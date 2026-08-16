@@ -72,12 +72,12 @@
       <h2 class="text-2xl font-black text-theme mb-2">Thông tin lớp học</h2>
       <p class="text-sm text-slate-500 mb-6">Cập nhật thông tin cơ bản để hệ thống tạo Mã ID cho học sinh.</p>
       <div class="space-y-4">
-        <div><label class="text-xs font-bold text-slate-600">Họ tên GVCN</label><input type="text" id="ob-teacher" class="w-full mt-1 px-4 py-3 border rounded-xl ring-theme outline-none" placeholder="VD: Đỗ Thị Thùy"></div>
+        <div><label class="text-xs font-bold text-slate-600">Họ tên GVCN</label><input type="text" id="ob-teacher" class="w-full mt-1 px-4 py-3 border rounded-xl ring-theme outline-none" placeholder="VD: Phạm Minh Tuấn"></div>
         <div class="grid grid-cols-2 gap-4">
           <div><label class="text-xs font-bold text-slate-600">Lớp</label><input type="text" id="ob-class" class="w-full mt-1 px-4 py-3 border rounded-xl ring-theme outline-none" placeholder="VD: 12A17"></div>
-          <div><label class="text-xs font-bold text-slate-600">Năm học</label><input type="text" id="ob-year" class="w-full mt-1 px-4 py-3 border rounded-xl ring-theme outline-none" placeholder="VD: 2025 - 2026"></div>
+          <div><label class="text-xs font-bold text-slate-600">Năm học</label><input type="text" id="ob-year" class="w-full mt-1 px-4 py-3 border rounded-xl ring-theme outline-none" placeholder="VD: 2026 - 2027"></div>
         </div>
-        <div><label class="text-xs font-bold text-slate-600">Khẩu hiệu</label><input type="text" id="ob-slogan" class="w-full mt-1 px-4 py-3 border rounded-xl ring-theme outline-none" placeholder="VD: Chuyến Tàu Thanh Xuân"></div>
+        <div><label class="text-xs font-bold text-slate-600">Khẩu hiệu</label><input type="text" id="ob-slogan" class="w-full mt-1 px-4 py-3 border rounded-xl ring-theme outline-none" placeholder="VD: Chuyến Tàu Tuổi Trẻ"></div>
         <button onclick="saveOnboarding()" class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold shadow-lg hover:bg-emerald-600 transition mt-4">Lưu & Bắt đầu</button>
       </div>
     </div>
@@ -154,7 +154,7 @@
   <!-- =============================== -->
   <!-- NỘI DUNG CHÍNH -->
   <!-- =============================== -->
-  <main class="flex-1 flex flex-col h-full relative w-full" id="main-content">
+  <main class="flex-1 flex flex-col h-full relative w-full overflow-hidden" id="main-content">
     
     <!-- HEADER -->
     <header class="bg-white/90 backdrop-blur-md px-4 md:px-8 py-3 md:py-4 shadow-sm flex items-center justify-between shrink-0 sticky top-0 z-50 border-b border-slate-100">
@@ -163,7 +163,7 @@
         <button onclick="toggleSidebar()" class="lg:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition">
           <i data-lucide="menu" class="w-6 h-6"></i>
         </button>
-        <h2 id="header-title" class="text-lg md:text-xl font-black text-theme-grad uppercase tracking-tight line-clamp-1">Tổng Quan</h2>
+        <h2 id="header-title" class="text-lg md:text-xl font-black text-theme-grad uppercase tracking-tight line-clamp-1">Tổng Quan Lớp</h2>
       </div>
       
       <div class="flex items-center gap-3 md:gap-4 shrink-0">
@@ -180,12 +180,25 @@
     </header>
 
     <!-- CONTENT TABS -->
-    <div class="p-4 md:p-8 flex-1 overflow-y-auto custom-scrollbar">
+    <div class="p-4 md:p-8 flex-1 overflow-y-auto custom-scrollbar relative">
       
       <!-- TAB 1: TỔNG QUAN -->
       <section id="tab-overview" class="tab-section space-y-4 md:space-y-6">
-        <!-- Banner -->
-        <div class="bg-theme-grad rounded-3xl p-6 md:p-8 text-white shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between relative overflow-hidden transition-all duration-300">
+        <!-- Banner Ảnh Tường (Wall Cover) MỚI -->
+        <div class="relative w-full h-40 md:h-64 bg-slate-200 rounded-3xl overflow-hidden shadow-md group border border-slate-200">
+            <!-- Khu vực hiện ảnh -->
+            <div id="cover-photo" class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style="background-image: url('https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80');"></div>
+            <!-- Overlay mờ màu đen để dễ đọc text nếu có -->
+            <div class="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors"></div>
+            <!-- Nút Upload Cover -->
+            <label class="absolute bottom-4 right-4 bg-white/80 backdrop-blur-sm hover:bg-white text-slate-700 px-4 py-2 rounded-xl text-sm font-bold shadow-lg cursor-pointer transition flex items-center gap-2 border border-slate-100">
+                <i data-lucide="image" class="w-4 h-4"></i> Đổi ảnh bìa
+                <input type="file" id="cover-upload" accept="image/*" class="hidden" onchange="handleCoverUpload(event)">
+            </label>
+        </div>
+
+        <!-- Thông điệp lớp -->
+        <div class="bg-theme-grad rounded-3xl p-6 md:p-8 text-white shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between relative overflow-hidden transition-all duration-300 mt-[-2rem] md:mt-[-3rem] z-10 mx-4 md:mx-8">
           <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4"></div>
           <div class="relative z-10 w-full">
             <span class="text-[10px] md:text-xs font-black uppercase tracking-widest bg-white/20 px-3 py-1.5 rounded-lg backdrop-blur-sm shadow-sm border border-white/10 whitespace-nowrap">Thông điệp lớp</span>
@@ -194,8 +207,8 @@
           <div class="hidden md:block text-7xl relative z-10 opacity-90 drop-shadow-xl transform -rotate-6">🚀</div>
         </div>
 
-        <!-- Đổi từ md:grid-cols-3 thành lg:grid-cols-3 để điện thoại không bị bóp méo -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+        <!-- Bảng vàng và thống kê -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mt-6">
           <div class="lg:col-span-2 bg-gradient-to-br from-amber-400 to-orange-500 text-white p-1 rounded-3xl shadow-lg">
             <div class="bg-white/10 backdrop-blur-md rounded-[22px] p-5 md:p-6 h-full border border-white/20">
                <h3 class="font-black flex items-center gap-2 text-white mb-4 md:mb-6 drop-shadow-md text-base md:text-lg whitespace-nowrap"><i data-lucide="crown" class="w-6 h-6 text-amber-200 fill-amber-200"></i> BẢNG VÀNG (TOP 5)</h3>
@@ -225,7 +238,6 @@
           </div>
         </div>
         <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-          <!-- Bảng cuộn ngang trên điện thoại -->
           <div class="overflow-x-auto custom-scrollbar">
             <table class="w-full text-left text-sm min-w-[600px]">
               <thead class="bg-slate-50 border-b text-slate-500 uppercase text-[10px] md:text-xs tracking-wider font-bold">
@@ -271,7 +283,6 @@
            <div class="sticky left-0 text-[10px] md:text-xs text-slate-500 font-medium flex items-center gap-1 md:gap-2 bg-slate-50 px-2 md:px-3 py-1.5 rounded-lg border border-slate-100 w-fit mb-4">
              <i data-lucide="info" class="w-3 h-3 md:w-4 md:h-4 text-theme"></i> Click ô trống để xếp chỗ. Click HS để đổi.
            </div>
-           <!-- Khung chứa sơ đồ cuộn ngang trên mobile -->
            <div class="min-w-[800px] pb-10">
                <div class="flex justify-center mb-8 md:mb-12">
                    <div class="bg-slate-800 shadow-xl text-white w-48 md:w-64 py-3 md:py-4 rounded-2xl text-center font-black text-xs md:text-sm tracking-widest flex flex-col items-center border-b-4 border-slate-900 relative">
@@ -435,6 +446,13 @@
       rose:    { c1: '#f43f5e', c2: '#f97316', s1: '#4c0519', s2: '#881337' }
     };
 
+    // Default Wallpapers
+    const DEFAULT_COVERS = [
+        'https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80'
+    ];
+
     window.onload = () => {
       lucide.createIcons(); checkAuth();
       document.getElementById('excel-upload').addEventListener('change', handleExcelUpload);
@@ -528,7 +546,9 @@
       currentUser.className = document.getElementById('ob-class').value || '12A1';
       currentUser.year = document.getElementById('ob-year').value || '2026';
       currentUser.slogan = document.getElementById('ob-slogan').value || 'Lớp học yêu thương';
-      currentUser.theme = 'violet'; saveUserToStorage();
+      currentUser.theme = 'violet'; 
+      currentUser.cover = DEFAULT_COVERS[Math.floor(Math.random() * DEFAULT_COVERS.length)]; // Gán ảnh cover mặc định
+      saveUserToStorage();
       document.getElementById('onboarding-screen').classList.replace('flex', 'hidden'); loadUserData();
     }
 
@@ -552,11 +572,24 @@
 
     function updateUI() {
       document.getElementById('sidebar-class-logo').innerText = currentUser.className; document.getElementById('sidebar-slogan').innerText = currentUser.slogan;
-      document.getElementById('sidebar-teacher-name').innerText = currentUser.teacherName;
+      // Sửa tên hiển thị để thêm chữ GVCN:
+      document.getElementById('sidebar-teacher-name').innerText = "GVCN: " + (currentUser.teacherName || "...");
       document.getElementById('header-year').innerHTML = `<i data-lucide="calendar" class="w-3 h-3"></i> Năm học ${currentUser.year}`;
       document.getElementById('banner-slogan').innerText = currentUser.slogan; document.getElementById('stat-student-count').innerText = students.length;
       if(currentUser.avatar) document.getElementById('header-avatar').innerHTML = `<img src="${currentUser.avatar}" class="w-full h-full object-cover">`;
+      if(currentUser.cover) document.getElementById('cover-photo').style.backgroundImage = `url('${currentUser.cover}')`;
       lucide.createIcons();
+    }
+
+    // --- UPLOAD ẢNH BÌA ---
+    function handleCoverUpload(e) {
+      const file = e.target.files[0]; if(!file) return; const reader = new FileReader();
+      reader.onload = function(event) { 
+          currentUser.cover = event.target.result; 
+          saveUserToStorage(); 
+          document.getElementById('cover-photo').style.backgroundImage = `url('${currentUser.cover}')`;
+      }; 
+      reader.readAsDataURL(file);
     }
 
     function handleAvatarUpload(e) {
@@ -655,7 +688,6 @@
       const titles = { 'tab-overview': 'Tổng Quan Lớp', 'tab-students': 'Danh Sách Lớp', 'tab-notebook': 'Sổ Theo Dõi', 'tab-wheel': 'Vòng Quay May Mắn', 'tab-seating': 'Sơ Đồ Chỗ Ngồi', 'tab-praise': 'Tuyên Dương', 'tab-points': 'Thành Tích', 'tab-gifts': 'Quà Tặng', 'tab-settings': 'Cài Đặt & Giao Diện' };
       document.getElementById('header-title').innerText = titles[tabId] || 'Hệ Thống';
       
-      // Auto close sidebar on mobile after clicking a tab
       if(window.innerWidth < 1024) { toggleSidebar(); }
     }
 
