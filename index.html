@@ -957,8 +957,9 @@
             const res = await fetch('/api/data');
             if (res.ok) {
                 const backendData = await res.json();
-                if (backendData.currentUser) {
-                    currentUser = backendData.currentUser;
+                const userObj = backendData.currentUser || backendData.user;
+                if (userObj) {
+                    currentUser = userObj;
                     students = backendData.students || [];
                     seatingCharts = backendData.seatingCharts || [];
                     timetables = backendData.timetables || [];
@@ -975,8 +976,9 @@
                 const res = await fetch('./data.json');
                 if (res.ok) {
                     const backendData = await res.json();
-                    if (backendData.currentUser) {
-                        currentUser = backendData.currentUser;
+                    const userObj = backendData.currentUser || backendData.user;
+                    if (userObj) {
+                        currentUser = userObj;
                         students = backendData.students || [];
                         seatingCharts = backendData.seatingCharts || [];
                         timetables = backendData.timetables || [];
