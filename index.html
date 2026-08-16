@@ -45,6 +45,8 @@
     
     .student-card {
       transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform-style: preserve-3d;
+      position: relative;
     }
     @keyframes shuffle-card {
       0% { transform: translate(0, 0) scale(1) rotate(0deg); z-index: 10; }
@@ -63,6 +65,66 @@
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4) !important;
       border-color: var(--c1) !important;
       background-color: white !important;
+    }
+    @keyframes flip-reveal {
+      0% { transform: translate(var(--tx), var(--ty)) scale(1) rotateY(180deg); }
+      100% { transform: translate(var(--tx), var(--ty)) scale(1.5) rotateY(360deg); }
+    }
+    .winner-stage-highlight.flipped {
+      animation: flip-reveal 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+    }
+    .student-card.face-down .card-content {
+      opacity: 0 !important;
+      transform: rotateY(180deg) !important;
+      pointer-events: none !important;
+    }
+    .student-card.face-down::after {
+      content: "🃏";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #1e1b4b, #312e81);
+      border: 2px solid #8b5cf6;
+      border-radius: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: #a78bfa;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), inset 0 0 10px rgba(255,255,255,0.05);
+      transition: all 0.3s ease;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+    .student-card.gift-box .card-content {
+      opacity: 0 !important;
+      pointer-events: none !important;
+      transform: scale(0.5) !important;
+    }
+    .student-card.gift-box::after {
+      content: "🎁";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #f43f5e, #be123c);
+      border: 2px solid #fda4af;
+      border-radius: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+      transition: all 0.3s ease;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+    @keyframes shake-gift {
+      0%, 100% { transform: rotate(0deg) scale(1); }
+      20% { transform: rotate(-8deg) scale(1.05); }
+      40% { transform: rotate(8deg) scale(1.05); }
+      60% { transform: rotate(-5deg) scale(1.05); }
+      80% { transform: rotate(5deg) scale(1.05); }
+    }
+    .mode-gift-shake::after {
+      animation: shake-gift 0.5s ease-in-out infinite;
     }
   </style>
 </head>
@@ -358,8 +420,10 @@
             </div>
             <div>
               <label class="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider">Chế độ hiển thị</label>
-              <select id="spin-mode" class="w-full mt-1 border border-slate-200 rounded-xl p-2.5 md:p-3 text-sm bg-white font-bold ring-theme outline-none text-slate-700 cursor-pointer">
-                  <option value="card">Lật Thẻ Ngẫu Nhiên</option>
+              <select id="spin-mode" onchange="handleModeChange()" class="w-full mt-1 border border-slate-200 rounded-xl p-2.5 md:p-3 text-sm bg-white font-bold ring-theme outline-none text-slate-700 cursor-pointer">
+                  <option value="card">Xào & Lật Bài 🃏</option>
+                  <option value="gift">Hộp Quà Bí Ẩn 🎁</option>
+                  <option value="wheel_pie">Vòng Quay Kỳ Diệu 🎡</option>
                   <option value="bubble">Thả Bong Bóng 🎈</option>
                   <option value="spin">Quay Chong Chóng 🌀</option>
                   <option value="duck">Đua Vịt 🦆</option>
@@ -377,6 +441,10 @@
               </div>
             </h4>
             <div id="student-grid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 max-h-[400px] md:max-h-[500px] overflow-y-auto custom-scrollbar p-3 rounded-2xl bg-slate-50/50 border border-slate-100 min-h-[200px] items-center"></div>
+            <div id="wheel-canvas-container" class="hidden flex flex-col items-center justify-center relative w-full h-[400px] md:h-[500px] bg-slate-50/50 border border-slate-100 rounded-2xl p-4 overflow-hidden">
+               <canvas id="wheel-canvas" width="450" height="450" class="max-w-full max-h-full"></canvas>
+               <div class="absolute top-[20px] w-0 h-0 border-l-[15px] border-l-transparent border-r-[15px] border-r-transparent border-t-[30px] border-t-rose-500 filter drop-shadow"></div>
+            </div>
           </div>
         </div>
       </section>
@@ -807,7 +875,7 @@
 
     function applyTheme(themeName) { const t = THEMES[themeName] || THEMES.emerald; document.documentElement.style.setProperty('--c1', t.c1); document.documentElement.style.setProperty('--c2', t.c2); document.documentElement.style.setProperty('--s1', t.s1); document.documentElement.style.setProperty('--s2', t.s2); if(currentUser) { currentUser.theme = themeName; saveUserToStorage(); } }
     function toggleSidebar() { const sidebar = document.getElementById('main-sidebar'); const overlay = document.getElementById('mobile-overlay'); sidebar.classList.toggle('-translate-x-full'); overlay.classList.toggle('hidden'); }
-    function switchTab(tabId) { document.querySelectorAll('.tab-section').forEach(sec => sec.classList.add('hidden')); document.querySelectorAll('.tab-btn').forEach(btn => { btn.classList.remove('bg-theme-grad', 'text-white', 'shadow-lg', 'font-bold'); btn.classList.add('hover:bg-white/10', 'text-white/70'); }); document.getElementById(tabId).classList.remove('hidden'); const activeBtn = document.getElementById('btn-' + tabId); if(activeBtn) { activeBtn.classList.remove('hover:bg-white/10', 'text-white/70'); activeBtn.classList.add('bg-theme-grad', 'text-white', 'shadow-lg', 'font-bold'); } const titles = { 'tab-overview': 'Tổng Quan Lớp', 'tab-students': 'Danh Sách Lớp', 'tab-attendance': 'Điểm Danh Hàng Ngày', 'tab-timetable': 'Thời Khoá Biểu', 'tab-seating': 'Sơ Đồ Chỗ Ngồi', 'tab-notebook': 'Sổ Theo Dõi', 'tab-wheel': 'Vòng Quay May Mắn', 'tab-praise': 'Tuyên Dương', 'tab-points': 'Thành Tích', 'tab-gifts': 'Quà Tặng', 'tab-settings': 'Cài Đặt & Giao Diện' }; document.getElementById('header-title').innerText = titles[tabId] || 'Hệ Thống'; if(window.innerWidth < 1024) toggleSidebar(); }
+    function switchTab(tabId) { document.querySelectorAll('.tab-section').forEach(sec => sec.classList.add('hidden')); document.querySelectorAll('.tab-btn').forEach(btn => { btn.classList.remove('bg-theme-grad', 'text-white', 'shadow-lg', 'font-bold'); btn.classList.add('hover:bg-white/10', 'text-white/70'); }); document.getElementById(tabId).classList.remove('hidden'); const activeBtn = document.getElementById('btn-' + tabId); if(activeBtn) { activeBtn.classList.remove('hover:bg-white/10', 'text-white/70'); activeBtn.classList.add('bg-theme-grad', 'text-white', 'shadow-lg', 'font-bold'); } const titles = { 'tab-overview': 'Tổng Quan Lớp', 'tab-students': 'Danh Sách Lớp', 'tab-attendance': 'Điểm Danh Hàng Ngày', 'tab-timetable': 'Thời Khoá Biểu', 'tab-seating': 'Sơ Đồ Chỗ Ngồi', 'tab-notebook': 'Sổ Theo Dõi', 'tab-wheel': 'Vòng Quay May Mắn', 'tab-praise': 'Tuyên Dương', 'tab-points': 'Thành Tích', 'tab-gifts': 'Quà Tặng', 'tab-settings': 'Cài Đặt & Giao Diện' }; document.getElementById('header-title').innerText = titles[tabId] || 'Hệ Thống'; if(tabId === 'tab-wheel') handleModeChange(); if(window.innerWidth < 1024) toggleSidebar(); }
     function updateUI() { document.getElementById('sidebar-class-logo').innerText = currentUser.className; document.getElementById('sidebar-slogan').innerText = currentUser.slogan; document.getElementById('sidebar-teacher-name').innerText = (currentUser.teacherName || "..."); document.getElementById('header-year').innerHTML = `<i data-lucide="calendar" class="w-3 h-3"></i> Năm học ${currentUser.year}`; let sloganEl = document.getElementById('banner-slogan'); if (sloganEl) sloganEl.innerText = currentUser.slogan; document.getElementById('stat-student-count').innerText = students.length; if(currentUser.avatar) document.getElementById('header-avatar').innerHTML = `<img src="${currentUser.avatar}" class="w-full h-full object-cover">`; if(currentUser.cover) document.getElementById('cover-photo').style.backgroundImage = `url('${currentUser.cover}')`; lucide.createIcons(); }
     function handleCoverUpload(e) { const file = e.target.files[0]; if(!file) return; compressImage(file, 1200, 800, function(dataUrl) { currentUser.cover = dataUrl; if(saveUserToStorage()) document.getElementById('cover-photo').style.backgroundImage = `url('${currentUser.cover}')`; }, 0.85); e.target.value = ''; }
     function handleAvatarUpload(e) { const file = e.target.files[0]; if(!file) return; compressImage(file, 300, 300, function(dataUrl) { currentUser.avatar = dataUrl; if(saveUserToStorage()) updateUI(); }, 0.8); e.target.value = ''; }
@@ -1140,25 +1208,188 @@
     
     function renderStage() {
       const visibleStudents = students.filter(s => !hiddenWheelIds.includes(s.id));
-      document.getElementById('wheel-student-count').innerText = visibleStudents.length + " HS"; const grid = document.getElementById('student-grid');
-      const btnReset = document.getElementById('btn-reset-wheel'); if(hiddenWheelIds.length > 0) btnReset.classList.remove('hidden'); else btnReset.classList.add('hidden');
-      if(visibleStudents.length === 0) { grid.innerHTML = `<div class="col-span-full text-center py-10 text-slate-400 font-medium">Sân khấu trống!</div>`; return; }
-      grid.innerHTML = visibleStudents.map(s => `<div id="card-${s.id}" class="student-card bg-white border border-slate-200 p-2 md:p-3 rounded-2xl flex flex-col items-center justify-center text-center transition-all duration-300 shadow-sm"><div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-3xl md:text-4xl mb-1 md:mb-2 rounded-full overflow-hidden">${getAvatarHtml(s.avatar)}</div><span class="font-bold text-[10px] md:text-[11px] truncate w-full text-slate-700" title="${s.name}">${s.name}</span></div>`).join('');
+      const countEl = document.getElementById('wheel-student-count');
+      if (countEl) countEl.innerText = visibleStudents.length + " HS";
+      const grid = document.getElementById('student-grid');
+      const btnReset = document.getElementById('btn-reset-wheel');
+      if (btnReset) {
+        if (hiddenWheelIds.length > 0) btnReset.classList.remove('hidden');
+        else btnReset.classList.add('hidden');
+      }
+      if (visibleStudents.length === 0) {
+        if (grid) grid.innerHTML = `<div class="col-span-full text-center py-10 text-slate-400 font-medium">Sân khấu trống!</div>`;
+        return;
+      }
+      if (grid) {
+        grid.innerHTML = visibleStudents.map(s => `
+          <div id="card-${s.id}" class="student-card bg-white border border-slate-200 p-2 md:p-3 rounded-2xl flex flex-col items-center justify-center text-center transition-all duration-300 shadow-sm">
+            <div class="card-content flex flex-col items-center justify-center w-full h-full">
+              <div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-3xl md:text-4xl mb-1 md:mb-2 rounded-full overflow-hidden">${getAvatarHtml(s.avatar)}</div>
+              <span class="font-bold text-[10px] md:text-[11px] truncate w-full text-slate-700" title="${s.name}">${s.name}</span>
+            </div>
+          </div>
+        `).join('');
+      }
+      const modeSelect = document.getElementById('spin-mode');
+      if (modeSelect && modeSelect.value === 'wheel_pie') {
+        drawWheel();
+      }
     }
+    let wheelAngle = 0;
+    function handleModeChange() {
+      const mode = document.getElementById('spin-mode').value;
+      const grid = document.getElementById('student-grid');
+      const canvasContainer = document.getElementById('wheel-canvas-container');
+      if (mode === 'wheel_pie') {
+        if(grid) grid.classList.add('hidden');
+        if(canvasContainer) canvasContainer.classList.remove('hidden');
+        drawWheel();
+      } else {
+        if(grid) grid.classList.remove('hidden');
+        if(canvasContainer) canvasContainer.classList.add('hidden');
+        renderStage();
+      }
+    }
+
+    function drawWheel() {
+      const canvas = document.getElementById('wheel-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const colors = ['#f43f5e', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4', '#ec4899', '#14b8a6'];
+      const visibleStudents = students.filter(s => !hiddenWheelIds.includes(s.id));
+      const len = visibleStudents.length;
+      if (len === 0) return;
+      
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+      const radius = canvas.width / 2 - 15;
+      
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      const sliceAngle = (Math.PI * 2) / len;
+      for (let i = 0; i < len; i++) {
+        const startA = i * sliceAngle + wheelAngle;
+        const endA = startA + sliceAngle;
+        
+        // Draw slice
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, radius, startA, endA);
+        ctx.closePath();
+        ctx.fillStyle = colors[i % colors.length];
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Draw text
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(startA + sliceAngle / 2);
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 13px sans-serif';
+        const name = visibleStudents[i].name;
+        const displayName = name.length > 14 ? name.substring(0, 12) + '..' : name;
+        ctx.fillText(displayName, radius - 20, 5);
+        ctx.restore();
+      }
+      
+      // Draw center circle decoration
+      ctx.beginPath();
+      ctx.arc(cx, cy, 30, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffffff';
+      ctx.fill();
+      ctx.strokeStyle = 'var(--c1)';
+      ctx.lineWidth = 4;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, 8, 0, Math.PI * 2);
+      ctx.fillStyle = 'var(--c1)';
+      ctx.fill();
+    }
+
+    let isWheelSpinning = false;
+    function startWheelSpin(winner, duration, callback) {
+      const visibleStudents = students.filter(s => !hiddenWheelIds.includes(s.id));
+      const len = visibleStudents.length;
+      const winIdx = visibleStudents.findIndex(s => s.id === winner.id);
+      
+      const sliceAngle = (Math.PI * 2) / len;
+      const targetAngle = 1.5 * Math.PI - (winIdx + 0.5) * sliceAngle;
+      const extraSpins = Math.PI * 2 * (6 + Math.floor(Math.random() * 3)); // 6 to 8 full spins
+      const totalRotation = extraSpins + (targetAngle - (wheelAngle % (Math.PI * 2)));
+      
+      const startTime = performance.now();
+      const startAngle = wheelAngle;
+      
+      function animate(time) {
+        const elapsed = time - startTime;
+        if (elapsed >= duration) {
+          wheelAngle = startAngle + totalRotation;
+          drawWheel();
+          isWheelSpinning = false;
+          callback();
+        } else {
+          const t = elapsed / duration;
+          const easeOut = 1 - Math.pow(1 - t, 3);
+          wheelAngle = startAngle + totalRotation * easeOut;
+          drawWheel();
+          requestAnimationFrame(animate);
+        }
+      }
+      isWheelSpinning = true;
+      requestAnimationFrame(animate);
 
     // --- VÒNG QUAY MAY MẮN ---
     function startSpin() {
       const visibleStudents = students.filter(s => !hiddenWheelIds.includes(s.id));
       if (visibleStudents.length === 0) return showModal('warning', 'Sân khấu trống', 'Không có học sinh nào trên sân khấu để gọi!');
       
-      const btn = document.getElementById('spin-btn'); btn.disabled = true; btn.innerHTML = "ĐANG XÀO BÀI..."; btn.classList.add('opacity-70');
+      const mode = document.getElementById('spin-mode').value;
+      const btn = document.getElementById('spin-btn'); 
+      btn.disabled = true; 
+      btn.classList.add('opacity-70');
       
+      const randomIndex = Math.floor(Math.random() * visibleStudents.length); 
+      const selected = visibleStudents[randomIndex]; 
+
+      // If wheel_pie mode, we do canvas wheel animation instead of grid animations
+      if (mode === 'wheel_pie') {
+        const duration = parseInt(document.getElementById('spin-duration').value || 3) * 1000;
+        btn.innerHTML = "ĐANG QUAY...";
+        startWheelSpin(selected, duration, () => {
+          currentWinner = selected;
+          confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 }});
+          
+          setTimeout(() => {
+            document.getElementById('winner-name').innerText = selected.name; 
+            document.getElementById('winner-avatar').innerHTML = getAvatarHtml(selected.avatar); 
+            document.getElementById('winner-id').innerText = "ID: " + (selected.code || "...");
+            openModalUi('result-modal', 'result-content');
+            btn.disabled = false; 
+            btn.innerHTML = "🎲 QUAY LẠI"; 
+            btn.classList.remove('opacity-70');
+          }, 800);
+        });
+        return;
+      }
+
+      btn.innerHTML = "ĐANG XÀO BÀI...";
       const grid = document.getElementById('student-grid');
       const cards = grid.querySelectorAll('.student-card');
       const gridRect = grid.getBoundingClientRect();
       const gridCenterX = gridRect.left + gridRect.width / 2;
       const gridCenterY = gridRect.top + gridRect.height / 2;
       
+      // Face down or package up cards first
+      if (mode === 'card') {
+        cards.forEach(c => c.classList.add('face-down'));
+      } else if (mode === 'gift') {
+        cards.forEach(c => c.classList.add('gift-box'));
+      }
+
       // Perform shuffle animation
       cards.forEach(card => {
         const cardRect = card.getBoundingClientRect();
@@ -1179,19 +1410,48 @@
         });
         
         btn.innerHTML = "ĐANG QUAY...";
-        const duration = parseInt(document.getElementById('spin-duration').value || 3) * 1000; const intervalTime = 150; let elapsed = 0;
-        const mode = document.getElementById('spin-mode').value;
+        const duration = parseInt(document.getElementById('spin-duration').value || 3) * 1000; 
+        const intervalTime = 150; 
+        let elapsed = 0;
+        
+        // Active visual classes for current card selection cycle
         let activeClass = 'border-theme bg-theme-light ring-4 ring-theme scale-110 shadow-lg';
-        if(mode === 'bubble') activeClass += ' mode-bubble'; if(mode === 'spin') activeClass += ' mode-spin';
-        if(mode === 'duck') activeClass += ' mode-duck'; if(mode === 'horse') activeClass += ' mode-horse';
+        if(mode === 'bubble') activeClass += ' mode-bubble'; 
+        if(mode === 'spin') activeClass += ' mode-spin';
+        if(mode === 'duck') activeClass += ' mode-duck'; 
+        if(mode === 'horse') activeClass += ' mode-horse';
+        if(mode === 'gift') activeClass += ' mode-gift-shake';
   
         const interval = setInterval(() => {
-          document.querySelectorAll('.student-card').forEach(c => c.className = "student-card bg-white border border-slate-200 p-2 md:p-3 rounded-2xl flex flex-col items-center justify-center text-center transition-all duration-300 shadow-sm");
-          const randomIndex = Math.floor(Math.random() * visibleStudents.length); const selected = visibleStudents[randomIndex]; const card = document.getElementById(`card-${selected.id}`);
-          if(card) card.className = `student-card p-2 md:p-3 flex flex-col items-center justify-center text-center transition-all duration-300 ${activeClass}`;
+          document.querySelectorAll('.student-card').forEach(c => {
+            let baseClass = "student-card bg-white border border-slate-200 p-2 md:p-3 rounded-2xl flex flex-col items-center justify-center text-center transition-all duration-300 shadow-sm";
+            if (mode === 'card') {
+              c.className = baseClass + " face-down";
+            } else if (mode === 'gift') {
+              c.className = baseClass + " gift-box";
+            } else {
+              c.className = baseClass;
+            }
+          });
+          
+          const cycleRandomIndex = Math.floor(Math.random() * visibleStudents.length); 
+          const cycleSelected = visibleStudents[cycleRandomIndex]; 
+          const card = document.getElementById(`card-${cycleSelected.id}`);
+          if (card) {
+            let activeFullClass = `student-card p-2 md:p-3 flex flex-col items-center justify-center text-center transition-all duration-300 ${activeClass}`;
+            if (mode === 'card') {
+              card.className = activeFullClass + " face-down";
+            } else if (mode === 'gift') {
+              card.className = activeFullClass + " gift-box";
+            } else {
+              card.className = activeFullClass;
+            }
+          }
+          
           elapsed += intervalTime;
           if (elapsed >= duration) {
-            clearInterval(interval); currentWinner = selected; 
+            clearInterval(interval); 
+            currentWinner = selected; 
             
             // Center the winner card on stage and hide all others
             const winnerCard = document.getElementById(`card-${selected.id}`);
@@ -1211,21 +1471,32 @@
                   c.style.pointerEvents = 'none';
                 }
               });
-              winnerCard.className = "student-card p-4 md:p-6 flex flex-col items-center justify-center text-center winner-stage-highlight ring-4 ring-theme ring-offset-2";
+              
+              let winnerClass = "student-card p-4 md:p-6 flex flex-col items-center justify-center text-center winner-stage-highlight ring-4 ring-theme ring-offset-2";
+              if (mode === 'card') {
+                winnerClass += " flipped";
+              }
+              winnerCard.className = winnerClass;
+              winnerCard.classList.remove('face-down', 'gift-box');
             }
             
             confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 }});
             
             // Wait 2 seconds for centered stage visual before showing results modal
             setTimeout(() => {
-              document.getElementById('winner-name').innerText = selected.name; document.getElementById('winner-avatar').innerHTML = getAvatarHtml(selected.avatar); document.getElementById('winner-id').innerText = "ID: " + (selected.code || "...");
+              document.getElementById('winner-name').innerText = selected.name; 
+              document.getElementById('winner-avatar').innerHTML = getAvatarHtml(selected.avatar); 
+              document.getElementById('winner-id').innerText = "ID: " + (selected.code || "...");
               openModalUi('result-modal', 'result-content');
-              btn.disabled = false; btn.innerHTML = "🎲 QUAY LẠI"; btn.classList.remove('opacity-70');
+              btn.disabled = false; 
+              btn.innerHTML = "🎲 QUAY LẠI"; 
+              btn.classList.remove('opacity-70');
             }, 2000);
           }
         }, intervalTime);
       }, 1800);
     }
+
     function closeResultModal(removeStudent) { 
       if (removeStudent && currentWinner) { 
         hiddenWheelIds.push(currentWinner.id); 
