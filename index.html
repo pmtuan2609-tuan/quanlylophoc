@@ -12,9 +12,10 @@
     :root {
       --c1: #8b5cf6; /* Tím */
       --c2: #d946ef; /* Hồng */
-      --s1: #1e1b4b; /* Sidebar 1 */
-      --s2: #312e81; /* Sidebar 2 */
+      --s1: #1e1b4b; /* Nền sidebar 1 */
+      --s2: #312e81; /* Nền sidebar 2 */
     }
+
     .bg-theme-grad { background: linear-gradient(to right, var(--c1), var(--c2)); }
     .bg-theme-sidebar { background: linear-gradient(to bottom, var(--s1), var(--s2), var(--s1)); }
     .text-theme-grad { background: linear-gradient(to right, var(--c1), var(--c2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -29,8 +30,13 @@
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-    @keyframes float-bubble { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-15px) scale(1.05); } }
-    .mode-bubble { border-radius: 50% !important; animation: float-bubble 1s ease-in-out infinite; border: 4px solid var(--c1) !important; background-color: color-mix(in srgb, var(--c1) 15%, white) !important; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+    /* Hiệu ứng Vòng Quay */
+    @keyframes float-bubble {
+        0%, 100% { transform: translateY(0) scale(1); }
+        50% { transform: translateY(-15px) scale(1.05); }
+    }
+    .mode-bubble { border-radius: 50% !important; animation: float-bubble 1s ease-in-out infinite; border: 4px solid var(--c1) !important; background-color: color-mix(in srgb, var(--c1) 15%, white) !important; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+    
     @keyframes spin-custom { 100% { transform: rotate(360deg) scale(1.1); } }
     .mode-spin { animation: spin-custom 0.8s linear infinite; border-radius: 30% !important; background-color: #fef3c7 !important; border: 4px dashed #f59e0b !important; }
   </style>
@@ -73,6 +79,7 @@
     </div>
   </div>
 
+  <!-- OVERLAY CHO ĐIỆN THOẠI -->
   <div id="mobile-overlay" class="fixed inset-0 bg-slate-900/60 z-[90] hidden lg:hidden backdrop-blur-sm transition-opacity" onclick="toggleSidebar()"></div>
 
   <!-- ========================================== -->
@@ -103,12 +110,11 @@
         <button onclick="switchTab('tab-gifts')" id="btn-tab-gifts" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70"><i data-lucide="gift" class="w-5 h-5 text-rose-400"></i> Quà tặng</button>
 
         <div class="my-4 border-t border-white/10 mx-2"></div>
-
         <button onclick="switchTab('tab-settings')" id="btn-tab-settings" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70"><i data-lucide="settings" class="w-5 h-5"></i> Cài đặt & Giao diện</button>
       </nav>
     </div>
 
-    <!-- KHU VỰC GVCN -->
+    <!-- KHU VỰC GVCN TRONG SIDEBAR -->
     <div class="p-4 bg-black/20 flex flex-col mt-auto shrink-0 relative">
       <div class="text-[10px] text-white/50 font-bold uppercase tracking-widest mb-1.5 pl-1">Giáo viên chủ nhiệm</div>
       <div class="flex items-center justify-between gap-2">
@@ -134,8 +140,8 @@
       </div>
       
       <div class="flex items-center gap-3 md:gap-4 shrink-0">
-        <!-- NÚT TRA CỨU -->
-        <button onclick="openGlobalSearch()" class="hidden md:flex items-center gap-1.5 text-xs bg-white px-3 py-2 rounded-full font-bold shadow-sm border border-slate-200 text-slate-500 hover:text-theme hover:border-theme transition">
+        <!-- NÚT TRA CỨU MỚI -->
+        <button onclick="openModalUi('global-search-modal', 'global-search-content'); document.getElementById('global-search-input').focus();" class="hidden md:flex items-center gap-1.5 text-xs bg-white px-3 py-2 rounded-full font-bold shadow-sm border border-slate-200 text-slate-500 hover:text-theme hover:border-theme transition">
           <i data-lucide="search" class="w-3.5 h-3.5"></i> Tra cứu
         </button>
 
@@ -154,11 +160,12 @@
       
       <!-- TAB TỔNG QUAN -->
       <section id="tab-overview" class="tab-section space-y-4 md:space-y-6">
-        <!-- Banner Ảnh Tường -->
+        <!-- Banner Ảnh Tường MỚI -->
         <div class="relative w-full h-40 md:h-64 bg-slate-200 rounded-3xl overflow-hidden shadow-md group border border-slate-200">
+            <!-- Khu vực hiện ảnh bìa không làm tối -->
             <div id="cover-photo" class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style="background-image: url('https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80');"></div>
-            <div class="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors"></div>
-            <label class="absolute bottom-4 right-4 bg-white/80 backdrop-blur-sm hover:bg-white text-slate-700 px-4 py-2 rounded-xl text-sm font-bold shadow-lg cursor-pointer transition flex items-center gap-2 border border-slate-100">
+            <!-- Nút Đổi ảnh bìa chỉ hiện khi lia chuột (hover) -->
+            <label class="absolute bottom-4 right-4 bg-white/80 backdrop-blur-sm hover:bg-white text-slate-700 px-4 py-2 rounded-xl text-sm font-bold shadow-lg cursor-pointer flex items-center gap-2 border border-slate-100 opacity-0 group-hover:opacity-100 transition-all duration-300 z-20">
                 <i data-lucide="image" class="w-4 h-4"></i> Đổi ảnh bìa
                 <input type="file" id="cover-upload" accept="image/*" class="hidden" onchange="handleCoverUpload(event)">
             </label>
@@ -196,12 +203,11 @@
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-slate-100 gap-4">
           <h3 class="font-bold text-slate-700 text-base md:text-lg whitespace-nowrap">Danh Sách Lớp (<span id="student-count" class="text-theme">0</span>)</h3>
           <div class="flex gap-2 w-full sm:w-auto">
-            <button onclick="document.getElementById('excel-upload').click()" class="flex-[1] sm:flex-auto flex items-center justify-center gap-2 bg-emerald-50 text-emerald-600 border border-emerald-200 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-emerald-100 transition shadow-sm whitespace-nowrap">
+            <button onclick="document.getElementById('excel-upload').click()" class="flex-1 sm:flex-auto flex items-center justify-center gap-2 bg-emerald-50 text-emerald-600 border border-emerald-200 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-emerald-100 transition shadow-sm whitespace-nowrap">
               <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Nhập Excel
             </button>
             <input type="file" id="excel-upload" accept=".xlsx, .xls" class="hidden">
-            <!-- NÚT XÓA TẤT CẢ ĐÃ SỬA -->
-            <button onclick="deleteAllStudents()" class="flex-[1] sm:flex-auto flex items-center justify-center gap-2 bg-rose-50 text-rose-600 border border-rose-200 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-rose-100 transition shadow-sm whitespace-nowrap" title="Xóa toàn bộ học sinh">
+            <button onclick="deleteAllStudents()" class="flex-1 sm:flex-auto flex items-center justify-center gap-2 bg-rose-50 text-rose-600 border border-rose-200 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-rose-100 transition shadow-sm whitespace-nowrap" title="Xóa toàn bộ học sinh">
               <i data-lucide="trash-2" class="w-4 h-4"></i> Xóa tất cả
             </button>
           </div>
@@ -247,7 +253,7 @@
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 rounded-2xl shadow-sm border border-slate-100 shrink-0 gap-4">
           <div class="flex flex-wrap items-center gap-2 md:gap-3 w-full sm:w-auto">
             <select id="seating-select" class="flex-1 sm:flex-none border border-slate-200 rounded-xl px-3 md:px-4 py-2.5 text-xs md:text-sm bg-slate-50 ring-theme font-bold text-slate-700 outline-none" onchange="changeSeatingChart()"></select>
-            <button onclick="openNewChartModal()" class="text-theme bg-theme-light hover-bg-theme-light px-3 md:px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1 md:gap-2 shadow-sm whitespace-nowrap">
+            <button onclick="openModalUi('new-chart-modal', 'new-chart-content')" class="text-theme bg-theme-light hover-bg-theme-light px-3 md:px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1 md:gap-2 shadow-sm whitespace-nowrap">
               <i data-lucide="plus" class="w-4 h-4"></i> Thêm mới
             </button>
           </div>
@@ -272,7 +278,6 @@
                        <div class="absolute -bottom-2.5 w-10 h-1.5 bg-slate-400/50 rounded-full"></div>
                    </div>
                </div>
-               <!-- Lưới 4 cột -->
                <div class="grid grid-cols-4 gap-4 md:gap-8" id="seating-grid"></div>
            </div>
         </div>
@@ -284,7 +289,7 @@
           <div class="bg-white p-5 md:p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col gap-3 md:gap-4 h-fit">
             <h4 class="font-black text-slate-800 text-base md:text-lg">Cấu hình quay</h4>
             <div>
-              <label class="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider">Thời gian quay</label>
+              <label class="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider">Thời gian (giây)</label>
               <input type="number" id="spin-duration" min="1" max="10" value="3" class="w-full mt-1 border border-slate-200 rounded-xl p-2.5 md:p-3 text-sm bg-slate-50 font-bold ring-theme outline-none">
             </div>
             <div>
@@ -348,22 +353,10 @@
             <h3 class="text-lg md:text-xl font-black text-slate-800 mb-2">Cá nhân hóa</h3>
             <p class="text-xs md:text-sm text-slate-500 mb-4 md:mb-6 font-medium">Chọn màu sắc chủ đạo (Theme).</p>
             <div class="grid grid-cols-2 gap-3 md:gap-4">
-              <button onclick="applyTheme('violet')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-violet-400 transition group outline-none focus:ring-4 focus:ring-violet-200">
-                <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div>
-                <span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Tím Mộng Mơ</span>
-              </button>
-              <button onclick="applyTheme('blue')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-blue-400 transition group outline-none focus:ring-4 focus:ring-blue-200">
-                <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#3b82f6] to-[#06b6d4] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div>
-                <span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Đại Dương</span>
-              </button>
-              <button onclick="applyTheme('emerald')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-emerald-400 transition group outline-none focus:ring-4 focus:ring-emerald-200">
-                <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#10b981] to-[#14b8a6] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div>
-                <span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Thiên Nhiên</span>
-              </button>
-              <button onclick="applyTheme('rose')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-rose-400 transition group outline-none focus:ring-4 focus:ring-rose-200">
-                <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#f43f5e] to-[#f97316] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div>
-                <span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Hoàng Hôn</span>
-              </button>
+              <button onclick="applyTheme('violet')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-violet-400 transition group outline-none focus:ring-4 focus:ring-violet-200"><div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Tím Mộng Mơ</span></button>
+              <button onclick="applyTheme('blue')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-blue-400 transition group outline-none focus:ring-4 focus:ring-blue-200"><div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#3b82f6] to-[#06b6d4] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Đại Dương</span></button>
+              <button onclick="applyTheme('emerald')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-emerald-400 transition group outline-none focus:ring-4 focus:ring-emerald-200"><div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#10b981] to-[#14b8a6] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Thiên Nhiên</span></button>
+              <button onclick="applyTheme('rose')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-rose-400 transition group outline-none focus:ring-4 focus:ring-rose-200"><div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#f43f5e] to-[#f97316] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Hoàng Hôn</span></button>
             </div>
           </div>
         </div>
@@ -373,10 +366,10 @@
   </main>
 
   <!-- ========================================== -->
-  <!-- 4. HỆ THỐNG MODAL (POPUPS) MỚI CHUẨN       -->
+  <!-- 4. HỆ THỐNG MODAL (POPUPS) ĐIỀU KHIỂN CHUNG  -->
   <!-- ========================================== -->
 
-  <!-- Modal Báo Lỗi Tùy Chỉnh (Z: 700 - Cao nhất) -->
+  <!-- Modal Báo Lỗi Tùy Chỉnh -->
   <div id="custom-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[700] p-4 opacity-0 transition-opacity duration-300">
     <div class="bg-white rounded-[2rem] p-6 md:p-8 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col items-center border border-white/20" id="custom-modal-content">
       <div id="custom-modal-icon" class="w-20 h-20 rounded-full flex items-center justify-center mb-5 shadow-inner ring-4 ring-white"></div>
@@ -484,8 +477,8 @@
     </div>
   </div>
 
-  <!-- Modal Xem Ảnh To (Z: 700) -->
-  <div id="image-viewer-modal" class="fixed inset-0 bg-black/90 backdrop-blur-xl hidden items-center justify-center z-[700] p-4 opacity-0 transition-opacity duration-300" onclick="closeModalUi('image-viewer-modal', 'image-viewer-img'); setTimeout(()=>document.getElementById('image-viewer-img').src='', 300);">
+  <!-- Modal Xem Ảnh To (Z: 800) -->
+  <div id="image-viewer-modal" class="fixed inset-0 bg-black/90 backdrop-blur-xl hidden items-center justify-center z-[800] p-4 opacity-0 transition-opacity duration-300" onclick="closeModalUi('image-viewer-modal', 'image-viewer-img'); setTimeout(()=>document.getElementById('image-viewer-img').src='', 300);">
       <button class="absolute top-6 right-6 text-white/50 hover:text-white transition bg-white/10 hover:bg-white/20 p-3 rounded-full"><i data-lucide="x" class="w-6 h-6"></i></button>
       <img id="image-viewer-img" src="" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl transform scale-95 transition-transform duration-300">
   </div>
@@ -674,7 +667,6 @@
     function initSeatingCharts() { if(seatingCharts.length === 0) { seatingCharts.push({ id: Date.now().toString(), name: "Sơ đồ mặc định", layout: {} }); saveSeatingToStorage(); } currentChartId = seatingCharts[0].id; renderChartSelect(); applyChartLayout(); }
     function renderChartSelect() { const select = document.getElementById('seating-select'); select.innerHTML = seatingCharts.map(c => `<option value="${c.id}">${c.name}</option>`).join(''); select.value = currentChartId; document.getElementById('btn-delete-chart').classList.toggle('hidden', seatingCharts.length <= 1); }
     function changeSeatingChart() { currentChartId = document.getElementById('seating-select').value; applyChartLayout(); }
-    function openNewChartModal() { document.getElementById('new-chart-name').value = ''; openModalUi('new-chart-modal', 'new-chart-content'); }
     function confirmCreateChart() { const name = document.getElementById('new-chart-name').value.trim(); if(!name) return showModal('warning', 'Thiếu thông tin', 'Vui lòng nhập tên sơ đồ!'); const newChart = { id: Date.now().toString(), name: name, layout: {} }; seatingCharts.push(newChart); saveSeatingToStorage(); currentChartId = newChart.id; renderChartSelect(); applyChartLayout(); closeModalUi('new-chart-modal', 'new-chart-content'); }
     function deleteCurrentChart() { if(seatingCharts.length <= 1) return showModal('error', 'Không thể xóa', 'Bắt buộc phải có ít nhất 1 sơ đồ!'); showModal('confirm', 'Xác nhận xóa', 'Xóa sơ đồ lớp này?', () => { seatingCharts = seatingCharts.filter(c => c.id !== currentChartId); currentChartId = seatingCharts[0].id; saveSeatingToStorage(); renderChartSelect(); applyChartLayout(); }); }
     function saveSeatingToStorage() { localStorage.setItem('seating_' + currentUser.id, JSON.stringify(seatingCharts)); }
@@ -709,7 +701,7 @@
     function removeStudentFromCurrentSeat() { const chart = seatingCharts.find(c => c.id === currentChartId); delete chart.layout[selectedSeatId]; saveSeatingToStorage(); applyChartLayout(); closeModalUi('pick-student-modal', 'pick-student-content'); }
     function assignStudentToSeat(studentId) { const chart = seatingCharts.find(c => c.id === currentChartId); for (const [key, val] of Object.entries(chart.layout)) { if(val === studentId) delete chart.layout[key]; } chart.layout[selectedSeatId] = studentId; saveSeatingToStorage(); applyChartLayout(); closeModalUi('pick-student-modal', 'pick-student-content'); }
 
-    // --- RENDER TABLE & NOTEBOOK (ĐÃ TỔ CHỨC LẠI) ---
+    // --- RENDER TABLE & NOTEBOOK ---
     function renderStudentTable() {
       const tbody = document.getElementById('full-student-table'); document.getElementById('student-count').innerText = students.length;
       if(students.length === 0) { tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400 italic">Chưa có học sinh nào.</td></tr>`; return; }
