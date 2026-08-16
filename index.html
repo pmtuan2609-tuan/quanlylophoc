@@ -42,6 +42,28 @@
     
     .table-sticky th:first-child, .table-sticky td:first-child { position: sticky; left: 0; background-color: white; z-index: 10; border-right: 2px solid #f1f5f9; }
     .table-sticky th:first-child { z-index: 20; background-color: #f8fafc; }
+    
+    .student-card {
+      transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes shuffle-card {
+      0% { transform: translate(0, 0) scale(1) rotate(0deg); z-index: 10; }
+      20% { transform: translate(var(--tx), var(--ty)) scale(0.9) rotate(var(--rot)); z-index: 50; }
+      40% { transform: translate(calc(var(--tx) + 15px), calc(var(--ty) - 15px)) scale(0.9) rotate(calc(var(--rot) + 5deg)); z-index: 50; }
+      60% { transform: translate(calc(var(--tx) - 15px), calc(var(--ty) + 15px)) scale(0.9) rotate(calc(var(--rot) - 5deg)); z-index: 50; }
+      80% { transform: translate(var(--tx), var(--ty)) scale(0.95) rotate(var(--rot)); z-index: 50; }
+      100% { transform: translate(0, 0) scale(1) rotate(0deg); z-index: 10; }
+    }
+    .animate-shuffle {
+      animation: shuffle-card 1.8s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+    }
+    .winner-stage-highlight {
+      transform: translate(var(--tx), var(--ty)) scale(1.5) !important;
+      z-index: 100 !important;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4) !important;
+      border-color: var(--c1) !important;
+      background-color: white !important;
+    }
   </style>
 </head>
 <body class="bg-[#f3f4f6] font-sans text-slate-800 h-screen flex relative overflow-hidden">
@@ -157,18 +179,30 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mt-6">
-          <div class="lg:col-span-2 bg-gradient-to-br from-amber-400 to-orange-500 text-white p-1 rounded-3xl shadow-lg">
-            <div class="bg-white/10 backdrop-blur-md rounded-[22px] p-5 md:p-6 h-full border border-white/20">
-               <h3 class="font-black flex items-center gap-2 text-white mb-4 md:mb-6 drop-shadow-md text-base md:text-lg whitespace-nowrap"><i data-lucide="crown" class="w-6 h-6 text-amber-200 fill-amber-200"></i> BẢNG VÀNG (TOP 5)</h3>
+          <div class="lg:col-span-2 bg-gradient-to-br from-[#120e2e] via-[#1a1440] to-[#0d0926] text-white p-1 rounded-3xl shadow-lg border border-purple-500/20">
+            <div class="bg-white/5 backdrop-blur-md rounded-[22px] p-5 md:p-6 h-full border border-white/10">
+               <h3 class="font-black flex items-center gap-2 text-purple-200 mb-4 md:mb-6 drop-shadow-md text-base md:text-lg whitespace-nowrap"><i data-lucide="crown" class="w-6 h-6 text-amber-400 fill-amber-400"></i> BẢNG VÀNG THÀNH TÍCH</h3>
                <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 md:gap-4 text-center" id="top-students-list"></div>
             </div>
           </div>
           <div class="bg-gradient-to-br from-emerald-400 to-teal-500 text-white p-6 rounded-3xl shadow-lg border border-white/20 flex flex-col relative overflow-hidden h-40 lg:h-auto">
             <i data-lucide="users" class="absolute -right-4 -bottom-4 w-24 h-24 text-white/10"></i>
             <h3 class="font-black flex items-center gap-2 mb-2 text-white drop-shadow-md text-base md:text-lg whitespace-nowrap"><i data-lucide="pie-chart" class="w-6 h-6"></i> THỐNG KÊ</h3>
-            <div class="flex-1 flex flex-col items-center justify-center relative z-10">
-              <span class="text-5xl md:text-6xl font-black text-white drop-shadow-lg" id="stat-student-count">0</span>
-              <span class="text-xs md:text-sm font-bold text-emerald-100 uppercase mt-1 md:mt-2 tracking-widest whitespace-nowrap">Tổng học sinh</span>
+            <div class="flex-1 flex flex-col items-center justify-center relative z-10 w-full">
+              <span class="text-4xl md:text-5xl font-black text-white drop-shadow-lg" id="stat-student-count">0</span>
+              <span class="text-xs font-bold text-emerald-100 uppercase mt-0.5 tracking-widest whitespace-nowrap">Tổng học sinh</span>
+              <div class="w-full border-t border-white/20 my-3"></div>
+              <div class="flex justify-around w-full gap-2">
+                <div class="text-center">
+                  <span class="text-base md:text-lg font-black text-lime-200" id="stat-total-add">+0</span>
+                  <div class="text-[9px] font-bold text-emerald-100 uppercase tracking-wider">Khen thưởng</div>
+                </div>
+                <div class="w-px bg-white/20 self-stretch"></div>
+                <div class="text-center">
+                  <span class="text-base md:text-lg font-black text-rose-200" id="stat-total-sub">-0</span>
+                  <div class="text-[9px] font-bold text-emerald-100 uppercase tracking-wider">Vi phạm</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -636,6 +670,35 @@
     window.onload = () => { lucide.createIcons(); checkAuth(); renderEmptySeatingGrid(); };
 
     function removeAccents(str) { return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D'); }
+    function saveAppData() {
+        if (!currentUser) return;
+        try {
+            localStorage.setItem('students_' + currentUser.id, JSON.stringify(students));
+            localStorage.setItem('seating_' + currentUser.id, JSON.stringify(seatingCharts));
+            localStorage.setItem('timetables_' + currentUser.id, JSON.stringify(timetables));
+            localStorage.setItem('attendance_' + currentUser.id, JSON.stringify(attendanceData));
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            localStorage.setItem('user_' + currentUser.id, JSON.stringify(currentUser));
+        } catch(e) {
+            console.error("Local storage error:", e);
+        }
+        const payload = {
+            currentUser: currentUser,
+            students: students,
+            seatingCharts: seatingCharts,
+            timetables: timetables,
+            attendanceData: attendanceData
+        };
+        fetch('/api/data', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        }).then(res => {
+            if (res.ok) console.log("Data synced to server data.json");
+        }).catch(err => {
+            console.log("Running offline or no server connection. Data saved to LocalStorage.");
+        });
+    }
     function getAvatarHtml(avatarStr, extraClass = "") { if(!avatarStr) return ''; if(avatarStr.startsWith('data:image')) return `<img src="${avatarStr}" class="w-full h-full object-cover rounded-full ${extraClass}">`; return `<span class="${extraClass}">${avatarStr}</span>`; }
     function compressImage(file, maxWidth, maxHeight, callback, quality = 0.95) { 
         const reader = new FileReader(); 
@@ -652,7 +715,7 @@
         }; reader.readAsDataURL(file); 
     }
     function generateCode(className, year, index) { className = className || "12A1"; year = year || "2026"; let yMatch = year.match(/\d{4}/g); let yStr = yMatch ? yMatch[yMatch.length - 1].slice(-2) : "00"; let gMatch = className.match(/^(\d{1,2})/); let gStr = gMatch ? gMatch[1].padStart(2, '0') : "00"; let sMatch = className.match(/[A-Za-z]+(\d+)/); let sStr = sMatch ? sMatch[1].padStart(2, '0') : "00"; return `${yStr}${gStr}${sStr}${index.toString().padStart(2, '0')}`; }
-    function ensureStudentCodes() { let changed = false; students.forEach((s, idx) => { if (!s.code) { s.code = generateCode(currentUser.className, currentUser.year, idx + 1); changed = true; } }); if (changed) localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); }
+    function ensureStudentCodes() { let changed = false; students.forEach((s, idx) => { if (!s.code) { s.code = generateCode(currentUser.className, currentUser.year, idx + 1); changed = true; } }); if (changed) saveAppData(); }
     function parseExcelDate(excelValue) { if (!excelValue) return ''; if (typeof excelValue === 'number') { const date = new Date(Math.round((excelValue - 25569) * 86400 * 1000)); return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`; } return String(excelValue).trim(); }
 
     function openModalUi(modalId, contentId) { const modal = document.getElementById(modalId); if(!modal) return; if(modalTimeouts[modalId]) clearTimeout(modalTimeouts[modalId]); modal.classList.remove('hidden'); modal.classList.add('flex'); setTimeout(() => { modal.classList.remove('opacity-0'); if(contentId) { const content = document.getElementById(contentId); if(content) { content.classList.remove('scale-95'); content.classList.add('scale-100'); } } }, 10); }
@@ -669,13 +732,69 @@
     }
 
     // --- Auth & Config ---
-    function checkAuth() { const savedUser = localStorage.getItem('currentUser'); const authScreen = document.getElementById('auth-screen'); if (savedUser) { currentUser = JSON.parse(savedUser); authScreen.classList.add('hidden'); authScreen.classList.remove('flex'); if (!currentUser.className) { const obScreen = document.getElementById('onboarding-screen'); obScreen.classList.remove('hidden'); obScreen.classList.add('flex'); } else loadUserData(); } else { authScreen.classList.remove('hidden'); authScreen.classList.add('flex'); } }
+    async function checkAuth() {
+        const authScreen = document.getElementById('auth-screen');
+        let loaded = false;
+        try {
+            const res = await fetch('/api/data');
+            if (res.ok) {
+                const backendData = await res.json();
+                if (backendData.currentUser) {
+                    currentUser = backendData.currentUser;
+                    students = backendData.students || [];
+                    seatingCharts = backendData.seatingCharts || [];
+                    timetables = backendData.timetables || [];
+                    attendanceData = backendData.attendanceData || {};
+                    loaded = true;
+                }
+            }
+        } catch(e) {
+            console.warn("Server API not available, falling back to LocalStorage:", e);
+        }
+
+        if (loaded) {
+            authScreen.classList.add('hidden');
+            authScreen.classList.remove('flex');
+            if (!currentUser.className) {
+                const obScreen = document.getElementById('onboarding-screen');
+                obScreen.classList.remove('hidden');
+                obScreen.classList.add('flex');
+            } else {
+                applyTheme(currentUser.theme || 'emerald'); 
+                document.getElementById('set-teacher').value = currentUser.teacherName || ''; 
+                document.getElementById('set-class').value = currentUser.className || ''; 
+                document.getElementById('set-year').value = currentUser.year || ''; 
+                document.getElementById('set-slogan').value = currentUser.slogan || ''; 
+                ensureStudentCodes(); 
+                initAttendance(); 
+                initTimetables(); 
+                updateUI(); 
+                renderAll(); 
+                initSeatingCharts();
+            }
+        } else {
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                authScreen.classList.add('hidden');
+                authScreen.classList.remove('flex');
+                if (!currentUser.className) {
+                    const obScreen = document.getElementById('onboarding-screen');
+                    obScreen.classList.remove('hidden');
+                    obScreen.classList.add('flex');
+                } else loadUserData();
+            } else {
+                authScreen.classList.remove('hidden');
+                authScreen.classList.add('flex');
+            }
+        }
+    }
     function toggleAuthMode() { isLoginMode = !isLoginMode; document.getElementById('auth-title').innerText = isLoginMode ? 'Đăng Nhập' : 'Tạo Tài Khoản'; document.getElementById('auth-btn').innerText = isLoginMode ? 'Đăng Nhập' : 'Đăng Ký Nhanh'; document.getElementById('auth-toggle-text').innerText = isLoginMode ? 'Chưa có tài khoản?' : 'Đã có tài khoản?'; document.getElementById('auth-toggle-btn').innerText = isLoginMode ? 'Đăng ký ngay' : 'Đăng nhập'; document.getElementById('auth-error').classList.add('hidden'); }
     function handleAuth() { const id = document.getElementById('auth-id').value.trim(); const pass = document.getElementById('auth-pass').value.trim(); const errorMsg = document.getElementById('auth-error'); if(!id || !pass) return; if (isLoginMode) { if (id === MOCK_ADMIN.id && pass === MOCK_ADMIN.pass) { let adminData = localStorage.getItem('user_thaytuan'); if(!adminData) { adminData = { id: 'thaytuan' }; localStorage.setItem('user_thaytuan', JSON.stringify(adminData)); } else adminData = JSON.parse(adminData); loginSuccess(adminData); } else { const savedStr = localStorage.getItem('user_' + id); if (savedStr) { const user = JSON.parse(savedStr); if (user.pass === pass) loginSuccess(user); else { errorMsg.innerText = 'Sai mật khẩu!'; errorMsg.classList.remove('hidden'); } } else { errorMsg.innerText = 'Tài khoản không tồn tại!'; errorMsg.classList.remove('hidden'); } } } else { if(id === MOCK_ADMIN.id || localStorage.getItem('user_' + id)) { errorMsg.innerText = 'Tài khoản này đã tồn tại!'; errorMsg.classList.remove('hidden'); return; } const newUser = { id: id, pass: pass }; localStorage.setItem('user_' + id, JSON.stringify(newUser)); loginSuccess(newUser); } }
     function loginSuccess(user) { currentUser = user; localStorage.setItem('currentUser', JSON.stringify(currentUser)); const authScreen = document.getElementById('auth-screen'); authScreen.classList.add('hidden'); authScreen.classList.remove('flex'); if (!currentUser.className) { const obScreen = document.getElementById('onboarding-screen'); obScreen.classList.remove('hidden'); obScreen.classList.add('flex'); } else loadUserData(); }
     function logout() { localStorage.removeItem('currentUser'); location.reload(); }
     function saveOnboarding() { currentUser.teacherName = document.getElementById('ob-teacher').value || 'Thầy/Cô'; currentUser.className = document.getElementById('ob-class').value || '12A1'; currentUser.year = document.getElementById('ob-year').value || '2026'; currentUser.slogan = document.getElementById('ob-slogan').value || 'Lớp học yêu thương'; currentUser.theme = 'emerald'; currentUser.cover = DEFAULT_COVERS[Math.floor(Math.random() * DEFAULT_COVERS.length)]; if(saveUserToStorage()) { document.getElementById('onboarding-screen').classList.replace('flex', 'hidden'); loadUserData(); } }
-    function saveUserToStorage() { try { localStorage.setItem('currentUser', JSON.stringify(currentUser)); localStorage.setItem('user_' + currentUser.id, JSON.stringify(currentUser)); return true; } catch (e) { showModal('error', 'Lỗi bộ nhớ', 'Bộ nhớ đầy! Vui lòng tải ảnh nhẹ hơn.'); return false; } }
+    function saveUserToStorage() { try { saveAppData(); return true; } catch (e) { showModal('error', 'Lỗi bộ nhớ', 'Bộ nhớ đầy! Vui lòng tải ảnh nhẹ hơn.'); return false; } }
     function updateSettings() { currentUser.teacherName = document.getElementById('set-teacher').value; currentUser.className = document.getElementById('set-class').value; currentUser.year = document.getElementById('set-year').value; currentUser.slogan = document.getElementById('set-slogan').value; if(saveUserToStorage()) { showModal('success', 'Thành công', 'Đã lưu thay đổi cài đặt hệ thống!'); updateUI(); } }
     
     function loadUserData() { 
@@ -695,7 +814,7 @@
 
     // --- TIMETABLES ---
     function initTimetables() { const saved = localStorage.getItem('timetables_' + currentUser.id); if (saved) timetables = JSON.parse(saved); if (!timetables || timetables.length === 0) { timetables = [{ id: 'tkb_' + Date.now(), name: 'TKB Lần 1', data: {} }]; saveTimetables(); } currentTimetableId = timetables[0].id; renderTimetableSelect(); applyTimetable(); }
-    function saveTimetables() { localStorage.setItem('timetables_' + currentUser.id, JSON.stringify(timetables)); }
+    function saveTimetables() { saveAppData(); }
     function renderTimetableSelect() { const sel = document.getElementById('timetable-select'); sel.innerHTML = timetables.map(t => `<option value="${t.id}">${t.name}</option>`).join(''); sel.value = currentTimetableId; }
     function changeTimetable() { currentTimetableId = document.getElementById('timetable-select').value; applyTimetable(); }
     function addTimetable() { const newName = `TKB Lần ${timetables.length + 1}`; const newTkb = { id: 'tkb_' + Date.now(), name: newName, data: {} }; timetables.push(newTkb); saveTimetables(); currentTimetableId = newTkb.id; renderTimetableSelect(); applyTimetable(); showModal('success', 'Thành công', `Đã thêm ${newName}`); }
@@ -707,7 +826,7 @@
     function initAttendance() { const today = new Date(); const yyyy = today.getFullYear(); const mm = String(today.getMonth() + 1).padStart(2, '0'); const dd = String(today.getDate()).padStart(2, '0'); document.getElementById('attendance-date').value = `${yyyy}-${mm}-${dd}`; const saved = localStorage.getItem('attendance_' + currentUser.id); if(saved) attendanceData = JSON.parse(saved); else attendanceData = {}; }
     function loadAttendance() { const dateStr = document.getElementById('attendance-date').value; if(!dateStr) return; const dailyData = attendanceData[dateStr] || {}; const tbody = document.getElementById('attendance-tbody'); if(students.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400 font-medium">Danh sách trống. Vui lòng thêm học sinh.</td></tr>`; return; } tbody.innerHTML = students.map((s, index) => { const status = dailyData[s.id] || 'present'; return `<tr class="hover:bg-slate-50 transition border-b border-slate-50 group"><td class="p-3 md:p-4 font-bold text-slate-400 text-center">${index + 1}</td><td class="p-3 md:p-4 min-w-[200px]"><div class="flex items-center gap-3"><div class="w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden bg-slate-100 flex items-center justify-center text-xl shadow-sm border border-slate-200">${getAvatarHtml(s.avatar)}</div><div><div class="font-bold text-slate-800 text-sm md:text-base line-clamp-1">${s.name}</div><div class="text-[9px] text-slate-400 font-mono font-bold mt-0.5">ID: ${s.code || '...'}</div></div></div></td><td class="p-3 md:p-4 text-center"><label class="cursor-pointer inline-block"><input type="radio" id="att_${s.id}_p" name="att_${s.id}" value="present" ${status === 'present' ? 'checked' : ''} class="peer sr-only"><div class="w-8 h-8 md:w-10 md:h-10 mx-auto rounded-xl flex items-center justify-center bg-slate-100 text-slate-300 peer-checked:bg-emerald-500 peer-checked:text-white transition-all hover:scale-110 shadow-sm"><i data-lucide="check" class="w-4 h-4 md:w-5 md:h-5"></i></div></label></td><td class="p-3 md:p-4 text-center"><label class="cursor-pointer inline-block"><input type="radio" id="att_${s.id}_l" name="att_${s.id}" value="late" ${status === 'late' ? 'checked' : ''} class="peer sr-only"><div class="w-8 h-8 md:w-10 md:h-10 mx-auto rounded-xl flex items-center justify-center bg-slate-100 text-slate-300 peer-checked:bg-amber-500 peer-checked:text-white transition-all hover:scale-110 shadow-sm"><span class="font-black text-sm md:text-base">T</span></div></label></td><td class="p-3 md:p-4 text-center"><label class="cursor-pointer inline-block"><input type="radio" id="att_${s.id}_e" name="att_${s.id}" value="excused" ${status === 'excused' ? 'checked' : ''} class="peer sr-only"><div class="w-8 h-8 md:w-10 md:h-10 mx-auto rounded-xl flex items-center justify-center bg-slate-100 text-slate-300 peer-checked:bg-blue-500 peer-checked:text-white transition-all hover:scale-110 shadow-sm"><span class="font-black text-sm md:text-base">P</span></div></label></td><td class="p-3 md:p-4 text-center"><label class="cursor-pointer inline-block"><input type="radio" id="att_${s.id}_u" name="att_${s.id}" value="unexcused" ${status === 'unexcused' ? 'checked' : ''} class="peer sr-only"><div class="w-8 h-8 md:w-10 md:h-10 mx-auto rounded-xl flex items-center justify-center bg-slate-100 text-slate-300 peer-checked:bg-rose-500 peer-checked:text-white transition-all hover:scale-110 shadow-sm"><span class="font-black text-sm md:text-base">K</span></div></label></td></tr>`; }).join(''); lucide.createIcons(); }
     function checkAllAttendance(val) { if(students.length === 0) return; students.forEach(s => { const radios = document.getElementsByName(`att_${s.id}`); for(let r of radios) { if(r.value === val) r.checked = true; } }); }
-    function saveAttendance() { if(students.length === 0) return showModal('warning', 'Trống', 'Chưa có học sinh nào để điểm danh.'); const dateStr = document.getElementById('attendance-date').value; if(!dateStr) return showModal('warning', 'Lỗi', 'Vui lòng chọn ngày.'); let dailyData = {}; students.forEach(s => { const radios = document.getElementsByName(`att_${s.id}`); for(let r of radios) { if(r.checked) { dailyData[s.id] = r.value; break; } } }); attendanceData[dateStr] = dailyData; localStorage.setItem('attendance_' + currentUser.id, JSON.stringify(attendanceData)); showModal('success', 'Thành công', `Đã lưu điểm danh ngày ${dateStr.split('-').reverse().join('/')}`); }
+    function saveAttendance() { if(students.length === 0) return showModal('warning', 'Trống', 'Chưa có học sinh nào để điểm danh.'); const dateStr = document.getElementById('attendance-date').value; if(!dateStr) return showModal('warning', 'Lỗi', 'Vui lòng chọn ngày.'); let dailyData = {}; students.forEach(s => { const radios = document.getElementsByName(`att_${s.id}`); for(let r of radios) { if(r.checked) { dailyData[s.id] = r.value; break; } } }); attendanceData[dateStr] = dailyData; saveAppData(); showModal('success', 'Thành công', `Đã lưu điểm danh ngày ${dateStr.split('-').reverse().join('/')}`); }
     function openMonthlyAttendance() { const today = new Date(); const yyyy = today.getFullYear(); const mm = String(today.getMonth() + 1).padStart(2, '0'); document.getElementById('report-month').value = `${yyyy}-${mm}`; generateMonthlyReport(); openModalUi('monthly-attendance-modal', 'monthly-attendance-content'); }
     function generateMonthlyReport() { const monthStr = document.getElementById('report-month').value; if(!monthStr) return; const [yyyy, mm] = monthStr.split('-'); const daysInMonth = new Date(yyyy, mm, 0).getDate(); let html = '<table class="w-full text-center text-sm border-collapse table-sticky"><thead class="bg-slate-50 border-b border-slate-200 shadow-sm"><tr><th class="p-3 text-left whitespace-nowrap font-black text-slate-600 min-w-[180px]">Học sinh</th>'; for(let d=1; d<=daysInMonth; d++) { html += `<th class="border-r border-slate-100 p-2 w-8 text-[10px] text-slate-500">${d}</th>`; } html += '</tr></thead><tbody class="divide-y divide-slate-100">'; students.forEach(s => { html += `<tr><td class="p-3 text-left font-bold text-xs text-slate-800 whitespace-nowrap min-w-[180px]" title="${s.name}">${s.name}</td>`; for(let d=1; d<=daysInMonth; d++) { const dateKey = `${yyyy}-${mm}-${String(d).padStart(2, '0')}`; const dailyRecord = attendanceData[dateKey] || {}; const status = dailyRecord[s.id]; let cellClass = "border-r border-slate-100 p-1 text-[10px] font-black "; let text = ""; if(status === 'present') { cellClass += "bg-emerald-100/50 text-emerald-600"; text = ""; } else if(status === 'excused') { cellClass += "bg-blue-50 text-blue-600"; text = "P"; } else if(status === 'unexcused') { cellClass += "bg-rose-50 text-rose-600"; text = "K"; } else if(status === 'late') { cellClass += "bg-amber-50 text-amber-600"; text = "T"; } html += `<td class="${cellClass}">${text}</td>`; } html += '</tr>'; }); html += '</tbody></table>'; document.getElementById('monthly-report-container').innerHTML = html; }
 
@@ -734,23 +853,23 @@
                   closeModalUi('custom-modal', 'custom-modal-content');
                   setTimeout(() => {
                       showModal('confirm', 'Tải danh sách', `Đã tìm thấy ${newStudents.length} HS trong file.\nBạn muốn XÓA BỎ danh sách lớp cũ để ĐÈ LÊN MỚI không?`, () => { 
-                          students = newStudents; localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); seatingCharts.forEach(c => c.layout = {}); saveSeatingToStorage(); renderAll(); updateUI(); 
+                          students = newStudents; seatingCharts.forEach(c => c.layout = {}); saveAppData(); renderAll(); updateUI(); 
                           showModal('success', 'Thành công', `Đã tạo danh sách mới gồm ${newStudents.length} học sinh!`); 
                       });
                   }, 400);
-              } else { students = newStudents; localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); renderAll(); updateUI(); closeModalUi('custom-modal'); setTimeout(() => showModal('success', 'Thành công', `Đã nhập ${students.length} học sinh!`), 400); }
+              } else { students = newStudents; saveAppData(); renderAll(); updateUI(); closeModalUi('custom-modal'); setTimeout(() => showModal('success', 'Thành công', `Đã nhập ${students.length} học sinh!`), 400); }
             } else { closeModalUi('custom-modal'); setTimeout(() => showModal('error', 'Lỗi dữ liệu', 'Không tìm thấy dữ liệu học sinh! Đảm bảo Cột B là Họ và Tên.'), 400); }
         } catch(err) { closeModalUi('custom-modal'); setTimeout(() => showModal('error', 'Lỗi file', 'Không thể đọc định dạng file Excel này.'), 400); }
       }; reader.readAsArrayBuffer(file);
     }
     
-    function deleteAllStudents() { if(students.length === 0) return showModal('info', 'Trống', 'Danh sách lớp hiện đang trống!'); showModal('confirm', 'XÓA TẤT CẢ', 'CẢNH BÁO: Bạn có chắc chắn muốn xóa TOÀN BỘ học sinh trong lớp? Thao tác này sẽ xóa sạch dữ liệu và không thể khôi phục!', () => { students = []; localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); seatingCharts.forEach(c => c.layout = {}); saveSeatingToStorage(); hiddenWheelIds = []; renderAll(); updateUI(); setTimeout(() => showModal('success', 'Hoàn tất', 'Đã xóa toàn bộ dữ liệu học sinh thành công.'), 350); }); }
-    function deleteStudent(id) { showModal('confirm', 'Xác nhận xóa', 'Xóa học sinh này khỏi hệ thống?', () => { students = students.filter(s => s.id !== id); localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); hiddenWheelIds = hiddenWheelIds.filter(hid => hid !== id); seatingCharts.forEach(chart => { for (const [k, v] of Object.entries(chart.layout)) { if(v === id) delete chart.layout[k]; } }); saveSeatingToStorage(); renderAll(); updateUI(); }); }
+    function deleteAllStudents() { if(students.length === 0) return showModal('info', 'Trống', 'Danh sách lớp hiện đang trống!'); showModal('confirm', 'XÓA TẤT CẢ', 'CẢNH BÁO: Bạn có chắc chắn muốn xóa TOÀN BỘ học sinh trong lớp? Thao tác này sẽ xóa sạch dữ liệu và không thể khôi phục!', () => { students = []; seatingCharts.forEach(c => c.layout = {}); saveAppData(); hiddenWheelIds = []; renderAll(); updateUI(); setTimeout(() => showModal('success', 'Hoàn tất', 'Đã xóa toàn bộ dữ liệu học sinh thành công.'), 350); }); }
+    function deleteStudent(id) { showModal('confirm', 'Xác nhận xóa', 'Xóa học sinh này khỏi hệ thống?', () => { students = students.filter(s => s.id !== id); hiddenWheelIds = hiddenWheelIds.filter(hid => hid !== id); seatingCharts.forEach(chart => { for (const [k, v] of Object.entries(chart.layout)) { if(v === id) delete chart.layout[k]; } }); saveAppData(); renderAll(); updateUI(); }); }
     function openEditModal(id) { const s = students.find(x => x.id === id); if(!s) return; document.getElementById('edit-hs-id').value = s.id; document.getElementById('edit-hs-name').value = s.name; document.getElementById('edit-hs-gender').value = s.gender || 'Nam'; document.getElementById('edit-hs-dob').value = s.dob || ''; document.getElementById('edit-hs-role').value = s.role || ''; openModalUi('edit-student-modal', 'edit-student-content'); }
-    function saveStudentEdit() { const id = parseInt(document.getElementById('edit-hs-id').value); const name = document.getElementById('edit-hs-name').value.trim(); if(!name) return showModal('warning', 'Lỗi', 'Vui lòng nhập tên học sinh!'); let s = students.find(x => x.id === id); if(s) { s.name = name; s.gender = document.getElementById('edit-hs-gender').value; s.dob = document.getElementById('edit-hs-dob').value.trim(); s.role = document.getElementById('edit-hs-role').value; localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); renderAll(); closeModalUi('edit-student-modal', 'edit-student-content'); setTimeout(()=>showModal('success', 'Thành công', 'Đã cập nhật thông tin!'), 350); } }
-
+    function saveStudentEdit() { const id = parseInt(document.getElementById('edit-hs-id').value); const name = document.getElementById('edit-hs-name').value.trim(); if(!name) return showModal('warning', 'Lỗi', 'Vui lòng nhập tên học sinh!'); let s = students.find(x => x.id === id); if(s) { s.name = name; s.gender = document.getElementById('edit-hs-gender').value; s.dob = document.getElementById('edit-hs-dob').value.trim(); s.role = document.getElementById('edit-hs-role').value; saveAppData(); renderAll(); closeModalUi('edit-student-modal', 'edit-student-content'); setTimeout(()=>showModal('success', 'Thành công', 'Đã cập nhật thông tin!'), 350); } }
+ 
     function openAvatarModal(studentId) { studentToEditAvatar = studentId; const renderGroup = (id, list) => { document.getElementById(id).innerHTML = list.map(a => `<button onclick="selectAvatar('${a}')" class="text-3xl p-2 hover:bg-slate-100 rounded-xl transition hover:scale-110">${a}</button>`).join(''); }; renderGroup('avatars-male', AVATARS.male); renderGroup('avatars-female', AVATARS.female); renderGroup('avatars-special', AVATARS.special); openModalUi('avatar-picker-modal', 'avatar-picker-content'); }
-    function selectAvatar(avatar) { if(studentToEditAvatar !== null) { const s = students.find(x => x.id === studentToEditAvatar); if(s) { s.avatar = avatar; localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); renderAll(); closeModalUi('avatar-picker-modal', 'avatar-picker-content'); setTimeout(()=>showModal('success', 'Thành công', 'Đã đổi ảnh đại diện!'), 350); } } }
+    function selectAvatar(avatar) { if(studentToEditAvatar !== null) { const s = students.find(x => x.id === studentToEditAvatar); if(s) { s.avatar = avatar; saveAppData(); renderAll(); closeModalUi('avatar-picker-modal', 'avatar-picker-content'); setTimeout(()=>showModal('success', 'Thành công', 'Đã đổi ảnh đại diện!'), 350); } } }
     function handleStudentAvatarUpload(e) { const file = e.target.files[0]; if(!file) return; compressImage(file, 200, 200, function(dataUrl) { selectAvatar(dataUrl); }, 0.85); e.target.value = ''; }
 
     // --- Grading / History ---
@@ -771,7 +890,7 @@
                     const h = s.history[idx];
                     if(h.type === 'add') s.points -= h.points; else s.points += h.points;
                     s.history.splice(idx, 1);
-                    localStorage.setItem('students_' + currentUser.id, JSON.stringify(students));
+                    saveAppData();
                     openProfileModal(studentId); // Reload
                     renderAll();
                 }
@@ -837,7 +956,7 @@
     function openNewChartModal() { document.getElementById('new-chart-name').value = ''; openModalUi('new-chart-modal', 'new-chart-content'); }
     function confirmCreateChart() { const name = document.getElementById('new-chart-name').value.trim(); if(!name) return showModal('warning', 'Thiếu thông tin', 'Vui lòng nhập tên sơ đồ!'); const newChart = { id: Date.now().toString(), name: name, layout: {} }; seatingCharts.push(newChart); saveSeatingToStorage(); currentChartId = newChart.id; renderChartSelect(); applyChartLayout(); closeModalUi('new-chart-modal', 'new-chart-content'); }
     function deleteCurrentChart() { if(seatingCharts.length <= 1) return showModal('error', 'Không thể xóa', 'Bắt buộc phải có ít nhất 1 sơ đồ!'); showModal('confirm', 'Xác nhận xóa', 'Xóa sơ đồ lớp này?', () => { seatingCharts = seatingCharts.filter(c => c.id !== currentChartId); currentChartId = seatingCharts[0].id; saveSeatingToStorage(); renderChartSelect(); applyChartLayout(); }); }
-    function saveSeatingToStorage() { localStorage.setItem('seating_' + currentUser.id, JSON.stringify(seatingCharts)); }
+    function saveSeatingToStorage() { saveAppData(); }
     
     function applyChartLayout() {
       renderEmptySeatingGrid(); 
@@ -995,8 +1114,28 @@
     
     function renderOverview() {
       const sorted = [...students].sort((a,b) => b.points - a.points); const topContainer = document.getElementById('top-students-list');
-      if(sorted.length === 0) { topContainer.innerHTML = `<div class="col-span-5 text-sm text-white/50 italic mt-4 font-medium">Chưa có dữ liệu</div>`; return; }
-      topContainer.innerHTML = sorted.slice(0, 5).map((s, index) => `<div class="bg-black/20 p-3 md:p-4 rounded-2xl flex flex-col items-center relative overflow-hidden border border-white/10 group hover:bg-white/20 transition cursor-pointer" onclick="openProfileModal(${s.id})">${index === 0 ? '<div class="absolute top-0 right-0 bg-white text-rose-500 text-[9px] md:text-[10px] font-black px-1.5 md:px-2 py-0.5 rounded-bl-lg shadow-sm">TOP 1</div>' : ''}<div class="w-10 h-10 md:w-14 md:h-14 flex items-center justify-center text-3xl md:text-4xl transform group-hover:scale-110 transition rounded-full overflow-hidden shadow-sm">${getAvatarHtml(s.avatar)}</div><span class="font-bold text-[10px] md:text-xs mt-2 md:mt-3 truncate w-full text-center" title="${s.name}">${s.name}</span><span class="text-[9px] md:text-[11px] bg-white/20 text-white font-black px-2 md:px-3 py-1 rounded-full mt-1.5 shadow-inner">${s.points} đ</span></div>`).join('');
+      if(sorted.length === 0) { topContainer.innerHTML = `<div class="col-span-5 text-sm text-white/50 italic mt-4 font-medium">Chưa có dữ liệu</div>`; }
+      else {
+        topContainer.innerHTML = sorted.slice(0, 5).map((s, index) => `<div class="bg-black/20 p-3 md:p-4 rounded-2xl flex flex-col items-center relative overflow-hidden border border-white/10 group hover:bg-white/20 transition cursor-pointer" onclick="openProfileModal(${s.id})">${index === 0 ? '<div class="absolute top-0 right-0 bg-white text-rose-500 text-[9px] md:text-[10px] font-black px-1.5 md:px-2 py-0.5 rounded-bl-lg shadow-sm">TOP 1</div>' : ''}<div class="w-10 h-10 md:w-14 md:h-14 flex items-center justify-center text-3xl md:text-4xl transform group-hover:scale-110 transition rounded-full overflow-hidden shadow-sm">${getAvatarHtml(s.avatar)}</div><span class="font-bold text-[10px] md:text-xs mt-2 md:mt-3 truncate w-full text-center" title="${s.name}">${s.name}</span><span class="text-[9px] md:text-[11px] bg-white/20 text-white font-black px-2 md:px-3 py-1 rounded-full mt-1.5 shadow-inner">${s.points} đ</span></div>`).join('');
+      }
+      
+      let totalAddPoints = 0;
+      let totalSubPoints = 0;
+      students.forEach(s => {
+        if (s.history) {
+          s.history.forEach(h => {
+            if (h.type === 'add') {
+              totalAddPoints += h.points;
+            } else if (h.type === 'sub') {
+              totalSubPoints += h.points;
+            }
+          });
+        }
+      });
+      const addEl = document.getElementById('stat-total-add');
+      const subEl = document.getElementById('stat-total-sub');
+      if (addEl) addEl.innerText = `+${totalAddPoints}`;
+      if (subEl) subEl.innerText = `-${totalSubPoints}`;
     }
     
     function renderStage() {
@@ -1012,33 +1151,94 @@
       const visibleStudents = students.filter(s => !hiddenWheelIds.includes(s.id));
       if (visibleStudents.length === 0) return showModal('warning', 'Sân khấu trống', 'Không có học sinh nào trên sân khấu để gọi!');
       
-      const btn = document.getElementById('spin-btn'); btn.disabled = true; btn.innerHTML = "ĐANG QUAY..."; btn.classList.add('opacity-70');
-      const duration = parseInt(document.getElementById('spin-duration').value || 3) * 1000; const intervalTime = 150; let elapsed = 0;
-      const mode = document.getElementById('spin-mode').value;
-      let activeClass = 'border-theme bg-theme-light ring-4 ring-theme scale-110 shadow-lg';
-      if(mode === 'bubble') activeClass += ' mode-bubble'; if(mode === 'spin') activeClass += ' mode-spin';
-      if(mode === 'duck') activeClass += ' mode-duck'; if(mode === 'horse') activeClass += ' mode-horse';
-
-      const interval = setInterval(() => {
-        document.querySelectorAll('.student-card').forEach(c => c.className = "student-card bg-white border border-slate-200 p-2 md:p-3 rounded-2xl flex flex-col items-center justify-center text-center transition-all duration-300 shadow-sm");
-        const randomIndex = Math.floor(Math.random() * visibleStudents.length); const selected = visibleStudents[randomIndex]; const card = document.getElementById(`card-${selected.id}`);
-        if(card) card.className = `student-card p-2 md:p-3 flex flex-col items-center justify-center text-center transition-all duration-300 ${activeClass}`;
-        elapsed += intervalTime;
-        if (elapsed >= duration) {
-          clearInterval(interval); currentWinner = selected; 
-          document.getElementById('winner-name').innerText = selected.name; document.getElementById('winner-avatar').innerHTML = getAvatarHtml(selected.avatar); document.getElementById('winner-id').innerText = "ID: " + (selected.code || "...");
-          openModalUi('result-modal', 'result-content'); confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 }});
-          btn.disabled = false; btn.innerHTML = "🎲 QUAY LẠI"; btn.classList.remove('opacity-70');
-        }
-      }, intervalTime);
+      const btn = document.getElementById('spin-btn'); btn.disabled = true; btn.innerHTML = "ĐANG XÀO BÀI..."; btn.classList.add('opacity-70');
+      
+      const grid = document.getElementById('student-grid');
+      const cards = grid.querySelectorAll('.student-card');
+      const gridRect = grid.getBoundingClientRect();
+      const gridCenterX = gridRect.left + gridRect.width / 2;
+      const gridCenterY = gridRect.top + gridRect.height / 2;
+      
+      // Perform shuffle animation
+      cards.forEach(card => {
+        const cardRect = card.getBoundingClientRect();
+        const cardCenterX = cardRect.left + cardRect.width / 2;
+        const cardCenterY = cardRect.top + cardRect.height / 2;
+        const dx = gridCenterX - cardCenterX;
+        const dy = gridCenterY - cardCenterY;
+        card.style.setProperty('--tx', `${dx}px`);
+        card.style.setProperty('--ty', `${dy}px`);
+        card.style.setProperty('--rot', `${Math.random() * 30 - 15}deg`);
+        card.classList.add('animate-shuffle');
+      });
+      
+      // Wait for shuffle (1.8s) then spin
+      setTimeout(() => {
+        cards.forEach(card => {
+          card.classList.remove('animate-shuffle');
+        });
+        
+        btn.innerHTML = "ĐANG QUAY...";
+        const duration = parseInt(document.getElementById('spin-duration').value || 3) * 1000; const intervalTime = 150; let elapsed = 0;
+        const mode = document.getElementById('spin-mode').value;
+        let activeClass = 'border-theme bg-theme-light ring-4 ring-theme scale-110 shadow-lg';
+        if(mode === 'bubble') activeClass += ' mode-bubble'; if(mode === 'spin') activeClass += ' mode-spin';
+        if(mode === 'duck') activeClass += ' mode-duck'; if(mode === 'horse') activeClass += ' mode-horse';
+  
+        const interval = setInterval(() => {
+          document.querySelectorAll('.student-card').forEach(c => c.className = "student-card bg-white border border-slate-200 p-2 md:p-3 rounded-2xl flex flex-col items-center justify-center text-center transition-all duration-300 shadow-sm");
+          const randomIndex = Math.floor(Math.random() * visibleStudents.length); const selected = visibleStudents[randomIndex]; const card = document.getElementById(`card-${selected.id}`);
+          if(card) card.className = `student-card p-2 md:p-3 flex flex-col items-center justify-center text-center transition-all duration-300 ${activeClass}`;
+          elapsed += intervalTime;
+          if (elapsed >= duration) {
+            clearInterval(interval); currentWinner = selected; 
+            
+            // Center the winner card on stage and hide all others
+            const winnerCard = document.getElementById(`card-${selected.id}`);
+            if (winnerCard) {
+              const cardRect = winnerCard.getBoundingClientRect();
+              const cardCenterX = cardRect.left + cardRect.width / 2;
+              const cardCenterY = cardRect.top + cardRect.height / 2;
+              const dx = gridCenterX - cardCenterX;
+              const dy = gridCenterY - cardCenterY;
+              winnerCard.style.setProperty('--tx', `${dx}px`);
+              winnerCard.style.setProperty('--ty', `${dy}px`);
+              
+              document.querySelectorAll('.student-card').forEach(c => {
+                if (c !== winnerCard) {
+                  c.style.opacity = '0';
+                  c.style.transform = 'scale(0.5)';
+                  c.style.pointerEvents = 'none';
+                }
+              });
+              winnerCard.className = "student-card p-4 md:p-6 flex flex-col items-center justify-center text-center winner-stage-highlight ring-4 ring-theme ring-offset-2";
+            }
+            
+            confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 }});
+            
+            // Wait 2 seconds for centered stage visual before showing results modal
+            setTimeout(() => {
+              document.getElementById('winner-name').innerText = selected.name; document.getElementById('winner-avatar').innerHTML = getAvatarHtml(selected.avatar); document.getElementById('winner-id').innerText = "ID: " + (selected.code || "...");
+              openModalUi('result-modal', 'result-content');
+              btn.disabled = false; btn.innerHTML = "🎲 QUAY LẠI"; btn.classList.remove('opacity-70');
+            }, 2000);
+          }
+        }, intervalTime);
+      }, 1800);
     }
-    function closeResultModal(removeStudent) { if (removeStudent && currentWinner) { hiddenWheelIds.push(currentWinner.id); renderStage(); } closeModalUi('result-modal', 'result-content'); }
+    function closeResultModal(removeStudent) { 
+      if (removeStudent && currentWinner) { 
+        hiddenWheelIds.push(currentWinner.id); 
+      } 
+      renderStage(); 
+      closeModalUi('result-modal', 'result-content'); 
+    }
     function resetWheel() { hiddenWheelIds = []; renderStage(); }
 
     // --- Quản Lý Hệ Thống ---
-    function resetAllPoints() { showModal('confirm', 'Reset Toàn Bộ Điểm', 'CẢNH BÁO: Đặt điểm của TOÀN BỘ học sinh về 0, đồng thời xóa sạch lịch sử đánh giá. Phù hợp khi bắt đầu Học Kỳ mới. Bạn chắc chắn chứ?', () => { students.forEach(s => { s.points = 0; s.history = []; }); localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); renderAll(); setTimeout(() => showModal('success', 'Hoàn tất', 'Tất cả điểm số và lịch sử đã được đặt về 0.'), 350); }); }
+    function resetAllPoints() { showModal('confirm', 'Reset Toàn Bộ Điểm', 'CẢNH BÁO: Đặt điểm của TOÀN BỘ học sinh về 0, đồng thời xóa sạch lịch sử đánh giá. Phù hợp khi bắt đầu Học Kỳ mới. Bạn chắc chắn chứ?', () => { students.forEach(s => { s.points = 0; s.history = []; }); saveAppData(); renderAll(); setTimeout(() => showModal('success', 'Hoàn tất', 'Tất cả điểm số và lịch sử đã được đặt về 0.'), 350); }); }
     function exportData() { const data = { user: currentUser, students: students, seatingCharts: seatingCharts, timetables: timetables, attendanceData: attendanceData }; const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data)); const downloadAnchorNode = document.createElement('a'); downloadAnchorNode.setAttribute("href", dataStr); downloadAnchorNode.setAttribute("download", `Data_LopHoc_${currentUser.className}.json`); document.body.appendChild(downloadAnchorNode); downloadAnchorNode.click(); downloadAnchorNode.remove(); showModal('success', 'Thành công', 'Đã lưu file dữ liệu (Backup) về máy!'); }
-    function importData(event) { const file = event.target.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = function(e) { try { const data = JSON.parse(e.target.result); if(data.user && data.students) { showModal('confirm', 'Khôi phục dữ liệu', 'Bạn có muốn GHI ĐÈ toàn bộ dữ liệu hiện tại bằng dữ liệu từ file Backup không?', () => { students = data.students || []; seatingCharts = data.seatingCharts || []; timetables = data.timetables || []; attendanceData = data.attendanceData || {}; localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); localStorage.setItem('seating_' + currentUser.id, JSON.stringify(seatingCharts)); localStorage.setItem('timetables_' + currentUser.id, JSON.stringify(timetables)); localStorage.setItem('attendance_' + currentUser.id, JSON.stringify(attendanceData)); initTimetables(); initSeatingCharts(); initAttendance(); renderAll(); updateUI(); setTimeout(()=>showModal('success', 'Thành công', 'Đã khôi phục dữ liệu thành công!'), 400); }); } else throw new Error("Invalid"); } catch(error) { showModal('error', 'Lỗi', 'File dữ liệu không hợp lệ.'); } }; reader.readAsText(file); event.target.value = ''; }
+    function importData(event) { const file = event.target.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = function(e) { try { const data = JSON.parse(e.target.result); if(data.user && data.students) { showModal('confirm', 'Khôi phục dữ liệu', 'Bạn có muốn GHI ĐÈ toàn bộ dữ liệu hiện tại bằng dữ liệu từ file Backup không?', () => { students = data.students || []; seatingCharts = data.seatingCharts || []; timetables = data.timetables || []; attendanceData = data.attendanceData || {}; saveAppData(); initTimetables(); initSeatingCharts(); initAttendance(); renderAll(); updateUI(); setTimeout(()=>showModal('success', 'Thành công', 'Đã khôi phục dữ liệu thành công!'), 400); }); } else throw new Error("Invalid"); } catch(error) { showModal('error', 'Lỗi', 'File dữ liệu không hợp lệ.'); } }; reader.readAsText(file); event.target.value = ''; }
 
     function renderAll() { renderStudentTable(); renderStage(); renderOverview(); renderNotebook(); renderPraiseGrid(); applyChartLayout(); }
   </script>
