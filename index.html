@@ -33,7 +33,7 @@
 </head>
 <body class="bg-[#f3f4f6] font-sans text-slate-800 h-screen flex relative overflow-hidden">
 
-  <!-- MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ -->
+  <!-- MÀN HÌNH ĐĂNG NHẬP -->
   <div id="auth-screen" class="fixed inset-0 bg-slate-900/95 backdrop-blur-md z-[200] hidden items-center justify-center p-4">
     <div class="bg-white p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-md border border-white/20">
       <div class="text-center mb-8">
@@ -62,7 +62,7 @@
     </div>
   </div>
 
-  <!-- MÀN HÌNH CẬP NHẬT THÔNG TIN LẦN ĐẦU -->
+  <!-- MÀN HÌNH ONBOARDING -->
   <div id="onboarding-screen" class="fixed inset-0 bg-slate-900/90 z-[190] hidden items-center justify-center backdrop-blur-md p-4">
     <div class="bg-white p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-md">
       <h2 class="text-2xl font-black text-theme mb-2">Thông tin lớp học</h2>
@@ -85,55 +85,30 @@
   <!-- SIDEBAR MENU -->
   <aside class="fixed inset-y-0 left-0 z-[100] w-[280px] transform -translate-x-full lg:relative lg:translate-x-0 transition-transform duration-300 ease-in-out bg-theme-sidebar text-white flex flex-col shadow-2xl h-full" id="main-sidebar">
     <div class="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar">
-      <button onclick="toggleSidebar()" class="absolute top-4 right-4 lg:hidden text-white/50 hover:text-white bg-white/10 p-2 rounded-full">
-        <i data-lucide="x" class="w-5 h-5"></i>
-      </button>
+      <button onclick="toggleSidebar()" class="absolute top-4 right-4 lg:hidden text-white/50 hover:text-white bg-white/10 p-2 rounded-full"><i data-lucide="x" class="w-5 h-5"></i></button>
 
       <div class="p-6 pt-10 lg:pt-6 flex flex-col items-center relative">
         <div class="absolute inset-0 bg-white/5 opacity-50 blur-xl rounded-full"></div>
         <div id="sidebar-class-logo" class="w-20 h-20 rounded-2xl bg-white/10 backdrop-blur border border-white/20 flex items-center justify-center font-black text-2xl shadow-lg mb-3 relative z-10 whitespace-nowrap px-2">...</div>
         <h1 id="sidebar-slogan" class="font-bold text-sm tracking-wider uppercase text-center text-white/90 relative z-10 drop-shadow-md px-2">...</h1>
-        <p class="text-[11px] text-white/50 mt-1 uppercase tracking-widest font-semibold">Hệ thống quản lý</p>
       </div>
 
       <nav class="mt-2 px-4 space-y-1.5 font-medium pb-6">
-        <button onclick="switchTab('tab-overview')" id="btn-tab-overview" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition bg-theme-grad text-white shadow-lg font-bold">
-          <i data-lucide="layout-dashboard" class="w-5 h-5"></i> Tổng quan
-        </button>
-        <button onclick="switchTab('tab-students')" id="btn-tab-students" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70">
-          <i data-lucide="users" class="w-5 h-5"></i> Danh sách học sinh
-        </button>
-        <button onclick="switchTab('tab-seating')" id="btn-tab-seating" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70">
-          <i data-lucide="layout-grid" class="w-5 h-5"></i> Sơ đồ chỗ ngồi
-        </button>
-        <button onclick="switchTab('tab-notebook')" id="btn-tab-notebook" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70">
-          <i data-lucide="contact" class="w-5 h-5"></i> Sổ theo dõi (Cards)
-        </button>
-        <button onclick="switchTab('tab-wheel')" id="btn-tab-wheel" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70">
-          <i data-lucide="dices" class="w-5 h-5"></i> Vòng quay gọi tên
-        </button>
-        
+        <button onclick="switchTab('tab-overview')" id="btn-tab-overview" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition bg-theme-grad text-white shadow-lg font-bold"><i data-lucide="layout-dashboard" class="w-5 h-5"></i> Tổng quan</button>
+        <button onclick="switchTab('tab-students')" id="btn-tab-students" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70"><i data-lucide="users" class="w-5 h-5"></i> Danh sách học sinh</button>
+        <button onclick="switchTab('tab-seating')" id="btn-tab-seating" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70"><i data-lucide="layout-grid" class="w-5 h-5"></i> Sơ đồ chỗ ngồi</button>
+        <button onclick="switchTab('tab-notebook')" id="btn-tab-notebook" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70"><i data-lucide="contact" class="w-5 h-5"></i> Sổ theo dõi (Cards)</button>
+        <button onclick="switchTab('tab-wheel')" id="btn-tab-wheel" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70"><i data-lucide="dices" class="w-5 h-5"></i> Vòng quay gọi tên</button>
         <div class="my-4 border-t border-white/10 mx-2"></div>
-        
-        <button onclick="switchTab('tab-praise')" id="btn-tab-praise" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70">
-          <i data-lucide="award" class="w-5 h-5 text-amber-400"></i> Tuyên dương
-        </button>
-        <button onclick="switchTab('tab-points')" id="btn-tab-points" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70">
-          <i data-lucide="star" class="w-5 h-5 text-amber-400"></i> Thành tích / Điểm
-        </button>
-        <button onclick="switchTab('tab-gifts')" id="btn-tab-gifts" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70">
-          <i data-lucide="gift" class="w-5 h-5 text-rose-400"></i> Quà tặng
-        </button>
-
+        <button onclick="switchTab('tab-praise')" id="btn-tab-praise" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70"><i data-lucide="award" class="w-5 h-5 text-amber-400"></i> Tuyên dương</button>
+        <button onclick="switchTab('tab-points')" id="btn-tab-points" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70"><i data-lucide="star" class="w-5 h-5 text-amber-400"></i> Thành tích / Điểm</button>
+        <button onclick="switchTab('tab-gifts')" id="btn-tab-gifts" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70"><i data-lucide="gift" class="w-5 h-5 text-rose-400"></i> Quà tặng</button>
         <div class="my-4 border-t border-white/10 mx-2"></div>
-
-        <button onclick="switchTab('tab-settings')" id="btn-tab-settings" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70">
-          <i data-lucide="settings" class="w-5 h-5"></i> Cài đặt & Giao diện
-        </button>
+        <button onclick="switchTab('tab-settings')" id="btn-tab-settings" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70"><i data-lucide="settings" class="w-5 h-5"></i> Cài đặt & Giao diện</button>
       </nav>
     </div>
 
-    <!-- KHU VỰC GVCN TRONG SIDEBAR -->
+    <!-- KHU VỰC GVCN TRONG SIDEBAR (KHÔNG IN ĐẬM) -->
     <div class="p-4 bg-black/20 flex flex-col mt-auto shrink-0 relative">
       <div class="text-[10px] text-white/50 font-bold uppercase tracking-widest mb-1.5 pl-1">Giáo viên chủ nhiệm</div>
       <div class="flex items-center justify-between gap-2">
@@ -141,7 +116,8 @@
           <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0">
             <i data-lucide="user" class="w-4 h-4 text-white"></i>
           </div>
-          <span id="sidebar-teacher-name" class="font-bold text-white text-sm leading-tight break-words max-w-[140px] drop-shadow-sm">...</span>
+          <!-- Chữ GVCN không còn in đậm (xóa font-bold) -->
+          <span id="sidebar-teacher-name" class="text-white text-sm leading-tight break-words max-w-[140px] drop-shadow-sm">...</span>
         </div>
         <button onclick="logout()" class="text-white/50 hover:text-white bg-white/5 hover:bg-white/20 p-2.5 rounded-xl transition shrink-0" title="Đăng xuất"><i data-lucide="log-out" class="w-4 h-4"></i></button>
       </div>
@@ -154,12 +130,15 @@
     <!-- HEADER -->
     <header class="bg-white/90 backdrop-blur-md px-4 md:px-8 py-3 md:py-4 shadow-sm flex items-center justify-between shrink-0 sticky top-0 z-40 border-b border-slate-100">
       <div class="flex items-center gap-3">
-        <button onclick="toggleSidebar()" class="lg:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition">
-          <i data-lucide="menu" class="w-6 h-6"></i>
-        </button>
+        <button onclick="toggleSidebar()" class="lg:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition"><i data-lucide="menu" class="w-6 h-6"></i></button>
         <h2 id="header-title" class="text-lg md:text-xl font-black text-theme-grad uppercase tracking-tight line-clamp-1">Tổng Quan Lớp</h2>
       </div>
       <div class="flex items-center gap-3 md:gap-4 shrink-0">
+        <!-- NÚT TRA CỨU MỚI -->
+        <button onclick="openGlobalSearch()" class="hidden md:flex items-center gap-1.5 text-xs bg-white px-3 py-2 rounded-full font-bold shadow-sm border border-slate-200 text-slate-500 hover:text-theme hover:border-theme transition">
+          <i data-lucide="search" class="w-3.5 h-3.5"></i> Tra cứu
+        </button>
+
         <span id="header-year" class="hidden md:inline-flex text-xs bg-theme-light px-3 py-1.5 rounded-full font-bold shadow-sm items-center gap-1.5 border border-slate-100 whitespace-nowrap">
           <i data-lucide="calendar" class="w-3 h-3"></i> Năm học ...
         </span>
@@ -218,7 +197,7 @@
           <h3 class="font-bold text-slate-700 text-base md:text-lg whitespace-nowrap">Danh Sách Lớp (<span id="student-count" class="text-theme">0</span>)</h3>
           <div class="flex gap-2 w-full sm:w-auto">
             <button onclick="document.getElementById('excel-upload').click()" class="w-full sm:w-auto flex items-center justify-center gap-2 bg-emerald-50 text-emerald-600 border border-emerald-200 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-emerald-100 transition shadow-sm whitespace-nowrap">
-              <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Nhập Excel (Mới)
+              <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Nhập Mẫu Excel
             </button>
             <input type="file" id="excel-upload" accept=".xlsx, .xls" class="hidden">
           </div>
@@ -227,7 +206,15 @@
           <div class="overflow-x-auto custom-scrollbar">
             <table class="w-full text-left text-sm min-w-[600px]">
               <thead class="bg-slate-50 border-b text-slate-500 uppercase text-[10px] md:text-xs tracking-wider font-bold">
-                <tr><th class="p-3 md:p-4 w-12 text-center">STT</th><th class="p-3 md:p-4">Mã HS (ID)</th><th class="p-3 md:p-4">Họ và Tên</th><th class="p-3 md:p-4 text-center">Avatar</th><th class="p-3 md:p-4">Điểm</th><th class="p-3 md:p-4 text-right">Thao tác</th></tr>
+                <tr>
+                  <th class="p-3 md:p-4 w-12 text-center">STT</th>
+                  <th class="p-3 md:p-4">Mã HS</th>
+                  <th class="p-3 md:p-4">Họ và Tên</th>
+                  <th class="p-3 md:p-4">Ngày sinh</th>
+                  <th class="p-3 md:p-4 text-center">Avatar</th>
+                  <th class="p-3 md:p-4">Điểm</th>
+                  <th class="p-3 md:p-4 text-right">Thao tác</th>
+                </tr>
               </thead>
               <tbody id="full-student-table" class="divide-y divide-slate-100"></tbody>
             </table>
@@ -391,10 +378,17 @@
   <div id="avatar-picker-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[400] p-4 opacity-0 transition-opacity duration-300">
     <div class="bg-white rounded-3xl p-5 md:p-6 w-full max-w-md shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col" id="avatar-picker-content">
       <div class="flex justify-between items-center mb-4 border-b pb-3">
-        <h3 class="font-black text-lg md:text-xl text-slate-800">Chọn Avatar</h3>
+        <h3 class="font-black text-lg md:text-xl text-slate-800">Chọn Ảnh Học Sinh</h3>
         <button onclick="closeAvatarPicker()" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-full text-slate-500 transition"><i data-lucide="x" class="w-4 h-4"></i></button>
       </div>
-      <div class="overflow-y-auto max-h-[60vh] custom-scrollbar pr-2 space-y-5">
+      
+      <!-- Nút tải ảnh thật từ máy -->
+      <label class="w-full flex items-center justify-center gap-2 bg-theme-light text-theme py-3.5 rounded-xl font-bold cursor-pointer hover:scale-[1.02] transition mb-5 border border-dashed border-theme">
+          <i data-lucide="upload" class="w-5 h-5"></i> Tải ảnh từ máy
+          <input type="file" accept="image/*" class="hidden" onchange="handleStudentAvatarUpload(event)">
+      </label>
+
+      <div class="overflow-y-auto max-h-[50vh] custom-scrollbar pr-2 space-y-5">
           <div>
               <p class="text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider"><span class="text-blue-400 mr-1">♂</span> Nam</p>
               <div class="grid grid-cols-5 gap-2" id="avatars-male"></div>
@@ -411,13 +405,65 @@
     </div>
   </div>
 
+  <!-- Modal Sửa Thông Tin HS -->
+  <div id="edit-student-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[400] p-4 opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-3xl p-6 md:p-8 w-full max-w-md shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col" id="edit-student-content">
+      <h3 class="font-black text-xl text-slate-800 mb-4">Sửa thông tin học sinh</h3>
+      <div class="space-y-4">
+        <input type="hidden" id="edit-hs-id">
+        <div>
+          <label class="text-xs font-bold text-slate-600">Họ và Tên</label>
+          <input type="text" id="edit-hs-name" class="w-full mt-1 px-4 py-2.5 border border-slate-200 rounded-xl outline-none ring-theme font-semibold">
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs font-bold text-slate-600">Giới tính</label>
+            <select id="edit-hs-gender" class="w-full mt-1 px-4 py-2.5 border border-slate-200 rounded-xl outline-none ring-theme font-semibold bg-white">
+              <option value="Nam">Nam</option>
+              <option value="Nữ">Nữ</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs font-bold text-slate-600">Ngày sinh</label>
+            <input type="text" id="edit-hs-dob" placeholder="DD/MM/YYYY" class="w-full mt-1 px-4 py-2.5 border border-slate-200 rounded-xl outline-none ring-theme font-semibold">
+          </div>
+        </div>
+        <div>
+          <label class="text-xs font-bold text-slate-600">Điểm tích lũy</label>
+          <input type="number" id="edit-hs-points" class="w-full mt-1 px-4 py-2.5 border border-slate-200 rounded-xl outline-none ring-theme font-semibold text-amber-600">
+        </div>
+      </div>
+      <div class="flex gap-3 mt-6">
+        <button onclick="closeEditModal()" class="flex-[0.4] bg-slate-100 text-slate-600 font-bold py-3 rounded-xl hover:bg-slate-200 transition">Hủy</button>
+        <button onclick="saveStudentEdit()" class="flex-1 bg-theme-grad text-white font-bold py-3 rounded-xl shadow-lg transition hover:scale-[1.02]">Lưu thay đổi</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Tra Cứu Toàn Cục -->
+  <div id="global-search-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-start justify-center z-[400] p-4 opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-3xl w-full max-w-lg shadow-2xl transform scale-95 transition-transform duration-300 mt-10 md:mt-20 overflow-hidden flex flex-col" id="global-search-content" style="max-height: 80vh;">
+      <!-- Khung tìm kiếm -->
+      <div class="p-4 md:p-6 border-b border-slate-100 shrink-0 relative">
+         <button onclick="closeGlobalSearch()" class="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 p-2 bg-slate-100 hover:bg-slate-200 rounded-full text-slate-500 transition"><i data-lucide="x" class="w-4 h-4"></i></button>
+         <h3 class="font-black text-lg text-slate-800 mb-3"><i data-lucide="search" class="w-5 h-5 inline text-theme mr-1"></i> Tra cứu học sinh</h3>
+         <input type="text" id="global-search-input" onkeyup="handleGlobalSearch()" placeholder="Nhập Tên hoặc Mã ID để tra cứu..." class="w-full pl-4 pr-12 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none ring-theme font-bold text-slate-700">
+      </div>
+      
+      <!-- Danh sách kết quả -->
+      <div id="global-search-results" class="flex-1 overflow-y-auto custom-scrollbar p-2">
+         <div class="p-10 text-center text-slate-400 font-medium">Hãy nhập thông tin để bắt đầu tìm kiếm.</div>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal Kết Quả Vòng Quay -->
   <div id="result-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md hidden items-center justify-center z-[300] p-4">
     <div class="bg-white rounded-[2rem] p-6 md:p-8 max-w-sm w-full text-center shadow-2xl transform transition-all scale-95 duration-200 border border-white/20">
       <div class="w-16 h-16 md:w-20 md:h-20 bg-amber-400 rounded-full mx-auto flex items-center justify-center text-3xl md:text-4xl shadow-lg animate-bounce mt-[-3rem] md:mt-[-4rem] border-4 border-white">🎉</div>
       <h3 class="text-[10px] md:text-xs font-black uppercase tracking-widest text-theme mt-4 md:mt-6">Người được chọn</h3>
       <div class="my-4 md:my-6">
-        <div class="w-24 h-24 md:w-28 md:h-28 mx-auto rounded-full bg-theme-light border-4 border-white shadow-xl flex items-center justify-center text-5xl md:text-6xl relative" id="winner-avatar">👦</div>
+        <div class="w-24 h-24 md:w-28 md:h-28 mx-auto rounded-full bg-theme-light border-4 border-white shadow-xl flex items-center justify-center text-5xl md:text-6xl relative overflow-hidden" id="winner-avatar">👦</div>
         <h2 id="winner-name" class="text-2xl md:text-3xl font-black text-slate-800 mt-3 md:mt-4 tracking-tight drop-shadow-sm">...</h2>
         <span id="winner-id" class="inline-block mt-2 text-[10px] md:text-xs font-mono bg-slate-100 px-3 py-1 rounded-full text-slate-500 font-bold border border-slate-200">ID: ...</span>
       </div>
@@ -425,33 +471,6 @@
         <button onclick="closeResultModal(false)" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 py-3 md:py-3.5 rounded-xl font-bold text-xs md:text-sm transition">Giữ lại để gọi tiếp</button>
         <button onclick="closeResultModal(true)" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 py-3 md:py-3.5 rounded-xl font-bold text-xs md:text-sm transition">Tạm ẩn khỏi vòng quay</button>
       </div>
-    </div>
-  </div>
-
-  <!-- Modal Tạo Sơ Đồ -->
-  <div id="new-chart-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[300] p-4">
-    <div class="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl">
-      <h3 class="font-black text-lg md:text-xl text-slate-800 mb-4">Tạo Sơ Đồ Lớp Mới</h3>
-      <input type="text" id="new-chart-name" placeholder="VD: Sơ đồ thi HK1" class="w-full border-2 border-slate-100 rounded-xl px-4 py-3 outline-none ring-theme transition mb-6 font-medium text-sm">
-      <div class="flex justify-end gap-2 md:gap-3">
-        <button onclick="document.getElementById('new-chart-modal').classList.replace('flex','hidden')" class="px-4 md:px-5 py-2 md:py-2.5 text-slate-500 font-bold hover:bg-slate-100 rounded-xl transition text-sm">Hủy</button>
-        <button onclick="confirmCreateChart()" class="px-4 md:px-5 py-2 md:py-2.5 bg-theme-grad text-white font-bold rounded-xl shadow-lg transition hover:scale-105 text-sm">Tạo mới</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal Chọn HS Cho Sơ Đồ -->
-  <div id="pick-student-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[300] p-4">
-    <div class="bg-white rounded-3xl p-4 md:p-6 w-full max-w-[400px] shadow-2xl flex flex-col max-h-[85vh]">
-      <div class="flex justify-between items-center mb-4 shrink-0">
-        <h3 class="font-black text-lg md:text-xl text-slate-800">Chọn học sinh</h3>
-        <button onclick="closeStudentPicker()" class="text-slate-400 hover:text-slate-700 bg-slate-100 p-2 rounded-full"><i data-lucide="x" class="w-4 h-4"></i></button>
-      </div>
-      <button id="btn-remove-seat" onclick="removeStudentFromCurrentSeat()" class="hidden w-full mb-3 md:mb-4 bg-rose-50 text-rose-600 py-2.5 md:py-3 rounded-xl text-xs md:text-sm font-bold border border-rose-100 hover:bg-rose-100 transition shadow-sm">
-        Gỡ học sinh khỏi chỗ này
-      </button>
-      <input type="text" id="search-student-seat" placeholder="Tìm tên..." onkeyup="filterPickerList()" class="w-full border-2 border-slate-100 rounded-xl px-4 py-2.5 text-sm outline-none ring-theme mb-3 md:mb-4 shrink-0 font-medium bg-slate-50">
-      <div class="overflow-y-auto flex-1 custom-scrollbar space-y-2 pr-1 md:pr-2" id="picker-list"></div>
     </div>
   </div>
 
@@ -487,8 +506,17 @@
       renderEmptySeatingGrid();
     };
 
+    // Hàm render HTML cho Avatar (Hỗ trợ cả Emoji và Ảnh thật)
+    function getAvatarHtml(avatarStr, extraClass = "") {
+        if(!avatarStr) return '';
+        if(avatarStr.startsWith('data:image')) {
+            return `<img src="${avatarStr}" class="w-full h-full object-cover rounded-full ${extraClass}">`;
+        }
+        return `<span class="${extraClass}">${avatarStr}</span>`;
+    }
+
     // ==========================================
-    // HỆ THỐNG THÔNG BÁO TÙY CHỈNH
+    // HỆ THỐNG THÔNG BÁO (MODALS)
     // ==========================================
     function showModal(type, title, message, onConfirm = null) {
       const modal = document.getElementById('custom-modal');
@@ -525,8 +553,7 @@
           document.getElementById('btn-modal-ok').onclick = closeCustomModal;
       }
 
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
+      modal.classList.remove('hidden'); modal.classList.add('flex');
       setTimeout(() => {
           modal.classList.remove('opacity-0');
           document.getElementById('custom-modal-content').classList.remove('scale-95');
@@ -540,6 +567,114 @@
       setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
     }
 
+    // ==========================================
+    // CHỨC NĂNG TRA CỨU HỒ SƠ HS
+    // ==========================================
+    function openGlobalSearch() {
+        const modal = document.getElementById('global-search-modal');
+        document.getElementById('global-search-input').value = '';
+        document.getElementById('global-search-results').innerHTML = `<div class="p-10 text-center text-slate-400 font-medium">Hãy nhập thông tin để bắt đầu tìm kiếm.</div>`;
+        modal.classList.remove('hidden'); modal.classList.add('flex');
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            document.getElementById('global-search-content').classList.remove('scale-95');
+            document.getElementById('global-search-content').classList.add('scale-100');
+            document.getElementById('global-search-input').focus();
+        }, 10);
+    }
+
+    function closeGlobalSearch() {
+        const modal = document.getElementById('global-search-modal'); modal.classList.add('opacity-0');
+        document.getElementById('global-search-content').classList.remove('scale-100'); document.getElementById('global-search-content').classList.add('scale-95');
+        setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
+    }
+
+    function handleGlobalSearch() {
+        const query = document.getElementById('global-search-input').value.toLowerCase().trim();
+        const resContainer = document.getElementById('global-search-results');
+        if(!query) {
+            resContainer.innerHTML = `<div class="p-10 text-center text-slate-400 font-medium">Hãy nhập thông tin để bắt đầu tìm kiếm.</div>`;
+            return;
+        }
+
+        const filtered = students.filter(s => s.name.toLowerCase().includes(query) || (s.code && s.code.toLowerCase().includes(query)));
+        
+        if(filtered.length === 0) {
+            resContainer.innerHTML = `<div class="p-10 text-center text-rose-400 font-medium"><i data-lucide="frown" class="w-10 h-10 mx-auto mb-2 opacity-50"></i>Không tìm thấy học sinh nào.</div>`;
+            lucide.createIcons(); return;
+        }
+
+        resContainer.innerHTML = filtered.map(s => `
+            <div class="bg-white border-2 border-slate-100 p-4 rounded-2xl mb-3 flex flex-col md:flex-row gap-4 items-center md:items-start shadow-sm hover:border-theme transition">
+                <div class="w-20 h-20 bg-theme-light rounded-2xl flex items-center justify-center text-4xl shrink-0 border border-slate-100 overflow-hidden shadow-sm">
+                    ${getAvatarHtml(s.avatar)}
+                </div>
+                <div class="flex-1 text-center md:text-left">
+                    <h4 class="text-xl font-black text-slate-800 mb-1">${s.name}</h4>
+                    <span class="inline-block bg-slate-100 text-slate-600 font-mono text-xs px-2.5 py-1 rounded font-bold border border-slate-200 mb-2">ID: ${s.code || '...'}</span>
+                    <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-sm text-slate-500 font-medium mt-1">
+                        <div><i data-lucide="user" class="w-3.5 h-3.5 inline mr-1 text-theme"></i> Giới tính: <span class="text-slate-700">${s.gender || 'Chưa rõ'}</span></div>
+                        <div><i data-lucide="cake" class="w-3.5 h-3.5 inline mr-1 text-theme"></i> Ngày sinh: <span class="text-slate-700">${s.dob || 'Chưa rõ'}</span></div>
+                    </div>
+                </div>
+                <div class="bg-amber-50 border border-amber-100 px-4 py-3 rounded-xl flex flex-col items-center justify-center shrink-0 w-full md:w-auto">
+                    <span class="text-[10px] font-bold text-amber-500 uppercase tracking-widest">Điểm Tích Lũy</span>
+                    <span class="text-2xl font-black text-amber-600 leading-none mt-1">${s.points}</span>
+                </div>
+            </div>
+        `).join('');
+        lucide.createIcons();
+    }
+
+    // ==========================================
+    // CHỨC NĂNG SỬA THÔNG TIN HS
+    // ==========================================
+    function openEditModal(id) {
+        const s = students.find(x => x.id === id);
+        if(!s) return;
+        document.getElementById('edit-hs-id').value = s.id;
+        document.getElementById('edit-hs-name').value = s.name;
+        document.getElementById('edit-hs-gender').value = s.gender || 'Nam';
+        document.getElementById('edit-hs-dob').value = s.dob || '';
+        document.getElementById('edit-hs-points').value = s.points || 0;
+
+        const modal = document.getElementById('edit-student-modal');
+        modal.classList.remove('hidden'); modal.classList.add('flex');
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            document.getElementById('edit-student-content').classList.remove('scale-95');
+            document.getElementById('edit-student-content').classList.add('scale-100');
+        }, 10);
+    }
+
+    function closeEditModal() {
+        const modal = document.getElementById('edit-student-modal'); modal.classList.add('opacity-0');
+        document.getElementById('edit-student-content').classList.remove('scale-100'); document.getElementById('edit-student-content').classList.add('scale-95');
+        setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
+    }
+
+    function saveStudentEdit() {
+        const id = parseInt(document.getElementById('edit-hs-id').value);
+        const name = document.getElementById('edit-hs-name').value.trim();
+        const gender = document.getElementById('edit-hs-gender').value;
+        const dob = document.getElementById('edit-hs-dob').value.trim();
+        const points = parseInt(document.getElementById('edit-hs-points').value) || 0;
+
+        if(!name) return showModal('warning', 'Lỗi', 'Vui lòng nhập tên học sinh!');
+
+        let s = students.find(x => x.id === id);
+        if(s) {
+            s.name = name; s.gender = gender; s.dob = dob; s.points = points;
+            localStorage.setItem('students_' + currentUser.id, JSON.stringify(students));
+            renderAll(); closeEditModal();
+            showModal('success', 'Thành công', 'Đã cập nhật thông tin học sinh!');
+        }
+    }
+
+
+    // ==========================================
+    // RÚT GỌN TÊN CHO SƠ ĐỒ LỚP
+    // ==========================================
     function getShortName(student) {
       if(!student || !student.name) return "";
       let parts = student.name.trim().split(' ').filter(Boolean);
@@ -558,7 +693,6 @@
              let sName = p.length >= 3 ? p.slice(-3).join(' ') : p.join(' ');
              return sName.toLowerCase() === shortName.toLowerCase();
           });
-
           if(exactConflicts.length > 1) {
              exactConflicts.sort((a,b) => a.id - b.id);
              let idx = exactConflicts.findIndex(s => s.id === student.id);
@@ -569,6 +703,9 @@
       return shortName;
     }
 
+    // ==========================================
+    // ĐỔI AVATAR HỌC SINH (CHIBI + ẢNH THẬT)
+    // ==========================================
     function openAvatarModal(studentId) {
         studentToEditAvatar = studentId;
         const renderGroup = (id, list) => {
@@ -579,8 +716,7 @@
         renderGroup('avatars-special', AVATARS.special);
         
         const modal = document.getElementById('avatar-picker-modal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
+        modal.classList.remove('hidden'); modal.classList.add('flex');
         setTimeout(() => {
             modal.classList.remove('opacity-0');
             document.getElementById('avatar-picker-content').classList.remove('scale-95');
@@ -600,11 +736,20 @@
             const s = students.find(x => x.id === studentToEditAvatar);
             if(s) {
                 s.avatar = avatar; localStorage.setItem('students_' + currentUser.id, JSON.stringify(students));
-                renderAll(); closeAvatarPicker(); showModal('success', 'Thành công', 'Đã thay đổi ảnh đại diện học sinh!');
+                renderAll(); closeAvatarPicker(); showModal('success', 'Thành công', 'Đã đổi ảnh đại diện học sinh!');
             }
         }
     }
 
+    function handleStudentAvatarUpload(e) {
+      const file = e.target.files[0]; if(!file) return; 
+      compressImage(file, 200, 200, function(dataUrl) { 
+          selectAvatar(dataUrl);
+      });
+      e.target.value = '';
+    }
+
+    // --- TIỆN ÍCH NÉN ẢNH ---
     function compressImage(file, maxWidth, maxHeight, callback) {
       const reader = new FileReader();
       reader.onload = function(event) {
@@ -637,6 +782,9 @@
       e.target.value = '';
     }
 
+    // ==========================================
+    // CÁC HÀM CƠ BẢN & LƯU TRỮ
+    // ==========================================
     function toggleSidebar() {
       const sidebar = document.getElementById('main-sidebar'); const overlay = document.getElementById('mobile-overlay');
       sidebar.classList.toggle('-translate-x-full'); overlay.classList.toggle('hidden');
@@ -664,18 +812,12 @@
     }
 
     function checkAuth() {
-      const savedUser = localStorage.getItem('currentUser');
-      const authScreen = document.getElementById('auth-screen');
+      const savedUser = localStorage.getItem('currentUser'); const authScreen = document.getElementById('auth-screen');
       if (savedUser) {
-        currentUser = JSON.parse(savedUser);
-        authScreen.classList.add('hidden'); authScreen.classList.remove('flex');
-        if (!currentUser.className) {
-           const obScreen = document.getElementById('onboarding-screen');
-           obScreen.classList.remove('hidden'); obScreen.classList.add('flex');
-        } else loadUserData();
-      } else {
-        authScreen.classList.remove('hidden'); authScreen.classList.add('flex');
-      }
+        currentUser = JSON.parse(savedUser); authScreen.classList.add('hidden'); authScreen.classList.remove('flex');
+        if (!currentUser.className) { const obScreen = document.getElementById('onboarding-screen'); obScreen.classList.remove('hidden'); obScreen.classList.add('flex'); } 
+        else loadUserData();
+      } else { authScreen.classList.remove('hidden'); authScreen.classList.add('flex'); }
     }
 
     function toggleAuthMode() {
@@ -709,35 +851,25 @@
 
     function loginSuccess(user) {
       currentUser = user; localStorage.setItem('currentUser', JSON.stringify(currentUser));
-      const authScreen = document.getElementById('auth-screen');
-      authScreen.classList.add('hidden'); authScreen.classList.remove('flex');
-      if (!currentUser.className) {
-         const obScreen = document.getElementById('onboarding-screen');
-         obScreen.classList.remove('hidden'); obScreen.classList.add('flex');
-      } else loadUserData();
+      const authScreen = document.getElementById('auth-screen'); authScreen.classList.add('hidden'); authScreen.classList.remove('flex');
+      if (!currentUser.className) { const obScreen = document.getElementById('onboarding-screen'); obScreen.classList.remove('hidden'); obScreen.classList.add('flex'); } 
+      else loadUserData();
     }
 
     function logout() { localStorage.removeItem('currentUser'); location.reload(); }
 
     function saveOnboarding() {
-      currentUser.teacherName = document.getElementById('ob-teacher').value || 'Thầy/Cô';
-      currentUser.className = document.getElementById('ob-class').value || '12A1';
-      currentUser.year = document.getElementById('ob-year').value || '2026';
-      currentUser.slogan = document.getElementById('ob-slogan').value || 'Lớp học yêu thương';
+      currentUser.teacherName = document.getElementById('ob-teacher').value || 'Thầy/Cô'; currentUser.className = document.getElementById('ob-class').value || '12A1';
+      currentUser.year = document.getElementById('ob-year').value || '2026'; currentUser.slogan = document.getElementById('ob-slogan').value || 'Lớp học yêu thương';
       currentUser.theme = 'violet'; currentUser.cover = DEFAULT_COVERS[Math.floor(Math.random() * DEFAULT_COVERS.length)];
       if(saveUserToStorage()) {
-        const obScreen = document.getElementById('onboarding-screen');
-        obScreen.classList.add('hidden'); obScreen.classList.remove('flex');
-        loadUserData();
+        const obScreen = document.getElementById('onboarding-screen'); obScreen.classList.add('hidden'); obScreen.classList.remove('flex'); loadUserData();
       }
     }
 
     function saveUserToStorage() { 
-      try {
-        localStorage.setItem('currentUser', JSON.stringify(currentUser)); localStorage.setItem('user_' + currentUser.id, JSON.stringify(currentUser)); return true;
-      } catch (e) {
-        showModal('error', 'Lỗi bộ nhớ', 'Bộ nhớ trình duyệt của bạn đã đầy! Không thể lưu cài đặt hoặc ảnh mới. Vui lòng tải lên ảnh nhẹ hơn.'); return false;
-      }
+      try { localStorage.setItem('currentUser', JSON.stringify(currentUser)); localStorage.setItem('user_' + currentUser.id, JSON.stringify(currentUser)); return true; } 
+      catch (e) { showModal('error', 'Lỗi bộ nhớ', 'Bộ nhớ trình duyệt của bạn đã đầy! Không thể lưu cài đặt hoặc ảnh mới. Vui lòng tải lên ảnh nhẹ hơn.'); return false; }
     }
 
     function updateSettings() {
@@ -771,14 +903,19 @@
         const data = new Uint8Array(event.target.result); const workbook = XLSX.read(data, {type: 'array'});
         const firstSheet = workbook.Sheets[workbook.SheetNames[0]]; const json = XLSX.utils.sheet_to_json(firstSheet, {header: 1});
         let newStudents = []; let indexCounter = 1;
+        
         for(let i = 1; i < json.length; i++) {
           let row = json[i];
           if(row && row[1]) {
             let isFemale = row[2] && String(row[2]).toLowerCase().trim() === 'x';
+            let dobStr = row[3] ? String(row[3]).trim() : ''; // Đọc Cột D (Ngày sinh)
+            
             let avatars = isFemale ? AVATARS.female : AVATARS.male;
             let randAva = avatars[Math.floor(Math.random() * avatars.length)];
+
             newStudents.push({ 
-              id: Date.now() + i, name: String(row[1]).trim(), points: 0, avatar: randAva, gender: isFemale ? 'Nữ' : 'Nam',
+              id: Date.now() + i, name: String(row[1]).trim(), points: 0, avatar: randAva, 
+              gender: isFemale ? 'Nữ' : 'Nam', dob: dobStr,
               code: generateCode(currentUser.className, currentUser.year, indexCounter) 
             }); indexCounter++;
           }
@@ -790,24 +927,33 @@
       }; reader.readAsArrayBuffer(file); e.target.value = '';
     }
 
+    // ==========================================
+    // RENDER CÁC TAB
+    // ==========================================
     function renderAll() { renderStudentTable(); renderStage(); renderOverview(); renderNotebook(); applyChartLayout(); }
 
     function renderStudentTable() {
       const tbody = document.getElementById('full-student-table'); document.getElementById('student-count').innerText = students.length;
-      if(students.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400 italic">Chưa có học sinh nào.</td></tr>`; return; }
+      if(students.length === 0) { tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400 italic">Chưa có học sinh nào.</td></tr>`; return; }
       tbody.innerHTML = students.map((s, index) => `
         <tr class="hover:bg-slate-50 transition border-b border-slate-50">
           <td class="p-3 md:p-4 font-bold text-slate-400 text-center">${index + 1}</td>
           <td class="p-3 md:p-4"><span class="bg-slate-100 text-slate-600 font-mono text-[10px] md:text-xs px-2 py-1 rounded border border-slate-200">${s.code || '...'}</span></td>
-          <td class="p-3 md:p-4 font-bold text-slate-800 whitespace-nowrap">${s.name} ${s.gender === 'Nữ' ? '<span class="text-rose-400 ml-1">♀</span>' : '<span class="text-blue-400 ml-1">♂</span>'}</td>
+          <td class="p-3 md:p-4 font-bold text-slate-800 whitespace-nowrap">${s.name} ${s.gender === 'Nữ' ? '<span class="text-rose-400 ml-1 font-normal">♀</span>' : '<span class="text-blue-400 ml-1 font-normal">♂</span>'}</td>
+          <td class="p-3 md:p-4 text-xs text-slate-500 font-medium whitespace-nowrap">${s.dob || '-'}</td>
           <td class="p-3 md:p-4 text-center">
-            <button onclick="openAvatarModal(${s.id})" class="text-xl md:text-3xl hover:scale-110 hover:-translate-y-1 transition-all duration-200 p-1 md:p-1.5 rounded-full bg-slate-50 border border-slate-100 shadow-sm relative group cursor-pointer" title="Đổi Avatar">
-                ${s.avatar}
-                <span class="absolute -top-1 -right-1 bg-theme-grad text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition shadow-md"><i data-lucide="edit-2" class="w-2.5 h-2.5"></i></span>
+            <button onclick="openAvatarModal(${s.id})" class="w-10 h-10 md:w-12 md:h-12 mx-auto flex items-center justify-center text-2xl md:text-3xl hover:scale-110 hover:-translate-y-1 transition-all duration-200 rounded-full bg-slate-50 border border-slate-100 shadow-sm relative group cursor-pointer" title="Đổi Avatar">
+                ${getAvatarHtml(s.avatar)}
+                <span class="absolute -top-1 -right-1 bg-theme-grad text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition shadow-md z-10"><i data-lucide="edit-2" class="w-2.5 h-2.5"></i></span>
             </button>
           </td>
           <td class="p-3 md:p-4"><span class="bg-amber-100 text-amber-700 px-2 py-1 rounded-md font-black text-[10px] md:text-xs shadow-sm whitespace-nowrap">${s.points} đ</span></td>
-          <td class="p-3 md:p-4 text-right"><button class="bg-rose-50 p-1.5 md:p-2 rounded-lg text-rose-400 hover:text-white hover:bg-rose-500 transition shadow-sm" onclick="deleteStudent(${s.id})"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td>
+          <td class="p-3 md:p-4 text-right">
+            <div class="flex items-center justify-end gap-1.5">
+               <button class="bg-blue-50 p-1.5 md:p-2 rounded-lg text-blue-500 hover:text-white hover:bg-blue-500 transition shadow-sm" title="Sửa thông tin" onclick="openEditModal(${s.id})"><i data-lucide="pen-line" class="w-4 h-4"></i></button>
+               <button class="bg-rose-50 p-1.5 md:p-2 rounded-lg text-rose-400 hover:text-white hover:bg-rose-500 transition shadow-sm" title="Xóa học sinh" onclick="deleteStudent(${s.id})"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+            </div>
+          </td>
         </tr>
       `).join(''); lucide.createIcons();
     }
@@ -819,15 +965,25 @@
       grid.innerHTML = filtered.map(s => `
         <div class="bg-white rounded-3xl p-4 md:p-5 shadow-sm border border-slate-100 hover:shadow-xl transition-all flex flex-col items-center relative overflow-hidden group">
            <div class="absolute top-0 left-0 w-full h-1.5 bg-theme-grad opacity-50 group-hover:opacity-100 transition"></div>
-           <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-slate-50 text-4xl md:text-5xl flex items-center justify-center mb-2 md:mb-3 ring-4 ring-slate-100 group-hover:ring-[var(--c1)] transition mt-2 cursor-pointer" onclick="openAvatarModal(${s.id})" title="Đổi Avatar">${s.avatar}</div>
-           <h4 class="font-black text-slate-800 text-center line-clamp-1 w-full text-sm md:text-[15px] px-2" title="${s.name}">${s.name}</h4>
-           <div class="mt-1.5 flex items-center justify-center"><span class="text-[10px] md:text-[11px] font-mono bg-theme-light px-2 py-1 md:px-2.5 md:py-1.5 rounded-lg font-bold tracking-widest"><i data-lucide="fingerprint" class="w-3 h-3 inline mr-1 opacity-70"></i>${s.code || 'CHƯA CẤP'}</span></div>
-           <div class="mt-4 md:mt-5 flex gap-2 w-full">
+           <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-slate-50 text-4xl md:text-5xl flex items-center justify-center mb-3 ring-4 ring-slate-100 group-hover:ring-[var(--c1)] transition mt-2 cursor-pointer relative" onclick="openAvatarModal(${s.id})" title="Đổi Avatar">
+               ${getAvatarHtml(s.avatar)}
+           </div>
+           <h4 class="font-black text-slate-800 text-center line-clamp-1 w-full text-sm md:text-[15px] px-2 mb-1" title="${s.name}">${s.name}</h4>
+           
+           <div class="text-[10px] md:text-xs text-slate-500 font-medium mb-2 flex items-center gap-1.5">
+              <span>${s.gender || 'Nam'}</span> 
+              <span class="w-1 h-1 bg-slate-300 rounded-full"></span> 
+              <span>${s.dob || '--/--/----'}</span>
+           </div>
+
+           <div class="flex items-center justify-center mb-4"><span class="text-[10px] md:text-[11px] font-mono bg-theme-light px-2.5 py-1 rounded-lg font-bold tracking-widest"><i data-lucide="fingerprint" class="w-3 h-3 inline mr-1 opacity-70"></i>${s.code || 'CHƯA CẤP'}</span></div>
+           
+           <div class="flex gap-2 w-full mt-auto">
               <div class="flex-[0.8] bg-amber-50 rounded-xl py-2 text-center flex flex-col justify-center border border-amber-100 shadow-sm">
                 <span class="text-[8px] md:text-[9px] uppercase font-bold text-amber-500/80 tracking-wider">Điểm</span>
                 <span class="font-black text-amber-600 text-base md:text-lg leading-none mt-0.5">${s.points}</span>
               </div>
-              <button class="flex-1 bg-slate-50 text-slate-500 rounded-xl py-2 text-center text-[10px] md:text-xs font-bold hover:bg-[var(--c1)] hover:text-white transition shadow-sm border border-slate-200 hover:border-transparent flex items-center justify-center gap-1" onclick="showModal('info', 'Chức năng', 'Tính năng xem hồ sơ chi tiết đang được hoàn thiện!')"><i data-lucide="book-user" class="w-3 h-3 md:w-4 md:h-4"></i> Hồ sơ</button>
+              <button class="flex-1 bg-slate-50 text-slate-500 rounded-xl py-2 text-center text-[10px] md:text-xs font-bold hover:bg-[var(--c1)] hover:text-white transition shadow-sm border border-slate-200 hover:border-transparent flex items-center justify-center gap-1" onclick="openEditModal(${s.id})"><i data-lucide="pen-line" class="w-3 h-3 md:w-4 md:h-4"></i> Cập nhật</button>
            </div>
         </div>
       `).join(''); lucide.createIcons();
@@ -845,8 +1001,8 @@
       topContainer.innerHTML = sorted.slice(0, 5).map((s, index) => `
         <div class="bg-black/20 p-3 md:p-4 rounded-2xl flex flex-col items-center relative overflow-hidden border border-white/10 group hover:bg-white/20 transition">
           ${index === 0 ? '<div class="absolute top-0 right-0 bg-white text-rose-500 text-[9px] md:text-[10px] font-black px-1.5 md:px-2 py-0.5 rounded-bl-lg shadow-sm">TOP 1</div>' : ''}
-          <span class="text-3xl md:text-4xl transform group-hover:scale-110 transition">${s.avatar}</span>
-          <span class="font-bold text-[10px] md:text-xs mt-2 md:mt-3 truncate w-full" title="${s.name}">${s.name}</span>
+          <div class="w-10 h-10 md:w-14 md:h-14 flex items-center justify-center text-3xl md:text-4xl transform group-hover:scale-110 transition">${getAvatarHtml(s.avatar)}</div>
+          <span class="font-bold text-[10px] md:text-xs mt-2 md:mt-3 truncate w-full text-center" title="${s.name}">${s.name}</span>
           <span class="text-[9px] md:text-[11px] bg-white/20 text-white font-black px-2 md:px-3 py-1 rounded-full mt-1.5 shadow-inner">${s.points} đ</span>
         </div>
       `).join('');
@@ -857,7 +1013,7 @@
       if(students.length === 0) { grid.innerHTML = `<div class="col-span-full text-center py-10 text-slate-400 font-medium">Vui lòng thêm học sinh!</div>`; return; }
       grid.innerHTML = students.map(s => `
         <div id="card-${s.id}" class="student-card bg-white border border-slate-200 p-2 md:p-3 rounded-2xl flex flex-col items-center justify-center text-center transition shadow-sm hover:shadow-md">
-          <span class="text-3xl md:text-4xl mb-1 md:mb-2">${s.avatar}</span>
+          <div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-3xl md:text-4xl mb-1 md:mb-2">${getAvatarHtml(s.avatar)}</div>
           <span class="font-bold text-[10px] md:text-[11px] truncate w-full text-slate-700" title="${s.name}">${s.name}</span>
         </div>
       `).join('');
@@ -930,7 +1086,7 @@
         if (student && seatEl) {
           const displayName = getShortName(student);
           seatEl.className = "seat-slot border-2 bg-gradient-to-b from-white to-slate-50 border-theme shadow-md border-solid h-[60px] md:h-[76px] rounded-xl flex flex-col items-center justify-center cursor-pointer transition relative overflow-hidden";
-          seatEl.innerHTML = `<span class="text-2xl md:text-[32px] mt-1">${student.avatar}</span><span class="font-black text-[9px] md:text-[10px] text-theme leading-tight truncate w-full text-center px-0.5 md:px-1 mt-1 uppercase tracking-wide" title="${student.name}">${displayName}</span>`;
+          seatEl.innerHTML = `<div class="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center text-2xl md:text-[32px] mt-1">${getAvatarHtml(student.avatar)}</div><span class="font-black text-[9px] md:text-[10px] text-theme leading-tight truncate w-full text-center px-0.5 md:px-1 mt-1 uppercase tracking-wide" title="${student.name}">${displayName}</span>`;
         }
       }
     }
@@ -953,7 +1109,7 @@
         const isSel = chart.layout[selectedSeatId] === s.id; const bgClass = isSel ? 'bg-theme-light border-theme' : 'hover:bg-slate-50 border-transparent border-b-slate-100';
         return `
           <div onclick="assignStudentToSeat(${s.id})" class="flex items-center gap-3 md:gap-4 p-2 md:p-3 rounded-xl cursor-pointer border-2 ${bgClass} transition">
-            <span class="text-2xl md:text-3xl bg-white rounded-full shadow-sm">${s.avatar}</span>
+            <div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-2xl md:text-3xl bg-white rounded-full shadow-sm">${getAvatarHtml(s.avatar)}</div>
             <div class="flex-1">
                <div class="font-black text-xs md:text-sm text-slate-800">${s.name}</div>
                ${seatTxt ? `<div class="text-[9px] md:text-[10px] text-amber-600 font-bold tracking-wide mt-0.5"><i data-lucide="map-pin" class="w-2 h-2 md:w-3 md:h-3 inline mr-0.5"></i>${seatTxt}</div>` : `<div class="text-[9px] md:text-[10px] text-emerald-500 font-bold tracking-wide mt-0.5"><i data-lucide="check" class="w-2 h-2 md:w-3 md:h-3 inline mr-0.5"></i>Chưa xếp chỗ</div>`}
@@ -991,7 +1147,9 @@
     }
 
     function showWinner(student) {
-      document.getElementById('winner-name').innerText = student.name; document.getElementById('winner-avatar').innerText = student.avatar; document.getElementById('winner-id').innerText = "ID: " + (student.code || "...");
+      document.getElementById('winner-name').innerText = student.name; 
+      document.getElementById('winner-avatar').innerHTML = getAvatarHtml(student.avatar); 
+      document.getElementById('winner-id').innerText = "ID: " + (student.code || "...");
       const modal = document.getElementById('result-modal'); modal.classList.remove('hidden'); modal.classList.add('flex');
       confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 }});
     }
