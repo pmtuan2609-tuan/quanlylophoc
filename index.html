@@ -186,14 +186,22 @@
           <div class="flex gap-2 w-full sm:w-auto">
             <button onclick="document.getElementById('excel-upload').click()" class="flex-[1] sm:flex-auto flex items-center justify-center gap-2 bg-emerald-50 text-emerald-600 border border-emerald-200 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-emerald-100 transition shadow-sm whitespace-nowrap"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Nhập Excel</button>
             <input type="file" id="excel-upload" accept=".xlsx, .xls" class="hidden" onchange="handleExcelUpload(event)">
-            <button onclick="deleteAllStudents()" class="flex-[1] sm:flex-auto flex items-center justify-center gap-2 bg-rose-50 text-rose-600 border border-rose-200 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-rose-100 transition shadow-sm whitespace-nowrap"><i data-lucide="trash-2" class="w-4 h-4"></i> Xóa tất cả</button>
+            <button onclick="deleteAllStudents()" class="flex-[1] sm:flex-auto flex items-center justify-center gap-2 bg-rose-50 text-rose-600 border border-rose-200 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-rose-100 transition shadow-sm whitespace-nowrap" title="Xóa toàn bộ học sinh"><i data-lucide="trash-2" class="w-4 h-4"></i> Xóa tất cả</button>
           </div>
         </div>
         <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
           <div class="overflow-x-auto custom-scrollbar">
             <table class="w-full text-left text-sm min-w-[800px]">
               <thead class="bg-slate-50 border-b text-slate-500 uppercase text-[10px] md:text-xs tracking-wider font-bold">
-                <tr><th class="p-3 md:p-4 w-12 text-center">STT</th><th class="p-3 md:p-4">Mã HS</th><th class="p-3 md:p-4">Họ và Tên</th><th class="p-3 md:p-4">Ngày sinh</th><th class="p-3 md:p-4 text-center">Avatar</th><th class="p-3 md:p-4">Điểm</th><th class="p-3 md:p-4 text-right">Thao tác</th></tr>
+                <tr>
+                  <th class="p-3 md:p-4 w-12 text-center">STT</th>
+                  <th class="p-3 md:p-4">Mã HS (ID)</th>
+                  <th class="p-3 md:p-4">Họ và Tên</th>
+                  <th class="p-3 md:p-4">Ngày sinh</th>
+                  <th class="p-3 md:p-4 text-center">Avatar</th>
+                  <th class="p-3 md:p-4">Điểm</th>
+                  <th class="p-3 md:p-4 text-right">Thao tác</th>
+                </tr>
               </thead>
               <tbody id="full-student-table" class="divide-y divide-slate-100"></tbody>
             </table>
@@ -201,7 +209,7 @@
         </div>
       </section>
 
-      <!-- TAB ĐIỂM DANH -->
+      <!-- TAB ĐIỂM DANH (GIAO DIỆN HIỆN ĐẠI MỚI) -->
       <section id="tab-attendance" class="tab-section hidden space-y-4 h-full flex-col">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-slate-100 shrink-0 gap-4">
            <h3 class="font-bold text-slate-700 text-base md:text-lg flex items-center gap-2 whitespace-nowrap"><i data-lucide="user-check" class="w-5 h-5 text-emerald-500"></i> Điểm Danh Hàng Ngày</h3>
@@ -214,14 +222,14 @@
         <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex-1 flex flex-col">
             <div class="overflow-x-auto custom-scrollbar flex-1">
                 <table class="w-full text-left text-sm min-w-[700px]">
-                    <thead class="bg-slate-50 border-b text-slate-500 uppercase text-[10px] md:text-xs tracking-wider font-bold sticky top-0 z-10 shadow-sm">
+                    <thead class="bg-[#1e1b4b] text-white uppercase text-[10px] md:text-xs tracking-wider font-bold sticky top-0 z-10 shadow-sm">
                         <tr>
                             <th class="p-3 md:p-4 w-12 text-center">STT</th>
                             <th class="p-3 md:p-4 min-w-[200px]">Học sinh</th>
-                            <th class="p-3 md:p-4 text-center cursor-pointer hover:text-emerald-600 transition" onclick="checkAllAttendance('present')">Có mặt (Tất cả)</th>
-                            <th class="p-3 md:p-4 text-center cursor-pointer hover:text-amber-600 transition" onclick="checkAllAttendance('late')">Đi trễ (Tất cả)</th>
-                            <th class="p-3 md:p-4 text-center cursor-pointer hover:text-blue-600 transition" onclick="checkAllAttendance('excused')">Vắng Phép (Tất cả)</th>
-                            <th class="p-3 md:p-4 text-center cursor-pointer hover:text-rose-600 transition" onclick="checkAllAttendance('unexcused')">Vắng K.Phép (Tất cả)</th>
+                            <th class="p-3 md:p-4 text-center cursor-pointer hover:text-emerald-300 transition" onclick="checkAllAttendance('present')">Có mặt (Tất cả)</th>
+                            <th class="p-3 md:p-4 text-center cursor-pointer hover:text-amber-300 transition" onclick="checkAllAttendance('late')">Đi trễ (Tất cả)</th>
+                            <th class="p-3 md:p-4 text-center cursor-pointer hover:text-blue-300 transition" onclick="checkAllAttendance('excused')">Vắng (P)</th>
+                            <th class="p-3 md:p-4 text-center cursor-pointer hover:text-rose-300 transition" onclick="checkAllAttendance('unexcused')">Vắng (KP)</th>
                         </tr>
                     </thead>
                     <tbody id="attendance-tbody" class="divide-y divide-slate-100"></tbody>
@@ -245,12 +253,12 @@
                 <thead>
                     <tr>
                         <th class="border border-slate-200 p-3 bg-slate-50 text-slate-400 font-black uppercase tracking-wider text-[10px] md:text-xs">Tiết \ Thứ</th>
-                        <th class="border border-slate-200 p-3 bg-slate-50 text-blue-600 font-black uppercase text-xs md:text-sm">Thứ 2</th>
-                        <th class="border border-slate-200 p-3 bg-slate-50 text-blue-600 font-black uppercase text-xs md:text-sm">Thứ 3</th>
-                        <th class="border border-slate-200 p-3 bg-slate-50 text-blue-600 font-black uppercase text-xs md:text-sm">Thứ 4</th>
-                        <th class="border border-slate-200 p-3 bg-slate-50 text-blue-600 font-black uppercase text-xs md:text-sm">Thứ 5</th>
-                        <th class="border border-slate-200 p-3 bg-slate-50 text-blue-600 font-black uppercase text-xs md:text-sm">Thứ 6</th>
-                        <th class="border border-slate-200 p-3 bg-slate-50 text-blue-600 font-black uppercase text-xs md:text-sm">Thứ 7</th>
+                        <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 2</th>
+                        <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 3</th>
+                        <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 4</th>
+                        <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 5</th>
+                        <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 6</th>
+                        <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 7</th>
                     </tr>
                 </thead>
                 <tbody id="timetable-tbody"></tbody>
@@ -258,7 +266,7 @@
         </div>
       </section>
 
-      <!-- TAB SỔ THEO DÕI (CARD DESIGN MỚI) -->
+      <!-- TAB SỔ THEO DÕI (CARD MỚI) -->
       <section id="tab-notebook" class="tab-section hidden space-y-4 h-full flex-col">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-slate-100 shrink-0 gap-4">
            <h3 class="font-bold text-slate-700 text-base md:text-lg flex items-center gap-2 whitespace-nowrap"><i data-lucide="contact" class="w-5 h-5 text-theme"></i> Thẻ Học Sinh</h3>
@@ -277,7 +285,9 @@
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 rounded-2xl shadow-sm border border-slate-100 shrink-0 gap-4">
           <div class="flex flex-wrap items-center gap-2 md:gap-3 w-full sm:w-auto">
             <select id="seating-select" class="flex-1 sm:flex-none border border-slate-200 rounded-xl px-3 md:px-4 py-2.5 text-xs md:text-sm bg-slate-50 ring-theme font-bold text-slate-700 outline-none cursor-pointer" onchange="changeSeatingChart()"></select>
-            <button onclick="openNewChartModal()" class="text-theme bg-theme-light hover-bg-theme-light px-3 md:px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1 md:gap-2 shadow-sm whitespace-nowrap"><i data-lucide="plus" class="w-4 h-4"></i> Thêm mới</button>
+            <button onclick="openNewChartModal()" class="text-theme bg-theme-light hover-bg-theme-light px-3 md:px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1 md:gap-2 shadow-sm whitespace-nowrap">
+              <i data-lucide="plus" class="w-4 h-4"></i> Thêm mới
+            </button>
           </div>
           <button onclick="deleteCurrentChart()" class="w-full sm:w-auto flex justify-center text-rose-500 bg-rose-50 hover:bg-rose-100 px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold transition items-center gap-2 border border-rose-100 shadow-sm"><i data-lucide="trash-2" class="w-4 h-4"></i> Xóa sơ đồ</button>
         </div>
@@ -289,8 +299,14 @@
            
            <div class="min-w-[800px] pb-10 relative">
                <div class="relative flex justify-center items-end mb-10 h-16 md:h-20 w-full">
-                   <div class="bg-[#1e293b] shadow-xl text-white w-[50%] py-4 rounded-xl text-center font-black text-sm md:text-base tracking-[0.3em] border-4 border-slate-600 relative flex items-center justify-center z-10"><span class="opacity-90">BẢNG ĐEN</span><div class="absolute bottom-2 right-4 w-12 h-1 bg-white/30 rounded-full"></div></div>
-                   <div class="absolute right-0 bottom-0 bg-theme-sidebar shadow-2xl text-white w-24 md:w-32 py-3 md:py-4 rounded-2xl text-center font-black text-[10px] md:text-xs tracking-widest flex flex-col items-center border-b-4 border-slate-900 z-10"><span>BÀN GV</span><div class="absolute -bottom-2.5 w-10 h-1.5 bg-slate-400/50 rounded-full"></div></div>
+                   <div class="bg-[#1e293b] shadow-xl text-white w-[50%] py-4 rounded-xl text-center font-black text-sm md:text-base tracking-[0.3em] border-4 border-slate-600 relative flex items-center justify-center z-10">
+                       <span class="opacity-90">BẢNG ĐEN</span>
+                       <div class="absolute bottom-2 right-4 w-12 h-1 bg-white/30 rounded-full"></div>
+                   </div>
+                   <div class="absolute right-0 bottom-0 bg-theme-sidebar shadow-2xl text-white w-24 md:w-32 py-3 md:py-4 rounded-2xl text-center font-black text-[10px] md:text-xs tracking-widest flex flex-col items-center border-b-4 border-slate-900 z-10">
+                       <span>BÀN GV</span>
+                       <div class="absolute -bottom-2.5 w-10 h-1.5 bg-slate-400/50 rounded-full"></div>
+                   </div>
                </div>
                <div class="grid grid-cols-4 gap-4 md:gap-8" id="seating-grid"></div>
            </div>
@@ -424,22 +440,37 @@
     <div class="bg-white rounded-[2rem] w-full max-w-md shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col overflow-hidden border border-white/20" id="edit-student-content">
       <div class="bg-theme-grad p-6 md:p-8 text-white flex justify-between items-center relative overflow-hidden rounded-t-[2rem]">
          <div class="absolute top-0 right-0 w-40 h-40 bg-white/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
-         <div class="relative z-10 flex items-center gap-3 md:gap-4"><div class="w-12 h-12 md:w-14 md:h-14 bg-white/20 rounded-2xl backdrop-blur-md shadow-inner border border-white/30 flex items-center justify-center shrink-0"><i data-lucide="user-pen" class="w-6 h-6 md:w-7 md:h-7 text-white"></i></div><div><h3 class="font-black text-xl md:text-2xl drop-shadow-sm leading-tight">Sửa hồ sơ</h3><p class="text-[9px] md:text-[10px] font-bold text-white/80 uppercase tracking-widest mt-0.5 md:mt-1">Cập nhật thông tin</p></div></div>
+         <div class="relative z-10 flex items-center gap-3 md:gap-4">
+           <div class="w-12 h-12 md:w-14 md:h-14 bg-white/20 rounded-2xl backdrop-blur-md shadow-inner border border-white/30 flex items-center justify-center shrink-0"><i data-lucide="user-pen" class="w-6 h-6 md:w-7 md:h-7 text-white"></i></div>
+           <div><h3 class="font-black text-xl md:text-2xl drop-shadow-sm leading-tight">Sửa hồ sơ</h3><p class="text-[9px] md:text-[10px] font-bold text-white/80 uppercase tracking-widest mt-0.5 md:mt-1">Cập nhật thông tin</p></div>
+         </div>
          <button onclick="closeModalUi('edit-student-modal', 'edit-student-content')" class="relative z-10 p-2 bg-black/10 hover:bg-black/20 rounded-full transition"><i data-lucide="x" class="w-4 h-4 md:w-5 md:h-5"></i></button>
       </div>
       <div class="p-6 md:p-8 space-y-4 md:space-y-5 bg-white">
         <input type="hidden" id="edit-hs-id">
-        <div><label class="text-[10px] md:text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 md:mb-2 flex items-center gap-1.5"><i data-lucide="type" class="w-3.5 h-3.5 md:w-4 md:h-4 text-emerald-500"></i> Họ và Tên</label><input type="text" id="edit-hs-name" class="w-full px-4 py-3 md:py-3.5 border-2 border-slate-100 rounded-xl md:rounded-2xl outline-none focus:border-theme focus:ring-4 focus:ring-[var(--c1)]/10 font-bold text-slate-800 bg-white shadow-sm transition-all text-sm md:text-base"></div>
+        <div>
+           <label class="text-[10px] md:text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 md:mb-2 flex items-center gap-1.5"><i data-lucide="type" class="w-3.5 h-3.5 md:w-4 md:h-4 text-emerald-500"></i> Họ và Tên</label>
+           <input type="text" id="edit-hs-name" class="w-full px-4 py-3 md:py-3.5 border-2 border-slate-100 rounded-xl md:rounded-2xl outline-none focus:border-theme focus:ring-4 focus:ring-[var(--c1)]/10 font-bold text-slate-800 bg-white shadow-sm transition-all text-sm md:text-base">
+        </div>
         <div class="grid grid-cols-2 gap-3 md:gap-4">
-          <div><label class="text-[10px] md:text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 md:mb-2 flex items-center gap-1.5"><i data-lucide="users" class="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-500"></i> Giới tính</label><select id="edit-hs-gender" class="w-full px-4 py-3 md:py-3.5 border-2 border-slate-100 rounded-xl md:rounded-2xl outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-400/10 font-bold text-slate-800 bg-white shadow-sm transition-all text-sm md:text-base cursor-pointer"><option value="Nam">Nam</option><option value="Nữ">Nữ</option></select></div>
-          <div><label class="text-[10px] md:text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 md:mb-2 flex items-center gap-1.5"><i data-lucide="calendar-days" class="w-3.5 h-3.5 md:w-4 md:h-4 text-rose-500"></i> Ngày sinh</label><input type="text" id="edit-hs-dob" placeholder="DD/MM/YYYY" class="w-full px-4 py-3 md:py-3.5 border-2 border-slate-100 rounded-xl md:rounded-2xl outline-none focus:border-rose-400 focus:ring-4 focus:ring-rose-400/10 font-bold text-slate-800 bg-white shadow-sm transition-all text-sm md:text-base"></div>
+          <div>
+             <label class="text-[10px] md:text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 md:mb-2 flex items-center gap-1.5"><i data-lucide="users" class="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-500"></i> Giới tính</label>
+             <select id="edit-hs-gender" class="w-full px-4 py-3 md:py-3.5 border-2 border-slate-100 rounded-xl md:rounded-2xl outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-400/10 font-bold text-slate-800 bg-white shadow-sm transition-all text-sm md:text-base cursor-pointer"><option value="Nam">Nam</option><option value="Nữ">Nữ</option></select>
+          </div>
+          <div>
+             <label class="text-[10px] md:text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 md:mb-2 flex items-center gap-1.5"><i data-lucide="calendar-days" class="w-3.5 h-3.5 md:w-4 md:h-4 text-rose-500"></i> Ngày sinh</label>
+             <input type="text" id="edit-hs-dob" placeholder="DD/MM/YYYY" class="w-full px-4 py-3 md:py-3.5 border-2 border-slate-100 rounded-xl md:rounded-2xl outline-none focus:border-rose-400 focus:ring-4 focus:ring-rose-400/10 font-bold text-slate-800 bg-white shadow-sm transition-all text-sm md:text-base">
+          </div>
         </div>
         <div>
            <label class="text-[10px] md:text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 md:mb-2 flex items-center gap-1.5"><i data-lucide="briefcase" class="w-3.5 h-3.5 md:w-4 md:h-4 text-amber-500"></i> Chức vụ <span class="text-[8px] md:text-[9px] font-medium text-slate-400 normal-case ml-auto">(Để trống nếu là HS thường)</span></label>
            <select id="edit-hs-role" class="w-full px-4 py-3 md:py-3.5 border-2 border-slate-100 rounded-xl md:rounded-2xl outline-none focus:border-amber-400 focus:ring-4 focus:ring-amber-400/10 font-bold text-slate-800 bg-white shadow-sm transition-all text-sm md:text-base cursor-pointer"><option value="">Học sinh</option><option value="Lớp trưởng">Lớp trưởng</option><option value="Lớp phó học tập">Lớp phó học tập</option><option value="Lớp phó kỷ luật">Lớp phó kỷ luật</option><option value="Lớp phó LĐ-VS">Lớp phó LĐ-VS</option><option value="Bí thư chi đoàn">Bí thư chi đoàn</option><option value="Tổ trưởng">Tổ trưởng</option><option value="Thủ quỹ">Thủ quỹ</option></select>
         </div>
       </div>
-      <div class="flex gap-3 md:gap-4 px-6 pb-6 md:px-8 md:pb-8 bg-white rounded-b-[2rem]"><button onclick="closeModalUi('edit-student-modal', 'edit-student-content')" class="flex-[0.4] bg-slate-100 text-slate-500 font-black py-3.5 md:py-4 rounded-xl md:rounded-2xl hover:bg-slate-200 hover:text-slate-700 transition-all text-xs md:text-sm uppercase tracking-wider">Hủy</button><button onclick="saveStudentEdit()" class="flex-1 bg-theme-grad text-white font-black py-3.5 md:py-4 rounded-xl md:rounded-2xl shadow-lg hover:scale-[1.02] transition-all flex items-center justify-center gap-2 text-xs md:text-sm uppercase tracking-wider"><i data-lucide="save" class="w-4 h-4 md:w-5 md:h-5"></i> Lưu thay đổi</button></div>
+      <div class="flex gap-3 md:gap-4 px-6 pb-6 md:px-8 md:pb-8 bg-white rounded-b-[2rem]">
+        <button onclick="closeModalUi('edit-student-modal', 'edit-student-content')" class="flex-[0.4] bg-slate-100 text-slate-500 font-black py-3.5 md:py-4 rounded-xl md:rounded-2xl hover:bg-slate-200 hover:text-slate-700 transition-all text-xs md:text-sm uppercase tracking-wider">Hủy</button>
+        <button onclick="saveStudentEdit()" class="flex-1 bg-theme-grad text-white font-black py-3.5 md:py-4 rounded-xl md:rounded-2xl shadow-lg hover:scale-[1.02] transition-all flex items-center justify-center gap-2 text-xs md:text-sm uppercase tracking-wider"><i data-lucide="save" class="w-4 h-4 md:w-5 md:h-5"></i> Lưu thay đổi</button>
+      </div>
     </div>
   </div>
 
@@ -449,7 +480,10 @@
       <div class="flex justify-between items-center mb-6 border-b pb-4"><h3 class="font-black text-lg md:text-xl text-slate-800 flex items-center gap-2"><i data-lucide="star" class="text-theme"></i> Đánh Giá Điểm</h3><button onclick="closeModalUi('grading-modal', 'grading-content')" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-full text-slate-500 transition"><i data-lucide="x" class="w-4 h-4"></i></button></div>
       <div class="space-y-4">
         <input type="hidden" id="grade-hs-id">
-        <div class="bg-slate-50 border border-slate-100 rounded-xl p-3 flex items-center gap-3"><div id="grade-hs-avatar" class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm overflow-hidden"></div><div><div id="grade-hs-name" class="font-black text-slate-800 text-lg">...</div><div id="grade-hs-role" class="text-[10px] text-theme font-bold uppercase tracking-widest">Học sinh</div></div></div>
+        <div class="bg-slate-50 border border-slate-100 rounded-xl p-3 flex items-center gap-3">
+           <div id="grade-hs-avatar" class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm overflow-hidden"></div>
+           <div><div id="grade-hs-name" class="font-black text-slate-800 text-lg">...</div><div id="grade-hs-role" class="text-[10px] text-theme font-bold uppercase tracking-widest">Học sinh</div></div>
+        </div>
         <div class="grid grid-cols-2 gap-3"><button id="btn-type-add" onclick="selectGradeType('add')" class="py-3 rounded-xl font-bold border-2 transition flex items-center justify-center gap-1"><i data-lucide="plus-circle" class="w-4 h-4"></i> CỘNG ĐIỂM</button><button id="btn-type-sub" onclick="selectGradeType('sub')" class="py-3 rounded-xl font-bold border-2 transition flex items-center justify-center gap-1"><i data-lucide="minus-circle" class="w-4 h-4"></i> TRỪ ĐIỂM</button></div>
         <input type="hidden" id="grade-type" value="add">
         <div><label class="text-xs font-bold text-slate-600 uppercase">Lý do</label><select id="grade-reason" class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl outline-none ring-theme font-medium bg-white"></select></div>
@@ -472,13 +506,16 @@
     <div class="bg-white rounded-3xl p-6 md:p-8 w-full max-w-5xl shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col max-h-[90vh]" id="monthly-attendance-content">
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b pb-4 gap-4">
         <h3 class="font-black text-lg md:text-xl text-slate-800 flex items-center gap-2"><i data-lucide="calendar-days" class="text-theme"></i> Báo Cáo Kiểm Diện Tháng</h3>
-        <div class="flex items-center gap-3"><input type="month" id="report-month" onchange="generateMonthlyReport()" class="border border-slate-200 rounded-xl px-4 py-2 outline-none ring-theme font-bold text-slate-700 bg-slate-50"><button onclick="closeModalUi('monthly-attendance-modal', 'monthly-attendance-content')" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-full text-slate-500 transition"><i data-lucide="x" class="w-4 h-4"></i></button></div>
+        <div class="flex items-center gap-3">
+           <input type="month" id="report-month" onchange="generateMonthlyReport()" class="border border-slate-200 rounded-xl px-4 py-2 outline-none ring-theme font-bold text-slate-700 bg-slate-50">
+           <button onclick="closeModalUi('monthly-attendance-modal', 'monthly-attendance-content')" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-full text-slate-500 transition"><i data-lucide="x" class="w-4 h-4"></i></button>
+        </div>
       </div>
       <div id="monthly-report-container" class="flex-1 overflow-auto custom-scrollbar border border-slate-100 rounded-xl"></div>
     </div>
   </div>
 
-  <!-- Modal Trao Danh Hiệu -->
+  <!-- Modal Trao Danh Hiệu (Tuyên Dương) -->
   <div id="praise-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[600] p-4 opacity-0 transition-opacity duration-300">
     <div class="bg-white rounded-3xl p-6 md:p-8 w-full max-w-lg shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col" id="praise-content">
       <div class="flex justify-between items-center mb-6 border-b pb-4"><h3 class="font-black text-xl text-slate-800 flex items-center gap-2"><i data-lucide="award" class="text-amber-500"></i> Trao Danh Hiệu</h3><button onclick="closeModalUi('praise-modal', 'praise-content')" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-full text-slate-500 transition"><i data-lucide="x" class="w-4 h-4"></i></button></div>
@@ -494,7 +531,7 @@
          <button onclick="closeModalUi('profile-modal', 'profile-content')" class="absolute top-4 right-4 p-2 bg-black/20 hover:bg-black/40 rounded-full text-white transition backdrop-blur-md z-20"><i data-lucide="x" class="w-4 h-4 md:w-5 md:h-5"></i></button>
          <div class="flex items-center gap-4 md:gap-6 w-full translate-y-8 md:translate-y-12">
             <div id="profile-avatar" class="w-24 h-24 md:w-32 md:h-32 bg-white rounded-full flex items-center justify-center text-5xl md:text-6xl shadow-xl border-4 md:border-[6px] border-white overflow-hidden shrink-0 z-10 relative"></div>
-            <div class="z-10 pb-4 md:pb-6 flex-1">
+            <div class="z-10 pb-4 md:pb-6 flex-1 min-w-0">
                <h3 id="profile-name" class="font-black text-2xl md:text-3xl text-slate-800 drop-shadow-sm leading-tight mb-1.5 md:mb-2 line-clamp-1">...</h3>
                <div class="flex flex-wrap items-center gap-2">
                   <span id="profile-code" class="text-[10px] md:text-xs font-mono font-bold text-theme bg-white/90 px-2.5 md:px-3 py-1 md:py-1.5 rounded-lg shadow-sm border border-theme/20">ID: ...</span>
@@ -600,7 +637,20 @@
 
     function removeAccents(str) { return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D'); }
     function getAvatarHtml(avatarStr, extraClass = "") { if(!avatarStr) return ''; if(avatarStr.startsWith('data:image')) return `<img src="${avatarStr}" class="w-full h-full object-cover rounded-full ${extraClass}">`; return `<span class="${extraClass}">${avatarStr}</span>`; }
-    function compressImage(file, maxWidth, maxHeight, callback) { const reader = new FileReader(); reader.onload = function(event) { const img = new Image(); img.onload = function() { let width = img.width; let height = img.height; if (width > height) { if (width > maxWidth) { height *= maxWidth / width; width = maxWidth; } } else { if (height > maxHeight) { width *= maxHeight / height; height = maxHeight; } } const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = height; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height); callback(canvas.toDataURL('image/jpeg', 0.6)); }; img.src = event.target.result; }; reader.readAsDataURL(file); }
+    function compressImage(file, maxWidth, maxHeight, callback, quality = 0.95) { 
+        const reader = new FileReader(); 
+        reader.onload = function(event) { 
+            const img = new Image(); 
+            img.onload = function() { 
+                let width = img.width; let height = img.height; 
+                if (width > height) { if (width > maxWidth) { height *= maxWidth / width; width = maxWidth; } } 
+                else { if (height > maxHeight) { width *= maxHeight / height; height = maxHeight; } } 
+                const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = height; 
+                const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height); 
+                callback(canvas.toDataURL('image/jpeg', quality)); 
+            }; img.src = event.target.result; 
+        }; reader.readAsDataURL(file); 
+    }
     function generateCode(className, year, index) { className = className || "12A1"; year = year || "2026"; let yMatch = year.match(/\d{4}/g); let yStr = yMatch ? yMatch[yMatch.length - 1].slice(-2) : "00"; let gMatch = className.match(/^(\d{1,2})/); let gStr = gMatch ? gMatch[1].padStart(2, '0') : "00"; let sMatch = className.match(/[A-Za-z]+(\d+)/); let sStr = sMatch ? sMatch[1].padStart(2, '0') : "00"; return `${yStr}${gStr}${sStr}${index.toString().padStart(2, '0')}`; }
     function ensureStudentCodes() { let changed = false; students.forEach((s, idx) => { if (!s.code) { s.code = generateCode(currentUser.className, currentUser.year, idx + 1); changed = true; } }); if (changed) localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); }
     function parseExcelDate(excelValue) { if (!excelValue) return ''; if (typeof excelValue === 'number') { const date = new Date(Math.round((excelValue - 25569) * 86400 * 1000)); return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`; } return String(excelValue).trim(); }
@@ -640,8 +690,8 @@
     function toggleSidebar() { const sidebar = document.getElementById('main-sidebar'); const overlay = document.getElementById('mobile-overlay'); sidebar.classList.toggle('-translate-x-full'); overlay.classList.toggle('hidden'); }
     function switchTab(tabId) { document.querySelectorAll('.tab-section').forEach(sec => sec.classList.add('hidden')); document.querySelectorAll('.tab-btn').forEach(btn => { btn.classList.remove('bg-theme-grad', 'text-white', 'shadow-lg', 'font-bold'); btn.classList.add('hover:bg-white/10', 'text-white/70'); }); document.getElementById(tabId).classList.remove('hidden'); const activeBtn = document.getElementById('btn-' + tabId); if(activeBtn) { activeBtn.classList.remove('hover:bg-white/10', 'text-white/70'); activeBtn.classList.add('bg-theme-grad', 'text-white', 'shadow-lg', 'font-bold'); } const titles = { 'tab-overview': 'Tổng Quan Lớp', 'tab-students': 'Danh Sách Lớp', 'tab-attendance': 'Điểm Danh Hàng Ngày', 'tab-timetable': 'Thời Khoá Biểu', 'tab-seating': 'Sơ Đồ Chỗ Ngồi', 'tab-notebook': 'Sổ Theo Dõi', 'tab-wheel': 'Vòng Quay May Mắn', 'tab-praise': 'Tuyên Dương', 'tab-points': 'Thành Tích', 'tab-gifts': 'Quà Tặng', 'tab-settings': 'Cài Đặt & Giao Diện' }; document.getElementById('header-title').innerText = titles[tabId] || 'Hệ Thống'; if(window.innerWidth < 1024) toggleSidebar(); }
     function updateUI() { document.getElementById('sidebar-class-logo').innerText = currentUser.className; document.getElementById('sidebar-slogan').innerText = currentUser.slogan; document.getElementById('sidebar-teacher-name').innerText = (currentUser.teacherName || "..."); document.getElementById('header-year').innerHTML = `<i data-lucide="calendar" class="w-3 h-3"></i> Năm học ${currentUser.year}`; let sloganEl = document.getElementById('banner-slogan'); if (sloganEl) sloganEl.innerText = currentUser.slogan; document.getElementById('stat-student-count').innerText = students.length; if(currentUser.avatar) document.getElementById('header-avatar').innerHTML = `<img src="${currentUser.avatar}" class="w-full h-full object-cover">`; if(currentUser.cover) document.getElementById('cover-photo').style.backgroundImage = `url('${currentUser.cover}')`; lucide.createIcons(); }
-    function handleCoverUpload(e) { const file = e.target.files[0]; if(!file) return; compressImage(file, 1200, 800, function(dataUrl) { currentUser.cover = dataUrl; if(saveUserToStorage()) document.getElementById('cover-photo').style.backgroundImage = `url('${currentUser.cover}')`; }); e.target.value = ''; }
-    function handleAvatarUpload(e) { const file = e.target.files[0]; if(!file) return; compressImage(file, 300, 300, function(dataUrl) { currentUser.avatar = dataUrl; if(saveUserToStorage()) updateUI(); }); e.target.value = ''; }
+    function handleCoverUpload(e) { const file = e.target.files[0]; if(!file) return; compressImage(file, 1200, 800, function(dataUrl) { currentUser.cover = dataUrl; if(saveUserToStorage()) document.getElementById('cover-photo').style.backgroundImage = `url('${currentUser.cover}')`; }, 0.85); e.target.value = ''; }
+    function handleAvatarUpload(e) { const file = e.target.files[0]; if(!file) return; compressImage(file, 300, 300, function(dataUrl) { currentUser.avatar = dataUrl; if(saveUserToStorage()) updateUI(); }, 0.8); e.target.value = ''; }
 
     // --- TIMETABLES ---
     function initTimetables() { const saved = localStorage.getItem('timetables_' + currentUser.id); if (saved) timetables = JSON.parse(saved); if (!timetables || timetables.length === 0) { timetables = [{ id: 'tkb_' + Date.now(), name: 'TKB Lần 1', data: {} }]; saveTimetables(); } currentTimetableId = timetables[0].id; renderTimetableSelect(); applyTimetable(); }
@@ -655,33 +705,11 @@
 
     // --- ATTENDANCE ---
     function initAttendance() { const today = new Date(); const yyyy = today.getFullYear(); const mm = String(today.getMonth() + 1).padStart(2, '0'); const dd = String(today.getDate()).padStart(2, '0'); document.getElementById('attendance-date').value = `${yyyy}-${mm}-${dd}`; const saved = localStorage.getItem('attendance_' + currentUser.id); if(saved) attendanceData = JSON.parse(saved); else attendanceData = {}; }
-    function loadAttendance() { const dateStr = document.getElementById('attendance-date').value; if(!dateStr) return; const dailyData = attendanceData[dateStr] || {}; const tbody = document.getElementById('attendance-tbody'); if(students.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400 font-medium">Danh sách trống. Vui lòng thêm học sinh.</td></tr>`; return; } tbody.innerHTML = students.map((s, index) => { const status = dailyData[s.id] || 'present'; return `<tr class="hover:bg-slate-50 transition border-b border-slate-50 group"><td class="p-3 md:p-4 font-bold text-slate-400 text-center">${index + 1}</td><td class="p-3 md:p-4 min-w-[200px]"><div class="flex items-center gap-3"><div class="w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden bg-slate-100 flex items-center justify-center text-2xl shadow-sm border border-slate-200">${getAvatarHtml(s.avatar)}</div><div><div class="font-bold text-slate-800 text-sm md:text-base line-clamp-1">${s.name}</div><div class="text-[9px] text-slate-400 font-mono font-bold mt-0.5">ID: ${s.code || '...'}</div></div></div></td><td class="p-3 md:p-4 text-center bg-emerald-50/30 group-hover:bg-emerald-50/80 transition cursor-pointer" onclick="document.getElementById('att_${s.id}_p').checked = true"><input type="radio" id="att_${s.id}_p" name="att_${s.id}" value="present" ${status === 'present' ? 'checked' : ''} class="w-5 h-5 accent-emerald-500 cursor-pointer"></td><td class="p-3 md:p-4 text-center bg-amber-50/30 group-hover:bg-amber-50/80 transition cursor-pointer" onclick="document.getElementById('att_${s.id}_l').checked = true"><input type="radio" id="att_${s.id}_l" name="att_${s.id}" value="late" ${status === 'late' ? 'checked' : ''} class="w-5 h-5 accent-amber-500 cursor-pointer"></td><td class="p-3 md:p-4 text-center bg-blue-50/30 group-hover:bg-blue-50/80 transition cursor-pointer" onclick="document.getElementById('att_${s.id}_e').checked = true"><input type="radio" id="att_${s.id}_e" name="att_${s.id}" value="excused" ${status === 'excused' ? 'checked' : ''} class="w-5 h-5 accent-blue-500 cursor-pointer"></td><td class="p-3 md:p-4 text-center bg-rose-50/30 group-hover:bg-rose-50/80 transition cursor-pointer" onclick="document.getElementById('att_${s.id}_u').checked = true"><input type="radio" id="att_${s.id}_u" name="att_${s.id}" value="unexcused" ${status === 'unexcused' ? 'checked' : ''} class="w-5 h-5 accent-rose-500 cursor-pointer"></td></tr>`; }).join(''); }
+    function loadAttendance() { const dateStr = document.getElementById('attendance-date').value; if(!dateStr) return; const dailyData = attendanceData[dateStr] || {}; const tbody = document.getElementById('attendance-tbody'); if(students.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400 font-medium">Danh sách trống. Vui lòng thêm học sinh.</td></tr>`; return; } tbody.innerHTML = students.map((s, index) => { const status = dailyData[s.id] || 'present'; return `<tr class="hover:bg-slate-50 transition border-b border-slate-50 group"><td class="p-3 md:p-4 font-bold text-slate-400 text-center">${index + 1}</td><td class="p-3 md:p-4 min-w-[200px]"><div class="flex items-center gap-3"><div class="w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden bg-slate-100 flex items-center justify-center text-xl shadow-sm border border-slate-200">${getAvatarHtml(s.avatar)}</div><div><div class="font-bold text-slate-800 text-sm md:text-base line-clamp-1">${s.name}</div><div class="text-[9px] text-slate-400 font-mono font-bold mt-0.5">ID: ${s.code || '...'}</div></div></div></td><td class="p-3 md:p-4 text-center"><label class="cursor-pointer inline-block"><input type="radio" id="att_${s.id}_p" name="att_${s.id}" value="present" ${status === 'present' ? 'checked' : ''} class="peer sr-only"><div class="w-8 h-8 md:w-10 md:h-10 mx-auto rounded-xl flex items-center justify-center bg-slate-100 text-slate-300 peer-checked:bg-emerald-500 peer-checked:text-white transition-all hover:scale-110 shadow-sm"><i data-lucide="check" class="w-4 h-4 md:w-5 md:h-5"></i></div></label></td><td class="p-3 md:p-4 text-center"><label class="cursor-pointer inline-block"><input type="radio" id="att_${s.id}_l" name="att_${s.id}" value="late" ${status === 'late' ? 'checked' : ''} class="peer sr-only"><div class="w-8 h-8 md:w-10 md:h-10 mx-auto rounded-xl flex items-center justify-center bg-slate-100 text-slate-300 peer-checked:bg-amber-500 peer-checked:text-white transition-all hover:scale-110 shadow-sm"><span class="font-black text-sm md:text-base">T</span></div></label></td><td class="p-3 md:p-4 text-center"><label class="cursor-pointer inline-block"><input type="radio" id="att_${s.id}_e" name="att_${s.id}" value="excused" ${status === 'excused' ? 'checked' : ''} class="peer sr-only"><div class="w-8 h-8 md:w-10 md:h-10 mx-auto rounded-xl flex items-center justify-center bg-slate-100 text-slate-300 peer-checked:bg-blue-500 peer-checked:text-white transition-all hover:scale-110 shadow-sm"><span class="font-black text-sm md:text-base">P</span></div></label></td><td class="p-3 md:p-4 text-center"><label class="cursor-pointer inline-block"><input type="radio" id="att_${s.id}_u" name="att_${s.id}" value="unexcused" ${status === 'unexcused' ? 'checked' : ''} class="peer sr-only"><div class="w-8 h-8 md:w-10 md:h-10 mx-auto rounded-xl flex items-center justify-center bg-slate-100 text-slate-300 peer-checked:bg-rose-500 peer-checked:text-white transition-all hover:scale-110 shadow-sm"><span class="font-black text-sm md:text-base">K</span></div></label></td></tr>`; }).join(''); lucide.createIcons(); }
     function checkAllAttendance(val) { if(students.length === 0) return; students.forEach(s => { const radios = document.getElementsByName(`att_${s.id}`); for(let r of radios) { if(r.value === val) r.checked = true; } }); }
     function saveAttendance() { if(students.length === 0) return showModal('warning', 'Trống', 'Chưa có học sinh nào để điểm danh.'); const dateStr = document.getElementById('attendance-date').value; if(!dateStr) return showModal('warning', 'Lỗi', 'Vui lòng chọn ngày.'); let dailyData = {}; students.forEach(s => { const radios = document.getElementsByName(`att_${s.id}`); for(let r of radios) { if(r.checked) { dailyData[s.id] = r.value; break; } } }); attendanceData[dateStr] = dailyData; localStorage.setItem('attendance_' + currentUser.id, JSON.stringify(attendanceData)); showModal('success', 'Thành công', `Đã lưu điểm danh ngày ${dateStr.split('-').reverse().join('/')}`); }
     function openMonthlyAttendance() { const today = new Date(); const yyyy = today.getFullYear(); const mm = String(today.getMonth() + 1).padStart(2, '0'); document.getElementById('report-month').value = `${yyyy}-${mm}`; generateMonthlyReport(); openModalUi('monthly-attendance-modal', 'monthly-attendance-content'); }
-    function generateMonthlyReport() { 
-        const monthStr = document.getElementById('report-month').value; if(!monthStr) return; 
-        const [yyyy, mm] = monthStr.split('-'); const daysInMonth = new Date(yyyy, mm, 0).getDate(); 
-        let html = '<table class="w-full text-center text-sm border-collapse table-sticky"><thead class="bg-slate-50 border-b border-slate-200 shadow-sm"><tr><th class="p-3 text-left whitespace-nowrap font-black text-slate-600 min-w-[180px]">Học sinh</th>'; 
-        for(let d=1; d<=daysInMonth; d++) { html += `<th class="border-r border-slate-100 p-2 w-8 text-[10px] text-slate-500">${d}</th>`; } 
-        html += '</tr></thead><tbody class="divide-y divide-slate-100">'; 
-        students.forEach(s => { 
-            html += `<tr><td class="p-3 text-left font-bold text-xs text-slate-800 whitespace-nowrap min-w-[180px]" title="${s.name}">${s.name}</td>`; 
-            for(let d=1; d<=daysInMonth; d++) { 
-                const dateKey = `${yyyy}-${mm}-${String(d).padStart(2, '0')}`; 
-                const dailyRecord = attendanceData[dateKey] || {}; const status = dailyRecord[s.id]; 
-                let cellClass = "border-r border-slate-100 p-1 text-[10px] font-black "; let text = ""; 
-                if(status === 'present') { cellClass += "bg-emerald-100/50 text-emerald-600"; text = ""; } 
-                else if(status === 'excused') { cellClass += "bg-blue-50 text-blue-600"; text = "P"; } 
-                else if(status === 'unexcused') { cellClass += "bg-rose-50 text-rose-600"; text = "K"; } 
-                else if(status === 'late') { cellClass += "bg-amber-50 text-amber-600"; text = "T"; } 
-                html += `<td class="${cellClass}">${text}</td>`; 
-            } 
-            html += '</tr>'; 
-        }); 
-        html += '</tbody></table>'; 
-        document.getElementById('monthly-report-container').innerHTML = html; 
-    }
+    function generateMonthlyReport() { const monthStr = document.getElementById('report-month').value; if(!monthStr) return; const [yyyy, mm] = monthStr.split('-'); const daysInMonth = new Date(yyyy, mm, 0).getDate(); let html = '<table class="w-full text-center text-sm border-collapse table-sticky"><thead class="bg-slate-50 border-b border-slate-200 shadow-sm"><tr><th class="p-3 text-left whitespace-nowrap font-black text-slate-600 min-w-[180px]">Học sinh</th>'; for(let d=1; d<=daysInMonth; d++) { html += `<th class="border-r border-slate-100 p-2 w-8 text-[10px] text-slate-500">${d}</th>`; } html += '</tr></thead><tbody class="divide-y divide-slate-100">'; students.forEach(s => { html += `<tr><td class="p-3 text-left font-bold text-xs text-slate-800 whitespace-nowrap min-w-[180px]" title="${s.name}">${s.name}</td>`; for(let d=1; d<=daysInMonth; d++) { const dateKey = `${yyyy}-${mm}-${String(d).padStart(2, '0')}`; const dailyRecord = attendanceData[dateKey] || {}; const status = dailyRecord[s.id]; let cellClass = "border-r border-slate-100 p-1 text-[10px] font-black "; let text = ""; if(status === 'present') { cellClass += "bg-emerald-100/50 text-emerald-600"; text = ""; } else if(status === 'excused') { cellClass += "bg-blue-50 text-blue-600"; text = "P"; } else if(status === 'unexcused') { cellClass += "bg-rose-50 text-rose-600"; text = "K"; } else if(status === 'late') { cellClass += "bg-amber-50 text-amber-600"; text = "T"; } html += `<td class="${cellClass}">${text}</td>`; } html += '</tr>'; }); html += '</tbody></table>'; document.getElementById('monthly-report-container').innerHTML = html; }
 
     // --- XỬ LÝ HỌC SINH (EXCEL, CRUD) ---
     function handleExcelUpload(e) {
@@ -716,55 +744,24 @@
       }; reader.readAsArrayBuffer(file);
     }
     
-    function deleteAllStudents() {
-        if(students.length === 0) return showModal('info', 'Trống', 'Danh sách lớp hiện đang trống!');
-        showModal('confirm', 'XÓA TẤT CẢ', 'CẢNH BÁO: Bạn có chắc chắn muốn xóa TOÀN BỘ học sinh trong lớp? Thao tác này sẽ xóa sạch dữ liệu và không thể khôi phục!', () => {
-            students = []; localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); 
-            seatingCharts.forEach(c => c.layout = {}); saveSeatingToStorage(); hiddenWheelIds = []; renderAll(); updateUI(); 
-            setTimeout(() => showModal('success', 'Hoàn tất', 'Đã xóa toàn bộ dữ liệu học sinh thành công.'), 350);
-        });
-    }
-    
-    function deleteStudent(id) { 
-        showModal('confirm', 'Xác nhận xóa', 'Xóa học sinh này khỏi hệ thống?', () => { 
-            students = students.filter(s => s.id !== id); localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); 
-            hiddenWheelIds = hiddenWheelIds.filter(hid => hid !== id); 
-            seatingCharts.forEach(chart => { for (const [k, v] of Object.entries(chart.layout)) { if(v === id) delete chart.layout[k]; } }); saveSeatingToStorage();
-            renderAll(); updateUI(); 
-        }); 
-    }
-    
-    function openEditModal(id) { 
-        const s = students.find(x => x.id === id); if(!s) return; 
-        document.getElementById('edit-hs-id').value = s.id; 
-        document.getElementById('edit-hs-name').value = s.name; 
-        document.getElementById('edit-hs-gender').value = s.gender || 'Nam'; 
-        document.getElementById('edit-hs-dob').value = s.dob || ''; 
-        document.getElementById('edit-hs-role').value = s.role || ''; 
-        openModalUi('edit-student-modal', 'edit-student-content'); 
-    }
-    function saveStudentEdit() { 
-        const id = parseInt(document.getElementById('edit-hs-id').value); const name = document.getElementById('edit-hs-name').value.trim(); 
-        if(!name) return showModal('warning', 'Lỗi', 'Vui lòng nhập tên học sinh!'); 
-        let s = students.find(x => x.id === id); 
-        if(s) { 
-            s.name = name; s.gender = document.getElementById('edit-hs-gender').value; s.dob = document.getElementById('edit-hs-dob').value.trim(); s.role = document.getElementById('edit-hs-role').value; 
-            localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); renderAll(); 
-            closeModalUi('edit-student-modal', 'edit-student-content'); setTimeout(()=>showModal('success', 'Thành công', 'Đã cập nhật thông tin!'), 350); 
-        } 
-    }
+    function deleteAllStudents() { if(students.length === 0) return showModal('info', 'Trống', 'Danh sách lớp hiện đang trống!'); showModal('confirm', 'XÓA TẤT CẢ', 'CẢNH BÁO: Bạn có chắc chắn muốn xóa TOÀN BỘ học sinh trong lớp? Thao tác này sẽ xóa sạch dữ liệu và không thể khôi phục!', () => { students = []; localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); seatingCharts.forEach(c => c.layout = {}); saveSeatingToStorage(); hiddenWheelIds = []; renderAll(); updateUI(); setTimeout(() => showModal('success', 'Hoàn tất', 'Đã xóa toàn bộ dữ liệu học sinh thành công.'), 350); }); }
+    function deleteStudent(id) { showModal('confirm', 'Xác nhận xóa', 'Xóa học sinh này khỏi hệ thống?', () => { students = students.filter(s => s.id !== id); localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); hiddenWheelIds = hiddenWheelIds.filter(hid => hid !== id); seatingCharts.forEach(chart => { for (const [k, v] of Object.entries(chart.layout)) { if(v === id) delete chart.layout[k]; } }); saveSeatingToStorage(); renderAll(); updateUI(); }); }
+    function openEditModal(id) { const s = students.find(x => x.id === id); if(!s) return; document.getElementById('edit-hs-id').value = s.id; document.getElementById('edit-hs-name').value = s.name; document.getElementById('edit-hs-gender').value = s.gender || 'Nam'; document.getElementById('edit-hs-dob').value = s.dob || ''; document.getElementById('edit-hs-role').value = s.role || ''; openModalUi('edit-student-modal', 'edit-student-content'); }
+    function saveStudentEdit() { const id = parseInt(document.getElementById('edit-hs-id').value); const name = document.getElementById('edit-hs-name').value.trim(); if(!name) return showModal('warning', 'Lỗi', 'Vui lòng nhập tên học sinh!'); let s = students.find(x => x.id === id); if(s) { s.name = name; s.gender = document.getElementById('edit-hs-gender').value; s.dob = document.getElementById('edit-hs-dob').value.trim(); s.role = document.getElementById('edit-hs-role').value; localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); renderAll(); closeModalUi('edit-student-modal', 'edit-student-content'); setTimeout(()=>showModal('success', 'Thành công', 'Đã cập nhật thông tin!'), 350); } }
 
-    // --- Avatars ---
     function openAvatarModal(studentId) { studentToEditAvatar = studentId; const renderGroup = (id, list) => { document.getElementById(id).innerHTML = list.map(a => `<button onclick="selectAvatar('${a}')" class="text-3xl p-2 hover:bg-slate-100 rounded-xl transition hover:scale-110">${a}</button>`).join(''); }; renderGroup('avatars-male', AVATARS.male); renderGroup('avatars-female', AVATARS.female); renderGroup('avatars-special', AVATARS.special); openModalUi('avatar-picker-modal', 'avatar-picker-content'); }
     function selectAvatar(avatar) { if(studentToEditAvatar !== null) { const s = students.find(x => x.id === studentToEditAvatar); if(s) { s.avatar = avatar; localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); renderAll(); closeModalUi('avatar-picker-modal', 'avatar-picker-content'); setTimeout(()=>showModal('success', 'Thành công', 'Đã đổi ảnh đại diện!'), 350); } } }
-    function handleStudentAvatarUpload(e) { const file = e.target.files[0]; if(!file) return; compressImage(file, 200, 200, function(dataUrl) { selectAvatar(dataUrl); }); e.target.value = ''; }
+    function handleStudentAvatarUpload(e) { const file = e.target.files[0]; if(!file) return; compressImage(file, 200, 200, function(dataUrl) { selectAvatar(dataUrl); }, 0.85); e.target.value = ''; }
 
-    // --- Grading ---
+    // --- Grading / History ---
     function openGradingModal(id) { const s = students.find(x => x.id === id); if(!s) return; document.getElementById('grade-hs-id').value = s.id; document.getElementById('grade-hs-name').innerText = s.name; document.getElementById('grade-hs-role').innerText = s.role || 'Học sinh'; document.getElementById('grade-hs-avatar').innerHTML = getAvatarHtml(s.avatar); tempReportImage = null; selectGradeType('add'); openModalUi('grading-modal', 'grading-content'); }
     function selectGradeType(type) { document.getElementById('grade-type').value = type; const btnAdd = document.getElementById('btn-type-add'); const btnSub = document.getElementById('btn-type-sub'); const reasonSelect = document.getElementById('grade-reason'); const reportBox = document.getElementById('grade-report-box'); document.getElementById('report-preview').classList.add('hidden'); document.getElementById('report-placeholder').classList.remove('hidden'); document.getElementById('grade-image').value = ''; tempReportImage = null; if(type === 'add') { btnAdd.className = "py-3 rounded-xl font-bold border-2 border-emerald-500 bg-emerald-50 text-emerald-600 transition flex items-center justify-center gap-1 shadow-sm"; btnSub.className = "py-3 rounded-xl font-bold border-2 border-slate-200 bg-white text-slate-400 hover:bg-slate-50 transition flex items-center justify-center gap-1"; reasonSelect.innerHTML = GRADING_REASONS.add.map(r => `<option value="${r}">${r}</option>`).join(''); document.getElementById('grade-points').value = 5; reportBox.classList.add('hidden'); } else { btnSub.className = "py-3 rounded-xl font-bold border-2 border-rose-500 bg-rose-50 text-rose-600 transition flex items-center justify-center gap-1 shadow-sm"; btnAdd.className = "py-3 rounded-xl font-bold border-2 border-slate-200 bg-white text-slate-400 hover:bg-slate-50 transition flex items-center justify-center gap-1"; reasonSelect.innerHTML = GRADING_REASONS.sub.map(r => `<option value="${r}">${r}</option>`).join(''); document.getElementById('grade-points').value = 10; reportBox.classList.remove('hidden'); } }
-    function previewReportImage(event) { const file = event.target.files[0]; if(!file) return; compressImage(file, 800, 800, function(dataUrl) { tempReportImage = dataUrl; document.getElementById('report-placeholder').classList.add('hidden'); const preview = document.getElementById('report-preview'); preview.style.backgroundImage = `url('${dataUrl}')`; preview.classList.remove('hidden'); }); }
-    function confirmGrading() { const id = parseInt(document.getElementById('grade-hs-id').value); const s = students.find(x => x.id === id); if(!s) return; const type = document.getElementById('grade-type').value; const reason = document.getElementById('grade-reason').value; const points = parseInt(document.getElementById('grade-points').value) || 0; if (points <= 0) return showModal('warning', 'Lỗi', 'Số điểm phải lớn hơn 0.'); if (!s.history) s.history = []; const d = new Date(); const dateStr = `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`; s.history.unshift({ id: Date.now(), date: dateStr, type: type, reason: reason, points: points, image: type === 'sub' ? tempReportImage : null }); if(type === 'add') s.points += points; else s.points -= points; if(saveUserToStorage()) { closeModalUi('grading-modal', 'grading-content'); renderAll(); setTimeout(()=>showModal('success', 'Thành công', `Đã ${type==='add'?'cộng':'trừ'} ${points} điểm.`), 350); } }
     
+    // Nâng cao chất lượng ảnh báo cáo (1920x1920, quality 0.95)
+    function previewReportImage(event) { const file = event.target.files[0]; if(!file) return; compressImage(file, 1920, 1920, function(dataUrl) { tempReportImage = dataUrl; document.getElementById('report-placeholder').classList.add('hidden'); const preview = document.getElementById('report-preview'); preview.style.backgroundImage = `url('${dataUrl}')`; preview.classList.remove('hidden'); }, 0.95); }
+    
+    function confirmGrading() { const id = parseInt(document.getElementById('grade-hs-id').value); const s = students.find(x => x.id === id); if(!s) return; const type = document.getElementById('grade-type').value; const reason = document.getElementById('grade-reason').value; const points = parseInt(document.getElementById('grade-points').value) || 0; if (points <= 0) return showModal('warning', 'Lỗi', 'Số điểm phải lớn hơn 0.'); if (!s.history) s.history = []; const d = new Date(); const dateStr = `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`; s.history.unshift({ id: Date.now(), date: dateStr, type: type, reason: reason, points: points, image: type === 'sub' ? tempReportImage : null }); if(type === 'add') s.points += points; else s.points -= points; if(saveUserToStorage()) { closeModalUi('grading-modal', 'grading-content'); renderAll(); setTimeout(()=>showModal('success', 'Thành công', `Đã ${type==='add'?'cộng':'trừ'} ${points} điểm.`), 350); } }
+
     function deleteHistoryItem(studentId, historyId) {
         showModal('confirm', 'Xóa bản ghi', 'Xóa bản ghi này sẽ hoàn tác số điểm tương ứng của học sinh. Bạn chắc chắn chứ?', () => {
             const s = students.find(x => x.id === studentId);
@@ -775,58 +772,32 @@
                     if(h.type === 'add') s.points -= h.points; else s.points += h.points;
                     s.history.splice(idx, 1);
                     localStorage.setItem('students_' + currentUser.id, JSON.stringify(students));
-                    openProfileModal(studentId); // Reload profile UI
+                    openProfileModal(studentId); // Reload
                     renderAll();
                 }
             }
         });
     }
 
-    // --- Profile Modal Tách Cột ---
+    // --- Profile ---
     function openProfileModal(id) { 
         const s = students.find(x => x.id === id); if(!s) return; 
         document.getElementById('profile-name').innerText = s.name; 
         document.getElementById('profile-code').innerText = "ID: " + (s.code || 'Chưa cấp'); 
-        
-        const roleEl = document.getElementById('profile-role');
-        if(s.role) { roleEl.innerText = s.role; roleEl.classList.remove('hidden'); } else { roleEl.classList.add('hidden'); }
-        
+        const roleEl = document.getElementById('profile-role'); if(s.role) { roleEl.innerText = s.role; roleEl.classList.remove('hidden'); } else { roleEl.classList.add('hidden'); }
         document.getElementById('profile-avatar').innerHTML = getAvatarHtml(s.avatar); document.getElementById('profile-gender').innerText = s.gender || 'Nam'; document.getElementById('profile-dob').innerText = s.dob || 'Chưa rõ'; document.getElementById('profile-total-points').innerText = s.points; let history = s.history || []; document.getElementById('profile-total-violations').innerText = history.filter(h => h.type === 'sub').length; 
-        
-        const listVio = document.getElementById('profile-violations-list');
-        const listPraise = document.getElementById('profile-praises-list');
-        
-        const violations = history.filter(h => h.type === 'sub');
-        const praises = history.filter(h => h.type === 'add');
+        const listVio = document.getElementById('profile-violations-list'); const listPraise = document.getElementById('profile-praises-list');
+        const violations = history.filter(h => h.type === 'sub'); const praises = history.filter(h => h.type === 'add');
 
         const buildItem = (h, isVio) => {
-            const cClass = isVio ? 'text-rose-600 bg-rose-50 border-rose-200' : 'text-emerald-600 bg-emerald-50 border-emerald-200';
-            const sign = isVio ? '-' : '+';
-            const icon = isVio ? '<i data-lucide="minus-circle" class="w-4 h-4 md:w-5 md:h-5 text-rose-500"></i>' : '<i data-lucide="plus-circle" class="w-4 h-4 md:w-5 md:h-5 text-emerald-500"></i>';
-            let imgBtn = h.image ? `<button onclick="viewImage('${h.image}')" class="mt-2 text-[10px] bg-slate-800 text-white px-3 py-1.5 rounded-lg flex items-center gap-1 hover:bg-slate-700 transition"><i data-lucide="image" class="w-3 h-3"></i> Xem Biên Bản</button>` : '';
+            const cClass = isVio ? 'text-rose-600 bg-rose-50 border-rose-200' : 'text-emerald-600 bg-emerald-50 border-emerald-200'; const sign = isVio ? '-' : '+'; const icon = isVio ? '<i data-lucide="minus-circle" class="w-4 h-4 md:w-5 md:h-5 text-rose-500"></i>' : '<i data-lucide="plus-circle" class="w-4 h-4 md:w-5 md:h-5 text-emerald-500"></i>'; 
+            let imgBtn = h.image ? `<button onclick="viewImage('${h.image}')" class="mt-2 text-[10px] bg-slate-800 text-white px-3 py-1.5 rounded-lg flex items-center gap-1 hover:bg-slate-700 transition"><i data-lucide="image" class="w-3 h-3"></i> Xem Biên Bản</button>` : ''; 
             let delBtn = `<button onclick="deleteHistoryItem(${s.id}, ${h.id})" class="absolute top-2 right-2 p-1.5 bg-white text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg opacity-0 group-hover:opacity-100 transition shadow-sm border border-slate-100" title="Xóa lịch sử"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`;
-            
-            return `
-            <div class="relative flex items-start group">
-                <div class="hidden md:flex flex-col items-center mr-3 mt-1 relative z-10 bg-slate-50 py-1 rounded-full">${icon}</div>
-                <div class="flex-1 bg-white p-3 md:p-4 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition relative">
-                    ${delBtn}
-                    <div class="flex justify-between items-start mb-1 pr-8">
-                        <span class="text-[10px] md:text-xs font-bold text-slate-400">${h.date}</span>
-                        <span class="font-black text-sm md:text-lg ${cClass} px-2 py-0.5 rounded-lg border">${sign}${h.points}</span>
-                    </div>
-                    <p class="font-bold text-slate-700 text-xs md:text-sm mt-1">${h.reason}</p>
-                    ${imgBtn}
-                </div>
-            </div>`;
+            return `<div class="relative flex items-start group"><div class="hidden md:flex flex-col items-center mr-3 mt-1 relative z-10 bg-slate-50 py-1 rounded-full">${icon}</div><div class="flex-1 bg-white p-3 md:p-4 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition relative">${delBtn}<div class="flex justify-between items-start mb-1 pr-8"><span class="text-[10px] md:text-xs font-bold text-slate-400">${h.date}</span><span class="font-black text-sm md:text-lg ${cClass} px-2 py-0.5 rounded-lg border">${sign}${h.points}</span></div><p class="font-bold text-slate-700 text-xs md:text-sm mt-1">${h.reason}</p>${imgBtn}</div></div>`; 
         };
 
-        if(violations.length === 0) listVio.innerHTML = `<div class="text-center text-slate-400 italic py-6 text-xs md:text-sm">Không có vi phạm nào.</div>`;
-        else listVio.innerHTML = violations.map(h => buildItem(h, true)).join('');
-
-        if(praises.length === 0) listPraise.innerHTML = `<div class="text-center text-slate-400 italic py-6 text-xs md:text-sm">Chưa có khen thưởng.</div>`;
-        else listPraise.innerHTML = praises.map(h => buildItem(h, false)).join('');
-
+        if(violations.length === 0) listVio.innerHTML = `<div class="text-center text-slate-400 italic py-6 text-xs md:text-sm">Không có vi phạm nào.</div>`; else listVio.innerHTML = violations.map(h => buildItem(h, true)).join('');
+        if(praises.length === 0) listPraise.innerHTML = `<div class="text-center text-slate-400 italic py-6 text-xs md:text-sm">Chưa có khen thưởng.</div>`; else listPraise.innerHTML = praises.map(h => buildItem(h, false)).join('');
         lucide.createIcons(); openModalUi('profile-modal', 'profile-content'); 
     }
     function viewImage(base64Str) { document.getElementById('image-viewer-img').src = base64Str; openModalUi('image-viewer-modal', 'image-viewer-img'); }
@@ -834,44 +805,19 @@
     // --- Global Search ---
     function openGlobalSearch() { document.getElementById('global-search-input').value = ''; document.getElementById('global-search-results').innerHTML = `<div class="p-10 text-center text-slate-400 font-medium">Nhập thông tin tìm kiếm.</div>`; openModalUi('global-search-modal', 'global-search-content'); setTimeout(()=>document.getElementById('global-search-input').focus(), 100); }
     function handleGlobalSearch() { 
-        const queryRaw = document.getElementById('global-search-input').value.trim(); 
-        const query = removeAccents(queryRaw.toLowerCase());
+        const queryRaw = document.getElementById('global-search-input').value.trim(); const query = removeAccents(queryRaw.toLowerCase());
         const resContainer = document.getElementById('global-search-results'); 
         if(!query) { resContainer.innerHTML = `<div class="p-10 text-center text-slate-400 font-medium">Nhập thông tin tìm kiếm.</div>`; return; } 
-        
-        const filtered = students.filter(s => {
-            const nameMatch = removeAccents(s.name.toLowerCase()).includes(query);
-            const codeMatch = s.code && s.code.toLowerCase().includes(queryRaw.toLowerCase());
-            return nameMatch || codeMatch;
-        });
-
+        const filtered = students.filter(s => { const nameMatch = removeAccents(s.name.toLowerCase()).includes(query); const codeMatch = s.code && s.code.toLowerCase().includes(queryRaw.toLowerCase()); return nameMatch || codeMatch; });
         if(filtered.length === 0) { resContainer.innerHTML = `<div class="p-10 text-center text-rose-400 font-medium"><i data-lucide="frown" class="w-10 h-10 mx-auto mb-2 opacity-50"></i>Không tìm thấy.</div>`; lucide.createIcons(); return; } 
         resContainer.innerHTML = filtered.map(s => { let vioCount = (s.history || []).filter(h => h.type === 'sub').length; return `<div class="bg-white border-2 border-slate-100 p-4 rounded-2xl mb-3 flex flex-col md:flex-row gap-4 items-center md:items-start shadow-sm hover:border-theme transition cursor-pointer" onclick="closeModalUi('global-search-modal', 'global-search-content'); setTimeout(()=>openProfileModal(${s.id}), 300);"><div class="w-20 h-20 bg-theme-light rounded-2xl flex items-center justify-center text-4xl shrink-0 overflow-hidden shadow-sm">${getAvatarHtml(s.avatar)}</div><div class="flex-1 text-center md:text-left w-full"><h4 class="text-xl font-black text-slate-800 mb-1">${s.name}</h4><span class="inline-block bg-slate-100 text-slate-600 font-mono text-xs px-2.5 py-1 rounded font-bold border mb-2">ID: ${s.code}</span><div class="grid grid-cols-2 gap-x-4 gap-y-1 text-sm text-slate-500 font-medium mt-1"><div><i data-lucide="user" class="w-3.5 h-3.5 inline mr-1 text-theme"></i> ${s.gender}</div><div><i data-lucide="alert-circle" class="w-3.5 h-3.5 inline mr-1 text-rose-500"></i> Vi phạm: <span class="text-rose-600 font-bold">${vioCount}</span></div></div></div><div class="bg-amber-50 border border-amber-100 px-4 py-3 rounded-xl flex flex-col items-center justify-center shrink-0 w-full md:w-auto"><span class="text-[10px] font-bold text-amber-500 uppercase tracking-widest">Điểm</span><span class="text-2xl font-black text-amber-600 mt-1">${s.points}</span></div></div>`; }).join(''); lucide.createIcons(); 
     }
 
-    // --- Seating Chart (FIXED) ---
+    // --- Seating Chart ---
     function getShortName(student) { 
-        if(!student || !student.name) return ""; 
-        let parts = student.name.trim().split(' ').filter(Boolean); if(parts.length === 1) return parts[0]; 
-        let shortName = parts.slice(-2).join(' '); 
-        let conflicts = students.filter(s => { 
-            let p = s.name.trim().split(' ').filter(Boolean); 
-            if(p.length === 1) return p[0].toLowerCase() === shortName.toLowerCase(); 
-            return p.slice(-2).join(' ').toLowerCase() === shortName.toLowerCase(); 
-        }); 
-        if(conflicts.length > 1) { 
-            if(parts.length >= 3) shortName = parts.slice(-3).join(' '); 
-            let exactConflicts = conflicts.filter(s => { 
-                let p = s.name.trim().split(' ').filter(Boolean); 
-                let sName = p.length >= 3 ? p.slice(-3).join(' ') : p.join(' '); 
-                return removeAccents(sName.toLowerCase()) === removeAccents(shortName.toLowerCase()); 
-            }); 
-            if(exactConflicts.length > 1) { 
-                exactConflicts.sort((a,b) => a.id - b.id); 
-                let idx = exactConflicts.findIndex(s => s.id === student.id); 
-                shortName = parts[parts.length-1] + " " + String.fromCharCode(65 + idx); 
-            } 
-        } 
+        if(!student || !student.name) return ""; let parts = student.name.trim().split(' ').filter(Boolean); if(parts.length === 1) return parts[0]; let shortName = parts.slice(-2).join(' '); 
+        let conflicts = students.filter(s => { let p = s.name.trim().split(' ').filter(Boolean); if(p.length === 1) return p[0].toLowerCase() === shortName.toLowerCase(); return p.slice(-2).join(' ').toLowerCase() === shortName.toLowerCase(); }); 
+        if(conflicts.length > 1) { if(parts.length >= 3) shortName = parts.slice(-3).join(' '); let exactConflicts = conflicts.filter(s => { let p = s.name.trim().split(' ').filter(Boolean); let sName = p.length >= 3 ? p.slice(-3).join(' ') : p.join(' '); return removeAccents(sName.toLowerCase()) === removeAccents(shortName.toLowerCase()); }); if(exactConflicts.length > 1) { exactConflicts.sort((a,b) => a.id - b.id); let idx = exactConflicts.findIndex(s => s.id === student.id); shortName = parts[parts.length-1] + " " + String.fromCharCode(65 + idx); } } 
         return shortName; 
     }
     
@@ -881,10 +827,8 @@
           html += `<div class="flex flex-col gap-2 md:gap-3 bg-slate-100/50 p-3 md:p-4 rounded-3xl border border-slate-200 shadow-sm"><div class="text-center font-black text-[10px] md:text-xs text-slate-400 mb-1 md:mb-2 tracking-widest uppercase border-b border-slate-200 pb-2 md:pb-3">Dãy ${d}</div>`; 
           for(let b=1; b<=7; b++) { 
               html += `<div class="bg-white border border-slate-200 p-1.5 md:p-2 rounded-2xl grid grid-cols-2 gap-1.5 md:gap-2 shadow-sm relative group hover:border-[var(--c1)] transition"><div class="absolute -left-4 md:-left-6 top-1/2 -translate-y-1/2 text-[8px] md:text-[10px] text-white font-bold bg-slate-300 rounded-full w-4 h-4 md:w-5 md:h-5 flex items-center justify-center shadow-inner group-hover:bg-[var(--c1)] transition">${b}</div><div id="seat-d${d}-b${b}-1" onclick="handleSeatClick('d${d}-b${b}-1')" class="seat-slot border-2 border-dashed border-slate-200 h-[60px] md:h-[76px] rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-theme-light hover:border-[var(--c1)] transition relative overflow-hidden bg-slate-50/50"><i data-lucide="plus" class="w-4 h-4 md:w-5 md:h-5 text-slate-300"></i></div><div id="seat-d${d}-b${b}-2" onclick="handleSeatClick('d${d}-b${b}-2')" class="seat-slot border-2 border-dashed border-slate-200 h-[60px] md:h-[76px] rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-theme-light hover:border-[var(--c1)] transition relative overflow-hidden bg-slate-50/50"><i data-lucide="plus" class="w-4 h-4 md:w-5 md:h-5 text-slate-300"></i></div></div>`; 
-          } 
-          html += `</div>`; 
-      } 
-      grid.innerHTML = html; lucide.createIcons(); 
+          } html += `</div>`; 
+      } grid.innerHTML = html; lucide.createIcons(); 
     }
     
     function initSeatingCharts() { if(seatingCharts.length === 0) { seatingCharts.push({ id: Date.now().toString(), name: "Sơ đồ mặc định", layout: {} }); saveSeatingToStorage(); } currentChartId = seatingCharts[0].id; renderChartSelect(); applyChartLayout(); }
@@ -896,7 +840,7 @@
     function saveSeatingToStorage() { localStorage.setItem('seating_' + currentUser.id, JSON.stringify(seatingCharts)); }
     
     function applyChartLayout() {
-      renderEmptySeatingGrid(); // Render lại form lưới trống trước
+      renderEmptySeatingGrid(); 
       const chart = seatingCharts.find(c => c.id === currentChartId); if(!chart) return;
       for (const [seatId, studentId] of Object.entries(chart.layout)) {
         const student = students.find(s => s.id === studentId); const seatEl = document.getElementById('seat-' + seatId);
@@ -904,9 +848,7 @@
           const displayName = getShortName(student);
           seatEl.className = "seat-slot border-2 bg-gradient-to-b from-white to-slate-50 border-theme shadow-md border-solid h-[60px] md:h-[76px] rounded-xl flex flex-col items-center justify-center cursor-pointer transition relative overflow-hidden";
           seatEl.innerHTML = `<div class="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center text-2xl md:text-[32px] mt-1 rounded-full overflow-hidden shadow-sm">${getAvatarHtml(student.avatar)}</div><span class="font-black text-[9px] md:text-[10px] text-theme leading-tight truncate w-full text-center px-0.5 md:px-1 mt-1 uppercase tracking-wide" title="${student.name}">${displayName}</span>`;
-        } else if (!student && seatEl) {
-          delete chart.layout[seatId];
-        }
+        } else if (!student && seatEl) { delete chart.layout[seatId]; } 
       }
     }
     
@@ -933,21 +875,14 @@
     }
     
     function filterPickerList() { renderStudentPickerList(document.getElementById('search-student-seat').value); }
-    function removeStudentFromCurrentSeat() { const chart = seatingCharts.find(c => c.id === currentChartId); delete chart.layout[selectedSeatId]; saveSeatingToStorage(); applyChartLayout(); closeModalUi('pick-student-modal', 'pick-student-content'); }
+    function removeStudentFromCurrentSeat() { const chart = seatingCharts.find(c => c.id === currentChartId); if(chart) delete chart.layout[selectedSeatId]; saveSeatingToStorage(); applyChartLayout(); closeModalUi('pick-student-modal', 'pick-student-content'); }
     function assignStudentToSeat(studentId) { const chart = seatingCharts.find(c => c.id === currentChartId); if(chart) { for (const [key, val] of Object.entries(chart.layout)) { if(val === studentId) delete chart.layout[key]; } chart.layout[selectedSeatId] = studentId; saveSeatingToStorage(); applyChartLayout(); } closeModalUi('pick-student-modal', 'pick-student-content'); }
 
-    // --- Tuyên Dương ---
+    // --- Renders Main ---
     function renderPraiseGrid() {
       const grid = document.getElementById('praise-grid');
       if(students.length === 0) { grid.innerHTML = `<div class="col-span-full text-center py-10 text-slate-400 font-medium">Danh sách trống.</div>`; return; }
-      grid.innerHTML = students.map(s => `
-          <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 hover:shadow-md hover:border-amber-200 transition-all flex flex-col items-center group cursor-pointer" onclick="openPraiseModal(${s.id})">
-             <div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-slate-50 flex items-center justify-center text-3xl md:text-4xl mb-2 group-hover:scale-110 transition shadow-sm overflow-hidden">${getAvatarHtml(s.avatar)}</div>
-             <h4 class="font-black text-slate-800 text-center line-clamp-1 w-full text-xs md:text-sm px-1" title="${s.name}">${s.name}</h4>
-             <span class="text-[10px] font-bold text-slate-400 mt-1">ID: ${s.code || '...'}</span>
-             <div class="mt-3 w-full bg-amber-50 text-amber-600 text-[10px] md:text-xs font-bold py-1.5 rounded-lg text-center opacity-0 group-hover:opacity-100 transition border border-amber-200"><i data-lucide="award" class="w-3 h-3 inline"></i> Trao thưởng</div>
-          </div>
-      `).join(''); lucide.createIcons();
+      grid.innerHTML = students.map(s => `<div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 hover:shadow-md hover:border-amber-200 transition-all flex flex-col items-center group cursor-pointer" onclick="openPraiseModal(${s.id})"><div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-slate-50 flex items-center justify-center text-3xl md:text-4xl mb-2 group-hover:scale-110 transition shadow-sm overflow-hidden">${getAvatarHtml(s.avatar)}</div><h4 class="font-black text-slate-800 text-center line-clamp-1 w-full text-xs md:text-sm px-1" title="${s.name}">${s.name}</h4><span class="text-[10px] font-bold text-slate-400 mt-1">ID: ${s.code || '...'}</span><div class="mt-3 w-full bg-amber-50 text-amber-600 text-[10px] md:text-xs font-bold py-1.5 rounded-lg text-center opacity-0 group-hover:opacity-100 transition border border-amber-200"><i data-lucide="award" class="w-3 h-3 inline"></i> Trao thưởng</div></div>`).join(''); lucide.createIcons();
     }
     
     function openPraiseModal(id) {
@@ -964,26 +899,14 @@
         if(saveUserToStorage()) { closeModalUi('praise-modal', 'praise-content'); renderAll(); confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }}); setTimeout(() => showModal('success', 'Tuyệt vời!', `Đã trao danh hiệu "${badgeName}" cho ${s.name}.`), 350); }
     }
 
-    // --- Renders Main ---
     function renderRecentActivity() {
-        const list = document.getElementById('recent-activities-list');
-        if(!list) return;
-        let allHistory = [];
-        students.forEach(s => { if(s.history) { s.history.forEach(h => { allHistory.push({...h, studentName: s.name, avatar: s.avatar}); }); } });
-        allHistory.sort((a,b) => b.id - a.id);
-        const recent = allHistory.slice(0, 10);
-        
+        const list = document.getElementById('recent-activities-list'); if(!list) return;
+        let allHistory = []; students.forEach(s => { if(s.history) { s.history.forEach(h => { allHistory.push({...h, studentName: s.name, avatar: s.avatar}); }); } });
+        allHistory.sort((a,b) => b.id - a.id); const recent = allHistory.slice(0, 10);
         if(recent.length === 0) { list.innerHTML = `<div class="text-center text-slate-400 italic py-6 text-sm">Chưa có hoạt động nào gần đây.</div>`; return; }
         list.innerHTML = recent.map(h => {
             const isAdd = h.type === 'add'; const cClass = isAdd ? 'text-emerald-600 bg-emerald-50 border-emerald-200' : 'text-rose-600 bg-rose-50 border-rose-200'; const sign = isAdd ? '+' : '-';
-            return `<div class="flex items-center gap-3 p-3 bg-slate-50/80 rounded-2xl border border-slate-100 hover:bg-white hover:shadow-sm transition">
-                <div class="w-10 h-10 rounded-full overflow-hidden shrink-0 shadow-sm">${getAvatarHtml(h.avatar)}</div>
-                <div class="flex-1">
-                    <p class="text-sm text-slate-700 leading-tight"><b>${h.studentName}</b> ${h.reason}</p>
-                    <p class="text-[10px] text-slate-400 font-bold mt-0.5">${h.date}</p>
-                </div>
-                <div class="shrink-0 font-black ${cClass} px-2 py-1 rounded-lg border text-xs">${sign}${h.points}</div>
-            </div>`;
+            return `<div class="flex items-center gap-3 p-3 bg-slate-50/80 rounded-2xl border border-slate-100 hover:bg-white hover:shadow-sm transition"><div class="w-10 h-10 rounded-full overflow-hidden shrink-0 shadow-sm">${getAvatarHtml(h.avatar)}</div><div class="flex-1"><p class="text-sm text-slate-700 leading-tight"><b>${h.studentName}</b> ${h.reason}</p><p class="text-[10px] text-slate-400 font-bold mt-0.5">${h.date}</p></div><div class="shrink-0 font-black ${cClass} px-2 py-1 rounded-lg border text-xs">${sign}${h.points}</div></div>`;
         }).join('');
     }
 
@@ -998,19 +921,35 @@
       const queryRaw = document.getElementById('search-notebook').value.trim(); const query = removeAccents(queryRaw.toLowerCase()); const grid = document.getElementById('notebook-grid');
       let filtered = students; if (query) filtered = students.filter(s => removeAccents(s.name.toLowerCase()).includes(query) || (s.code && s.code.toLowerCase().includes(queryRaw.toLowerCase())));
       if (filtered.length === 0) { grid.innerHTML = `<div class="col-span-full text-center py-10 text-slate-400 font-medium">Không tìm thấy học sinh.</div>`; return; }
+      
+      const chart = seatingCharts.find(c => c.id === currentChartId);
+      const layout = chart ? chart.layout : {};
+
       grid.innerHTML = filtered.map(s => {
         let history = s.history || [];
         let praiseCount = history.filter(h => h.type === 'add').length;
         let vioCount = history.filter(h => h.type === 'sub').length;
-        return `<div class="bg-white rounded-[1.5rem] p-4 md:p-5 shadow-sm border border-slate-200 hover:border-theme transition-all flex flex-col relative">
+        
+        let to = '';
+        for (const [seatId, studentId] of Object.entries(layout)) {
+            if (studentId === s.id) {
+                const dayMatch = seatId.match(/d(\d+)-/);
+                if (dayMatch) to = dayMatch[1];
+                break;
+            }
+        }
+        const toStr = to ? ` - TỔ ${to}` : '';
+
+        return `
+        <div class="bg-white rounded-[1.5rem] p-4 md:p-5 shadow-sm border border-slate-200 hover:border-theme transition-all flex flex-col relative">
            <div class="flex items-center gap-3 mb-4">
               <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-3xl shrink-0 overflow-hidden border border-slate-100 cursor-pointer relative group" onclick="openAvatarModal(${s.id})" title="Đổi Avatar">
                  ${getAvatarHtml(s.avatar)}
                  <span class="absolute inset-0 bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition"><i data-lucide="camera" class="w-4 h-4"></i></span>
               </div>
               <div class="flex-1 min-w-0">
-                 <h4 class="text-[15px] font-bold text-slate-800 whitespace-nowrap overflow-hidden text-ellipsis" title="${s.name}">${s.name}</h4>
-                 <div class="text-[10px] text-theme font-bold mt-0.5 uppercase tracking-wider">${s.role ? s.role : 'Học sinh'}</div>
+                 <h4 class="text-[15px] font-bold text-slate-800 break-words leading-tight" title="${s.name}">${s.name}</h4>
+                 <div class="text-[10px] text-theme font-bold mt-1 uppercase tracking-wider">${s.role ? s.role : 'Học sinh'}${toStr}</div>
               </div>
               <button onclick="openEditModal(${s.id})" class="text-slate-300 hover:text-slate-600 transition p-1 shrink-0"><i data-lucide="more-vertical" class="w-5 h-5"></i></button>
            </div>
@@ -1093,49 +1032,13 @@
         }
       }, intervalTime);
     }
-    
-    function closeResultModal(removeStudent) {
-      if (removeStudent && currentWinner) { hiddenWheelIds.push(currentWinner.id); renderStage(); }
-      closeModalUi('result-modal', 'result-content');
-    }
-    
+    function closeResultModal(removeStudent) { if (removeStudent && currentWinner) { hiddenWheelIds.push(currentWinner.id); renderStage(); } closeModalUi('result-modal', 'result-content'); }
     function resetWheel() { hiddenWheelIds = []; renderStage(); }
 
     // --- Quản Lý Hệ Thống ---
-    function resetAllPoints() {
-        showModal('confirm', 'Reset Toàn Bộ Điểm', 'CẢNH BÁO: Đặt điểm của TOÀN BỘ học sinh về 0, đồng thời xóa sạch lịch sử đánh giá. Phù hợp khi bắt đầu Học Kỳ mới. Bạn chắc chắn chứ?', () => {
-            students.forEach(s => { s.points = 0; s.history = []; });
-            localStorage.setItem('students_' + currentUser.id, JSON.stringify(students));
-            renderAll();
-            setTimeout(() => showModal('success', 'Hoàn tất', 'Tất cả điểm số và lịch sử đã được đặt về 0.'), 350);
-        });
-    }
-
-    function exportData() {
-        const data = { user: currentUser, students: students, seatingCharts: seatingCharts, timetables: timetables, attendanceData: attendanceData };
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
-        const downloadAnchorNode = document.createElement('a'); downloadAnchorNode.setAttribute("href", dataStr); downloadAnchorNode.setAttribute("download", `Data_LopHoc_${currentUser.className}.json`);
-        document.body.appendChild(downloadAnchorNode); downloadAnchorNode.click(); downloadAnchorNode.remove();
-        showModal('success', 'Thành công', 'Đã lưu file dữ liệu (Backup) về máy!');
-    }
-
-    function importData(event) {
-        const file = event.target.files[0]; if(!file) return;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const data = JSON.parse(e.target.result);
-                if(data.user && data.students) {
-                    showModal('confirm', 'Khôi phục dữ liệu', 'Bạn có muốn GHI ĐÈ toàn bộ dữ liệu hiện tại bằng dữ liệu từ file Backup không?', () => {
-                        students = data.students || []; seatingCharts = data.seatingCharts || []; timetables = data.timetables || []; attendanceData = data.attendanceData || {};
-                        localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); localStorage.setItem('seating_' + currentUser.id, JSON.stringify(seatingCharts)); localStorage.setItem('timetables_' + currentUser.id, JSON.stringify(timetables)); localStorage.setItem('attendance_' + currentUser.id, JSON.stringify(attendanceData));
-                        initTimetables(); initSeatingCharts(); initAttendance(); renderAll(); updateUI();
-                        setTimeout(()=>showModal('success', 'Thành công', 'Đã khôi phục dữ liệu thành công!'), 400);
-                    });
-                } else throw new Error("Invalid");
-            } catch(error) { showModal('error', 'Lỗi', 'File dữ liệu không hợp lệ.'); }
-        }; reader.readAsText(file); event.target.value = '';
-    }
+    function resetAllPoints() { showModal('confirm', 'Reset Toàn Bộ Điểm', 'CẢNH BÁO: Đặt điểm của TOÀN BỘ học sinh về 0, đồng thời xóa sạch lịch sử đánh giá. Phù hợp khi bắt đầu Học Kỳ mới. Bạn chắc chắn chứ?', () => { students.forEach(s => { s.points = 0; s.history = []; }); localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); renderAll(); setTimeout(() => showModal('success', 'Hoàn tất', 'Tất cả điểm số và lịch sử đã được đặt về 0.'), 350); }); }
+    function exportData() { const data = { user: currentUser, students: students, seatingCharts: seatingCharts, timetables: timetables, attendanceData: attendanceData }; const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data)); const downloadAnchorNode = document.createElement('a'); downloadAnchorNode.setAttribute("href", dataStr); downloadAnchorNode.setAttribute("download", `Data_LopHoc_${currentUser.className}.json`); document.body.appendChild(downloadAnchorNode); downloadAnchorNode.click(); downloadAnchorNode.remove(); showModal('success', 'Thành công', 'Đã lưu file dữ liệu (Backup) về máy!'); }
+    function importData(event) { const file = event.target.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = function(e) { try { const data = JSON.parse(e.target.result); if(data.user && data.students) { showModal('confirm', 'Khôi phục dữ liệu', 'Bạn có muốn GHI ĐÈ toàn bộ dữ liệu hiện tại bằng dữ liệu từ file Backup không?', () => { students = data.students || []; seatingCharts = data.seatingCharts || []; timetables = data.timetables || []; attendanceData = data.attendanceData || {}; localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); localStorage.setItem('seating_' + currentUser.id, JSON.stringify(seatingCharts)); localStorage.setItem('timetables_' + currentUser.id, JSON.stringify(timetables)); localStorage.setItem('attendance_' + currentUser.id, JSON.stringify(attendanceData)); initTimetables(); initSeatingCharts(); initAttendance(); renderAll(); updateUI(); setTimeout(()=>showModal('success', 'Thành công', 'Đã khôi phục dữ liệu thành công!'), 400); }); } else throw new Error("Invalid"); } catch(error) { showModal('error', 'Lỗi', 'File dữ liệu không hợp lệ.'); } }; reader.readAsText(file); event.target.value = ''; }
 
     function renderAll() { renderStudentTable(); renderStage(); renderOverview(); renderNotebook(); renderPraiseGrid(); applyChartLayout(); }
   </script>
