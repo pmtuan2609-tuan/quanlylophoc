@@ -125,6 +125,7 @@
         <div class="absolute inset-0 bg-white/5 opacity-50 blur-xl rounded-full"></div>
         <div id="sidebar-class-logo" class="w-20 h-20 rounded-2xl bg-white/10 backdrop-blur border border-white/20 flex items-center justify-center font-black text-2xl shadow-lg mb-3 relative z-10 whitespace-nowrap px-2">...</div>
         <h1 id="sidebar-slogan" class="font-bold text-sm tracking-wider uppercase text-center text-white/90 relative z-10 drop-shadow-md px-2">...</h1>
+        <p class="text-[11px] text-white/50 mt-1 uppercase tracking-widest font-semibold">Hệ thống quản lý</p>
       </div>
 
       <nav class="mt-2 px-4 space-y-1.5 font-medium pb-6">
@@ -170,7 +171,9 @@
       </div>
       
       <div class="flex items-center gap-3 md:gap-4 shrink-0">
-        <button onclick="openGlobalSearch()" class="hidden md:flex items-center gap-1.5 text-xs bg-white px-3 py-2 rounded-full font-bold shadow-sm border border-slate-200 text-slate-500 hover:text-theme transition"><i data-lucide="search" class="w-3.5 h-3.5"></i> Tra cứu</button>
+        <button onclick="openModalUi('global-search-modal', 'global-search-content'); document.getElementById('global-search-input').focus();" class="hidden md:flex items-center gap-1.5 text-xs bg-white px-3 py-2 rounded-full font-bold shadow-sm border border-slate-200 text-slate-500 hover:text-theme hover:border-theme transition">
+          <i data-lucide="search" class="w-3.5 h-3.5"></i> Tra cứu
+        </button>
         <span id="header-year" class="hidden md:inline-flex text-xs bg-theme-light px-3 py-1.5 rounded-full font-bold shadow-sm items-center gap-1.5 border border-slate-100 whitespace-nowrap"><i data-lucide="calendar" class="w-3 h-3"></i> Năm học ...</span>
         <div class="relative group cursor-pointer shrink-0" onclick="document.getElementById('avatar-upload').click()" title="Đổi ảnh đại diện GV">
           <div id="header-avatar" class="w-10 h-10 rounded-full bg-theme-grad text-white flex items-center justify-center font-bold text-sm shadow-md border-2 border-white overflow-hidden transition transform group-hover:scale-105">GV</div>
@@ -219,7 +222,7 @@
               <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Nhập Excel
             </button>
             <input type="file" id="excel-upload" accept=".xlsx, .xls" class="hidden" onchange="handleExcelUpload(event)">
-            <button onclick="deleteAllStudents()" class="flex-[1] sm:flex-auto flex items-center justify-center gap-2 bg-rose-50 text-rose-600 border border-rose-200 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-rose-100 transition shadow-sm whitespace-nowrap">
+            <button onclick="deleteAllStudents()" class="flex-[1] sm:flex-auto flex items-center justify-center gap-2 bg-rose-50 text-rose-600 border border-rose-200 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-rose-100 transition shadow-sm whitespace-nowrap" title="Xóa toàn bộ học sinh">
               <i data-lucide="trash-2" class="w-4 h-4"></i> Xóa tất cả
             </button>
           </div>
@@ -341,7 +344,7 @@
       <section id="tab-points" class="tab-section hidden h-full"><div class="flex flex-col items-center justify-center h-full text-slate-400 bg-white rounded-3xl border border-dashed border-slate-200 p-6 md:p-10 text-center shadow-sm"><div class="w-20 h-20 md:w-24 md:h-24 bg-blue-50 rounded-full flex items-center justify-center mb-4 md:mb-6"><i data-lucide="star" class="w-10 h-10 md:w-12 md:h-12 text-blue-400"></i></div><h3 class="text-xl md:text-2xl font-black text-slate-700">Lịch sử Thành Tích</h3><p class="text-xs md:text-sm mt-2 font-medium">Sử dụng nút Hồ sơ trong Sổ theo dõi để xem chi tiết.</p></div></section>
       <section id="tab-gifts" class="tab-section hidden h-full"><div class="flex flex-col items-center justify-center h-full text-slate-400 bg-white rounded-3xl border border-dashed border-slate-200 p-6 md:p-10 text-center shadow-sm"><div class="w-20 h-20 md:w-24 md:h-24 bg-rose-50 rounded-full flex items-center justify-center mb-4 md:mb-6"><i data-lucide="gift" class="w-10 h-10 md:w-12 md:h-12 text-rose-400"></i></div><h3 class="text-xl md:text-2xl font-black text-slate-700">Cửa hàng Quà Tặng</h3><p class="text-xs md:text-sm mt-2 font-medium">Học sinh dùng điểm đổi quà. Đang phát triển.</p></div></section>
 
-      <!-- CÀI ĐẶT -->
+      <!-- TAB CÀI ĐẶT -->
       <section id="tab-settings" class="tab-section hidden h-full">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 max-w-5xl">
           <div class="bg-white p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm">
@@ -385,10 +388,10 @@
   </main>
 
   <!-- ========================================== -->
-  <!-- 4. HỆ THỐNG MODAL (POPUPS) TỐI ƯU HIỂN THỊ   -->
+  <!-- 4. HỆ THỐNG MODAL (POPUPS) MỚI CHUẨN       -->
   <!-- ========================================== -->
 
-  <!-- Modal Báo Lỗi Tùy Chỉnh (Z: 700 - Cao nhất) -->
+  <!-- Modal Báo Lỗi Tùy Chỉnh -->
   <div id="custom-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[700] p-4 opacity-0 transition-opacity duration-300">
     <div class="bg-white rounded-[2rem] p-6 md:p-8 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col items-center border border-white/20" id="custom-modal-content">
       <div id="custom-modal-icon" class="w-20 h-20 rounded-full flex items-center justify-center mb-5 shadow-inner ring-4 ring-white"></div>
@@ -400,12 +403,12 @@
 
   <!-- Modal Chọn Avatar HS -->
   <div id="avatar-picker-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[600] p-4 opacity-0 transition-opacity duration-300">
-    <div class="bg-white rounded-3xl p-5 md:p-6 w-full max-w-md shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col" id="avatar-picker-content">
+    <div class="bg-white rounded-3xl p-5 md:p-6 w-full max-w-md shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col overflow-hidden" id="avatar-picker-content">
       <div class="flex justify-between items-center mb-4 border-b pb-3">
         <h3 class="font-black text-lg md:text-xl text-slate-800">Chọn Ảnh Học Sinh</h3>
         <button onclick="closeModalUi('avatar-picker-modal', 'avatar-picker-content')" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-full text-slate-500 transition"><i data-lucide="x" class="w-4 h-4"></i></button>
       </div>
-      <label class="w-full flex items-center justify-center gap-2 bg-theme-light text-theme py-3.5 rounded-xl font-bold cursor-pointer hover:scale-[1.02] transition mb-5 border border-dashed border-theme">
+      <label class="w-full flex items-center justify-center gap-2 bg-theme-light text-theme py-3.5 rounded-xl font-bold cursor-pointer hover:scale-[1.02] transition mb-5 border border-dashed border-theme shrink-0">
           <i data-lucide="upload" class="w-5 h-5"></i> Tải ảnh từ máy
           <input type="file" accept="image/*" class="hidden" onchange="handleStudentAvatarUpload(event)">
       </label>
@@ -417,20 +420,49 @@
     </div>
   </div>
 
-  <!-- Modal Sửa Thông Tin HS -->
+  <!-- Modal Sửa Thông Tin HS (MỚI: BẢN COLORFUL & ĐẸP HƠN) -->
   <div id="edit-student-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[600] p-4 opacity-0 transition-opacity duration-300">
-    <div class="bg-white rounded-3xl p-6 md:p-8 w-full max-w-md shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col" id="edit-student-content">
-      <h3 class="font-black text-xl text-slate-800 mb-4">Sửa thông tin học sinh</h3>
-      <div class="space-y-4">
+    <div class="bg-white rounded-[2rem] w-full max-w-md shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col overflow-hidden border border-white/20" id="edit-student-content">
+      
+      <!-- Header Gradient Nhiều màu -->
+      <div class="bg-theme-grad p-6 md:p-8 text-white flex justify-between items-center relative overflow-hidden rounded-t-[2rem]">
+         <div class="absolute top-0 right-0 w-40 h-40 bg-white/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+         <div class="relative z-10 flex items-center gap-3">
+           <div class="bg-white/20 p-2.5 rounded-2xl backdrop-blur-md shadow-inner border border-white/30"><i data-lucide="user-pen" class="w-7 h-7 text-white"></i></div>
+           <div>
+               <h3 class="font-black text-2xl drop-shadow-sm leading-tight">Sửa hồ sơ</h3>
+               <p class="text-[11px] font-semibold text-white/80 uppercase tracking-widest mt-0.5">Cập nhật thông tin</p>
+           </div>
+         </div>
+         <button onclick="closeModalUi('edit-student-modal', 'edit-student-content')" class="relative z-10 p-2 bg-black/10 hover:bg-black/20 rounded-full transition"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+
+      <!-- Form Nội Dung -->
+      <div class="p-6 md:p-8 space-y-5 bg-slate-50/50">
         <input type="hidden" id="edit-hs-id">
-        <div><label class="text-xs font-bold text-slate-600">Họ và Tên</label><input type="text" id="edit-hs-name" class="w-full mt-1 px-4 py-2.5 border border-slate-200 rounded-xl outline-none ring-theme font-semibold"></div>
-        <div class="grid grid-cols-2 gap-4">
-          <div><label class="text-xs font-bold text-slate-600">Giới tính</label><select id="edit-hs-gender" class="w-full mt-1 px-4 py-2.5 border border-slate-200 rounded-xl outline-none ring-theme font-semibold bg-white"><option value="Nam">Nam</option><option value="Nữ">Nữ</option></select></div>
-          <div><label class="text-xs font-bold text-slate-600">Ngày sinh</label><input type="text" id="edit-hs-dob" placeholder="DD/MM/YYYY" class="w-full mt-1 px-4 py-2.5 border border-slate-200 rounded-xl outline-none ring-theme font-semibold"></div>
-        </div>
+        
         <div>
-           <label class="text-xs font-bold text-slate-600 flex items-center gap-1">Chức vụ <span class="text-[9px] text-slate-400 font-normal">(Để trống nếu là học sinh thường)</span></label>
-           <select id="edit-hs-role" class="w-full mt-1 px-4 py-2.5 border border-slate-200 rounded-xl outline-none ring-theme font-semibold bg-white">
+           <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-1.5"><i data-lucide="type" class="w-3.5 h-3.5 text-theme"></i> Họ và Tên</label>
+           <input type="text" id="edit-hs-name" class="w-full px-4 py-3.5 border-2 border-slate-100 rounded-2xl outline-none focus:border-theme focus:ring-4 focus:ring-[var(--c1)]/10 font-bold text-slate-800 bg-white shadow-sm transition-all text-base">
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+             <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-1.5"><i data-lucide="users" class="w-3.5 h-3.5 text-blue-500"></i> Giới tính</label>
+             <select id="edit-hs-gender" class="w-full px-4 py-3.5 border-2 border-slate-100 rounded-2xl outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-400/10 font-bold text-slate-800 bg-white shadow-sm transition-all text-base">
+                <option value="Nam">Nam</option>
+                <option value="Nữ">Nữ</option>
+             </select>
+          </div>
+          <div>
+             <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-1.5"><i data-lucide="calendar-days" class="w-3.5 h-3.5 text-rose-500"></i> Ngày sinh</label>
+             <input type="text" id="edit-hs-dob" placeholder="DD/MM/YYYY" class="w-full px-4 py-3.5 border-2 border-slate-100 rounded-2xl outline-none focus:border-rose-400 focus:ring-4 focus:ring-rose-400/10 font-bold text-slate-800 bg-white shadow-sm transition-all text-base">
+          </div>
+        </div>
+
+        <div>
+           <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-1.5"><i data-lucide="briefcase" class="w-3.5 h-3.5 text-amber-500"></i> Chức vụ <span class="text-[9px] font-medium text-slate-400 normal-case ml-auto">(Để trống nếu là HS thường)</span></label>
+           <select id="edit-hs-role" class="w-full px-4 py-3.5 border-2 border-slate-100 rounded-2xl outline-none focus:border-amber-400 focus:ring-4 focus:ring-amber-400/10 font-bold text-slate-800 bg-white shadow-sm transition-all text-base">
               <option value="">Học sinh</option>
               <option value="Lớp trưởng">Lớp trưởng</option>
               <option value="Lớp phó học tập">Lớp phó học tập</option>
@@ -442,9 +474,11 @@
            </select>
         </div>
       </div>
-      <div class="flex gap-3 mt-6">
-        <button onclick="closeModalUi('edit-student-modal', 'edit-student-content')" class="flex-[0.4] bg-slate-100 text-slate-600 font-bold py-3 rounded-xl hover:bg-slate-200 transition">Hủy</button>
-        <button onclick="saveStudentEdit()" class="flex-1 bg-theme-grad text-white font-bold py-3 rounded-xl shadow-lg hover:scale-[1.02] transition">Lưu thay đổi</button>
+      
+      <!-- Footer Button -->
+      <div class="flex gap-3 px-6 pb-6 md:px-8 md:pb-8 bg-slate-50/50 rounded-b-[2rem]">
+        <button onclick="closeModalUi('edit-student-modal', 'edit-student-content')" class="flex-[0.35] bg-slate-200 text-slate-600 font-black py-4 rounded-2xl hover:bg-slate-300 hover:text-slate-700 transition-all text-sm">HỦY</button>
+        <button onclick="saveStudentEdit()" class="flex-1 bg-theme-grad text-white font-black py-4 rounded-2xl shadow-xl shadow-[var(--c1)]/20 hover:scale-[1.02] transition-all flex items-center justify-center gap-2 text-sm"><i data-lucide="save" class="w-4 h-4"></i> LƯU THAY ĐỔI</button>
       </div>
     </div>
   </div>
@@ -534,7 +568,7 @@
     </div>
   </div>
 
-  <!-- Modal Xem Ảnh To (Z: 800) -->
+  <!-- Modal Xem Ảnh To -->
   <div id="image-viewer-modal" class="fixed inset-0 bg-black/90 backdrop-blur-xl hidden items-center justify-center z-[800] p-4 opacity-0 transition-opacity duration-300" onclick="closeModalUi('image-viewer-modal', 'image-viewer-img'); setTimeout(()=>document.getElementById('image-viewer-img').src='', 300);">
       <button class="absolute top-6 right-6 text-white/50 hover:text-white transition bg-white/10 hover:bg-white/20 p-3 rounded-full"><i data-lucide="x" class="w-6 h-6"></i></button>
       <img id="image-viewer-img" src="" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl transform scale-95 transition-transform duration-300">
@@ -589,7 +623,7 @@
   </div>
 
   <!-- ========================================== -->
-  <!-- 5. JAVASCRIPT ĐIỀU KHIỂN CHÍNH               -->
+  <!-- JAVASCRIPT ĐIỀU KHIỂN                      -->
   <!-- ========================================== -->
   <script>
     // --- Constants ---
@@ -639,6 +673,7 @@
       else if (type === 'warning' || type === 'confirm') { iconHtml = '<i data-lucide="alert-triangle" class="w-10 h-10 text-amber-500"></i>'; iconClass = 'bg-amber-100'; } 
       else { iconHtml = '<i data-lucide="info" class="w-10 h-10 text-blue-500"></i>'; iconClass = 'bg-blue-100'; }
       iconEl.innerHTML = iconHtml; iconEl.className = `w-20 h-20 rounded-full flex items-center justify-center mb-5 shadow-inner ring-4 ring-white ${iconClass}`; lucide.createIcons();
+
       if (onConfirm) {
           actionsEl.innerHTML = `<button id="btn-modal-cancel" class="flex-[0.4] bg-slate-100 text-slate-600 font-bold py-3.5 rounded-xl hover:bg-slate-200 transition">Hủy</button><button id="btn-modal-confirm" class="flex-1 bg-rose-500 text-white font-bold py-3.5 rounded-xl hover:bg-rose-600 transition shadow-lg shadow-rose-500/30">Đồng ý</button>`;
           document.getElementById('btn-modal-cancel').onclick = () => closeModalUi('custom-modal', 'custom-modal-content');
@@ -666,13 +701,13 @@
     function toggleSidebar() { const sidebar = document.getElementById('main-sidebar'); const overlay = document.getElementById('mobile-overlay'); sidebar.classList.toggle('-translate-x-full'); overlay.classList.toggle('hidden'); }
     function switchTab(tabId) { document.querySelectorAll('.tab-section').forEach(sec => sec.classList.add('hidden')); document.querySelectorAll('.tab-btn').forEach(btn => { btn.classList.remove('bg-theme-grad', 'text-white', 'shadow-lg', 'font-bold'); btn.classList.add('hover:bg-white/10', 'text-white/70'); }); document.getElementById(tabId).classList.remove('hidden'); const activeBtn = document.getElementById('btn-' + tabId); if(activeBtn) { activeBtn.classList.remove('hover:bg-white/10', 'text-white/70'); activeBtn.classList.add('bg-theme-grad', 'text-white', 'shadow-lg', 'font-bold'); } const titles = { 'tab-overview': 'Tổng Quan Lớp', 'tab-students': 'Danh Sách Lớp', 'tab-notebook': 'Sổ Theo Dõi', 'tab-wheel': 'Vòng Quay May Mắn', 'tab-seating': 'Sơ Đồ Chỗ Ngồi', 'tab-praise': 'Tuyên Dương', 'tab-points': 'Thành Tích', 'tab-gifts': 'Quà Tặng', 'tab-settings': 'Cài Đặt & Giao Diện' }; document.getElementById('header-title').innerText = titles[tabId] || 'Hệ Thống'; if(window.innerWidth < 1024) toggleSidebar(); }
     function updateUI() { document.getElementById('sidebar-class-logo').innerText = currentUser.className; document.getElementById('sidebar-slogan').innerText = currentUser.slogan; document.getElementById('sidebar-teacher-name').innerText = "GVCN: " + (currentUser.teacherName || "..."); document.getElementById('header-year').innerHTML = `<i data-lucide="calendar" class="w-3 h-3"></i> Năm học ${currentUser.year}`; let sloganEl = document.getElementById('banner-slogan'); if (sloganEl) sloganEl.innerText = currentUser.slogan; document.getElementById('stat-student-count').innerText = students.length; if(currentUser.avatar) document.getElementById('header-avatar').innerHTML = `<img src="${currentUser.avatar}" class="w-full h-full object-cover">`; if(currentUser.cover) document.getElementById('cover-photo').style.backgroundImage = `url('${currentUser.cover}')`; lucide.createIcons(); }
+    function handleCoverUpload(e) { const file = e.target.files[0]; if(!file) return; compressImage(file, 1200, 800, function(dataUrl) { currentUser.cover = dataUrl; if(saveUserToStorage()) document.getElementById('cover-photo').style.backgroundImage = `url('${currentUser.cover}')`; }); e.target.value = ''; }
+    function handleAvatarUpload(e) { const file = e.target.files[0]; if(!file) return; compressImage(file, 300, 300, function(dataUrl) { currentUser.avatar = dataUrl; if(saveUserToStorage()) updateUI(); }); e.target.value = ''; }
 
     // --- Excel & Students CRUD ---
     function handleExcelUpload(e) {
       const file = e.target.files[0]; if(!file) return; 
-      // Reset input ngay để có thể tải lại file cùng tên lần sau
-      e.target.value = '';
-      
+      showModal('info', 'Đang xử lý...', 'Vui lòng chờ hệ thống đọc file Excel.');
       const reader = new FileReader();
       reader.onload = function(event) {
         try {
@@ -689,16 +724,16 @@
             }
             if(newStudents.length > 0) { 
               if(students.length > 0) {
-                  showModal('confirm', 'Tải danh sách', `Đã tìm thấy ${newStudents.length} HS trong file.\nBạn muốn XÓA BỎ danh sách lớp cũ để ĐÈ LÊN MỚI không?`, () => { 
-                      students = newStudents; localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); seatingCharts.forEach(c => c.layout = {}); saveSeatingToStorage(); renderAll(); updateUI(); showModal('success', 'Thành công', `Đã tạo danh sách mới gồm ${newStudents.length} học sinh!`); 
-                  });
-              } else { 
-                  students = newStudents; localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); renderAll(); updateUI(); showModal('success', 'Thành công', `Đã nhập ${students.length} học sinh!`); 
-              }
-            } else { showModal('error', 'Lỗi dữ liệu', 'Không tìm thấy dữ liệu học sinh! Đảm bảo Cột B là Họ và Tên.'); }
-        } catch(err) { showModal('error', 'Lỗi file', 'Không thể đọc định dạng file Excel này.'); }
-      }; 
-      reader.readAsArrayBuffer(file);
+                  closeCustomModal();
+                  setTimeout(() => {
+                      showModal('confirm', 'Tải danh sách', `Đã tìm thấy ${newStudents.length} HS trong file.\nBạn muốn XÓA BỎ danh sách lớp cũ để ĐÈ LÊN MỚI không?`, () => { 
+                          students = newStudents; localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); seatingCharts.forEach(c => c.layout = {}); saveSeatingToStorage(); renderAll(); updateUI(); showModal('success', 'Thành công', `Đã tạo danh sách mới gồm ${newStudents.length} học sinh!`); 
+                      });
+                  }, 400);
+              } else { students = newStudents; localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); renderAll(); updateUI(); closeCustomModal(); setTimeout(() => showModal('success', 'Thành công', `Đã nhập ${students.length} học sinh!`), 400); }
+            } else { closeCustomModal(); setTimeout(() => showModal('error', 'Lỗi dữ liệu', 'Không tìm thấy dữ liệu học sinh! Đảm bảo Cột B là Họ và Tên.'), 400); }
+        } catch(err) { closeCustomModal(); setTimeout(() => showModal('error', 'Lỗi file', 'Không thể đọc định dạng file Excel này.'), 400); }
+      }; reader.readAsArrayBuffer(file); e.target.value = '';
     }
     
     function deleteAllStudents() {
@@ -714,14 +749,30 @@
         showModal('confirm', 'Xác nhận xóa', 'Xóa học sinh này khỏi hệ thống?', () => { 
             students = students.filter(s => s.id !== id); localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); 
             hiddenWheelIds = hiddenWheelIds.filter(hid => hid !== id); 
-            // Cập nhật lại sơ đồ ghế
             seatingCharts.forEach(chart => { for (const [k, v] of Object.entries(chart.layout)) { if(v === id) delete chart.layout[k]; } }); saveSeatingToStorage();
             renderAll(); updateUI(); 
         }); 
     }
     
-    function openEditModal(id) { const s = students.find(x => x.id === id); if(!s) return; document.getElementById('edit-hs-id').value = s.id; document.getElementById('edit-hs-name').value = s.name; document.getElementById('edit-hs-gender').value = s.gender || 'Nam'; document.getElementById('edit-hs-dob').value = s.dob || ''; document.getElementById('edit-hs-role').value = s.role || ''; openModalUi('edit-student-modal', 'edit-student-content'); }
-    function saveStudentEdit() { const id = parseInt(document.getElementById('edit-hs-id').value); const name = document.getElementById('edit-hs-name').value.trim(); if(!name) return showModal('warning', 'Lỗi', 'Vui lòng nhập tên học sinh!'); let s = students.find(x => x.id === id); if(s) { s.name = name; s.gender = document.getElementById('edit-hs-gender').value; s.dob = document.getElementById('edit-hs-dob').value.trim(); s.role = document.getElementById('edit-hs-role').value; localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); renderAll(); closeModalUi('edit-student-modal', 'edit-student-content'); setTimeout(()=>showModal('success', 'Thành công', 'Đã cập nhật thông tin!'), 350); } }
+    function openEditModal(id) { 
+        const s = students.find(x => x.id === id); if(!s) return; 
+        document.getElementById('edit-hs-id').value = s.id; 
+        document.getElementById('edit-hs-name').value = s.name; 
+        document.getElementById('edit-hs-gender').value = s.gender || 'Nam'; 
+        document.getElementById('edit-hs-dob').value = s.dob || ''; 
+        document.getElementById('edit-hs-role').value = s.role || ''; 
+        openModalUi('edit-student-modal', 'edit-student-content'); 
+    }
+    function saveStudentEdit() { 
+        const id = parseInt(document.getElementById('edit-hs-id').value); const name = document.getElementById('edit-hs-name').value.trim(); 
+        if(!name) return showModal('warning', 'Lỗi', 'Vui lòng nhập tên học sinh!'); 
+        let s = students.find(x => x.id === id); 
+        if(s) { 
+            s.name = name; s.gender = document.getElementById('edit-hs-gender').value; s.dob = document.getElementById('edit-hs-dob').value.trim(); s.role = document.getElementById('edit-hs-role').value; 
+            localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); renderAll(); 
+            closeModalUi('edit-student-modal', 'edit-student-content'); setTimeout(()=>showModal('success', 'Thành công', 'Đã cập nhật thông tin!'), 350); 
+        } 
+    }
 
     // --- Avatars ---
     function openAvatarModal(studentId) { studentToEditAvatar = studentId; const renderGroup = (id, list) => { document.getElementById(id).innerHTML = list.map(a => `<button onclick="selectAvatar('${a}')" class="text-3xl p-2 hover:bg-slate-100 rounded-xl transition hover:scale-110">${a}</button>`).join(''); }; renderGroup('avatars-male', AVATARS.male); renderGroup('avatars-female', AVATARS.female); renderGroup('avatars-special', AVATARS.special); openModalUi('avatar-picker-modal', 'avatar-picker-content'); }
@@ -788,7 +839,6 @@
       } 
       grid.innerHTML = html; lucide.createIcons(); 
     }
-    
     function initSeatingCharts() { if(seatingCharts.length === 0) { seatingCharts.push({ id: Date.now().toString(), name: "Sơ đồ mặc định", layout: {} }); saveSeatingToStorage(); } currentChartId = seatingCharts[0].id; renderChartSelect(); applyChartLayout(); }
     function renderChartSelect() { const select = document.getElementById('seating-select'); select.innerHTML = seatingCharts.map(c => `<option value="${c.id}">${c.name}</option>`).join(''); select.value = currentChartId; document.getElementById('btn-delete-chart').classList.toggle('hidden', seatingCharts.length <= 1); }
     function changeSeatingChart() { currentChartId = document.getElementById('seating-select').value; applyChartLayout(); }
@@ -796,7 +846,6 @@
     function confirmCreateChart() { const name = document.getElementById('new-chart-name').value.trim(); if(!name) return showModal('warning', 'Thiếu thông tin', 'Vui lòng nhập tên sơ đồ!'); const newChart = { id: Date.now().toString(), name: name, layout: {} }; seatingCharts.push(newChart); saveSeatingToStorage(); currentChartId = newChart.id; renderChartSelect(); applyChartLayout(); closeModalUi('new-chart-modal', 'new-chart-content'); }
     function deleteCurrentChart() { if(seatingCharts.length <= 1) return showModal('error', 'Không thể xóa', 'Bắt buộc phải có ít nhất 1 sơ đồ!'); showModal('confirm', 'Xác nhận xóa', 'Xóa sơ đồ lớp này?', () => { seatingCharts = seatingCharts.filter(c => c.id !== currentChartId); currentChartId = seatingCharts[0].id; saveSeatingToStorage(); renderChartSelect(); applyChartLayout(); }); }
     function saveSeatingToStorage() { localStorage.setItem('seating_' + currentUser.id, JSON.stringify(seatingCharts)); }
-    
     function applyChartLayout() {
       const chart = seatingCharts.find(c => c.id === currentChartId); if(!chart) return;
       document.querySelectorAll('.seat-slot').forEach(el => { el.innerHTML = `<i data-lucide="plus" class="w-4 h-4 md:w-5 md:h-5 text-slate-300"></i>`; el.className = "seat-slot border-2 border-dashed border-slate-200 h-[60px] md:h-[76px] rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-theme-light transition relative overflow-hidden bg-slate-50/50"; }); lucide.createIcons();
@@ -811,13 +860,11 @@
         }
       }
     }
-    
     function handleSeatClick(seatId) {
       if(students.length === 0) return showModal('warning', 'Danh sách trống', 'Cần thêm học sinh trước khi xếp chỗ!');
       selectedSeatId = seatId; const chart = seatingCharts.find(c => c.id === currentChartId); document.getElementById('search-student-seat').value = ''; const btnRemove = document.getElementById('btn-remove-seat');
       if(chart.layout[seatId]) btnRemove.classList.remove('hidden'); else btnRemove.classList.add('hidden'); renderStudentPickerList(); openModalUi('pick-student-modal', 'pick-student-content');
     }
-    
     function renderStudentPickerList(filterText = '') {
       const chart = seatingCharts.find(c => c.id === currentChartId); const listContainer = document.getElementById('picker-list');
       let filtered = students; if(filterText) filtered = students.filter(s => s.name.toLowerCase().includes(filterText.toLowerCase()));
@@ -828,7 +875,6 @@
         return `<div onclick="assignStudentToSeat(${s.id})" class="flex items-center gap-3 md:gap-4 p-2 md:p-3 rounded-xl cursor-pointer border-2 ${bgClass} transition"><div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-2xl md:text-3xl bg-white rounded-full shadow-sm overflow-hidden">${getAvatarHtml(s.avatar)}</div><div class="flex-1"><div class="font-black text-xs md:text-sm text-slate-800">${s.name}</div>${seatTxt ? `<div class="text-[9px] md:text-[10px] text-amber-600 font-bold tracking-wide mt-0.5"><i data-lucide="map-pin" class="w-2 h-2 md:w-3 md:h-3 inline mr-0.5"></i>${seatTxt}</div>` : `<div class="text-[9px] md:text-[10px] text-emerald-500 font-bold tracking-wide mt-0.5"><i data-lucide="check" class="w-2 h-2 md:w-3 md:h-3 inline mr-0.5"></i>Chưa xếp chỗ</div>`}</div>${isSel ? `<i data-lucide="check-circle-2" class="w-5 h-5 md:w-6 md:h-6 text-theme"></i>` : ``}</div>`;
       }).join(''); lucide.createIcons();
     }
-    
     function filterPickerList() { renderStudentPickerList(document.getElementById('search-student-seat').value); }
     function removeStudentFromCurrentSeat() { const chart = seatingCharts.find(c => c.id === currentChartId); delete chart.layout[selectedSeatId]; saveSeatingToStorage(); applyChartLayout(); closeModalUi('pick-student-modal', 'pick-student-content'); }
     function assignStudentToSeat(studentId) { const chart = seatingCharts.find(c => c.id === currentChartId); for (const [key, val] of Object.entries(chart.layout)) { if(val === studentId) delete chart.layout[key]; } chart.layout[selectedSeatId] = studentId; saveSeatingToStorage(); applyChartLayout(); closeModalUi('pick-student-modal', 'pick-student-content'); }
@@ -889,7 +935,7 @@
       grid.innerHTML = visibleStudents.map(s => `<div id="card-${s.id}" class="student-card bg-white border border-slate-200 p-2 md:p-3 rounded-2xl flex flex-col items-center justify-center text-center transition-all duration-300 shadow-sm"><div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-3xl md:text-4xl mb-1 md:mb-2 rounded-full overflow-hidden">${getAvatarHtml(s.avatar)}</div><span class="font-bold text-[10px] md:text-[11px] truncate w-full text-slate-700" title="${s.name}">${s.name}</span></div>`).join('');
     }
 
-    // --- VÒNG QUAY ---
+    // --- VÒNG QUAY MAY MẮN ---
     function startSpin() {
       const visibleStudents = students.filter(s => !hiddenWheelIds.includes(s.id));
       if (visibleStudents.length === 0) return showModal('warning', 'Sân khấu trống', 'Không có học sinh nào trên sân khấu để gọi!');
