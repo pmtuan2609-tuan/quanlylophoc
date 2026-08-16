@@ -15,6 +15,7 @@
       --s1: #1e1b4b; /* Nền sidebar 1 */
       --s2: #312e81; /* Nền sidebar 2 */
     }
+
     .bg-theme-grad { background: linear-gradient(to right, var(--c1), var(--c2)); }
     .bg-theme-sidebar { background: linear-gradient(to bottom, var(--s1), var(--s2), var(--s1)); }
     .text-theme-grad { background: linear-gradient(to right, var(--c1), var(--c2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -27,41 +28,45 @@
     .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: #f8fafc; border-radius: 4px; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-    
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    /* Hiệu ứng Vòng Quay */
     @keyframes float-bubble {
         0%, 100% { transform: translateY(0) scale(1); }
         50% { transform: translateY(-15px) scale(1.05); }
     }
-    .mode-bubble { border-radius: 50% !important; animation: float-bubble 1s ease-in-out infinite; border: 4px solid var(--c1) !important; background-color: color-mix(in srgb, var(--c1) 15%, white) !important; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+    .mode-bubble { border-radius: 50% !important; animation: float-bubble 1s ease-in-out infinite; border: 4px solid var(--c1) !important; background-color: color-mix(in srgb, var(--c1) 15%, white) !important; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+    
     @keyframes spin-custom { 100% { transform: rotate(360deg) scale(1.1); } }
     .mode-spin { animation: spin-custom 0.8s linear infinite; border-radius: 30% !important; background-color: #fef3c7 !important; border: 4px dashed #f59e0b !important; }
   </style>
 </head>
 <body class="bg-[#f3f4f6] font-sans text-slate-800 h-screen flex relative overflow-hidden">
 
-  <!-- MÀN HÌNH ĐĂNG NHẬP -->
-  <div id="auth-screen" class="fixed inset-0 bg-slate-900/95 backdrop-blur-md z-[200] hidden items-center justify-center p-4">
-    <div class="bg-white p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-md">
+  <!-- ========================================== -->
+  <!-- 1. MÀN HÌNH ĐĂNG NHẬP / ONBOARDING           -->
+  <!-- ========================================== -->
+  <div id="auth-screen" class="fixed inset-0 bg-slate-900/95 backdrop-blur-md z-[600] hidden items-center justify-center p-4">
+    <div class="bg-white p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-md border border-white/20">
       <div class="text-center mb-8">
-        <div class="w-16 h-16 bg-theme-grad rounded-2xl mx-auto flex items-center justify-center shadow-lg mb-4 rotate-3"><i data-lucide="graduation-cap" class="w-8 h-8 text-white -rotate-3"></i></div>
+        <div class="w-16 h-16 bg-theme-grad rounded-2xl mx-auto flex items-center justify-center shadow-lg mb-4 transform rotate-3"><i data-lucide="graduation-cap" class="w-8 h-8 text-white -rotate-3"></i></div>
         <h2 class="text-2xl font-black text-slate-800 tracking-tight" id="auth-title">Đăng Nhập</h2>
         <p class="text-sm text-slate-500 mt-1">Hệ thống quản lý lớp học</p>
       </div>
       <div class="space-y-4">
-        <div><label class="text-xs font-bold text-slate-600 uppercase">Tài khoản (ID)</label><input type="text" id="auth-id" class="w-full mt-1 px-4 py-3 bg-slate-50 border rounded-xl ring-theme outline-none"></div>
-        <div><label class="text-xs font-bold text-slate-600 uppercase">Mật khẩu</label><input type="password" id="auth-pass" class="w-full mt-1 px-4 py-3 bg-slate-50 border rounded-xl ring-theme outline-none"></div>
+        <div><label class="text-xs font-bold text-slate-600 uppercase tracking-wider">Tài khoản (ID)</label><input type="text" id="auth-id" class="w-full mt-1.5 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl ring-theme transition outline-none"></div>
+        <div><label class="text-xs font-bold text-slate-600 uppercase tracking-wider">Mật khẩu</label><input type="password" id="auth-pass" class="w-full mt-1.5 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl ring-theme transition outline-none"></div>
         <p id="auth-error" class="text-xs text-rose-500 font-bold hidden bg-rose-50 p-2 rounded-lg text-center">Sai tài khoản hoặc mật khẩu!</p>
-        <button onclick="handleAuth()" class="w-full bg-theme-grad text-white py-3.5 rounded-xl font-bold shadow-lg hover:scale-[1.02] transition">Đăng Nhập</button>
+        <button onclick="handleAuth()" class="w-full bg-theme-grad text-white py-3.5 rounded-xl font-bold shadow-lg hover:scale-[1.02] transition-all" id="auth-btn">Đăng Nhập</button>
       </div>
       <div class="mt-6 text-center text-sm"><span class="text-slate-500" id="auth-toggle-text">Chưa có tài khoản?</span> <button onclick="toggleAuthMode()" class="text-theme font-bold hover:underline" id="auth-toggle-btn">Đăng ký ngay</button></div>
     </div>
   </div>
 
-  <!-- MÀN HÌNH ONBOARDING -->
-  <div id="onboarding-screen" class="fixed inset-0 bg-slate-900/90 z-[190] hidden items-center justify-center p-4">
+  <div id="onboarding-screen" class="fixed inset-0 bg-slate-900/90 z-[550] hidden items-center justify-center backdrop-blur-md p-4">
     <div class="bg-white p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-md">
       <h2 class="text-2xl font-black text-theme mb-2">Thông tin lớp học</h2>
-      <p class="text-sm text-slate-500 mb-6">Cập nhật thông tin cơ bản để tạo Mã ID cho học sinh.</p>
+      <p class="text-sm text-slate-500 mb-6">Cập nhật thông tin cơ bản để hệ thống tạo Mã ID cho học sinh.</p>
       <div class="space-y-4">
         <div><label class="text-xs font-bold text-slate-600">Họ tên GVCN</label><input type="text" id="ob-teacher" class="w-full mt-1 px-4 py-3 border rounded-xl ring-theme outline-none" placeholder="VD: Phạm Minh Tuấn"></div>
         <div class="grid grid-cols-2 gap-4">
@@ -69,22 +74,28 @@
           <div><label class="text-xs font-bold text-slate-600">Năm học</label><input type="text" id="ob-year" class="w-full mt-1 px-4 py-3 border rounded-xl ring-theme outline-none" placeholder="VD: 2026 - 2027"></div>
         </div>
         <div><label class="text-xs font-bold text-slate-600">Khẩu hiệu</label><input type="text" id="ob-slogan" class="w-full mt-1 px-4 py-3 border rounded-xl ring-theme outline-none" placeholder="VD: Chuyến Tàu Tuổi Trẻ"></div>
-        <button onclick="saveOnboarding()" class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold shadow-lg hover:bg-emerald-600 transition">Lưu & Bắt đầu</button>
+        <button onclick="saveOnboarding()" class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold shadow-lg hover:bg-emerald-600 transition mt-4">Lưu & Bắt đầu</button>
       </div>
     </div>
   </div>
 
-  <!-- OVERLAY MOBILE -->
-  <div id="mobile-overlay" class="fixed inset-0 bg-slate-900/60 z-[90] hidden lg:hidden backdrop-blur-sm" onclick="toggleSidebar()"></div>
+  <!-- OVERLAY CHO ĐIỆN THOẠI -->
+  <div id="mobile-overlay" class="fixed inset-0 bg-slate-900/60 z-[90] hidden lg:hidden backdrop-blur-sm transition-opacity" onclick="toggleSidebar()"></div>
 
-  <!-- SIDEBAR -->
+  <!-- ========================================== -->
+  <!-- 2. SIDEBAR MENU BÊN TRÁI                     -->
+  <!-- ========================================== -->
   <aside class="fixed inset-y-0 left-0 z-[100] w-[280px] transform -translate-x-full lg:relative lg:translate-x-0 transition-transform duration-300 ease-in-out bg-theme-sidebar text-white flex flex-col shadow-2xl h-full" id="main-sidebar">
-    <div class="flex-1 overflow-y-auto custom-scrollbar">
+    <div class="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar">
       <button onclick="toggleSidebar()" class="absolute top-4 right-4 lg:hidden text-white/50 hover:text-white bg-white/10 p-2 rounded-full"><i data-lucide="x" class="w-5 h-5"></i></button>
-      <div class="p-6 pt-10 flex flex-col items-center relative">
-        <div id="sidebar-class-logo" class="w-20 h-20 rounded-2xl bg-white/10 backdrop-blur border border-white/20 flex items-center justify-center font-black text-2xl shadow-lg mb-3 relative z-10">...</div>
-        <h1 id="sidebar-slogan" class="font-bold text-sm tracking-wider uppercase text-center relative z-10 drop-shadow-md px-2">...</h1>
+
+      <div class="p-6 pt-10 lg:pt-6 flex flex-col items-center relative">
+        <div class="absolute inset-0 bg-white/5 opacity-50 blur-xl rounded-full"></div>
+        <div id="sidebar-class-logo" class="w-20 h-20 rounded-2xl bg-white/10 backdrop-blur border border-white/20 flex items-center justify-center font-black text-2xl shadow-lg mb-3 relative z-10 whitespace-nowrap px-2">...</div>
+        <h1 id="sidebar-slogan" class="font-bold text-sm tracking-wider uppercase text-center text-white/90 relative z-10 drop-shadow-md px-2">...</h1>
+        <p class="text-[11px] text-white/50 mt-1 uppercase tracking-widest font-semibold">Hệ thống quản lý</p>
       </div>
+
       <nav class="mt-2 px-4 space-y-1.5 font-medium pb-6">
         <button onclick="switchTab('tab-overview')" id="btn-tab-overview" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition bg-theme-grad text-white shadow-lg font-bold"><i data-lucide="layout-dashboard" class="w-5 h-5"></i> Tổng quan</button>
         <button onclick="switchTab('tab-students')" id="btn-tab-students" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70"><i data-lucide="users" class="w-5 h-5"></i> Danh sách học sinh</button>
@@ -99,43 +110,53 @@
         <button onclick="switchTab('tab-settings')" id="btn-tab-settings" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70"><i data-lucide="settings" class="w-5 h-5"></i> Cài đặt & Giao diện</button>
       </nav>
     </div>
+
+    <!-- KHU VỰC GVCN -->
     <div class="p-4 bg-black/20 flex flex-col mt-auto shrink-0 relative">
       <div class="text-[10px] text-white/50 font-bold uppercase tracking-widest mb-1.5 pl-1">Giáo viên chủ nhiệm</div>
       <div class="flex items-center justify-between gap-2">
         <div class="flex items-center gap-2.5">
           <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0"><i data-lucide="user" class="w-4 h-4 text-white"></i></div>
-          <span id="sidebar-teacher-name" class="text-white text-sm leading-tight truncate w-32">...</span>
+          <span id="sidebar-teacher-name" class="text-white text-sm leading-tight break-words max-w-[140px] drop-shadow-sm">...</span>
         </div>
-        <button onclick="logout()" class="text-white/50 hover:text-white bg-white/5 hover:bg-white/20 p-2.5 rounded-xl transition" title="Đăng xuất"><i data-lucide="log-out" class="w-4 h-4"></i></button>
+        <button onclick="logout()" class="text-white/50 hover:text-white bg-white/5 hover:bg-white/20 p-2.5 rounded-xl transition shrink-0" title="Đăng xuất"><i data-lucide="log-out" class="w-4 h-4"></i></button>
       </div>
     </div>
   </aside>
 
-  <!-- MAIN CONTENT -->
+  <!-- ========================================== -->
+  <!-- 3. NỘI DUNG CHÍNH (MAIN CONTENT)             -->
+  <!-- ========================================== -->
   <main class="flex-1 flex flex-col h-full relative w-full overflow-hidden" id="main-content">
     
     <!-- HEADER -->
     <header class="bg-white/90 backdrop-blur-md px-4 md:px-8 py-3 md:py-4 shadow-sm flex items-center justify-between shrink-0 sticky top-0 z-40 border-b border-slate-100">
       <div class="flex items-center gap-3">
         <button onclick="toggleSidebar()" class="lg:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition"><i data-lucide="menu" class="w-6 h-6"></i></button>
-        <h2 id="header-title" class="text-lg md:text-xl font-black text-theme-grad uppercase tracking-tight">Tổng Quan Lớp</h2>
+        <h2 id="header-title" class="text-lg md:text-xl font-black text-theme-grad uppercase tracking-tight line-clamp-1">Tổng Quan Lớp</h2>
       </div>
       <div class="flex items-center gap-3 md:gap-4 shrink-0">
-        <button onclick="openGlobalSearch()" class="hidden md:flex items-center gap-1.5 text-xs bg-white px-3 py-2 rounded-full font-bold shadow-sm border border-slate-200 text-slate-500 hover:text-theme transition"><i data-lucide="search" class="w-3.5 h-3.5"></i> Tra cứu</button>
+        <!-- NÚT TRA CỨU -->
+        <button onclick="openModalUi('global-search-modal', 'global-search-content'); document.getElementById('global-search-input').focus();" class="hidden md:flex items-center gap-1.5 text-xs bg-white px-3 py-2 rounded-full font-bold shadow-sm border border-slate-200 text-slate-500 hover:text-theme hover:border-theme transition">
+          <i data-lucide="search" class="w-3.5 h-3.5"></i> Tra cứu
+        </button>
+
         <span id="header-year" class="hidden md:inline-flex text-xs bg-theme-light px-3 py-1.5 rounded-full font-bold shadow-sm items-center gap-1.5 border border-slate-100 whitespace-nowrap"><i data-lucide="calendar" class="w-3 h-3"></i> Năm học ...</span>
-        <div class="relative group cursor-pointer" onclick="document.getElementById('avatar-upload').click()" title="Đổi ảnh đại diện GV">
-          <div id="header-avatar" class="w-10 h-10 rounded-full bg-theme-grad text-white flex items-center justify-center font-bold text-sm shadow-md border-2 border-white overflow-hidden transform group-hover:scale-105 transition">GV</div>
-          <div class="absolute -bottom-1 -right-1 bg-white rounded-full p-1 shadow-sm border border-slate-200"><i data-lucide="camera" class="w-3 h-3 text-slate-500"></i></div>
+        
+        <div class="relative group cursor-pointer shrink-0" onclick="document.getElementById('avatar-upload').click()" title="Đổi ảnh đại diện GV">
+          <div id="header-avatar" class="w-10 h-10 rounded-full bg-theme-grad text-white flex items-center justify-center font-bold text-sm shadow-md border-2 border-white overflow-hidden transition transform group-hover:scale-105">GV</div>
+          <div class="absolute -bottom-1 -right-1 bg-white rounded-full p-1 shadow-sm border border-slate-200 group-hover:bg-slate-50"><i data-lucide="camera" class="w-3 h-3 text-slate-500"></i></div>
           <input type="file" id="avatar-upload" accept="image/*" class="hidden" onchange="handleAvatarUpload(event)">
         </div>
       </div>
     </header>
 
-    <!-- CONTENT TABS -->
+    <!-- KHU VỰC CÁC TAB NỘI DUNG -->
     <div class="p-4 md:p-8 flex-1 overflow-y-auto custom-scrollbar relative">
       
-      <!-- TAB 1: TỔNG QUAN -->
+      <!-- TAB TỔNG QUAN -->
       <section id="tab-overview" class="tab-section space-y-4 md:space-y-6">
+        <!-- Banner Ảnh Tường -->
         <div class="relative w-full h-40 md:h-64 bg-slate-200 rounded-3xl overflow-hidden shadow-md group border border-slate-200">
             <div id="cover-photo" class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style="background-image: url('https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80');"></div>
             <div class="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors"></div>
@@ -144,26 +165,29 @@
                 <input type="file" id="cover-upload" accept="image/*" class="hidden" onchange="handleCoverUpload(event)">
             </label>
         </div>
+
         <div class="bg-theme-grad rounded-3xl p-6 md:p-8 text-white shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between relative overflow-hidden transition-all duration-300 mt-[-2rem] md:mt-[-3rem] z-10 mx-4 md:mx-8">
           <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4"></div>
           <div class="relative z-10 w-full">
-            <span class="text-[10px] md:text-xs font-black uppercase tracking-widest bg-white/20 px-3 py-1.5 rounded-lg shadow-sm border border-white/10">Thông điệp lớp</span>
-            <h2 id="banner-slogan" class="text-2xl md:text-4xl font-extrabold mt-3 md:mt-4 drop-shadow-lg tracking-tight">...</h2>
+            <span class="text-[10px] md:text-xs font-black uppercase tracking-widest bg-white/20 px-3 py-1.5 rounded-lg backdrop-blur-sm shadow-sm border border-white/10 whitespace-nowrap">Thông điệp lớp</span>
+            <h2 id="banner-slogan" class="text-2xl md:text-4xl font-extrabold mt-3 md:mt-4 drop-shadow-lg tracking-tight line-clamp-2 md:line-clamp-none">...</h2>
           </div>
+          <div class="hidden md:block text-7xl relative z-10 opacity-90 drop-shadow-xl transform -rotate-6">🚀</div>
         </div>
+
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mt-6">
           <div class="lg:col-span-2 bg-gradient-to-br from-amber-400 to-orange-500 text-white p-1 rounded-3xl shadow-lg">
             <div class="bg-white/10 backdrop-blur-md rounded-[22px] p-5 md:p-6 h-full border border-white/20">
-               <h3 class="font-black flex items-center gap-2 text-white mb-4 drop-shadow-md"><i data-lucide="crown" class="w-6 h-6 text-amber-200 fill-amber-200"></i> BẢNG VÀNG (TOP 5)</h3>
-               <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center" id="top-students-list"></div>
+               <h3 class="font-black flex items-center gap-2 text-white mb-4 md:mb-6 drop-shadow-md text-base md:text-lg whitespace-nowrap"><i data-lucide="crown" class="w-6 h-6 text-amber-200 fill-amber-200"></i> BẢNG VÀNG (TOP 5)</h3>
+               <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 md:gap-4 text-center" id="top-students-list"></div>
             </div>
           </div>
-          <div class="bg-gradient-to-br from-emerald-400 to-teal-500 text-white p-6 rounded-3xl shadow-lg border border-white/20 flex flex-col relative overflow-hidden">
+          <div class="bg-gradient-to-br from-emerald-400 to-teal-500 text-white p-6 rounded-3xl shadow-lg border border-white/20 flex flex-col relative overflow-hidden h-40 lg:h-auto">
             <i data-lucide="users" class="absolute -right-4 -bottom-4 w-24 h-24 text-white/10"></i>
-            <h3 class="font-black flex items-center gap-2 mb-2 text-white drop-shadow-md"><i data-lucide="pie-chart" class="w-6 h-6"></i> THỐNG KÊ</h3>
+            <h3 class="font-black flex items-center gap-2 mb-2 text-white drop-shadow-md text-base md:text-lg whitespace-nowrap"><i data-lucide="pie-chart" class="w-6 h-6"></i> THỐNG KÊ</h3>
             <div class="flex-1 flex flex-col items-center justify-center relative z-10">
               <span class="text-5xl md:text-6xl font-black text-white drop-shadow-lg" id="stat-student-count">0</span>
-              <span class="text-xs md:text-sm font-bold text-emerald-100 uppercase mt-1 tracking-widest">Tổng học sinh</span>
+              <span class="text-xs md:text-sm font-bold text-emerald-100 uppercase mt-1 md:mt-2 tracking-widest whitespace-nowrap">Tổng học sinh</span>
             </div>
           </div>
         </div>
@@ -172,18 +196,31 @@
       <!-- TAB DANH SÁCH -->
       <section id="tab-students" class="tab-section hidden space-y-4">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-slate-100 gap-4">
-          <h3 class="font-bold text-slate-700 text-base md:text-lg">Danh Sách Lớp (<span id="student-count" class="text-theme">0</span>)</h3>
+          <h3 class="font-bold text-slate-700 text-base md:text-lg whitespace-nowrap">Danh Sách Lớp (<span id="student-count" class="text-theme">0</span>)</h3>
           <div class="flex gap-2 w-full sm:w-auto">
-            <button onclick="document.getElementById('excel-upload').click()" class="flex-1 sm:flex-auto flex items-center justify-center gap-2 bg-emerald-50 text-emerald-600 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-emerald-100 transition"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Nhập Excel</button>
+            <button onclick="document.getElementById('excel-upload').click()" class="flex-1 sm:flex-auto flex items-center justify-center gap-2 bg-emerald-50 text-emerald-600 border border-emerald-200 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-emerald-100 transition shadow-sm whitespace-nowrap">
+              <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Nhập Excel (Mới)
+            </button>
             <input type="file" id="excel-upload" accept=".xlsx, .xls" class="hidden">
-            <button onclick="deleteAllStudents()" class="flex-[0.5] sm:flex-auto flex items-center justify-center gap-2 bg-rose-50 text-rose-600 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-rose-100 transition"><i data-lucide="trash-2" class="w-4 h-4"></i> Xóa tất cả</button>
+            <!-- NÚT XÓA TẤT CẢ -->
+            <button onclick="deleteAllStudents()" class="flex-[0.5] sm:flex-auto flex items-center justify-center gap-2 bg-rose-50 text-rose-600 border border-rose-200 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-rose-100 transition shadow-sm whitespace-nowrap" title="Xóa toàn bộ học sinh">
+              <i data-lucide="trash-2" class="w-4 h-4"></i> Xóa tất cả
+            </button>
           </div>
         </div>
         <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
           <div class="overflow-x-auto custom-scrollbar">
             <table class="w-full text-left text-sm min-w-[800px]">
               <thead class="bg-slate-50 border-b text-slate-500 uppercase text-[10px] md:text-xs tracking-wider font-bold">
-                <tr><th class="p-4 text-center">STT</th><th class="p-4">Mã HS</th><th class="p-4">Họ và Tên</th><th class="p-4">Ngày sinh</th><th class="p-4 text-center">Avatar</th><th class="p-4">Điểm</th><th class="p-4 text-right">Thao tác</th></tr>
+                <tr>
+                  <th class="p-3 md:p-4 w-12 text-center">STT</th>
+                  <th class="p-3 md:p-4">Mã HS</th>
+                  <th class="p-3 md:p-4">Họ và Tên</th>
+                  <th class="p-3 md:p-4">Ngày sinh</th>
+                  <th class="p-3 md:p-4 text-center">Avatar</th>
+                  <th class="p-3 md:p-4">Điểm</th>
+                  <th class="p-3 md:p-4 text-right">Thao tác</th>
+                </tr>
               </thead>
               <tbody id="full-student-table" class="divide-y divide-slate-100"></tbody>
             </table>
@@ -194,10 +231,12 @@
       <!-- TAB SỔ THEO DÕI -->
       <section id="tab-notebook" class="tab-section hidden space-y-4 h-full flex-col">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-slate-100 shrink-0 gap-4">
-           <h3 class="font-bold text-slate-700 text-base md:text-lg flex items-center gap-2"><i data-lucide="contact" class="w-5 h-5 text-theme"></i> Thẻ Học Sinh</h3>
+           <h3 class="font-bold text-slate-700 text-base md:text-lg flex items-center gap-2 whitespace-nowrap">
+             <i data-lucide="contact" class="w-5 h-5 text-theme"></i> Thẻ Học Sinh
+           </h3>
            <div class="relative w-full sm:w-auto">
              <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-             <input type="text" id="search-notebook" oninput="renderNotebook()" placeholder="Tra cứu Tên / ID..." class="pl-10 pr-4 py-2.5 border border-slate-200 rounded-xl text-sm ring-theme w-full sm:w-72 bg-slate-50 outline-none">
+             <input type="text" id="search-notebook" oninput="renderNotebook()" placeholder="Tra cứu Tên / ID..." class="pl-10 pr-4 py-2.5 border border-slate-200 rounded-xl text-sm ring-theme w-full sm:w-72 bg-slate-50 shadow-inner font-medium outline-none">
            </div>
         </div>
         <div class="flex-1 overflow-y-auto custom-scrollbar p-1">
@@ -209,17 +248,31 @@
       <section id="tab-seating" class="tab-section hidden space-y-4 h-full flex-col">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 rounded-2xl shadow-sm border border-slate-100 shrink-0 gap-4">
           <div class="flex flex-wrap items-center gap-2 md:gap-3 w-full sm:w-auto">
-            <select id="seating-select" class="flex-1 sm:flex-none border border-slate-200 rounded-xl px-3 py-2.5 text-sm bg-slate-50 ring-theme font-bold text-slate-700 outline-none" onchange="changeSeatingChart()"></select>
-            <button onclick="openNewChartModal()" class="text-theme bg-theme-light px-3 py-2.5 rounded-xl text-sm font-bold transition flex items-center gap-1 shadow-sm"><i data-lucide="plus" class="w-4 h-4"></i> Thêm mới</button>
+            <select id="seating-select" class="flex-1 sm:flex-none border border-slate-200 rounded-xl px-3 md:px-4 py-2.5 text-xs md:text-sm bg-slate-50 ring-theme font-bold text-slate-700 outline-none" onchange="changeSeatingChart()"></select>
+            <button onclick="openModalUi('new-chart-modal', 'new-chart-content')" class="text-theme bg-theme-light hover-bg-theme-light px-3 md:px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1 md:gap-2 shadow-sm whitespace-nowrap">
+              <i data-lucide="plus" class="w-4 h-4"></i> Thêm mới
+            </button>
           </div>
-          <button onclick="deleteCurrentChart()" class="w-full sm:w-auto flex justify-center text-rose-500 bg-rose-50 hover:bg-rose-100 px-4 py-2.5 rounded-xl text-sm font-bold transition items-center gap-2 border"><i data-lucide="trash-2" class="w-4 h-4"></i> Xóa sơ đồ</button>
+          <button onclick="deleteCurrentChart()" class="w-full sm:w-auto flex justify-center text-rose-500 bg-rose-50 hover:bg-rose-100 px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold transition items-center gap-2 border border-rose-100 shadow-sm">
+            <i data-lucide="trash-2" class="w-4 h-4"></i> Xóa sơ đồ
+          </button>
         </div>
+
         <div class="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-slate-100 overflow-auto custom-scrollbar flex-1 relative">
-           <div class="sticky left-0 text-xs text-slate-500 font-medium flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-lg border w-fit mb-4 z-20"><i data-lucide="info" class="w-4 h-4 text-theme"></i> Click ô trống để xếp chỗ. Click HS để đổi.</div>
+           <div class="sticky left-0 text-[10px] md:text-xs text-slate-500 font-medium flex items-center gap-1 md:gap-2 bg-slate-50 px-2 md:px-3 py-1.5 rounded-lg border border-slate-100 w-fit mb-4 z-20">
+             <i data-lucide="info" class="w-3 h-3 md:w-4 md:h-4 text-theme"></i> Click ô trống để xếp chỗ. Click HS để đổi.
+           </div>
+           
            <div class="min-w-[800px] pb-10 relative">
                <div class="relative flex justify-center items-end mb-10 h-16 md:h-20 w-full">
-                   <div class="bg-[#1e293b] shadow-xl text-white w-[50%] py-4 rounded-xl text-center font-black text-sm md:text-base tracking-[0.3em] border-4 border-slate-600 relative flex justify-center z-10"><span class="opacity-90">BẢNG ĐEN</span><div class="absolute bottom-2 right-4 w-12 h-1 bg-white/30 rounded-full"></div></div>
-                   <div class="absolute right-0 bottom-0 bg-theme-sidebar shadow-2xl text-white w-24 md:w-32 py-3 rounded-2xl text-center font-black text-[10px] md:text-xs tracking-widest flex flex-col items-center border-b-4 border-slate-900 z-10"><span>BÀN GV</span><div class="absolute -bottom-2 w-10 h-1.5 bg-slate-400/50 rounded-full"></div></div>
+                   <div class="bg-[#1e293b] shadow-xl text-white w-[50%] py-4 rounded-xl text-center font-black text-sm md:text-base tracking-[0.3em] border-4 border-slate-600 relative flex items-center justify-center z-10">
+                       <span class="opacity-90">BẢNG ĐEN</span>
+                       <div class="absolute bottom-2 right-4 w-12 h-1 bg-white/30 rounded-full"></div>
+                   </div>
+                   <div class="absolute right-0 bottom-0 bg-theme-sidebar shadow-2xl text-white w-24 md:w-32 py-3 md:py-4 rounded-2xl text-center font-black text-[10px] md:text-xs tracking-widest flex flex-col items-center border-b-4 border-slate-900 z-10">
+                       <span>BÀN GV</span>
+                       <div class="absolute -bottom-2.5 w-10 h-1.5 bg-slate-400/50 rounded-full"></div>
+                   </div>
                </div>
                <div class="grid grid-cols-4 gap-4 md:gap-8" id="seating-grid"></div>
            </div>
@@ -229,45 +282,77 @@
       <!-- TAB VÒNG QUAY -->
       <section id="tab-wheel" class="tab-section hidden space-y-4 md:space-y-6">
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6">
-          <div class="bg-white p-5 md:p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col gap-4 h-fit">
-            <h4 class="font-black text-slate-800 text-lg">Cấu hình quay</h4>
-            <div><label class="text-xs font-bold text-slate-500 uppercase">Thời gian (giây)</label><input type="number" id="spin-duration" min="1" max="10" value="3" class="w-full mt-1 border rounded-xl p-3 text-sm bg-slate-50 font-bold ring-theme outline-none"></div>
-            <div><label class="text-xs font-bold text-slate-500 uppercase">Kiểu quay</label><select id="spin-mode" class="w-full mt-1 border rounded-xl p-3 text-sm bg-white font-bold ring-theme outline-none text-slate-700"><option value="card">Lật Thẻ</option><option value="bubble">Thả Bong Bóng 🎈</option><option value="spin">Chong Chóng 🌀</option></select></div>
-            <button onclick="startSpin()" id="spin-btn" class="w-full bg-gradient-to-r from-amber-400 to-orange-500 text-white py-4 rounded-xl font-black shadow-lg hover:scale-[1.02] active:scale-95 transition-all mt-2 text-lg">🎲 QUAY NGAY</button>
+          <div class="bg-white p-5 md:p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col gap-3 md:gap-4 h-fit">
+            <h4 class="font-black text-slate-800 text-base md:text-lg">Cấu hình quay</h4>
+            <div>
+              <label class="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider">Thời gian (giây)</label>
+              <input type="number" id="spin-duration" min="1" max="10" value="3" class="w-full mt-1 border border-slate-200 rounded-xl p-2.5 md:p-3 text-sm bg-slate-50 font-bold ring-theme outline-none">
+            </div>
+            <div>
+              <label class="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider">Chế độ hiển thị</label>
+              <select id="spin-mode" class="w-full mt-1 border border-slate-200 rounded-xl p-2.5 md:p-3 text-sm bg-white font-bold ring-theme outline-none text-slate-700">
+                  <option value="card">Lật Thẻ Ngẫu Nhiên</option>
+                  <option value="bubble">Thả Bong Bóng 🎈</option>
+                  <option value="spin">Quay Chong Chóng 🌀</option>
+              </select>
+            </div>
+            <button onclick="startSpin()" id="spin-btn" class="w-full bg-gradient-to-r from-amber-400 to-orange-500 text-white py-3.5 md:py-4 rounded-xl font-black shadow-lg hover:scale-[1.02] active:scale-95 transition-all mt-2 text-base md:text-lg">🎲 QUAY NGAY</button>
           </div>
           <div class="lg:col-span-3 bg-white p-5 md:p-6 rounded-3xl shadow-sm border border-slate-100">
-            <h4 class="font-black text-slate-800 text-lg mb-4 flex items-center justify-between"><span>Sân khấu</span><span class="text-xs font-bold bg-theme-light px-3 py-1 rounded-full shadow-inner" id="wheel-student-count">0 HS</span></h4>
+            <h4 class="font-black text-slate-800 text-base md:text-lg mb-3 md:mb-4 flex items-center justify-between">
+              <span>Sân khấu</span><span class="text-[10px] md:text-xs font-bold bg-theme-light px-3 py-1 rounded-full shadow-inner whitespace-nowrap" id="wheel-student-count">0 HS</span>
+            </h4>
             <div id="student-grid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 max-h-[400px] md:max-h-[500px] overflow-y-auto custom-scrollbar p-3 rounded-2xl bg-slate-50/50 border border-slate-100 min-h-[200px] items-center"></div>
           </div>
         </div>
       </section>
 
       <!-- TABS PHỤ TRỢ -->
-      <section id="tab-praise" class="tab-section hidden h-full"><div class="flex flex-col items-center justify-center h-full text-slate-400 bg-white rounded-3xl border border-dashed border-slate-200 p-10 text-center shadow-sm"><div class="w-24 h-24 bg-amber-50 rounded-full flex items-center justify-center mb-6"><i data-lucide="award" class="w-12 h-12 text-amber-400"></i></div><h3 class="text-2xl font-black text-slate-700">Bảng Tuyên Dương</h3><p class="text-sm mt-2 font-medium">Đang phát triển.</p></div></section>
-      <section id="tab-points" class="tab-section hidden h-full"><div class="flex flex-col items-center justify-center h-full text-slate-400 bg-white rounded-3xl border border-dashed border-slate-200 p-10 text-center shadow-sm"><div class="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center mb-6"><i data-lucide="star" class="w-12 h-12 text-blue-400"></i></div><h3 class="text-2xl font-black text-slate-700">Lịch sử Thành Tích</h3><p class="text-sm mt-2 font-medium">Đang phát triển.</p></div></section>
-      <section id="tab-gifts" class="tab-section hidden h-full"><div class="flex flex-col items-center justify-center h-full text-slate-400 bg-white rounded-3xl border border-dashed border-slate-200 p-10 text-center shadow-sm"><div class="w-24 h-24 bg-rose-50 rounded-full flex items-center justify-center mb-6"><i data-lucide="gift" class="w-12 h-12 text-rose-400"></i></div><h3 class="text-2xl font-black text-slate-700">Quà Tặng</h3><p class="text-sm mt-2 font-medium">Đang phát triển.</p></div></section>
+      <section id="tab-praise" class="tab-section hidden h-full">
+        <div class="flex flex-col items-center justify-center h-full text-slate-400 bg-white rounded-3xl border border-dashed border-slate-200 p-6 md:p-10 text-center shadow-sm">
+          <div class="w-20 h-20 md:w-24 md:h-24 bg-amber-50 rounded-full flex items-center justify-center mb-4 md:mb-6"><i data-lucide="award" class="w-10 h-10 md:w-12 md:h-12 text-amber-400"></i></div>
+          <h3 class="text-xl md:text-2xl font-black text-slate-700">Bảng Tuyên Dương</h3>
+          <p class="text-xs md:text-sm mt-2 font-medium">Tính năng khen thưởng đang được phát triển.</p>
+        </div>
+      </section>
+      <section id="tab-points" class="tab-section hidden h-full">
+        <div class="flex flex-col items-center justify-center h-full text-slate-400 bg-white rounded-3xl border border-dashed border-slate-200 p-6 md:p-10 text-center shadow-sm">
+          <div class="w-20 h-20 md:w-24 md:h-24 bg-blue-50 rounded-full flex items-center justify-center mb-4 md:mb-6"><i data-lucide="star" class="w-10 h-10 md:w-12 md:h-12 text-blue-400"></i></div>
+          <h3 class="text-xl md:text-2xl font-black text-slate-700">Lịch sử Thành Tích</h3>
+          <p class="text-xs md:text-sm mt-2 font-medium">Sử dụng nút Hồ sơ trong Sổ theo dõi để xem.</p>
+        </div>
+      </section>
+      <section id="tab-gifts" class="tab-section hidden h-full">
+        <div class="flex flex-col items-center justify-center h-full text-slate-400 bg-white rounded-3xl border border-dashed border-slate-200 p-6 md:p-10 text-center shadow-sm">
+          <div class="w-20 h-20 md:w-24 md:h-24 bg-rose-50 rounded-full flex items-center justify-center mb-4 md:mb-6"><i data-lucide="gift" class="w-10 h-10 md:w-12 md:h-12 text-rose-400"></i></div>
+          <h3 class="text-xl md:text-2xl font-black text-slate-700">Cửa hàng Quà Tặng</h3>
+          <p class="text-xs md:text-sm mt-2 font-medium">Học sinh dùng điểm đổi quà. Đang phát triển.</p>
+        </div>
+      </section>
 
       <!-- CÀI ĐẶT -->
       <section id="tab-settings" class="tab-section hidden h-full">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 max-w-5xl">
           <div class="bg-white p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm">
              <h3 class="text-lg md:text-xl font-black text-slate-800 mb-2">Thông tin lớp</h3>
-             <div class="space-y-4">
-               <div><label class="text-xs font-bold text-slate-600 uppercase">Họ tên GVCN</label><input type="text" id="set-teacher" class="w-full mt-1 px-4 py-2.5 border rounded-xl bg-slate-50 ring-theme outline-none"></div>
-               <div><label class="text-xs font-bold text-slate-600 uppercase">Lớp</label><input type="text" id="set-class" class="w-full mt-1 px-4 py-2.5 border rounded-xl bg-slate-50 ring-theme outline-none"></div>
-               <div><label class="text-xs font-bold text-slate-600 uppercase">Năm học</label><input type="text" id="set-year" class="w-full mt-1 px-4 py-2.5 border rounded-xl bg-slate-50 ring-theme outline-none"></div>
-               <div><label class="text-xs font-bold text-slate-600 uppercase">Khẩu hiệu</label><input type="text" id="set-slogan" class="w-full mt-1 px-4 py-2.5 border rounded-xl bg-slate-50 ring-theme outline-none"></div>
-               <button onclick="updateSettings()" class="w-full bg-slate-800 text-white px-6 py-3.5 rounded-xl font-bold shadow-lg hover:bg-slate-700 transition mt-4">Lưu thay đổi cài đặt</button>
+             <p class="text-xs md:text-sm text-slate-500 mb-4 md:mb-6 font-medium">Lưu ý: Đổi Lớp/Năm học sẽ đổi Mã ID của HS mới.</p>
+             <div class="space-y-3 md:space-y-4">
+               <div><label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Họ tên GVCN</label><input type="text" id="set-teacher" class="w-full mt-1 px-3 md:px-4 py-2.5 border rounded-xl bg-slate-50 ring-theme outline-none"></div>
+               <div><label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Lớp</label><input type="text" id="set-class" class="w-full mt-1 px-3 md:px-4 py-2.5 border rounded-xl bg-slate-50 ring-theme outline-none"></div>
+               <div><label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Năm học</label><input type="text" id="set-year" class="w-full mt-1 px-3 md:px-4 py-2.5 border rounded-xl bg-slate-50 ring-theme outline-none"></div>
+               <div><label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Khẩu hiệu</label><input type="text" id="set-slogan" class="w-full mt-1 px-3 md:px-4 py-2.5 border rounded-xl bg-slate-50 ring-theme outline-none"></div>
+               <button onclick="updateSettings()" class="w-full bg-slate-800 text-white px-6 py-3 md:py-3.5 rounded-xl font-bold shadow-lg hover:bg-slate-700 transition mt-2 md:mt-4">Lưu thay đổi cài đặt</button>
              </div>
           </div>
+
           <div class="bg-white p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm h-fit">
             <h3 class="text-lg md:text-xl font-black text-slate-800 mb-2">Cá nhân hóa</h3>
-            <p class="text-sm text-slate-500 mb-6 font-medium">Chọn màu sắc chủ đạo (Theme).</p>
-            <div class="grid grid-cols-2 gap-4">
-              <button onclick="applyTheme('violet')" class="flex flex-col items-center p-4 border-2 border-slate-100 rounded-2xl hover:border-violet-400 transition group focus:ring-4 focus:ring-violet-200 outline-none"><div class="w-12 h-12 rounded-full bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-sm text-slate-700">Tím Mộng Mơ</span></button>
-              <button onclick="applyTheme('blue')" class="flex flex-col items-center p-4 border-2 border-slate-100 rounded-2xl hover:border-blue-400 transition group focus:ring-4 focus:ring-blue-200 outline-none"><div class="w-12 h-12 rounded-full bg-gradient-to-r from-[#3b82f6] to-[#06b6d4] mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-sm text-slate-700">Đại Dương</span></button>
-              <button onclick="applyTheme('emerald')" class="flex flex-col items-center p-4 border-2 border-slate-100 rounded-2xl hover:border-emerald-400 transition group focus:ring-4 focus:ring-emerald-200 outline-none"><div class="w-12 h-12 rounded-full bg-gradient-to-r from-[#10b981] to-[#14b8a6] mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-sm text-slate-700">Thiên Nhiên</span></button>
-              <button onclick="applyTheme('rose')" class="flex flex-col items-center p-4 border-2 border-slate-100 rounded-2xl hover:border-rose-400 transition group focus:ring-4 focus:ring-rose-200 outline-none"><div class="w-12 h-12 rounded-full bg-gradient-to-r from-[#f43f5e] to-[#f97316] mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-sm text-slate-700">Hoàng Hôn</span></button>
+            <p class="text-xs md:text-sm text-slate-500 mb-4 md:mb-6 font-medium">Chọn màu sắc chủ đạo (Theme).</p>
+            <div class="grid grid-cols-2 gap-3 md:gap-4">
+              <button onclick="applyTheme('violet')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-violet-400 transition group outline-none focus:ring-4 focus:ring-violet-200"><div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Tím Mộng Mơ</span></button>
+              <button onclick="applyTheme('blue')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-blue-400 transition group outline-none focus:ring-4 focus:ring-blue-200"><div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#3b82f6] to-[#06b6d4] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Đại Dương</span></button>
+              <button onclick="applyTheme('emerald')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-emerald-400 transition group outline-none focus:ring-4 focus:ring-emerald-200"><div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#10b981] to-[#14b8a6] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Thiên Nhiên</span></button>
+              <button onclick="applyTheme('rose')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-rose-400 transition group outline-none focus:ring-4 focus:ring-rose-200"><div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#f43f5e] to-[#f97316] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Hoàng Hôn</span></button>
             </div>
           </div>
         </div>
@@ -276,13 +361,13 @@
     </div>
   </main>
 
-  <!-- =============================== -->
-  <!-- MODALS -->
-  <!-- =============================== -->
+  <!-- ========================================== -->
+  <!-- 4. HỆ THỐNG MODAL (POPUPS) MỚI CHUẨN       -->
+  <!-- ========================================== -->
 
-  <!-- Modal Báo Lỗi Tùy Chỉnh -->
-  <div id="custom-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[500] p-4 opacity-0 transition-opacity duration-300">
-    <div class="bg-white rounded-[2rem] p-8 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col items-center" id="custom-modal-content">
+  <!-- Modal Báo Lỗi Tùy Chỉnh (Z: 600 - Cao nhất) -->
+  <div id="custom-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[600] p-4 opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-[2rem] p-8 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col items-center border border-white/20" id="custom-modal-content">
       <div id="custom-modal-icon" class="w-20 h-20 rounded-full flex items-center justify-center mb-5 shadow-inner ring-4 ring-white"></div>
       <h3 id="custom-modal-title" class="text-2xl font-black text-slate-800 text-center mb-2 tracking-tight">...</h3>
       <p id="custom-modal-message" class="text-sm text-slate-500 text-center mb-6 font-medium leading-relaxed">...</p>
@@ -291,11 +376,11 @@
   </div>
 
   <!-- Modal Chọn Avatar HS -->
-  <div id="avatar-picker-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[400] p-4 opacity-0 transition-opacity duration-300">
+  <div id="avatar-picker-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[500] p-4 opacity-0 transition-opacity duration-300">
     <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col" id="avatar-picker-content">
       <div class="flex justify-between items-center mb-4 border-b pb-3">
         <h3 class="font-black text-xl text-slate-800">Chọn Ảnh Học Sinh</h3>
-        <button onclick="closeAvatarPicker()" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-full text-slate-500"><i data-lucide="x" class="w-4 h-4"></i></button>
+        <button onclick="closeModalUi('avatar-picker-modal', 'avatar-picker-content')" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-full text-slate-500"><i data-lucide="x" class="w-4 h-4"></i></button>
       </div>
       <label class="w-full flex items-center justify-center gap-2 bg-theme-light text-theme py-3.5 rounded-xl font-bold cursor-pointer hover:scale-[1.02] transition mb-5 border border-dashed border-theme">
           <i data-lucide="upload" class="w-5 h-5"></i> Tải ảnh từ máy
@@ -310,7 +395,7 @@
   </div>
 
   <!-- Modal Sửa Thông Tin HS -->
-  <div id="edit-student-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[400] p-4 opacity-0 transition-opacity duration-300">
+  <div id="edit-student-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[500] p-4 opacity-0 transition-opacity duration-300">
     <div class="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col" id="edit-student-content">
       <h3 class="font-black text-xl text-slate-800 mb-4">Sửa thông tin học sinh</h3>
       <div class="space-y-4">
@@ -322,23 +407,23 @@
         </div>
       </div>
       <div class="flex gap-3 mt-6">
-        <button onclick="closeEditModal()" class="flex-[0.4] bg-slate-100 text-slate-600 font-bold py-3 rounded-xl hover:bg-slate-200">Hủy</button>
+        <button onclick="closeModalUi('edit-student-modal', 'edit-student-content')" class="flex-[0.4] bg-slate-100 text-slate-600 font-bold py-3 rounded-xl hover:bg-slate-200">Hủy</button>
         <button onclick="saveStudentEdit()" class="flex-1 bg-theme-grad text-white font-bold py-3 rounded-xl shadow-lg hover:scale-[1.02] transition">Lưu thay đổi</button>
       </div>
     </div>
   </div>
 
   <!-- Modal Chấm Điểm / Biên Bản -->
-  <div id="grading-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[400] p-4 opacity-0 transition-opacity duration-300">
+  <div id="grading-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[500] p-4 opacity-0 transition-opacity duration-300">
     <div class="bg-white rounded-3xl p-6 md:p-8 w-full max-w-md shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col" id="grading-content">
       <div class="flex justify-between items-center mb-6 border-b pb-4">
         <h3 class="font-black text-lg md:text-xl text-slate-800 flex items-center gap-2"><i data-lucide="star" class="text-theme"></i> Đánh Giá Điểm</h3>
-        <button onclick="closeGradingModal()" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-full text-slate-500 transition"><i data-lucide="x" class="w-4 h-4"></i></button>
+        <button onclick="closeModalUi('grading-modal', 'grading-content')" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-full text-slate-500 transition"><i data-lucide="x" class="w-4 h-4"></i></button>
       </div>
       <div class="space-y-4">
         <input type="hidden" id="grade-hs-id">
         <div class="bg-slate-50 border border-slate-100 rounded-xl p-3 flex items-center gap-3">
-           <div id="grade-hs-avatar" class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm"></div>
+           <div id="grade-hs-avatar" class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm overflow-hidden"></div>
            <div><div id="grade-hs-name" class="font-black text-slate-800 text-lg">...</div><div class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Học sinh</div></div>
         </div>
         <div class="grid grid-cols-2 gap-3">
@@ -361,14 +446,14 @@
     </div>
   </div>
 
-  <!-- Modal Hồ Sơ Chi Tiết -->
-  <div id="profile-modal" class="fixed inset-0 bg-slate-900/90 backdrop-blur-md hidden items-center justify-center z-[400] p-4 opacity-0 transition-opacity duration-300">
+  <!-- Modal Hồ Sơ Chi Tiết (Thẻ HS) -->
+  <div id="profile-modal" class="fixed inset-0 bg-slate-900/90 backdrop-blur-md hidden items-center justify-center z-[500] p-4 opacity-0 transition-opacity duration-300">
     <div class="bg-[#f8fafc] rounded-3xl w-full max-w-2xl shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col max-h-[90vh] overflow-hidden" id="profile-content">
       <div class="h-32 bg-theme-grad relative shrink-0">
-         <button onclick="closeProfileModal()" class="absolute top-4 right-4 p-2 bg-black/20 hover:bg-black/40 rounded-full text-white transition backdrop-blur-md"><i data-lucide="x" class="w-5 h-5"></i></button>
+         <button onclick="closeModalUi('profile-modal', 'profile-content')" class="absolute top-4 right-4 p-2 bg-black/20 hover:bg-black/40 rounded-full text-white transition backdrop-blur-md"><i data-lucide="x" class="w-5 h-5"></i></button>
          <div class="absolute -bottom-10 left-6 flex items-end gap-4">
             <div id="profile-avatar" class="w-24 h-24 bg-white rounded-full flex items-center justify-center text-5xl shadow-xl border-4 border-white overflow-hidden"></div>
-            <div class="mb-1"><h3 id="profile-name" class="font-black text-2xl text-slate-800 drop-shadow-sm leading-tight">...</h3><span id="profile-code" class="text-xs font-mono font-bold bg-theme-light px-2.5 py-1 rounded-lg">ID: ...</span></div>
+            <div class="mb-1"><h3 id="profile-name" class="font-black text-2xl text-slate-800 drop-shadow-sm leading-tight">...</h3><span id="profile-code" class="text-xs font-mono font-bold bg-theme-light px-2.5 py-1 rounded-lg border">ID: ...</span></div>
          </div>
       </div>
       <div class="px-6 pt-14 pb-4 bg-white border-b border-slate-100 flex justify-between items-center shrink-0">
@@ -388,30 +473,30 @@
     </div>
   </div>
 
-  <!-- Modal Xem Ảnh To -->
-  <div id="image-viewer-modal" class="fixed inset-0 bg-black/90 backdrop-blur-xl hidden items-center justify-center z-[500] p-4 opacity-0 transition-opacity duration-300" onclick="closeImageViewer()">
+  <!-- Modal Xem Ảnh To (Z: 700) -->
+  <div id="image-viewer-modal" class="fixed inset-0 bg-black/90 backdrop-blur-xl hidden items-center justify-center z-[700] p-4 opacity-0 transition-opacity duration-300" onclick="closeModalUi('image-viewer-modal', 'image-viewer-img')">
       <button class="absolute top-6 right-6 text-white/50 hover:text-white transition bg-white/10 hover:bg-white/20 p-3 rounded-full"><i data-lucide="x" class="w-6 h-6"></i></button>
       <img id="image-viewer-img" src="" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl transform scale-95 transition-transform duration-300">
   </div>
 
   <!-- Tra Cứu Toàn Cục -->
-  <div id="global-search-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-start justify-center z-[400] p-4 opacity-0 transition-opacity duration-300">
+  <div id="global-search-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-start justify-center z-[500] p-4 opacity-0 transition-opacity duration-300">
     <div class="bg-white rounded-3xl w-full max-w-lg shadow-2xl transform scale-95 transition-transform duration-300 mt-10 md:mt-20 overflow-hidden flex flex-col max-h-[80vh]" id="global-search-content">
       <div class="p-4 md:p-6 border-b border-slate-100 shrink-0 relative">
-         <button onclick="closeGlobalSearch()" class="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 p-2 bg-slate-100 hover:bg-slate-200 rounded-full text-slate-500"><i data-lucide="x" class="w-4 h-4"></i></button>
+         <button onclick="closeModalUi('global-search-modal', 'global-search-content')" class="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 p-2 bg-slate-100 hover:bg-slate-200 rounded-full text-slate-500"><i data-lucide="x" class="w-4 h-4"></i></button>
          <h3 class="font-black text-lg text-slate-800 mb-3"><i data-lucide="search" class="w-5 h-5 inline text-theme mr-1"></i> Tra cứu học sinh</h3>
-         <input type="text" id="global-search-input" onkeyup="handleGlobalSearch()" placeholder="Nhập Tên hoặc Mã ID..." class="w-full pl-4 pr-12 py-3.5 bg-slate-50 border rounded-xl outline-none ring-theme font-bold">
+         <input type="text" id="global-search-input" onkeyup="handleGlobalSearch()" placeholder="Nhập Tên hoặc Mã ID..." class="w-full pl-4 pr-12 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none ring-theme font-bold text-slate-700">
       </div>
       <div id="global-search-results" class="flex-1 overflow-y-auto custom-scrollbar p-4"></div>
     </div>
   </div>
 
-  <!-- Vòng quay kết quả -->
-  <div id="result-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md hidden items-center justify-center z-[300] p-4">
-    <div class="bg-white rounded-[2rem] p-6 md:p-8 max-w-sm w-full text-center shadow-2xl transform transition-all scale-95 duration-200">
+  <!-- Modal Kết Quả Vòng Quay -->
+  <div id="result-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md hidden items-center justify-center z-[500] p-4 opacity-0 transition-opacity duration-300">
+    <div id="result-content" class="bg-white rounded-[2rem] p-6 md:p-8 max-w-sm w-full text-center shadow-2xl transform scale-95 transition-transform duration-300 border border-white/20">
       <div class="w-20 h-20 bg-amber-400 rounded-full mx-auto flex items-center justify-center text-4xl shadow-lg animate-bounce mt-[-4rem] border-4 border-white">🎉</div>
       <h3 class="text-xs font-black uppercase tracking-widest text-theme mt-6">Người được chọn</h3>
-      <div class="my-6"><div class="w-28 h-28 mx-auto rounded-full bg-theme-light border-4 border-white shadow-xl flex items-center justify-center text-6xl relative overflow-hidden" id="winner-avatar">👦</div><h2 id="winner-name" class="text-3xl font-black text-slate-800 mt-4 tracking-tight">...</h2></div>
+      <div class="my-6"><div class="w-28 h-28 mx-auto rounded-full bg-theme-light border-4 border-white shadow-xl flex items-center justify-center text-6xl relative overflow-hidden" id="winner-avatar">👦</div><h2 id="winner-name" class="text-3xl font-black text-slate-800 mt-4 tracking-tight">...</h2><span id="winner-id" class="inline-block mt-2 text-[10px] md:text-xs font-mono bg-slate-100 px-3 py-1 rounded-full text-slate-500 font-bold border border-slate-200">ID: ...</span></div>
       <div class="flex flex-col gap-3">
         <button onclick="closeResultModal(false)" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 py-3.5 rounded-xl font-bold text-sm">Giữ lại để gọi tiếp</button>
         <button onclick="closeResultModal(true)" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 py-3.5 rounded-xl font-bold text-sm">Tạm ẩn khỏi vòng quay</button>
@@ -419,24 +504,30 @@
     </div>
   </div>
 
-  <!-- Modal Tạo Sơ Đồ, Chọn HS -->
-  <div id="new-chart-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[300] p-4">
-    <div class="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl">
+  <!-- Modal Tạo Sơ Đồ -->
+  <div id="new-chart-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[500] p-4 opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-300" id="new-chart-content">
       <h3 class="font-black text-xl text-slate-800 mb-4">Tạo Sơ Đồ Lớp Mới</h3>
-      <input type="text" id="new-chart-name" placeholder="VD: Sơ đồ thi HK1" class="w-full border-2 rounded-xl px-4 py-3 outline-none ring-theme mb-6 font-medium text-sm">
-      <div class="flex justify-end gap-3"><button onclick="document.getElementById('new-chart-modal').classList.replace('flex','hidden')" class="px-5 py-2.5 text-slate-500 font-bold hover:bg-slate-100 rounded-xl">Hủy</button><button onclick="confirmCreateChart()" class="px-5 py-2.5 bg-theme-grad text-white font-bold rounded-xl shadow-lg">Tạo mới</button></div>
+      <input type="text" id="new-chart-name" placeholder="VD: Sơ đồ thi HK1" class="w-full border-2 border-slate-100 rounded-xl px-4 py-3 outline-none ring-theme mb-6 font-medium text-sm">
+      <div class="flex justify-end gap-3"><button onclick="closeModalUi('new-chart-modal', 'new-chart-content')" class="px-5 py-2.5 text-slate-500 font-bold hover:bg-slate-100 rounded-xl">Hủy</button><button onclick="confirmCreateChart()" class="px-5 py-2.5 bg-theme-grad text-white font-bold rounded-xl shadow-lg">Tạo mới</button></div>
     </div>
   </div>
-  <div id="pick-student-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[300] p-4">
-    <div class="bg-white rounded-3xl p-6 w-full max-w-[400px] shadow-2xl flex flex-col max-h-[85vh]">
-      <div class="flex justify-between items-center mb-4"><h3 class="font-black text-xl text-slate-800">Chọn học sinh</h3><button onclick="closeStudentPicker()" class="p-2 bg-slate-100 rounded-full text-slate-500"><i data-lucide="x" class="w-4 h-4"></i></button></div>
+
+  <!-- Modal Chọn HS Cho Sơ Đồ -->
+  <div id="pick-student-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[500] p-4 opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-3xl p-6 w-full max-w-[400px] shadow-2xl flex flex-col max-h-[85vh] transform scale-95 transition-transform duration-300" id="pick-student-content">
+      <div class="flex justify-between items-center mb-4"><h3 class="font-black text-xl text-slate-800">Chọn học sinh</h3><button onclick="closeModalUi('pick-student-modal', 'pick-student-content')" class="p-2 bg-slate-100 rounded-full text-slate-500 hover:bg-slate-200"><i data-lucide="x" class="w-4 h-4"></i></button></div>
       <button id="btn-remove-seat" onclick="removeStudentFromCurrentSeat()" class="hidden w-full mb-4 bg-rose-50 text-rose-600 py-3 rounded-xl text-sm font-bold border border-rose-100">Gỡ học sinh khỏi chỗ này</button>
-      <input type="text" id="search-student-seat" placeholder="Tìm tên..." onkeyup="filterPickerList()" class="w-full border-2 rounded-xl px-4 py-2.5 text-sm outline-none ring-theme mb-4 font-medium">
+      <input type="text" id="search-student-seat" placeholder="Tìm tên..." onkeyup="filterPickerList()" class="w-full border-2 border-slate-100 rounded-xl px-4 py-2.5 text-sm outline-none ring-theme mb-4 font-medium bg-slate-50">
       <div class="overflow-y-auto flex-1 custom-scrollbar space-y-2 pr-2" id="picker-list"></div>
     </div>
   </div>
 
+  <!-- ========================================== -->
+  <!-- 5. TẤT CẢ MÃ JAVASCRIPT ĐIỀU KHIỂN           -->
+  <!-- ========================================== -->
   <script>
+    // --- KHAI BÁO BIẾN TOÀN CỤC ---
     const MOCK_ADMIN = { id: 'thaytuan', pass: 'minhtuan' };
     let isLoginMode = true; let currentUser = null; let students = []; let currentWinner = null;
     let seatingCharts = []; let currentChartId = null; let selectedSeatId = null; 
@@ -447,200 +538,77 @@
     const GRADING_REASONS = { add: ["Làm việc tốt", "Có tiến bộ", "Phát biểu xây dựng bài", "Đạt điểm cao", "Giúp đỡ bạn bè", "Tham gia phong trào", "Khác..."], sub: ["Vi phạm đồng phục", "Tóc màu", "Đeo khuyên tai", "Mang dép", "Không thắt lưng", "Đi trễ", "Nghỉ học không phép", "Nói chuyện riêng", "Không làm bài tập", "Sử dụng điện thoại", "Khác..."] };
     const DEFAULT_COVERS = ['https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80', 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80'];
 
+    // --- TIỆN ÍCH CƠ BẢN ---
     window.onload = () => { lucide.createIcons(); checkAuth(); document.getElementById('excel-upload').addEventListener('change', handleExcelUpload); renderEmptySeatingGrid(); };
-
-    function getAvatarHtml(avatarStr, extraClass = "") {
-        if(!avatarStr) return '';
-        if(avatarStr.startsWith('data:image')) return `<img src="${avatarStr}" class="w-full h-full object-cover rounded-full ${extraClass}">`;
-        return `<span class="${extraClass}">${avatarStr}</span>`;
-    }
-
-    // --- GRADING / BIÊN BẢN ---
-    function openGradingModal(id) {
-        const s = students.find(x => x.id === id); if(!s) return;
-        document.getElementById('grade-hs-id').value = s.id; document.getElementById('grade-hs-name').innerText = s.name; document.getElementById('grade-hs-avatar').innerHTML = getAvatarHtml(s.avatar);
-        tempReportImage = null; selectGradeType('add');
-        const modal = document.getElementById('grading-modal'); modal.classList.remove('hidden'); modal.classList.add('flex');
-        setTimeout(() => { modal.classList.remove('opacity-0'); document.getElementById('grading-content').classList.remove('scale-95'); document.getElementById('grading-content').classList.add('scale-100'); }, 10);
-    }
-    function closeGradingModal() {
-        const modal = document.getElementById('grading-modal'); modal.classList.add('opacity-0');
-        document.getElementById('grading-content').classList.remove('scale-100'); document.getElementById('grading-content').classList.add('scale-95');
-        setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
-    }
-    function selectGradeType(type) {
-        document.getElementById('grade-type').value = type; const btnAdd = document.getElementById('btn-type-add'); const btnSub = document.getElementById('btn-type-sub');
-        const reasonSelect = document.getElementById('grade-reason'); const reportBox = document.getElementById('grade-report-box');
-        document.getElementById('report-preview').classList.add('hidden'); document.getElementById('report-placeholder').classList.remove('hidden'); document.getElementById('grade-image').value = ''; tempReportImage = null;
-        if(type === 'add') {
-            btnAdd.className = "py-3 rounded-xl font-bold border-2 border-emerald-500 bg-emerald-50 text-emerald-600 transition flex items-center justify-center gap-1 shadow-sm";
-            btnSub.className = "py-3 rounded-xl font-bold border-2 border-slate-200 bg-white text-slate-400 hover:bg-slate-50 transition flex items-center justify-center gap-1";
-            reasonSelect.innerHTML = GRADING_REASONS.add.map(r => `<option value="${r}">${r}</option>`).join('');
-            document.getElementById('grade-points').value = 5; reportBox.classList.add('hidden');
-        } else {
-            btnSub.className = "py-3 rounded-xl font-bold border-2 border-rose-500 bg-rose-50 text-rose-600 transition flex items-center justify-center gap-1 shadow-sm";
-            btnAdd.className = "py-3 rounded-xl font-bold border-2 border-slate-200 bg-white text-slate-400 hover:bg-slate-50 transition flex items-center justify-center gap-1";
-            reasonSelect.innerHTML = GRADING_REASONS.sub.map(r => `<option value="${r}">${r}</option>`).join('');
-            document.getElementById('grade-points').value = 10; reportBox.classList.remove('hidden');
-        }
-    }
-    function previewReportImage(event) {
-        const file = event.target.files[0]; if(!file) return;
-        compressImage(file, 800, 800, function(dataUrl) {
-            tempReportImage = dataUrl; document.getElementById('report-placeholder').classList.add('hidden');
-            const preview = document.getElementById('report-preview'); preview.style.backgroundImage = `url('${dataUrl}')`; preview.classList.remove('hidden');
-        });
-    }
-    function confirmGrading() {
-        const id = parseInt(document.getElementById('grade-hs-id').value); const s = students.find(x => x.id === id); if(!s) return;
-        const type = document.getElementById('grade-type').value; const reason = document.getElementById('grade-reason').value; const points = parseInt(document.getElementById('grade-points').value) || 0;
-        if (points <= 0) return showModal('warning', 'Lỗi', 'Số điểm phải lớn hơn 0.');
-        if (!s.history) s.history = [];
-        const d = new Date(); const dateStr = `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()} ${d.getHours()}:${d.getMinutes().toString().padStart(2,'0')}`;
-        s.history.unshift({ id: Date.now(), date: dateStr, type: type, reason: reason, points: points, image: type === 'sub' ? tempReportImage : null });
-        if(type === 'add') s.points += points; else s.points -= points;
-        if(saveUserToStorage()) { closeGradingModal(); renderAll(); showModal('success', 'Thành công', `Đã ${type==='add'?'cộng':'trừ'} ${points} điểm.`); }
-    }
-
-    // --- HỒ SƠ CHI TIẾT (PROFILE) ---
-    function openProfileModal(id) {
-        const s = students.find(x => x.id === id); if(!s) return;
-        document.getElementById('profile-name').innerText = s.name; document.getElementById('profile-code').innerText = "ID: " + (s.code || 'Chưa cấp');
-        document.getElementById('profile-avatar').innerHTML = getAvatarHtml(s.avatar); document.getElementById('profile-gender').innerText = s.gender || 'Nam';
-        document.getElementById('profile-dob').innerText = s.dob || 'Chưa rõ'; document.getElementById('profile-total-points').innerText = s.points;
-        let history = s.history || []; document.getElementById('profile-total-violations').innerText = history.filter(h => h.type === 'sub').length;
-        const listEl = document.getElementById('profile-history-list');
-        if(history.length === 0) listEl.innerHTML = `<div class="text-center text-slate-400 italic py-10">Chưa có đánh giá nào.</div>`;
-        else {
-            listEl.innerHTML = history.map(h => {
-                const isAdd = h.type === 'add'; const cClass = isAdd ? 'text-emerald-600 bg-emerald-50 border-emerald-200' : 'text-rose-600 bg-rose-50 border-rose-200';
-                const sign = isAdd ? '+' : '-'; const icon = isAdd ? '<i data-lucide="plus-circle" class="w-5 h-5 text-emerald-500"></i>' : '<i data-lucide="minus-circle" class="w-5 h-5 text-rose-500"></i>';
-                let imgBtn = h.image ? `<button onclick="viewImage('${h.image}')" class="mt-2 text-[10px] bg-slate-800 text-white px-3 py-1.5 rounded-lg flex items-center gap-1 hover:bg-slate-700 transition"><i data-lucide="image" class="w-3 h-3"></i> Xem Biên Bản</button>` : '';
-                return `<div class="relative flex items-start group"><div class="hidden md:flex flex-col items-center mr-4 mt-1 relative z-10 bg-slate-50 py-1">${icon}</div><div class="flex-1 bg-white p-4 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition"><div class="flex justify-between items-start mb-1"><span class="text-xs font-bold text-slate-400">${h.date}</span><span class="font-black text-lg ${cClass} px-2 py-0.5 rounded-lg border">${sign}${h.points}</span></div><p class="font-bold text-slate-700">${h.reason}</p>${imgBtn}</div></div>`;
-            }).join('');
-        }
-        lucide.createIcons();
-        const modal = document.getElementById('profile-modal'); modal.classList.remove('hidden'); modal.classList.add('flex');
-        setTimeout(() => { modal.classList.remove('opacity-0'); document.getElementById('profile-content').classList.remove('scale-95'); document.getElementById('profile-content').classList.add('scale-100'); }, 10);
-    }
-    function closeProfileModal() {
-        const modal = document.getElementById('profile-modal'); modal.classList.add('opacity-0');
-        document.getElementById('profile-content').classList.remove('scale-100'); document.getElementById('profile-content').classList.add('scale-95');
-        setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
-    }
-    function viewImage(base64Str) {
-        document.getElementById('image-viewer-img').src = base64Str; const modal = document.getElementById('image-viewer-modal');
-        modal.classList.remove('hidden'); modal.classList.add('flex'); setTimeout(() => { modal.classList.remove('opacity-0'); document.getElementById('image-viewer-img').classList.remove('scale-95'); document.getElementById('image-viewer-img').classList.add('scale-100'); }, 10);
-    }
-    function closeImageViewer() {
-        const modal = document.getElementById('image-viewer-modal'); modal.classList.add('opacity-0'); document.getElementById('image-viewer-img').classList.remove('scale-100'); document.getElementById('image-viewer-img').classList.add('scale-95'); setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); document.getElementById('image-viewer-img').src = ""; }, 300);
-    }
-
-    // --- TRA CỨU TOÀN CỤC ---
-    function openGlobalSearch() {
-        const modal = document.getElementById('global-search-modal'); document.getElementById('global-search-input').value = ''; document.getElementById('global-search-results').innerHTML = `<div class="p-10 text-center text-slate-400 font-medium">Nhập thông tin tìm kiếm.</div>`;
-        modal.classList.remove('hidden'); modal.classList.add('flex'); setTimeout(() => { modal.classList.remove('opacity-0'); document.getElementById('global-search-content').classList.remove('scale-95'); document.getElementById('global-search-content').classList.add('scale-100'); document.getElementById('global-search-input').focus(); }, 10);
-    }
-    function closeGlobalSearch() {
-        const modal = document.getElementById('global-search-modal'); modal.classList.add('opacity-0'); document.getElementById('global-search-content').classList.remove('scale-100'); document.getElementById('global-search-content').classList.add('scale-95'); setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
-    }
-    function handleGlobalSearch() {
-        const query = document.getElementById('global-search-input').value.toLowerCase().trim(); const resContainer = document.getElementById('global-search-results');
-        if(!query) { resContainer.innerHTML = `<div class="p-10 text-center text-slate-400 font-medium">Nhập thông tin tìm kiếm.</div>`; return; }
-        const filtered = students.filter(s => s.name.toLowerCase().includes(query) || (s.code && s.code.toLowerCase().includes(query)));
-        if(filtered.length === 0) { resContainer.innerHTML = `<div class="p-10 text-center text-rose-400 font-medium"><i data-lucide="frown" class="w-10 h-10 mx-auto mb-2 opacity-50"></i>Không tìm thấy.</div>`; lucide.createIcons(); return; }
-        resContainer.innerHTML = filtered.map(s => {
-            let vioCount = (s.history || []).filter(h => h.type === 'sub').length;
-            return `<div class="bg-white border-2 border-slate-100 p-4 rounded-2xl mb-3 flex flex-col md:flex-row gap-4 items-center md:items-start shadow-sm hover:border-theme transition cursor-pointer" onclick="closeGlobalSearch(); openProfileModal(${s.id})"><div class="w-20 h-20 bg-theme-light rounded-2xl flex items-center justify-center text-4xl shrink-0 overflow-hidden">${getAvatarHtml(s.avatar)}</div><div class="flex-1 text-center md:text-left w-full"><h4 class="text-xl font-black text-slate-800 mb-1">${s.name}</h4><span class="inline-block bg-slate-100 text-slate-600 font-mono text-xs px-2.5 py-1 rounded font-bold border mb-2">ID: ${s.code}</span><div class="grid grid-cols-2 gap-x-4 gap-y-1 text-sm text-slate-500 font-medium mt-1"><div><i data-lucide="user" class="w-3.5 h-3.5 inline mr-1 text-theme"></i> ${s.gender}</div><div><i data-lucide="alert-circle" class="w-3.5 h-3.5 inline mr-1 text-rose-500"></i> Vi phạm: <span class="text-rose-600 font-bold">${vioCount}</span></div></div></div><div class="bg-amber-50 border border-amber-100 px-4 py-3 rounded-xl flex flex-col items-center justify-center shrink-0 w-full md:w-auto"><span class="text-[10px] font-bold text-amber-500 uppercase">Điểm</span><span class="text-2xl font-black text-amber-600 mt-1">${s.points}</span></div></div>`;
-        }).join(''); lucide.createIcons();
-    }
-
-    // --- SỬA THÔNG TIN HS ---
-    function openEditModal(id) {
-        const s = students.find(x => x.id === id); if(!s) return;
-        document.getElementById('edit-hs-id').value = s.id; document.getElementById('edit-hs-name').value = s.name;
-        document.getElementById('edit-hs-gender').value = s.gender || 'Nam'; document.getElementById('edit-hs-dob').value = s.dob || '';
-        const modal = document.getElementById('edit-student-modal'); modal.classList.remove('hidden'); modal.classList.add('flex');
-        setTimeout(() => { modal.classList.remove('opacity-0'); document.getElementById('edit-student-content').classList.remove('scale-95'); document.getElementById('edit-student-content').classList.add('scale-100'); }, 10);
-    }
-    function closeEditModal() {
-        const modal = document.getElementById('edit-student-modal'); modal.classList.add('opacity-0');
-        document.getElementById('edit-student-content').classList.remove('scale-100'); document.getElementById('edit-student-content').classList.add('scale-95');
-        setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
-    }
-    function saveStudentEdit() {
-        const id = parseInt(document.getElementById('edit-hs-id').value); const name = document.getElementById('edit-hs-name').value.trim();
-        if(!name) return showModal('warning', 'Lỗi', 'Nhập tên học sinh!');
-        let s = students.find(x => x.id === id);
-        if(s) { s.name = name; s.gender = document.getElementById('edit-hs-gender').value; s.dob = document.getElementById('edit-hs-dob').value.trim(); localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); renderAll(); closeEditModal(); showModal('success', 'Thành công', 'Đã cập nhật!'); }
-    }
-
-    function deleteAllStudents() {
-        if(students.length === 0) return showModal('info', 'Trống', 'Danh sách lớp hiện đang trống!');
-        showModal('confirm', 'XÓA TẤT CẢ', 'CẢNH BÁO: Xóa TOÀN BỘ học sinh trong danh sách? Không thể khôi phục!', () => {
-            students = []; localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); 
-            seatingCharts.forEach(c => c.layout = {}); saveSeatingToStorage(); renderAll(); updateUI(); showModal('success', 'Hoàn tất', 'Đã xóa toàn bộ học sinh.');
-        });
-    }
-
-    function parseExcelDate(excelValue) {
-        if (!excelValue) return '';
-        if (typeof excelValue === 'number') {
-            const date = new Date(Math.round((excelValue - 25569) * 86400 * 1000));
-            return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
-        }
-        return String(excelValue).trim();
-    }
-
-    // Lõi chức năng cũ (Rút gọn tên, Avatar picker, Nén ảnh)
-    function getShortName(student) {
-      if(!student || !student.name) return ""; let parts = student.name.trim().split(' ').filter(Boolean); if(parts.length === 1) return parts[0];
-      let shortName = parts.slice(-2).join(' ');
-      let conflicts = students.filter(s => { let p = s.name.trim().split(' ').filter(Boolean); if(p.length === 1) return p[0].toLowerCase() === shortName.toLowerCase(); return p.slice(-2).join(' ').toLowerCase() === shortName.toLowerCase(); });
-      if(conflicts.length > 1) {
-          if(parts.length >= 3) shortName = parts.slice(-3).join(' '); 
-          let exactConflicts = conflicts.filter(s => { let p = s.name.trim().split(' ').filter(Boolean); let sName = p.length >= 3 ? p.slice(-3).join(' ') : p.join(' '); return sName.toLowerCase() === shortName.toLowerCase(); });
-          if(exactConflicts.length > 1) { exactConflicts.sort((a,b) => a.id - b.id); let idx = exactConflicts.findIndex(s => s.id === student.id); shortName = parts[parts.length-1] + " " + String.fromCharCode(65 + idx); }
-      } return shortName;
-    }
-
-    function openAvatarModal(studentId) {
-        studentToEditAvatar = studentId; const renderGroup = (id, list) => { document.getElementById(id).innerHTML = list.map(a => `<button onclick="selectAvatar('${a}')" class="text-3xl p-2 hover:bg-slate-100 rounded-xl transition hover:scale-110">${a}</button>`).join(''); };
-        renderGroup('avatars-male', AVATARS.male); renderGroup('avatars-female', AVATARS.female); renderGroup('avatars-special', AVATARS.special);
-        const modal = document.getElementById('avatar-picker-modal'); modal.classList.remove('hidden'); modal.classList.add('flex');
-        setTimeout(() => { modal.classList.remove('opacity-0'); document.getElementById('avatar-picker-content').classList.remove('scale-95'); document.getElementById('avatar-picker-content').classList.add('scale-100'); }, 10);
-    }
-    function closeAvatarPicker() { const modal = document.getElementById('avatar-picker-modal'); modal.classList.add('opacity-0'); document.getElementById('avatar-picker-content').classList.remove('scale-100'); document.getElementById('avatar-picker-content').classList.add('scale-95'); setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300); studentToEditAvatar = null; }
-    function selectAvatar(avatar) { if(studentToEditAvatar !== null) { const s = students.find(x => x.id === studentToEditAvatar); if(s) { s.avatar = avatar; localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); renderAll(); closeAvatarPicker(); showModal('success', 'Thành công', 'Đã đổi ảnh đại diện!'); } } }
-    function handleStudentAvatarUpload(e) { const file = e.target.files[0]; if(!file) return; compressImage(file, 200, 200, function(dataUrl) { selectAvatar(dataUrl); }); e.target.value = ''; }
-
-    function compressImage(file, maxWidth, maxHeight, callback) {
-      const reader = new FileReader();
-      reader.onload = function(event) { const img = new Image(); img.onload = function() { let width = img.width; let height = img.height; if (width > height) { if (width > maxWidth) { height *= maxWidth / width; width = maxWidth; } } else { if (height > maxHeight) { width *= maxHeight / height; height = maxHeight; } } const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = height; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height); callback(canvas.toDataURL('image/jpeg', 0.6)); }; img.src = event.target.result; }; reader.readAsDataURL(file);
-    }
-    function handleCoverUpload(e) { const file = e.target.files[0]; if(!file) return; compressImage(file, 1200, 800, function(dataUrl) { currentUser.cover = dataUrl; if(saveUserToStorage()) document.getElementById('cover-photo').style.backgroundImage = `url('${currentUser.cover}')`; }); e.target.value = ''; }
-    function handleAvatarUpload(e) { const file = e.target.files[0]; if(!file) return; compressImage(file, 300, 300, function(dataUrl) { currentUser.avatar = dataUrl; if(saveUserToStorage()) updateUI(); }); e.target.value = ''; }
-    function toggleSidebar() { const sidebar = document.getElementById('main-sidebar'); const overlay = document.getElementById('mobile-overlay'); sidebar.classList.toggle('-translate-x-full'); overlay.classList.toggle('hidden'); }
-    function applyTheme(themeName) { const t = THEMES[themeName] || THEMES.violet; document.documentElement.style.setProperty('--c1', t.c1); document.documentElement.style.setProperty('--c2', t.c2); document.documentElement.style.setProperty('--s1', t.s1); document.documentElement.style.setProperty('--s2', t.s2); if(currentUser) { currentUser.theme = themeName; saveUserToStorage(); } }
+    function getAvatarHtml(avatarStr, extraClass = "") { if(!avatarStr) return ''; if(avatarStr.startsWith('data:image')) return `<img src="${avatarStr}" class="w-full h-full object-cover rounded-full ${extraClass}">`; return `<span class="${extraClass}">${avatarStr}</span>`; }
+    function compressImage(file, maxWidth, maxHeight, callback) { const reader = new FileReader(); reader.onload = function(event) { const img = new Image(); img.onload = function() { let width = img.width; let height = img.height; if (width > height) { if (width > maxWidth) { height *= maxWidth / width; width = maxWidth; } } else { if (height > maxHeight) { width *= maxHeight / height; height = maxHeight; } } const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = height; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height); callback(canvas.toDataURL('image/jpeg', 0.6)); }; img.src = event.target.result; }; reader.readAsDataURL(file); }
     function generateCode(className, year, index) { className = className || "12A1"; year = year || "2026"; let yMatch = year.match(/\d{4}/g); let yStr = yMatch ? yMatch[yMatch.length - 1].slice(-2) : "00"; let gMatch = className.match(/^(\d{1,2})/); let gStr = gMatch ? gMatch[1].padStart(2, '0') : "00"; let sMatch = className.match(/[A-Za-z]+(\d+)/); let sStr = sMatch ? sMatch[1].padStart(2, '0') : "00"; return `${yStr}${gStr}${sStr}${index.toString().padStart(2, '0')}`; }
     function ensureStudentCodes() { let changed = false; students.forEach((s, idx) => { if (!s.code) { s.code = generateCode(currentUser.className, currentUser.year, idx + 1); changed = true; } }); if (changed) localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); }
+    function parseExcelDate(excelValue) { if (!excelValue) return ''; if (typeof excelValue === 'number') { const date = new Date(Math.round((excelValue - 25569) * 86400 * 1000)); return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`; } return String(excelValue).trim(); }
+
+    // --- HỆ THỐNG MODAL ĐIỀU KHIỂN CHUNG ---
+    function openModalUi(modalId, contentId) {
+        const modal = document.getElementById(modalId); if(!modal) return;
+        modal.classList.remove('hidden'); modal.classList.add('flex');
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            if(contentId) {
+                const content = document.getElementById(contentId);
+                if(content) { content.classList.remove('scale-95'); content.classList.add('scale-100'); }
+            }
+        }, 10);
+    }
+    function closeModalUi(modalId, contentId) {
+        const modal = document.getElementById(modalId); if(!modal) return;
+        modal.classList.add('opacity-0');
+        if(contentId) {
+            const content = document.getElementById(contentId);
+            if(content) { content.classList.remove('scale-100'); content.classList.add('scale-95'); }
+        }
+        setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
+    }
+    
+    // Popup Thông báo (Alerts / Confirms)
+    function showModal(type, title, message, onConfirm = null) {
+      const iconEl = document.getElementById('custom-modal-icon'); const actionsEl = document.getElementById('custom-modal-actions');
+      document.getElementById('custom-modal-title').innerText = title; document.getElementById('custom-modal-message').innerText = message;
+
+      let iconHtml = ''; let iconClass = '';
+      if (type === 'success') { iconHtml = '<i data-lucide="check" class="w-10 h-10 text-emerald-500"></i>'; iconClass = 'bg-emerald-100'; } 
+      else if (type === 'error') { iconHtml = '<i data-lucide="x" class="w-10 h-10 text-rose-500"></i>'; iconClass = 'bg-rose-100'; } 
+      else if (type === 'warning' || type === 'confirm') { iconHtml = '<i data-lucide="alert-triangle" class="w-10 h-10 text-amber-500"></i>'; iconClass = 'bg-amber-100'; } 
+      else { iconHtml = '<i data-lucide="info" class="w-10 h-10 text-blue-500"></i>'; iconClass = 'bg-blue-100'; }
+      iconEl.innerHTML = iconHtml; iconEl.className = `w-20 h-20 rounded-full flex items-center justify-center mb-5 shadow-inner ring-4 ring-white ${iconClass}`; lucide.createIcons();
+
+      if (onConfirm) {
+          actionsEl.innerHTML = `<button id="btn-modal-cancel" class="flex-[0.4] bg-slate-100 text-slate-600 font-bold py-3.5 rounded-xl hover:bg-slate-200 transition">Hủy</button><button id="btn-modal-confirm" class="flex-1 bg-rose-500 text-white font-bold py-3.5 rounded-xl hover:bg-rose-600 transition shadow-lg shadow-rose-500/30">Đồng ý</button>`;
+          document.getElementById('btn-modal-cancel').onclick = () => closeModalUi('custom-modal', 'custom-modal-content');
+          document.getElementById('btn-modal-confirm').onclick = () => { closeModalUi('custom-modal', 'custom-modal-content'); onConfirm(); };
+      } else {
+          actionsEl.innerHTML = `<button id="btn-modal-ok" class="w-full bg-theme-grad text-white font-bold py-3.5 rounded-xl hover:scale-[1.02] transition shadow-lg shadow-violet-500/20">OK, Đã hiểu</button>`;
+          document.getElementById('btn-modal-ok').onclick = () => closeModalUi('custom-modal', 'custom-modal-content');
+      }
+      openModalUi('custom-modal', 'custom-modal-content');
+    }
+
+    // --- TÀI KHOẢN & CÀI ĐẶT ---
     function checkAuth() { const savedUser = localStorage.getItem('currentUser'); const authScreen = document.getElementById('auth-screen'); if (savedUser) { currentUser = JSON.parse(savedUser); authScreen.classList.add('hidden'); authScreen.classList.remove('flex'); if (!currentUser.className) { const obScreen = document.getElementById('onboarding-screen'); obScreen.classList.remove('hidden'); obScreen.classList.add('flex'); } else loadUserData(); } else { authScreen.classList.remove('hidden'); authScreen.classList.add('flex'); } }
     function toggleAuthMode() { isLoginMode = !isLoginMode; document.getElementById('auth-title').innerText = isLoginMode ? 'Đăng Nhập' : 'Tạo Tài Khoản'; document.getElementById('auth-btn').innerText = isLoginMode ? 'Đăng Nhập' : 'Đăng Ký Nhanh'; document.getElementById('auth-toggle-text').innerText = isLoginMode ? 'Chưa có tài khoản?' : 'Đã có tài khoản?'; document.getElementById('auth-toggle-btn').innerText = isLoginMode ? 'Đăng ký ngay' : 'Đăng nhập'; document.getElementById('auth-error').classList.add('hidden'); }
-    function handleAuth() {
-      const id = document.getElementById('auth-id').value.trim(); const pass = document.getElementById('auth-pass').value.trim(); const errorMsg = document.getElementById('auth-error'); if(!id || !pass) return;
-      if (isLoginMode) {
-        if (id === MOCK_ADMIN.id && pass === MOCK_ADMIN.pass) { let adminData = localStorage.getItem('user_thaytuan'); if(!adminData) { adminData = { id: 'thaytuan' }; localStorage.setItem('user_thaytuan', JSON.stringify(adminData)); } else adminData = JSON.parse(adminData); loginSuccess(adminData); } 
-        else { const savedStr = localStorage.getItem('user_' + id); if (savedStr) { const user = JSON.parse(savedStr); if (user.pass === pass) loginSuccess(user); else { errorMsg.innerText = 'Sai mật khẩu!'; errorMsg.classList.remove('hidden'); } } else { errorMsg.innerText = 'Tài khoản không tồn tại!'; errorMsg.classList.remove('hidden'); } }
-      } else { if(id === MOCK_ADMIN.id || localStorage.getItem('user_' + id)) { errorMsg.innerText = 'Tài khoản này đã tồn tại!'; errorMsg.classList.remove('hidden'); return; } const newUser = { id: id, pass: pass }; localStorage.setItem('user_' + id, JSON.stringify(newUser)); loginSuccess(newUser); }
-    }
+    function handleAuth() { const id = document.getElementById('auth-id').value.trim(); const pass = document.getElementById('auth-pass').value.trim(); const errorMsg = document.getElementById('auth-error'); if(!id || !pass) return; if (isLoginMode) { if (id === MOCK_ADMIN.id && pass === MOCK_ADMIN.pass) { let adminData = localStorage.getItem('user_thaytuan'); if(!adminData) { adminData = { id: 'thaytuan' }; localStorage.setItem('user_thaytuan', JSON.stringify(adminData)); } else adminData = JSON.parse(adminData); loginSuccess(adminData); } else { const savedStr = localStorage.getItem('user_' + id); if (savedStr) { const user = JSON.parse(savedStr); if (user.pass === pass) loginSuccess(user); else { errorMsg.innerText = 'Sai mật khẩu!'; errorMsg.classList.remove('hidden'); } } else { errorMsg.innerText = 'Tài khoản không tồn tại!'; errorMsg.classList.remove('hidden'); } } } else { if(id === MOCK_ADMIN.id || localStorage.getItem('user_' + id)) { errorMsg.innerText = 'Tài khoản này đã tồn tại!'; errorMsg.classList.remove('hidden'); return; } const newUser = { id: id, pass: pass }; localStorage.setItem('user_' + id, JSON.stringify(newUser)); loginSuccess(newUser); } }
     function loginSuccess(user) { currentUser = user; localStorage.setItem('currentUser', JSON.stringify(currentUser)); const authScreen = document.getElementById('auth-screen'); authScreen.classList.add('hidden'); authScreen.classList.remove('flex'); if (!currentUser.className) { const obScreen = document.getElementById('onboarding-screen'); obScreen.classList.remove('hidden'); obScreen.classList.add('flex'); } else loadUserData(); }
     function logout() { localStorage.removeItem('currentUser'); location.reload(); }
     function saveOnboarding() { currentUser.teacherName = document.getElementById('ob-teacher').value || 'Thầy/Cô'; currentUser.className = document.getElementById('ob-class').value || '12A1'; currentUser.year = document.getElementById('ob-year').value || '2026'; currentUser.slogan = document.getElementById('ob-slogan').value || 'Lớp học yêu thương'; currentUser.theme = 'violet'; currentUser.cover = DEFAULT_COVERS[Math.floor(Math.random() * DEFAULT_COVERS.length)]; if(saveUserToStorage()) { const obScreen = document.getElementById('onboarding-screen'); obScreen.classList.add('hidden'); obScreen.classList.remove('flex'); loadUserData(); } }
-    function saveUserToStorage() { try { localStorage.setItem('currentUser', JSON.stringify(currentUser)); localStorage.setItem('user_' + currentUser.id, JSON.stringify(currentUser)); return true; } catch (e) { showModal('error', 'Lỗi bộ nhớ', 'Bộ nhớ trình duyệt của bạn đã đầy! Không thể lưu cài đặt hoặc ảnh mới. Vui lòng tải lên ảnh nhẹ hơn.'); return false; } }
-    function updateSettings() { currentUser.teacherName = document.getElementById('set-teacher').value; currentUser.className = document.getElementById('set-class').value; currentUser.year = document.getElementById('set-year').value; currentUser.slogan = document.getElementById('set-slogan').value; if(saveUserToStorage()) { showModal('success', 'Thành công', 'Đã lưu thay đổi cài đặt hệ thống thành công!'); updateUI(); } }
+    function saveUserToStorage() { try { localStorage.setItem('currentUser', JSON.stringify(currentUser)); localStorage.setItem('user_' + currentUser.id, JSON.stringify(currentUser)); return true; } catch (e) { showModal('error', 'Lỗi bộ nhớ', 'Bộ nhớ đầy! Vui lòng tải ảnh nhẹ hơn.'); return false; } }
+    function updateSettings() { currentUser.teacherName = document.getElementById('set-teacher').value; currentUser.className = document.getElementById('set-class').value; currentUser.year = document.getElementById('set-year').value; currentUser.slogan = document.getElementById('set-slogan').value; if(saveUserToStorage()) { showModal('success', 'Thành công', 'Đã lưu thay đổi cài đặt hệ thống!'); updateUI(); } }
+    function applyTheme(themeName) { const t = THEMES[themeName] || THEMES.violet; document.documentElement.style.setProperty('--c1', t.c1); document.documentElement.style.setProperty('--c2', t.c2); document.documentElement.style.setProperty('--s1', t.s1); document.documentElement.style.setProperty('--s2', t.s2); if(currentUser) { currentUser.theme = themeName; saveUserToStorage(); } }
+    function toggleSidebar() { const sidebar = document.getElementById('main-sidebar'); const overlay = document.getElementById('mobile-overlay'); sidebar.classList.toggle('-translate-x-full'); overlay.classList.toggle('hidden'); }
+    function switchTab(tabId) { document.querySelectorAll('.tab-section').forEach(sec => sec.classList.add('hidden')); document.querySelectorAll('.tab-btn').forEach(btn => { btn.classList.remove('bg-theme-grad', 'text-white', 'shadow-lg', 'font-bold'); btn.classList.add('hover:bg-white/10', 'text-white/70'); }); document.getElementById(tabId).classList.remove('hidden'); const activeBtn = document.getElementById('btn-' + tabId); if(activeBtn) { activeBtn.classList.remove('hover:bg-white/10', 'text-white/70'); activeBtn.classList.add('bg-theme-grad', 'text-white', 'shadow-lg', 'font-bold'); } const titles = { 'tab-overview': 'Tổng Quan Lớp', 'tab-students': 'Danh Sách Lớp', 'tab-notebook': 'Sổ Theo Dõi', 'tab-wheel': 'Vòng Quay May Mắn', 'tab-seating': 'Sơ Đồ Chỗ Ngồi', 'tab-praise': 'Tuyên Dương', 'tab-points': 'Thành Tích', 'tab-gifts': 'Quà Tặng', 'tab-settings': 'Cài Đặt & Giao Diện' }; document.getElementById('header-title').innerText = titles[tabId] || 'Hệ Thống'; if(window.innerWidth < 1024) toggleSidebar(); }
+    function handleCoverUpload(e) { const file = e.target.files[0]; if(!file) return; compressImage(file, 1200, 800, function(dataUrl) { currentUser.cover = dataUrl; if(saveUserToStorage()) document.getElementById('cover-photo').style.backgroundImage = `url('${currentUser.cover}')`; }); e.target.value = ''; }
+    function handleAvatarUpload(e) { const file = e.target.files[0]; if(!file) return; compressImage(file, 300, 300, function(dataUrl) { currentUser.avatar = dataUrl; if(saveUserToStorage()) updateUI(); }); e.target.value = ''; }
     function loadUserData() { applyTheme(currentUser.theme || 'violet'); document.getElementById('set-teacher').value = currentUser.teacherName || ''; document.getElementById('set-class').value = currentUser.className || ''; document.getElementById('set-year').value = currentUser.year || ''; document.getElementById('set-slogan').value = currentUser.slogan || ''; const savedStudents = localStorage.getItem('students_' + currentUser.id); students = savedStudents ? JSON.parse(savedStudents) : []; ensureStudentCodes(); const savedCharts = localStorage.getItem('seating_' + currentUser.id); seatingCharts = savedCharts ? JSON.parse(savedCharts) : []; updateUI(); renderAll(); initSeatingCharts(); }
-    function updateUI() { document.getElementById('sidebar-class-logo').innerText = currentUser.className; document.getElementById('sidebar-slogan').innerText = currentUser.slogan; document.getElementById('sidebar-teacher-name').innerText = "GVCN: " + (currentUser.teacherName || "..."); document.getElementById('header-year').innerHTML = `<i data-lucide="calendar" class="w-3 h-3"></i> Năm học ${currentUser.year}`; document.getElementById('banner-slogan').innerText = currentUser.slogan; document.getElementById('stat-student-count').innerText = students.length; if(currentUser.avatar) document.getElementById('header-avatar').innerHTML = `<img src="${currentUser.avatar}" class="w-full h-full object-cover">`; if(currentUser.cover) document.getElementById('cover-photo').style.backgroundImage = `url('${currentUser.cover}')`; lucide.createIcons(); }
-    
+    function updateUI() { document.getElementById('sidebar-class-logo').innerText = currentUser.className; document.getElementById('sidebar-slogan').innerText = currentUser.slogan; document.getElementById('sidebar-teacher-name').innerText = (currentUser.teacherName || "..."); document.getElementById('header-year').innerHTML = `<i data-lucide="calendar" class="w-3 h-3"></i> Năm học ${currentUser.year}`; document.getElementById('banner-slogan').innerText = currentUser.slogan; document.getElementById('stat-student-count').innerText = students.length; if(currentUser.avatar) document.getElementById('header-avatar').innerHTML = `<img src="${currentUser.avatar}" class="w-full h-full object-cover">`; if(currentUser.cover) document.getElementById('cover-photo').style.backgroundImage = `url('${currentUser.cover}')`; lucide.createIcons(); }
+
+    // --- XỬ LÝ HỌC SINH (EXCEL, CRUD) ---
     function handleExcelUpload(e) {
       const file = e.target.files[0]; if(!file) return; const reader = new FileReader();
       reader.onload = function(event) {
@@ -656,121 +624,141 @@
           }
         }
         if(newStudents.length > 0) { 
-          if(students.length > 0) {
-              showModal('confirm', 'Tải danh sách', `Bạn muốn xóa danh sách cũ để đè lên mới?\n\nẤn [Đồng ý] để XÓA CŨ - LẤY MỚI.`, () => { students = newStudents; localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); showModal('success', 'Thành công', `Đã nhập mới ${newStudents.length} học sinh!`); renderAll(); updateUI(); });
-          } else { students = newStudents; localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); showModal('success', 'Thành công', `Đã nhập thành công ${students.length} học sinh!`); renderAll(); updateUI(); }
-        } else { showModal('error', 'Lỗi dữ liệu', 'Không tìm thấy dữ liệu học sinh trong file Excel! Xin đảm bảo Cột B là Họ và Tên.'); }
+          students = newStudents; localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); 
+          showModal('success', 'Thành công', `Đã nhập mới ${students.length} học sinh!`); renderAll(); updateUI();
+        } else showModal('error', 'Lỗi dữ liệu', 'Không tìm thấy học sinh! Đảm bảo Cột B là Họ Tên.');
       }; reader.readAsArrayBuffer(file); e.target.value = '';
     }
-
-    function renderAll() { renderStudentTable(); renderStage(); renderOverview(); renderNotebook(); applyChartLayout(); }
-
-    function renderStudentTable() {
-      const tbody = document.getElementById('full-student-table'); document.getElementById('student-count').innerText = students.length;
-      if(students.length === 0) { tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400 italic">Chưa có học sinh nào.</td></tr>`; return; }
-      tbody.innerHTML = students.map((s, index) => `
-        <tr class="hover:bg-slate-50 transition border-b border-slate-50">
-          <td class="p-3 md:p-4 font-bold text-slate-400 text-center">${index + 1}</td>
-          <td class="p-3 md:p-4"><span class="bg-slate-100 text-slate-600 font-mono text-[10px] md:text-xs px-2 py-1 rounded border border-slate-200">${s.code || '...'}</span></td>
-          <td class="p-3 md:p-4 font-bold text-slate-800 whitespace-nowrap">${s.name} ${s.gender === 'Nữ' ? '<span class="text-rose-400 ml-1 font-normal">♀</span>' : '<span class="text-blue-400 ml-1 font-normal">♂</span>'}</td>
-          <td class="p-3 md:p-4 text-xs text-slate-500 font-medium whitespace-nowrap">${s.dob || '-'}</td>
-          <td class="p-3 md:p-4 text-center"><button onclick="openAvatarModal(${s.id})" class="w-10 h-10 md:w-12 md:h-12 mx-auto flex items-center justify-center text-2xl md:text-3xl hover:scale-110 hover:-translate-y-1 transition-all duration-200 rounded-full bg-slate-50 border border-slate-100 shadow-sm relative group cursor-pointer" title="Đổi Avatar">${getAvatarHtml(s.avatar)}<span class="absolute -top-1 -right-1 bg-theme-grad text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition shadow-md z-10"><i data-lucide="edit-2" class="w-2.5 h-2.5"></i></span></button></td>
-          <td class="p-3 md:p-4"><span class="bg-amber-100 text-amber-700 px-2 py-1 rounded-md font-black text-[10px] md:text-xs shadow-sm whitespace-nowrap">${s.points} đ</span></td>
-          <td class="p-3 md:p-4 text-right">
-            <div class="flex items-center justify-end gap-1.5">
-               <button class="bg-amber-50 p-1.5 md:p-2 rounded-lg text-amber-500 hover:text-white hover:bg-amber-500 transition shadow-sm" title="Chấm điểm / Lập biên bản" onclick="openGradingModal(${s.id})"><i data-lucide="star" class="w-4 h-4 fill-amber-500 hover:fill-white"></i></button>
-               <button class="bg-blue-50 p-1.5 md:p-2 rounded-lg text-blue-500 hover:text-white hover:bg-blue-500 transition shadow-sm" title="Sửa thông tin" onclick="openEditModal(${s.id})"><i data-lucide="pen-line" class="w-4 h-4"></i></button>
-               <button class="bg-rose-50 p-1.5 md:p-2 rounded-lg text-rose-400 hover:text-white hover:bg-rose-500 transition shadow-sm" title="Xóa học sinh" onclick="deleteStudent(${s.id})"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-            </div>
-          </td>
-        </tr>
-      `).join(''); lucide.createIcons();
+    
+    // Sửa lỗi Nút Xóa Tất Cả (đã bọc gọi hàm chuẩn xác)
+    function deleteAllStudents() {
+        if(students.length === 0) return showModal('info', 'Trống', 'Danh sách lớp hiện đang trống!');
+        showModal('confirm', 'XÓA TẤT CẢ', 'CẢNH BÁO: Bạn có chắc chắn muốn xóa TOÀN BỘ học sinh trong lớp? Thao tác này sẽ xóa sạch dữ liệu và không thể khôi phục!', () => {
+            students = []; localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); 
+            seatingCharts.forEach(c => c.layout = {}); saveSeatingToStorage(); // Cập nhật lại sơ đồ luôn
+            renderAll(); updateUI(); 
+            showModal('success', 'Hoàn tất', 'Đã xóa toàn bộ dữ liệu học sinh thành công.');
+        });
+    }
+    
+    function deleteStudent(id) { 
+      showModal('confirm', 'Xác nhận xóa', 'Xóa học sinh này khỏi hệ thống?', () => { students = students.filter(s => s.id !== id); localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); renderAll(); updateUI(); });
     }
 
-    function renderNotebook() {
-      const query = document.getElementById('search-notebook').value.toLowerCase().trim(); const grid = document.getElementById('notebook-grid');
-      let filtered = students; if (query) filtered = students.filter(s => s.name.toLowerCase().includes(query) || (s.code && s.code.toLowerCase().includes(query)));
-      if (filtered.length === 0) { grid.innerHTML = `<div class="col-span-full text-center py-10 text-slate-400 font-medium">Không tìm thấy học sinh nào.</div>`; return; }
-      grid.innerHTML = filtered.map(s => `
-        <div class="bg-white rounded-3xl p-4 md:p-5 shadow-sm border border-slate-100 hover:shadow-xl transition-all flex flex-col items-center relative overflow-hidden group">
-           <div class="absolute top-0 left-0 w-full h-1.5 bg-theme-grad opacity-50 group-hover:opacity-100 transition"></div>
-           <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-slate-50 text-4xl md:text-5xl flex items-center justify-center mb-3 ring-4 ring-slate-100 group-hover:ring-[var(--c1)] transition mt-2 cursor-pointer relative" onclick="openAvatarModal(${s.id})" title="Đổi Avatar">${getAvatarHtml(s.avatar)}</div>
-           <h4 class="font-black text-slate-800 text-center line-clamp-1 w-full text-sm md:text-[15px] px-2 mb-1" title="${s.name}">${s.name}</h4>
-           <div class="text-[10px] md:text-xs text-slate-500 font-medium mb-2 flex items-center gap-1.5"><span>${s.gender || 'Nam'}</span> <span class="w-1 h-1 bg-slate-300 rounded-full"></span> <span>${s.dob || '--/--/----'}</span></div>
-           <div class="flex items-center justify-center mb-4"><span class="text-[10px] md:text-[11px] font-mono bg-theme-light px-2.5 py-1 rounded-lg font-bold tracking-widest"><i data-lucide="fingerprint" class="w-3 h-3 inline mr-1 opacity-70"></i>${s.code || 'CHƯA CẤP'}</span></div>
-           <div class="flex gap-2 w-full mt-auto">
-              <div class="flex-[0.8] bg-amber-50 rounded-xl py-2 text-center flex flex-col justify-center border border-amber-100 shadow-sm cursor-pointer hover:bg-amber-100 transition" onclick="openGradingModal(${s.id})" title="Chấm điểm / Cộng trừ">
-                <span class="text-[8px] md:text-[9px] uppercase font-bold text-amber-500/80 tracking-wider">Điểm</span>
-                <span class="font-black text-amber-600 text-base md:text-lg leading-none mt-0.5 flex items-center justify-center gap-1">${s.points} <i data-lucide="edit-3" class="w-3 h-3"></i></span>
-              </div>
-              <button class="flex-1 bg-slate-50 text-slate-500 rounded-xl py-2 text-center text-[10px] md:text-xs font-bold hover:bg-[var(--c1)] hover:text-white transition shadow-sm border border-slate-200 hover:border-transparent flex items-center justify-center gap-1" onclick="openProfileModal(${s.id})"><i data-lucide="book-user" class="w-3 h-3 md:w-4 md:h-4"></i> Hồ sơ</button>
-           </div>
-        </div>
-      `).join(''); lucide.createIcons();
+    function openEditModal(id) {
+        const s = students.find(x => x.id === id); if(!s) return;
+        document.getElementById('edit-hs-id').value = s.id; document.getElementById('edit-hs-name').value = s.name;
+        document.getElementById('edit-hs-gender').value = s.gender || 'Nam'; document.getElementById('edit-hs-dob').value = s.dob || '';
+        openModalUi('edit-student-modal', 'edit-student-content');
+    }
+    function saveStudentEdit() {
+        const id = parseInt(document.getElementById('edit-hs-id').value); const name = document.getElementById('edit-hs-name').value.trim();
+        if(!name) return showModal('warning', 'Lỗi', 'Vui lòng nhập tên học sinh!');
+        let s = students.find(x => x.id === id);
+        if(s) { s.name = name; s.gender = document.getElementById('edit-hs-gender').value; s.dob = document.getElementById('edit-hs-dob').value.trim(); localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); renderAll(); closeModalUi('edit-student-modal', 'edit-student-content'); showModal('success', 'Thành công', 'Đã cập nhật thông tin!'); }
     }
 
-    function renderOverview() {
-      const sorted = [...students].sort((a,b) => b.points - a.points); const topContainer = document.getElementById('top-students-list');
-      if(sorted.length === 0) { topContainer.innerHTML = `<div class="col-span-5 text-sm text-white/50 italic mt-4 font-medium">Chưa có dữ liệu</div>`; return; }
-      topContainer.innerHTML = sorted.slice(0, 5).map((s, index) => `
-        <div class="bg-black/20 p-3 md:p-4 rounded-2xl flex flex-col items-center relative overflow-hidden border border-white/10 group hover:bg-white/20 transition cursor-pointer" onclick="openProfileModal(${s.id})">
-          ${index === 0 ? '<div class="absolute top-0 right-0 bg-white text-rose-500 text-[9px] md:text-[10px] font-black px-1.5 md:px-2 py-0.5 rounded-bl-lg shadow-sm">TOP 1</div>' : ''}
-          <div class="w-10 h-10 md:w-14 md:h-14 flex items-center justify-center text-3xl md:text-4xl transform group-hover:scale-110 transition rounded-full overflow-hidden">${getAvatarHtml(s.avatar)}</div>
-          <span class="font-bold text-[10px] md:text-xs mt-2 md:mt-3 truncate w-full text-center" title="${s.name}">${s.name}</span>
-          <span class="text-[9px] md:text-[11px] bg-white/20 text-white font-black px-2 md:px-3 py-1 rounded-full mt-1.5 shadow-inner">${s.points} đ</span>
-        </div>
-      `).join('');
+    // --- AVATAR CHIBI ---
+    function openAvatarModal(studentId) {
+        studentToEditAvatar = studentId; const renderGroup = (id, list) => { document.getElementById(id).innerHTML = list.map(a => `<button onclick="selectAvatar('${a}')" class="text-3xl p-2 hover:bg-slate-100 rounded-xl transition hover:scale-110">${a}</button>`).join(''); };
+        renderGroup('avatars-male', AVATARS.male); renderGroup('avatars-female', AVATARS.female); renderGroup('avatars-special', AVATARS.special);
+        openModalUi('avatar-picker-modal', 'avatar-picker-content');
+    }
+    function selectAvatar(avatar) { if(studentToEditAvatar !== null) { const s = students.find(x => x.id === studentToEditAvatar); if(s) { s.avatar = avatar; localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); renderAll(); closeModalUi('avatar-picker-modal', 'avatar-picker-content'); showModal('success', 'Thành công', 'Đã đổi ảnh đại diện!'); } } }
+    function handleStudentAvatarUpload(e) { const file = e.target.files[0]; if(!file) return; compressImage(file, 200, 200, function(dataUrl) { selectAvatar(dataUrl); }); e.target.value = ''; }
+
+    // --- CHẤM ĐIỂM & BIÊN BẢN ---
+    function openGradingModal(id) {
+        const s = students.find(x => x.id === id); if(!s) return;
+        document.getElementById('grade-hs-id').value = s.id; document.getElementById('grade-hs-name').innerText = s.name; document.getElementById('grade-hs-avatar').innerHTML = getAvatarHtml(s.avatar);
+        tempReportImage = null; selectGradeType('add');
+        openModalUi('grading-modal', 'grading-content');
+    }
+    function selectGradeType(type) {
+        document.getElementById('grade-type').value = type; const btnAdd = document.getElementById('btn-type-add'); const btnSub = document.getElementById('btn-type-sub');
+        const reasonSelect = document.getElementById('grade-reason'); const reportBox = document.getElementById('grade-report-box');
+        document.getElementById('report-preview').classList.add('hidden'); document.getElementById('report-placeholder').classList.remove('hidden'); document.getElementById('grade-image').value = ''; tempReportImage = null;
+        if(type === 'add') {
+            btnAdd.className = "py-3 rounded-xl font-bold border-2 border-emerald-500 bg-emerald-50 text-emerald-600 transition flex items-center justify-center gap-1 shadow-sm"; btnSub.className = "py-3 rounded-xl font-bold border-2 border-slate-200 bg-white text-slate-400 hover:bg-slate-50 transition flex items-center justify-center gap-1";
+            reasonSelect.innerHTML = GRADING_REASONS.add.map(r => `<option value="${r}">${r}</option>`).join(''); document.getElementById('grade-points').value = 5; reportBox.classList.add('hidden');
+        } else {
+            btnSub.className = "py-3 rounded-xl font-bold border-2 border-rose-500 bg-rose-50 text-rose-600 transition flex items-center justify-center gap-1 shadow-sm"; btnAdd.className = "py-3 rounded-xl font-bold border-2 border-slate-200 bg-white text-slate-400 hover:bg-slate-50 transition flex items-center justify-center gap-1";
+            reasonSelect.innerHTML = GRADING_REASONS.sub.map(r => `<option value="${r}">${r}</option>`).join(''); document.getElementById('grade-points').value = 10; reportBox.classList.remove('hidden');
+        }
+    }
+    function previewReportImage(event) { const file = event.target.files[0]; if(!file) return; compressImage(file, 800, 800, function(dataUrl) { tempReportImage = dataUrl; document.getElementById('report-placeholder').classList.add('hidden'); const preview = document.getElementById('report-preview'); preview.style.backgroundImage = `url('${dataUrl}')`; preview.classList.remove('hidden'); }); }
+    function confirmGrading() {
+        const id = parseInt(document.getElementById('grade-hs-id').value); const s = students.find(x => x.id === id); if(!s) return;
+        const type = document.getElementById('grade-type').value; const reason = document.getElementById('grade-reason').value; const points = parseInt(document.getElementById('grade-points').value) || 0;
+        if (points <= 0) return showModal('warning', 'Lỗi', 'Số điểm phải lớn hơn 0.');
+        if (!s.history) s.history = []; const d = new Date(); const dateStr = `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()} ${d.getHours()}:${d.getMinutes().toString().padStart(2,'0')}`;
+        s.history.unshift({ id: Date.now(), date: dateStr, type: type, reason: reason, points: points, image: type === 'sub' ? tempReportImage : null });
+        if(type === 'add') s.points += points; else s.points -= points;
+        if(saveUserToStorage()) { closeModalUi('grading-modal', 'grading-content'); renderAll(); showModal('success', 'Thành công', `Đã ${type==='add'?'cộng':'trừ'} ${points} điểm.`); }
     }
 
-    function renderStage() {
-      document.getElementById('wheel-student-count').innerText = students.length + " HS"; const grid = document.getElementById('student-grid');
-      if(students.length === 0) { grid.innerHTML = `<div class="col-span-full text-center py-10 text-slate-400 font-medium">Vui lòng thêm học sinh!</div>`; return; }
-      grid.innerHTML = students.map(s => `
-        <div id="card-${s.id}" class="student-card bg-white border border-slate-200 p-2 md:p-3 rounded-2xl flex flex-col items-center justify-center text-center transition-all duration-300 shadow-sm">
-          <div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-3xl md:text-4xl mb-1 md:mb-2 rounded-full overflow-hidden">${getAvatarHtml(s.avatar)}</div>
-          <span class="font-bold text-[10px] md:text-[11px] truncate w-full text-slate-700" title="${s.name}">${s.name}</span>
-        </div>
-      `).join('');
+    // --- HỒ SƠ CHI TIẾT (PROFILE) ---
+    function openProfileModal(id) {
+        const s = students.find(x => x.id === id); if(!s) return;
+        document.getElementById('profile-name').innerText = s.name; document.getElementById('profile-code').innerText = "ID: " + (s.code || 'Chưa cấp');
+        document.getElementById('profile-avatar').innerHTML = getAvatarHtml(s.avatar); document.getElementById('profile-gender').innerText = s.gender || 'Nam'; document.getElementById('profile-dob').innerText = s.dob || 'Chưa rõ'; document.getElementById('profile-total-points').innerText = s.points;
+        let history = s.history || []; document.getElementById('profile-total-violations').innerText = history.filter(h => h.type === 'sub').length;
+        const listEl = document.getElementById('profile-history-list');
+        if(history.length === 0) listEl.innerHTML = `<div class="text-center text-slate-400 italic py-10">Chưa có đánh giá nào.</div>`;
+        else {
+            listEl.innerHTML = history.map(h => {
+                const isAdd = h.type === 'add'; const cClass = isAdd ? 'text-emerald-600 bg-emerald-50 border-emerald-200' : 'text-rose-600 bg-rose-50 border-rose-200'; const sign = isAdd ? '+' : '-'; const icon = isAdd ? '<i data-lucide="plus-circle" class="w-5 h-5 text-emerald-500"></i>' : '<i data-lucide="minus-circle" class="w-5 h-5 text-rose-500"></i>';
+                let imgBtn = h.image ? `<button onclick="viewImage('${h.image}')" class="mt-2 text-[10px] bg-slate-800 text-white px-3 py-1.5 rounded-lg flex items-center gap-1 hover:bg-slate-700 transition"><i data-lucide="image" class="w-3 h-3"></i> Xem Biên Bản</button>` : '';
+                return `<div class="relative flex items-start group"><div class="hidden md:flex flex-col items-center mr-4 mt-1 relative z-10 bg-slate-50 py-1">${icon}</div><div class="flex-1 bg-white p-4 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition"><div class="flex justify-between items-start mb-1"><span class="text-xs font-bold text-slate-400">${h.date}</span><span class="font-black text-lg ${cClass} px-2 py-0.5 rounded-lg border">${sign}${h.points}</span></div><p class="font-bold text-slate-700">${h.reason}</p>${imgBtn}</div></div>`;
+            }).join('');
+        }
+        lucide.createIcons();
+        openModalUi('profile-modal', 'profile-content');
+    }
+    function viewImage(base64Str) { document.getElementById('image-viewer-img').src = base64Str; openModalUi('image-viewer-modal', 'image-viewer-img'); }
+
+    // --- TRA CỨU TOÀN CỤC ---
+    function openGlobalSearch() { document.getElementById('global-search-input').value = ''; document.getElementById('global-search-results').innerHTML = `<div class="p-10 text-center text-slate-400 font-medium">Nhập thông tin tìm kiếm.</div>`; openModalUi('global-search-modal', 'global-search-content'); setTimeout(()=>document.getElementById('global-search-input').focus(), 100); }
+    function handleGlobalSearch() {
+        const query = document.getElementById('global-search-input').value.toLowerCase().trim(); const resContainer = document.getElementById('global-search-results');
+        if(!query) { resContainer.innerHTML = `<div class="p-10 text-center text-slate-400 font-medium">Nhập thông tin tìm kiếm.</div>`; return; }
+        const filtered = students.filter(s => s.name.toLowerCase().includes(query) || (s.code && s.code.toLowerCase().includes(query)));
+        if(filtered.length === 0) { resContainer.innerHTML = `<div class="p-10 text-center text-rose-400 font-medium"><i data-lucide="frown" class="w-10 h-10 mx-auto mb-2 opacity-50"></i>Không tìm thấy.</div>`; lucide.createIcons(); return; }
+        resContainer.innerHTML = filtered.map(s => {
+            let vioCount = (s.history || []).filter(h => h.type === 'sub').length;
+            return `<div class="bg-white border-2 border-slate-100 p-4 rounded-2xl mb-3 flex flex-col md:flex-row gap-4 items-center md:items-start shadow-sm hover:border-theme transition cursor-pointer" onclick="closeModalUi('global-search-modal', 'global-search-content'); setTimeout(()=>openProfileModal(${s.id}), 300);"><div class="w-20 h-20 bg-theme-light rounded-2xl flex items-center justify-center text-4xl shrink-0 overflow-hidden">${getAvatarHtml(s.avatar)}</div><div class="flex-1 text-center md:text-left w-full"><h4 class="text-xl font-black text-slate-800 mb-1">${s.name}</h4><span class="inline-block bg-slate-100 text-slate-600 font-mono text-xs px-2.5 py-1 rounded font-bold border mb-2">ID: ${s.code}</span><div class="grid grid-cols-2 gap-x-4 gap-y-1 text-sm text-slate-500 font-medium mt-1"><div><i data-lucide="user" class="w-3.5 h-3.5 inline mr-1 text-theme"></i> ${s.gender}</div><div><i data-lucide="alert-circle" class="w-3.5 h-3.5 inline mr-1 text-rose-500"></i> Vi phạm: <span class="text-rose-600 font-bold">${vioCount}</span></div></div></div><div class="bg-amber-50 border border-amber-100 px-4 py-3 rounded-xl flex flex-col items-center justify-center shrink-0 w-full md:w-auto"><span class="text-[10px] font-bold text-amber-500 uppercase">Điểm</span><span class="text-2xl font-black text-amber-600 mt-1">${s.points}</span></div></div>`;
+        }).join(''); lucide.createIcons();
     }
 
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-section').forEach(sec => sec.classList.add('hidden'));
-      document.querySelectorAll('.tab-btn').forEach(btn => { btn.classList.remove('bg-theme-grad', 'text-white', 'shadow-lg', 'font-bold'); btn.classList.add('hover:bg-white/10', 'text-white/70'); });
-      document.getElementById(tabId).classList.remove('hidden');
-      const activeBtn = document.getElementById('btn-' + tabId);
-      if(activeBtn) { activeBtn.classList.remove('hover:bg-white/10', 'text-white/70'); activeBtn.classList.add('bg-theme-grad', 'text-white', 'shadow-lg', 'font-bold'); }
-      const titles = { 'tab-overview': 'Tổng Quan Lớp', 'tab-students': 'Danh Sách Lớp', 'tab-notebook': 'Sổ Theo Dõi', 'tab-wheel': 'Vòng Quay May Mắn', 'tab-seating': 'Sơ Đồ Chỗ Ngồi', 'tab-praise': 'Tuyên Dương', 'tab-points': 'Thành Tích', 'tab-gifts': 'Quà Tặng', 'tab-settings': 'Cài Đặt & Giao Diện' };
-      document.getElementById('header-title').innerText = titles[tabId] || 'Hệ Thống';
-      if(window.innerWidth < 1024) toggleSidebar();
+    // --- SƠ ĐỒ LỚP ---
+    function getShortName(student) {
+      if(!student || !student.name) return ""; let parts = student.name.trim().split(' ').filter(Boolean); if(parts.length === 1) return parts[0];
+      let shortName = parts.slice(-2).join(' '); let conflicts = students.filter(s => { let p = s.name.trim().split(' ').filter(Boolean); if(p.length === 1) return p[0].toLowerCase() === shortName.toLowerCase(); return p.slice(-2).join(' ').toLowerCase() === shortName.toLowerCase(); });
+      if(conflicts.length > 1) {
+          if(parts.length >= 3) shortName = parts.slice(-3).join(' '); 
+          let exactConflicts = conflicts.filter(s => { let p = s.name.trim().split(' ').filter(Boolean); let sName = p.length >= 3 ? p.slice(-3).join(' ') : p.join(' '); return sName.toLowerCase() === shortName.toLowerCase(); });
+          if(exactConflicts.length > 1) { exactConflicts.sort((a,b) => a.id - b.id); let idx = exactConflicts.findIndex(s => s.id === student.id); shortName = parts[parts.length-1] + " " + String.fromCharCode(65 + idx); }
+      } return shortName;
     }
 
     function renderEmptySeatingGrid() {
       const grid = document.getElementById('seating-grid'); let html = '';
       for(let d=1; d<=4; d++) {
-        html += `<div class="flex flex-col gap-2 md:gap-3 bg-slate-100/50 p-3 md:p-4 rounded-3xl border border-slate-200 shadow-sm">
-                   <div class="text-center font-black text-[10px] md:text-xs text-slate-400 mb-1 md:mb-2 tracking-widest uppercase border-b border-slate-200 pb-2 md:pb-3">Dãy ${d}</div>`;
+        html += `<div class="flex flex-col gap-2 md:gap-3 bg-slate-100/50 p-3 md:p-4 rounded-3xl border border-slate-200 shadow-sm"><div class="text-center font-black text-[10px] md:text-xs text-slate-400 mb-1 md:mb-2 tracking-widest uppercase border-b border-slate-200 pb-2 md:pb-3">Dãy ${d}</div>`;
         for(let b=1; b<=7; b++) {
-          html += `<div class="bg-white border border-slate-200 p-1.5 md:p-2 rounded-2xl grid grid-cols-2 gap-1.5 md:gap-2 shadow-sm relative group hover:border-[var(--c1)] transition">
-                      <div class="absolute -left-4 md:-left-6 top-1/2 -translate-y-1/2 text-[8px] md:text-[10px] text-white font-bold bg-slate-300 rounded-full w-4 h-4 md:w-5 md:h-5 flex items-center justify-center shadow-inner group-hover:bg-[var(--c1)] transition">${b}</div>
-                      <div id="seat-d${d}-b${b}-1" onclick="handleSeatClick('d${d}-b${b}-1')" class="seat-slot border-2 border-dashed border-slate-200 h-[60px] md:h-[76px] rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-theme-light hover:border-[var(--c1)] transition relative overflow-hidden bg-slate-50/50"><i data-lucide="plus" class="w-4 h-4 md:w-5 md:h-5 text-slate-300"></i></div>
-                      <div id="seat-d${d}-b${b}-2" onclick="handleSeatClick('d${d}-b${b}-2')" class="seat-slot border-2 border-dashed border-slate-200 h-[60px] md:h-[76px] rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-theme-light hover:border-[var(--c1)] transition relative overflow-hidden bg-slate-50/50"><i data-lucide="plus" class="w-4 h-4 md:w-5 md:h-5 text-slate-300"></i></div>
-                   </div>`;
-        }
-        html += `</div>`;
-      }
-      grid.innerHTML = html; lucide.createIcons();
+          html += `<div class="bg-white border border-slate-200 p-1.5 md:p-2 rounded-2xl grid grid-cols-2 gap-1.5 md:gap-2 shadow-sm relative group hover:border-[var(--c1)] transition"><div class="absolute -left-4 md:-left-6 top-1/2 -translate-y-1/2 text-[8px] md:text-[10px] text-white font-bold bg-slate-300 rounded-full w-4 h-4 md:w-5 md:h-5 flex items-center justify-center shadow-inner group-hover:bg-[var(--c1)] transition">${b}</div><div id="seat-d${d}-b${b}-1" onclick="handleSeatClick('d${d}-b${b}-1')" class="seat-slot border-2 border-dashed border-slate-200 h-[60px] md:h-[76px] rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-theme-light hover:border-[var(--c1)] transition relative overflow-hidden bg-slate-50/50"><i data-lucide="plus" class="w-4 h-4 md:w-5 md:h-5 text-slate-300"></i></div><div id="seat-d${d}-b${b}-2" onclick="handleSeatClick('d${d}-b${b}-2')" class="seat-slot border-2 border-dashed border-slate-200 h-[60px] md:h-[76px] rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-theme-light hover:border-[var(--c1)] transition relative overflow-hidden bg-slate-50/50"><i data-lucide="plus" class="w-4 h-4 md:w-5 md:h-5 text-slate-300"></i></div></div>`;
+        } html += `</div>`;
+      } grid.innerHTML = html; lucide.createIcons();
     }
     function initSeatingCharts() { if(seatingCharts.length === 0) { seatingCharts.push({ id: Date.now().toString(), name: "Sơ đồ mặc định", layout: {} }); saveSeatingToStorage(); } currentChartId = seatingCharts[0].id; renderChartSelect(); applyChartLayout(); }
     function renderChartSelect() { const select = document.getElementById('seating-select'); select.innerHTML = seatingCharts.map(c => `<option value="${c.id}">${c.name}</option>`).join(''); select.value = currentChartId; document.getElementById('btn-delete-chart').classList.toggle('hidden', seatingCharts.length <= 1); }
     function changeSeatingChart() { currentChartId = document.getElementById('seating-select').value; applyChartLayout(); }
-    function openNewChartModal() { document.getElementById('new-chart-name').value = ''; const modal = document.getElementById('new-chart-modal'); modal.classList.remove('hidden'); modal.classList.add('flex'); }
-    function confirmCreateChart() { const name = document.getElementById('new-chart-name').value.trim(); if(!name) return showModal('warning', 'Thiếu thông tin', 'Vui lòng nhập tên sơ đồ!'); const newChart = { id: Date.now().toString(), name: name, layout: {} }; seatingCharts.push(newChart); saveSeatingToStorage(); currentChartId = newChart.id; renderChartSelect(); applyChartLayout(); const modal = document.getElementById('new-chart-modal'); modal.classList.add('hidden'); modal.classList.remove('flex'); }
-    function deleteCurrentChart() { if(seatingCharts.length <= 1) return showModal('error', 'Không thể xóa', 'Lớp học bắt buộc phải có ít nhất 1 sơ đồ!'); showModal('confirm', 'Xác nhận xóa', 'Bạn có chắc chắn muốn xóa sơ đồ lớp này?', () => { seatingCharts = seatingCharts.filter(c => c.id !== currentChartId); currentChartId = seatingCharts[0].id; saveSeatingToStorage(); renderChartSelect(); applyChartLayout(); }); }
+    function confirmCreateChart() { const name = document.getElementById('new-chart-name').value.trim(); if(!name) return showModal('warning', 'Thiếu thông tin', 'Vui lòng nhập tên sơ đồ!'); const newChart = { id: Date.now().toString(), name: name, layout: {} }; seatingCharts.push(newChart); saveSeatingToStorage(); currentChartId = newChart.id; renderChartSelect(); applyChartLayout(); closeModalUi('new-chart-modal', 'new-chart-content'); }
+    function deleteCurrentChart() { if(seatingCharts.length <= 1) return showModal('error', 'Không thể xóa', 'Bắt buộc phải có ít nhất 1 sơ đồ!'); showModal('confirm', 'Xác nhận xóa', 'Xóa sơ đồ lớp này?', () => { seatingCharts = seatingCharts.filter(c => c.id !== currentChartId); currentChartId = seatingCharts[0].id; saveSeatingToStorage(); renderChartSelect(); applyChartLayout(); }); }
     function saveSeatingToStorage() { localStorage.setItem('seating_' + currentUser.id, JSON.stringify(seatingCharts)); }
     function applyChartLayout() {
       const chart = seatingCharts.find(c => c.id === currentChartId); if(!chart) return;
-      document.querySelectorAll('.seat-slot').forEach(el => { el.innerHTML = `<i data-lucide="plus" class="w-4 h-4 md:w-5 md:h-5 text-slate-300"></i>`; el.className = "seat-slot border-2 border-dashed border-slate-200 h-[60px] md:h-[76px] rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-theme-light transition relative overflow-hidden bg-slate-50/50"; });
-      lucide.createIcons();
+      document.querySelectorAll('.seat-slot').forEach(el => { el.innerHTML = `<i data-lucide="plus" class="w-4 h-4 md:w-5 md:h-5 text-slate-300"></i>`; el.className = "seat-slot border-2 border-dashed border-slate-200 h-[60px] md:h-[76px] rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-theme-light transition relative overflow-hidden bg-slate-50/50"; }); lucide.createIcons();
       for (const [seatId, studentId] of Object.entries(chart.layout)) {
         const student = students.find(s => s.id == studentId); const seatEl = document.getElementById('seat-' + seatId);
         if (student && seatEl) {
@@ -781,9 +769,9 @@
       }
     }
     function handleSeatClick(seatId) {
-      if(students.length === 0) return showModal('warning', 'Danh sách trống', 'Vui lòng thêm học sinh vào danh sách lớp trước khi xếp chỗ!');
+      if(students.length === 0) return showModal('warning', 'Danh sách trống', 'Cần thêm học sinh trước khi xếp chỗ!');
       selectedSeatId = seatId; const chart = seatingCharts.find(c => c.id === currentChartId); document.getElementById('search-student-seat').value = ''; const btnRemove = document.getElementById('btn-remove-seat');
-      if(chart.layout[seatId]) btnRemove.classList.remove('hidden'); else btnRemove.classList.add('hidden'); renderStudentPickerList(); const modal = document.getElementById('pick-student-modal'); modal.classList.remove('hidden'); modal.classList.add('flex');
+      if(chart.layout[seatId]) btnRemove.classList.remove('hidden'); else btnRemove.classList.add('hidden'); renderStudentPickerList(); openModalUi('pick-student-modal', 'pick-student-content');
     }
     function renderStudentPickerList(filterText = '') {
       const chart = seatingCharts.find(c => c.id === currentChartId); const listContainer = document.getElementById('picker-list');
@@ -796,10 +784,58 @@
       }).join(''); lucide.createIcons();
     }
     function filterPickerList() { renderStudentPickerList(document.getElementById('search-student-seat').value); }
-    function closeStudentPicker() { const modal = document.getElementById('pick-student-modal'); modal.classList.add('hidden'); modal.classList.remove('flex'); selectedSeatId = null; }
-    function removeStudentFromCurrentSeat() { const chart = seatingCharts.find(c => c.id === currentChartId); delete chart.layout[selectedSeatId]; saveSeatingToStorage(); applyChartLayout(); closeStudentPicker(); }
-    function assignStudentToSeat(studentId) { const chart = seatingCharts.find(c => c.id === currentChartId); for (const [key, val] of Object.entries(chart.layout)) { if(val === studentId) delete chart.layout[key]; } chart.layout[selectedSeatId] = studentId; saveSeatingToStorage(); applyChartLayout(); closeStudentPicker(); }
+    function removeStudentFromCurrentSeat() { const chart = seatingCharts.find(c => c.id === currentChartId); delete chart.layout[selectedSeatId]; saveSeatingToStorage(); applyChartLayout(); closeModalUi('pick-student-modal', 'pick-student-content'); }
+    function assignStudentToSeat(studentId) { const chart = seatingCharts.find(c => c.id === currentChartId); for (const [key, val] of Object.entries(chart.layout)) { if(val === studentId) delete chart.layout[key]; } chart.layout[selectedSeatId] = studentId; saveSeatingToStorage(); applyChartLayout(); closeModalUi('pick-student-modal', 'pick-student-content'); }
 
+    // --- RENDER CHUNG ---
+    function renderStudentTable() {
+      const tbody = document.getElementById('full-student-table'); document.getElementById('student-count').innerText = students.length;
+      if(students.length === 0) { tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400 italic">Chưa có học sinh nào.</td></tr>`; return; }
+      tbody.innerHTML = students.map((s, index) => `
+        <tr class="hover:bg-slate-50 transition border-b border-slate-50">
+          <td class="p-3 md:p-4 font-bold text-slate-400 text-center">${index + 1}</td>
+          <td class="p-3 md:p-4"><span class="bg-slate-100 text-slate-600 font-mono text-[10px] md:text-xs px-2 py-1 rounded border border-slate-200">${s.code || '...'}</span></td>
+          <td class="p-3 md:p-4 font-bold text-slate-800 whitespace-nowrap">${s.name} ${s.gender === 'Nữ' ? '<span class="text-rose-400 ml-1 font-normal">♀</span>' : '<span class="text-blue-400 ml-1 font-normal">♂</span>'}</td>
+          <td class="p-3 md:p-4 text-xs text-slate-500 font-medium whitespace-nowrap">${s.dob || '-'}</td>
+          <td class="p-3 md:p-4 text-center"><button onclick="openAvatarModal(${s.id})" class="w-10 h-10 md:w-12 md:h-12 mx-auto flex items-center justify-center text-2xl md:text-3xl hover:scale-110 hover:-translate-y-1 transition-all duration-200 rounded-full bg-slate-50 border border-slate-100 shadow-sm relative group cursor-pointer" title="Đổi Avatar">${getAvatarHtml(s.avatar)}<span class="absolute -top-1 -right-1 bg-theme-grad text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition shadow-md z-10"><i data-lucide="edit-2" class="w-2.5 h-2.5"></i></span></button></td>
+          <td class="p-3 md:p-4"><span class="bg-amber-100 text-amber-700 px-2 py-1 rounded-md font-black text-[10px] md:text-xs shadow-sm whitespace-nowrap">${s.points} đ</span></td>
+          <td class="p-3 md:p-4 text-right"><div class="flex items-center justify-end gap-1.5"><button class="bg-amber-50 p-1.5 md:p-2 rounded-lg text-amber-500 hover:text-white hover:bg-amber-500 transition shadow-sm" title="Chấm điểm / Lập biên bản" onclick="openGradingModal(${s.id})"><i data-lucide="star" class="w-4 h-4 fill-amber-500 hover:fill-white"></i></button><button class="bg-blue-50 p-1.5 md:p-2 rounded-lg text-blue-500 hover:text-white hover:bg-blue-500 transition shadow-sm" title="Sửa thông tin" onclick="openEditModal(${s.id})"><i data-lucide="pen-line" class="w-4 h-4"></i></button><button class="bg-rose-50 p-1.5 md:p-2 rounded-lg text-rose-400 hover:text-white hover:bg-rose-500 transition shadow-sm" title="Xóa học sinh" onclick="deleteStudent(${s.id})"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></td>
+        </tr>
+      `).join(''); lucide.createIcons();
+    }
+    function renderNotebook() {
+      const query = document.getElementById('search-notebook').value.toLowerCase().trim(); const grid = document.getElementById('notebook-grid');
+      let filtered = students; if (query) filtered = students.filter(s => s.name.toLowerCase().includes(query) || (s.code && s.code.toLowerCase().includes(query)));
+      if (filtered.length === 0) { grid.innerHTML = `<div class="col-span-full text-center py-10 text-slate-400 font-medium">Không tìm thấy học sinh.</div>`; return; }
+      grid.innerHTML = filtered.map(s => `
+        <div class="bg-white rounded-3xl p-4 md:p-5 shadow-sm border border-slate-100 hover:shadow-xl transition-all flex flex-col items-center relative overflow-hidden group"><div class="absolute top-0 left-0 w-full h-1.5 bg-theme-grad opacity-50 group-hover:opacity-100 transition"></div><div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-slate-50 text-4xl md:text-5xl flex items-center justify-center mb-3 ring-4 ring-slate-100 group-hover:ring-[var(--c1)] transition mt-2 cursor-pointer relative overflow-hidden" onclick="openAvatarModal(${s.id})" title="Đổi Avatar">${getAvatarHtml(s.avatar)}</div><h4 class="font-black text-slate-800 text-center line-clamp-1 w-full text-sm md:text-[15px] px-2 mb-1" title="${s.name}">${s.name}</h4><div class="text-[10px] md:text-xs text-slate-500 font-medium mb-2 flex items-center gap-1.5"><span>${s.gender || 'Nam'}</span> <span class="w-1 h-1 bg-slate-300 rounded-full"></span> <span>${s.dob || '--/--/----'}</span></div><div class="flex items-center justify-center mb-4"><span class="text-[10px] md:text-[11px] font-mono bg-theme-light px-2.5 py-1 rounded-lg font-bold tracking-widest"><i data-lucide="fingerprint" class="w-3 h-3 inline mr-1 opacity-70"></i>${s.code || 'CHƯA CẤP'}</span></div><div class="flex gap-2 w-full mt-auto"><div class="flex-[0.8] bg-amber-50 rounded-xl py-2 text-center flex flex-col justify-center border border-amber-100 shadow-sm cursor-pointer hover:bg-amber-100 transition" onclick="openGradingModal(${s.id})" title="Chấm điểm / Cộng trừ"><span class="text-[8px] md:text-[9px] uppercase font-bold text-amber-500/80 tracking-wider">Điểm</span><span class="font-black text-amber-600 text-base md:text-lg leading-none mt-0.5 flex items-center justify-center gap-1">${s.points} <i data-lucide="edit-3" class="w-3 h-3"></i></span></div><button class="flex-1 bg-slate-50 text-slate-500 rounded-xl py-2 text-center text-[10px] md:text-xs font-bold hover:bg-[var(--c1)] hover:text-white transition shadow-sm border border-slate-200 hover:border-transparent flex items-center justify-center gap-1" onclick="openProfileModal(${s.id})"><i data-lucide="book-user" class="w-3 h-3 md:w-4 md:h-4"></i> Hồ sơ</button></div></div>
+      `).join(''); lucide.createIcons();
+    }
+    function renderOverview() {
+      const sorted = [...students].sort((a,b) => b.points - a.points); const topContainer = document.getElementById('top-students-list');
+      if(sorted.length === 0) { topContainer.innerHTML = `<div class="col-span-5 text-sm text-white/50 italic mt-4 font-medium">Chưa có dữ liệu</div>`; return; }
+      topContainer.innerHTML = sorted.slice(0, 5).map((s, index) => `
+        <div class="bg-black/20 p-3 md:p-4 rounded-2xl flex flex-col items-center relative overflow-hidden border border-white/10 group hover:bg-white/20 transition cursor-pointer" onclick="openProfileModal(${s.id})">
+          ${index === 0 ? '<div class="absolute top-0 right-0 bg-white text-rose-500 text-[9px] md:text-[10px] font-black px-1.5 md:px-2 py-0.5 rounded-bl-lg shadow-sm">TOP 1</div>' : ''}
+          <div class="w-10 h-10 md:w-14 md:h-14 flex items-center justify-center text-3xl md:text-4xl transform group-hover:scale-110 transition rounded-full overflow-hidden">${getAvatarHtml(s.avatar)}</div>
+          <span class="font-bold text-[10px] md:text-xs mt-2 md:mt-3 truncate w-full text-center" title="${s.name}">${s.name}</span>
+          <span class="text-[9px] md:text-[11px] bg-white/20 text-white font-black px-2 md:px-3 py-1 rounded-full mt-1.5 shadow-inner">${s.points} đ</span>
+        </div>
+      `).join('');
+    }
+    function renderStage() {
+      document.getElementById('wheel-student-count').innerText = students.length + " HS"; const grid = document.getElementById('student-grid');
+      if(students.length === 0) { grid.innerHTML = `<div class="col-span-full text-center py-10 text-slate-400 font-medium">Vui lòng thêm học sinh!</div>`; return; }
+      grid.innerHTML = students.map(s => `
+        <div id="card-${s.id}" class="student-card bg-white border border-slate-200 p-2 md:p-3 rounded-2xl flex flex-col items-center justify-center text-center transition-all duration-300 shadow-sm">
+          <div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-3xl md:text-4xl mb-1 md:mb-2 rounded-full overflow-hidden">${getAvatarHtml(s.avatar)}</div>
+          <span class="font-bold text-[10px] md:text-[11px] truncate w-full text-slate-700" title="${s.name}">${s.name}</span>
+        </div>
+      `).join('');
+    }
+    function renderAll() { renderStudentTable(); renderStage(); renderOverview(); renderNotebook(); applyChartLayout(); }
+
+    // --- VÒNG QUAY MAY MẮN ---
     function startSpin() {
       if (students.length === 0) return showModal('warning', 'Danh sách trống', 'Cần thêm học sinh vào danh sách lớp để có thể quay!');
       const btn = document.getElementById('spin-btn'); btn.disabled = true; btn.innerHTML = "ĐANG QUAY..."; btn.classList.add('opacity-70');
@@ -819,11 +855,16 @@
         }
       }, intervalTime);
     }
+
     function showWinner(student) {
       document.getElementById('winner-name').innerText = student.name; document.getElementById('winner-avatar').innerHTML = getAvatarHtml(student.avatar); document.getElementById('winner-id').innerText = "ID: " + (student.code || "...");
-      const modal = document.getElementById('result-modal'); modal.classList.remove('hidden'); modal.classList.add('flex'); confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 }});
+      openModalUi('result-modal'); confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 }});
     }
-    function closeResultModal(removeStudent) { if (removeStudent && currentWinner) { students = students.filter(s => s.id !== currentWinner.id); renderStage(); } const modal = document.getElementById('result-modal'); modal.classList.add('hidden'); modal.classList.remove('flex'); }
+
+    function closeResultModal(removeStudent) {
+      if (removeStudent && currentWinner) { students = students.filter(s => s.id !== currentWinner.id); renderStage(); localStorage.setItem('students_' + currentUser.id, JSON.stringify(students)); }
+      closeModalUi('result-modal');
+    }
   </script>
 </body>
 </html>
