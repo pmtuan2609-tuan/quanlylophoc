@@ -1,6 +1,7 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const { exec } = require('child_process');
 
 const PORT = 3000;
 const DATA_FILE = path.join(__dirname, 'data.json');
@@ -47,6 +48,15 @@ const server = http.createServer((req, res) => {
                     }
                     res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
                     res.end(JSON.stringify({ success: true }));
+
+                    // Auto push data.json to GitHub when running server locally
+                    exec('git add data.json && git commit -m "Auto-update classroom data" && git push', (gitErr) => {
+                        if (gitErr) {
+                            console.warn("Git auto-push failed (normal if not git repo or credentials not saved):", gitErr.message);
+                        } else {
+                            console.log("Classroom data successfully pushed to GitHub repository!");
+                        }
+                    });
                 });
             } catch (e) {
                 res.writeHead(400, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
