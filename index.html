@@ -817,7 +817,26 @@
                 }
             }
         } catch(e) {
-            console.warn("Server API not available, falling back to LocalStorage:", e);
+            console.warn("Server API not available, trying static file...");
+        }
+
+        if (!loaded) {
+            try {
+                const res = await fetch('./data.json');
+                if (res.ok) {
+                    const backendData = await res.json();
+                    if (backendData.currentUser) {
+                        currentUser = backendData.currentUser;
+                        students = backendData.students || [];
+                        seatingCharts = backendData.seatingCharts || [];
+                        timetables = backendData.timetables || [];
+                        attendanceData = backendData.attendanceData || {};
+                        loaded = true;
+                    }
+                }
+            } catch(e) {
+                console.warn("Static data.json not available, falling back to LocalStorage.");
+            }
         }
 
         if (loaded) {
