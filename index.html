@@ -143,6 +143,7 @@
         <div><label class="text-xs font-bold text-slate-600 uppercase tracking-wider">Mật khẩu</label><input type="password" id="auth-pass" class="w-full mt-1.5 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl ring-theme outline-none"></div>
         <p id="auth-error" class="text-xs text-rose-500 font-bold hidden bg-rose-50 p-2 rounded-lg text-center">Sai tài khoản hoặc mật khẩu!</p>
         <button onclick="handleAuth()" class="w-full bg-theme-grad text-white py-3.5 rounded-xl font-bold shadow-lg hover:scale-[1.02] transition-all">Đăng Nhập</button>
+      </div>
       <div class="mt-4 text-center text-sm"><span class="text-slate-500" id="auth-toggle-text">Chưa có tài khoản?</span> <button onclick="toggleAuthMode()" class="text-theme font-bold hover:underline" id="auth-toggle-btn">Đăng ký ngay</button></div>
     </div>
   </div>
@@ -589,6 +590,8 @@
                   </div>
                   <div id="supabase-status-text" class="text-[10px] md:text-xs font-bold text-slate-400 mt-1.5 flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-slate-300 inline-block animate-pulse"></span> Chưa kết nối đám mây</div>
                 </div>
+              </div>
+          </div>
           <!-- ADMIN ACCOUNT MANAGER -->
           <div id="admin-account-manager-card" class="bg-white p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm hidden">
              <h3 class="text-lg md:text-xl font-black text-slate-800 mb-2 flex items-center gap-2 text-theme"><i data-lucide="shield-check" class="w-5 h-5"></i> Quản trị tài khoản Giáo viên</h3>
