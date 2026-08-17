@@ -143,10 +143,6 @@
         <div><label class="text-xs font-bold text-slate-600 uppercase tracking-wider">Mật khẩu</label><input type="password" id="auth-pass" class="w-full mt-1.5 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl ring-theme outline-none"></div>
         <p id="auth-error" class="text-xs text-rose-500 font-bold hidden bg-rose-50 p-2 rounded-lg text-center">Sai tài khoản hoặc mật khẩu!</p>
         <button onclick="handleAuth()" class="w-full bg-theme-grad text-white py-3.5 rounded-xl font-bold shadow-lg hover:scale-[1.02] transition-all">Đăng Nhập</button>
-      </div>
-      <div class="mt-4 p-3 bg-slate-50 rounded-2xl border border-slate-100 text-[10.5px] md:text-xs text-slate-500 leading-normal">
-        💡 <b>Học sinh đăng nhập:</b> Sử dụng <b>Mã học sinh</b> (VD: <code>27121701</code>) và mật khẩu là các chữ cái đầu viết thường của tên ghép với <code>123@</code> (VD: học sinh <i>Phạm Minh Tuấn</i> mật khẩu là <code>pmt123@</code>).
-      </div>
       <div class="mt-4 text-center text-sm"><span class="text-slate-500" id="auth-toggle-text">Chưa có tài khoản?</span> <button onclick="toggleAuthMode()" class="text-theme font-bold hover:underline" id="auth-toggle-btn">Đăng ký ngay</button></div>
     </div>
   </div>
@@ -183,6 +179,7 @@
 
       <nav class="mt-2 px-4 space-y-1.5 font-medium pb-6">
         <button onclick="switchTab('tab-overview')" id="btn-tab-overview" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition bg-theme-grad text-white shadow-lg font-bold"><i data-lucide="layout-dashboard" class="w-5 h-5"></i> Tổng quan</button>
+        <button onclick="switchTab('tab-student-history')" id="btn-tab-student-history" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70 hidden"><i data-lucide="award" class="w-5 h-5 text-amber-400"></i> Khen thưởng & Vi phạm</button>
         <button onclick="switchTab('tab-students')" id="btn-tab-students" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70"><i data-lucide="users" class="w-5 h-5"></i> Danh sách học sinh</button>
         <button onclick="switchTab('tab-attendance')" id="btn-tab-attendance" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70"><i data-lucide="user-check" class="w-5 h-5"></i> Điểm danh hàng ngày</button>
         <button onclick="switchTab('tab-timetable')" id="btn-tab-timetable" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70"><i data-lucide="table" class="w-5 h-5"></i> Thời khóa biểu</button>
@@ -235,7 +232,7 @@
       
       <!-- TAB TỔNG QUAN -->
       <section id="tab-overview" class="tab-section space-y-4 md:space-y-6">
-        <div id="student-welcome-banner" class="bg-gradient-to-r from-theme to-theme-light p-5 md:p-6 rounded-3xl text-white shadow-md flex items-center justify-between gap-4 hidden">
+        <div id="student-welcome-banner" class="p-5 md:p-6 rounded-3xl text-white shadow-md flex items-center justify-between gap-4 hidden" style="background: linear-gradient(135deg, var(--c1), var(--c2));">
             <div>
                 <h2 class="text-lg md:text-xl font-black mb-1">Xin chào học sinh: <span id="student-welcome-name">...</span>! 👋</h2>
                 <p class="text-xs md:text-sm text-white/90 font-medium">Chào mừng bạn đến với Cổng thông tin Học sinh lớp <span id="student-welcome-class">...</span>.</p>
@@ -290,8 +287,8 @@
         </div>
 
         <div class="bg-white p-5 md:p-6 rounded-3xl shadow-sm border border-slate-100 mt-4 md:mt-6">
-           <div class="flex justify-between items-center mb-4 border-b pb-3">
-             <h3 class="font-black flex items-center gap-2 text-slate-800 text-sm md:text-base"><i data-lucide="activity" class="w-5 h-5 text-blue-500"></i> HOẠT ĐỘNG GẦN ĐÂY</h3>
+            <div class="flex justify-between items-center mb-4 border-b pb-3">
+              <h3 id="overview-activities-title" class="font-black flex items-center gap-2 text-slate-800 text-sm md:text-base"><i data-lucide="activity" class="w-5 h-5 text-blue-500"></i> HOẠT ĐỘNG GẦN ĐÂY</h3>
              <button onclick="openAllActivitiesModal()" class="text-xs font-bold text-theme bg-theme-light hover:bg-theme-light border border-theme/20 px-3 py-1.5 rounded-lg transition flex items-center gap-1"><i data-lucide="eye" class="w-3.5 h-3.5"></i> Xem tất cả</button>
            </div>
            <div id="recent-activities-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
@@ -394,6 +391,17 @@
                     </thead>
                     <tbody id="attendance-tbody" class="divide-y divide-slate-100"></tbody>
                 </table>
+            </div>
+        </div>
+      <!-- TAB KHEN THƯỞNG & VI PHẠM (DÀNH CHO HỌC SINH) -->
+      <section id="tab-student-history" class="tab-section hidden space-y-4 h-full flex-col">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-slate-100 shrink-0 gap-4">
+           <h3 class="font-bold text-slate-700 text-base md:text-lg flex items-center gap-2 whitespace-nowrap"><i data-lucide="award" class="w-5 h-5 text-amber-500"></i> Nhật Ký Thi Đua Cá Nhân</h3>
+        </div>
+        <div class="bg-white rounded-3xl p-5 md:p-6 border border-slate-100 shadow-sm flex-1 flex flex-col min-h-0 overflow-hidden">
+            <h4 class="font-bold text-slate-700 mb-3 text-sm flex items-center gap-1.5 shrink-0"><i data-lucide="history" class="w-4 h-4 text-slate-400"></i> Danh sách tất cả khen thưởng & vi phạm</h4>
+            <div class="overflow-y-auto flex-1 custom-scrollbar pr-1 md:pr-2" id="student-all-history-list">
+                <div class="text-center text-slate-400 italic py-10 text-sm">Chưa có lịch sử thi đua.</div>
             </div>
         </div>
       </section>
@@ -581,7 +589,7 @@
                   <div id="supabase-status-text" class="text-[10px] md:text-xs font-bold text-slate-400 mt-1.5 flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-slate-300 inline-block animate-pulse"></span> Chưa kết nối đám mây</div>
                 </div>
           <!-- ADMIN ACCOUNT MANAGER -->
-          <div id="admin-account-manager-card" class="bg-white p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm col-span-full hidden mt-4">
+          <div id="admin-account-manager-card" class="bg-white p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm hidden">
              <h3 class="text-lg md:text-xl font-black text-slate-800 mb-2 flex items-center gap-2 text-theme"><i data-lucide="shield-check" class="w-5 h-5"></i> Quản trị tài khoản Giáo viên</h3>
              <p class="text-xs md:text-sm text-slate-500 mb-4 md:mb-6 font-medium">Danh sách các tài khoản giáo viên đã đăng ký trên hệ thống đám mây.</p>
              <div class="overflow-x-auto custom-scrollbar border border-slate-100 rounded-2xl">
@@ -1613,7 +1621,7 @@
 
     function applyTheme(themeName) { const t = THEMES[themeName] || THEMES.emerald; document.documentElement.style.setProperty('--c1', t.c1); document.documentElement.style.setProperty('--c2', t.c2); document.documentElement.style.setProperty('--s1', t.s1); document.documentElement.style.setProperty('--s2', t.s2); if(currentUser) { currentUser.theme = themeName; saveUserToStorage(); } }
     function toggleSidebar() { const sidebar = document.getElementById('main-sidebar'); const overlay = document.getElementById('mobile-overlay'); sidebar.classList.toggle('-translate-x-full'); overlay.classList.toggle('hidden'); }
-    function switchTab(tabId) { document.querySelectorAll('.tab-section').forEach(sec => sec.classList.add('hidden')); document.querySelectorAll('.tab-btn').forEach(btn => { btn.classList.remove('bg-theme-grad', 'text-white', 'shadow-lg', 'font-bold'); btn.classList.add('hover:bg-white/10', 'text-white/70'); }); document.getElementById(tabId).classList.remove('hidden'); const activeBtn = document.getElementById('btn-' + tabId); if(activeBtn) { activeBtn.classList.remove('hover:bg-white/10', 'text-white/70'); activeBtn.classList.add('bg-theme-grad', 'text-white', 'shadow-lg', 'font-bold'); } const titles = { 'tab-overview': 'Tổng Quan Lớp', 'tab-students': 'Danh Sách Lớp', 'tab-attendance': 'Điểm Danh Hàng Ngày', 'tab-timetable': 'Thời Khoá Biểu', 'tab-seating': 'Sơ Đồ Chỗ Ngồi', 'tab-notebook': 'Sổ Theo Dõi', 'tab-wheel': 'Vòng Quay May Mắn', 'tab-praise': 'Tuyên Dương', 'tab-points': 'Thành Tích', 'tab-gifts': 'Quà Tặng', 'tab-settings': 'Cài Đặt & Giao Diện' }; document.getElementById('header-title').innerText = titles[tabId] || 'Hệ Thống'; if(tabId === 'tab-wheel') handleModeChange(); if(window.innerWidth < 1024) toggleSidebar(); }
+    function switchTab(tabId) { document.querySelectorAll('.tab-section').forEach(sec => sec.classList.add('hidden')); document.querySelectorAll('.tab-btn').forEach(btn => { btn.classList.remove('bg-theme-grad', 'text-white', 'shadow-lg', 'font-bold'); btn.classList.add('hover:bg-white/10', 'text-white/70'); }); document.getElementById(tabId).classList.remove('hidden'); const activeBtn = document.getElementById('btn-' + tabId); if(activeBtn) { activeBtn.classList.remove('hover:bg-white/10', 'text-white/70'); activeBtn.classList.add('bg-theme-grad', 'text-white', 'shadow-lg', 'font-bold'); } const titles = { 'tab-overview': 'Tổng Quan Lớp', 'tab-student-history': 'Nhật Ký Thi Đua Cá Nhân', 'tab-students': 'Danh Sách Lớp', 'tab-attendance': 'Điểm Danh Hàng Ngày', 'tab-timetable': 'Thời Khoá Biểu', 'tab-seating': 'Sơ Đồ Chỗ Ngồi', 'tab-notebook': 'Sổ Theo Dõi', 'tab-wheel': 'Vòng Quay May Mắn', 'tab-praise': 'Tuyên Dương', 'tab-points': 'Thành Tích', 'tab-gifts': 'Quà Tặng', 'tab-settings': 'Cài Đặt & Giao Diện' }; document.getElementById('header-title').innerText = titles[tabId] || 'Hệ Thống'; if(tabId === 'tab-wheel') handleModeChange(); if(window.innerWidth < 1024) toggleSidebar(); }
     function updateUI() { 
         document.getElementById('sidebar-class-logo').innerText = currentUser.className; 
         document.getElementById('sidebar-slogan').innerText = currentUser.slogan; 
@@ -2102,6 +2110,32 @@
             }
             return `<div class="flex items-start gap-3 p-3 bg-slate-50/80 rounded-2xl border border-slate-100 hover:bg-white hover:shadow-sm transition"><div class="w-10 h-10 rounded-full overflow-hidden shrink-0 shadow-sm">${getAvatarHtml(h.avatar)}</div><div class="flex-1 min-w-0"><p class="text-sm text-slate-700 leading-tight"><b>${h.studentName}</b> ${h.reason}</p>${imgBtn}<p class="text-[10px] text-slate-400 font-bold mt-1">${h.date}</p></div><div class="shrink-0 font-black ${cClass} px-2 py-1 rounded-lg border text-xs">${sign}${h.points}</div></div>`;
         }).join('');
+        if (currentUserRole === 'student' && currentStudent) {
+            const detailContainer = document.getElementById('student-all-history-list');
+            if (detailContainer) {
+                if (allHistory.length === 0) {
+                    detailContainer.innerHTML = `<div class="text-center text-slate-400 italic py-10 text-sm">Chưa có lịch sử thi đua.</div>`;
+                } else {
+                    detailContainer.innerHTML = allHistory.map(h => {
+                        const isAdd = h.type === 'add'; const cClass = isAdd ? 'text-emerald-600 bg-emerald-50 border-emerald-200' : 'text-rose-600 bg-rose-50 border-rose-200'; const sign = isAdd ? '+' : '-';
+                        let imgBtn = "";
+                        if (h.image) {
+                            imgBtn = `<button onclick="viewReportImage('${h.image}')" class="mt-1.5 text-[10px] text-theme font-bold flex items-center gap-1 hover:underline"><i data-lucide="image" class="w-3.5 h-3.5"></i> Xem ảnh minh chứng</button>`;
+                        }
+                        return `
+                        <div class="flex items-start gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:bg-white hover:shadow-sm transition mb-3">
+                            <div class="w-10 h-10 rounded-full overflow-hidden shrink-0 shadow-sm">${getAvatarHtml(h.avatar)}</div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm text-slate-700 leading-tight"><b>${h.studentName}</b> ${h.reason}</p>
+                                ${imgBtn}
+                                <p class="text-[10px] text-slate-400 font-bold mt-1.5">${h.date}</p>
+                            </div>
+                            <div class="shrink-0 font-black ${cClass} px-2.5 py-1.5 rounded-xl border text-xs">${sign}${h.points}</div>
+                        </div>`;
+                    }).join('');
+                }
+            }
+        }
         lucide.createIcons();
     }
 
@@ -2579,6 +2613,12 @@
     function configureSidebarForRole() {
         const isStudent = (currentUserRole === 'student');
         
+        const studentHistoryBtn = document.getElementById('btn-tab-student-history');
+        if (studentHistoryBtn) {
+            if (isStudent) studentHistoryBtn.classList.remove('hidden');
+            else studentHistoryBtn.classList.add('hidden');
+        }
+        
         const teacherButtons = [
             'btn-tab-students',
             'btn-tab-notebook',
@@ -2669,6 +2709,12 @@
         if (delChartBtn) {
             if (isStudent) delChartBtn.classList.add('hidden');
             else delChartBtn.classList.remove('hidden');
+        }
+        
+        const actTitle = document.getElementById('overview-activities-title');
+        if (actTitle) {
+            actTitle.innerHTML = isStudent ? `<i data-lucide="activity" class="w-5 h-5 text-blue-500"></i> HOẠT ĐỘNG THI ĐUA CỦA BẠN` : `<i data-lucide="activity" class="w-5 h-5 text-blue-500"></i> HOẠT ĐỘNG GẦN ĐÂY`;
+            lucide.createIcons();
         }
     }
 
