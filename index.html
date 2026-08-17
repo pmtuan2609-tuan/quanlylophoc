@@ -699,6 +699,20 @@
     </div>
   </div>
 
+  <!-- Modal Nhập Liệu (PROMPT) -->
+  <div id="prompt-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[700] p-4 opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-[2rem] p-6 md:p-8 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col border border-white/20" id="prompt-modal-content">
+      <div class="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center mb-4 text-amber-500 shadow-sm shrink-0"><i data-lucide="key-round" class="w-6 h-6"></i></div>
+      <h3 id="prompt-modal-title" class="text-lg md:text-xl font-black text-slate-800 mb-1 tracking-tight">Nhập thông tin</h3>
+      <p id="prompt-modal-message" class="text-xs text-slate-400 font-bold mb-4">Vui lòng điền thông tin bên dưới</p>
+      <input type="text" id="prompt-modal-input" class="w-full px-4 py-3 bg-slate-50 border-2 border-slate-100 rounded-xl ring-theme outline-none font-bold text-slate-800 text-sm mb-6" placeholder="...">
+      <div class="flex gap-3 w-full">
+         <button id="btn-prompt-cancel" class="flex-[0.4] bg-slate-100 text-slate-500 font-black py-3 rounded-xl hover:bg-slate-200 hover:text-slate-700 transition text-xs uppercase tracking-wider">Hủy</button>
+         <button id="btn-prompt-submit" class="flex-1 bg-theme-grad text-white font-black py-3 rounded-xl hover:scale-[1.02] transition shadow-lg text-xs uppercase tracking-wider">Xác nhận</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal Chọn Avatar HS -->
   <div id="avatar-picker-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[600] p-4 opacity-0 transition-opacity duration-300">
     <div class="bg-white rounded-3xl p-5 md:p-6 w-full max-w-md shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col overflow-hidden" id="avatar-picker-content">
@@ -1427,6 +1441,31 @@
       if (onConfirm) { actionsEl.innerHTML = `<button id="btn-modal-cancel" class="flex-[0.4] bg-slate-100 text-slate-600 font-bold py-3.5 rounded-xl hover:bg-slate-200 transition">Hủy</button><button id="btn-modal-confirm" class="flex-1 bg-rose-500 text-white font-bold py-3.5 rounded-xl hover:bg-rose-600 transition shadow-lg shadow-rose-500/30">Đồng ý</button>`; document.getElementById('btn-modal-cancel').onclick = () => closeModalUi('custom-modal', 'custom-modal-content'); document.getElementById('btn-modal-confirm').onclick = () => { closeModalUi('custom-modal', 'custom-modal-content'); setTimeout(onConfirm, 350); }; } 
       else { actionsEl.innerHTML = `<button id="btn-modal-ok" class="w-full bg-theme-grad text-white font-bold py-3.5 rounded-xl hover:scale-[1.02] transition shadow-lg shadow-violet-500/20">OK, Đã hiểu</button>`; document.getElementById('btn-modal-ok').onclick = () => closeModalUi('custom-modal', 'custom-modal-content'); }
       openModalUi('custom-modal', 'custom-modal-content');
+    }
+
+    function showPrompt(title, message, defaultValue, onSubmit) {
+      document.getElementById('prompt-modal-title').innerText = title;
+      document.getElementById('prompt-modal-message').innerText = message;
+      const input = document.getElementById('prompt-modal-input');
+      input.value = defaultValue || '';
+      
+      document.getElementById('btn-prompt-cancel').onclick = () => {
+          closeModalUi('prompt-modal', 'prompt-modal-content');
+      };
+      
+      document.getElementById('btn-prompt-submit').onclick = () => {
+          const val = input.value;
+          closeModalUi('prompt-modal', 'prompt-modal-content');
+          setTimeout(() => {
+              onSubmit(val);
+          }, 350);
+      };
+      
+      openModalUi('prompt-modal', 'prompt-modal-content');
+      setTimeout(() => {
+          input.focus();
+          input.select();
+      }, 300);
     }
 
     // --- Auth & Config ---
@@ -3102,12 +3141,12 @@
     }
 
     function adminChangePassword(id, oldPass) {
-        const newPass = prompt(`Nhập mật khẩu mới cho tài khoản "${id}":`, oldPass);
-        if (newPass === null) return;
-        const trimmed = newPass.trim();
-        if (!trimmed) return showModal('warning', 'Lỗi', 'Mật khẩu không được để trống!');
-        
-        showModal('confirm', 'Xác nhận đổi mật khẩu', `Bạn có chắc chắn muốn đổi mật khẩu của tài khoản "${id}" thành "${trimmed}"?`, async () => {
+        showPrompt("Đổi Mật Khẩu", `Nhập mật khẩu mới cho tài khoản "${id}":`, oldPass, (newPass) => {
+            if (newPass === null) return;
+            const trimmed = newPass.trim();
+            if (!trimmed) return showModal('warning', 'Lỗi', 'Mật khẩu không được để trống!');
+            
+            showModal('confirm', 'Xác nhận đổi mật khẩu', `Bạn có chắc chắn muốn đổi mật khẩu của tài khoản "${id}" thành "${trimmed}"?`, async () => {
             try {
                 const url = `${isSupabaseConnected.url}/rest/v1/classroom_data?id=eq.${id}&select=data`;
                 const res = await fetch(url, {
@@ -3144,6 +3183,7 @@
                 showModal('error', 'Lỗi', err.message || "Đã xảy ra lỗi không xác định.");
             }
         });
+      });
     }
 
     function adminDeleteAccount(id) {
