@@ -878,12 +878,6 @@
       <input type="text" id="new-chart-name" placeholder="VD: Sơ đồ thi HK1" class="w-full border-2 border-slate-100 rounded-xl px-4 py-3 outline-none ring-theme mb-6 font-medium text-sm">
       <div class="flex justify-end gap-3"><button onclick="closeModalUi('new-chart-modal', 'new-chart-content')" class="px-5 py-2.5 text-slate-500 font-bold hover:bg-slate-100 rounded-xl transition">Hủy</button><button onclick="confirmCreateChart()" class="px-5 py-2.5 bg-theme-grad text-white font-bold rounded-xl shadow-lg transition">Tạo mới</button></div>
     </div>
-  </div>
-
-  <!-- Modal Chọn HS Cho Sơ Đồ -->
-  <div id="pick-student-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[500] p-4 opacity-0 transition-opacity duration-300">
-    <div class="bg-white rounded-3xl p-4 md:p-6 w-full max-w-[400px] shadow-2xl flex flex-col max-h-[85vh] transform scale-95 transition-transform duration-300" id="pick-student-content">
-      <div class="flex justify-between items-center mb-4 shrink-0"><h3 class="font-black text-lg md:text-xl text-slate-800">Chọn học sinh</h3><button onclick="closeModalUi('pick-student-modal', 'pick-student-content')" class="p-2 bg-slate-100 rounded-full text-slate-500 hover:bg-slate-200 transition"><i data-lucide="x" class="w-4 h-4"></i></button></div>
       <button id="btn-remove-seat" onclick="removeStudentFromCurrentSeat()" class="hidden w-full mb-3 md:mb-4 bg-rose-50 text-rose-600 py-2.5 md:py-3 rounded-xl text-xs md:text-sm font-bold border border-rose-100 hover:bg-rose-100 transition shadow-sm">Gỡ học sinh khỏi chỗ này</button>
       <input type="text" id="search-student-seat" placeholder="Tìm tên..." onkeyup="filterPickerList()" class="w-full border-2 border-slate-100 rounded-xl px-4 py-2.5 text-sm outline-none ring-theme mb-3 md:mb-4 shrink-0 font-medium bg-slate-50">
       <div class="overflow-y-auto flex-1 custom-scrollbar space-y-2 pr-1 md:pr-2 min-h-[200px]" id="picker-list"></div>
@@ -894,6 +888,12 @@
   <!-- JAVASCRIPT ĐIỀU KHIỂN CHÍNH                  -->
   <!-- ========================================== -->
   <script>
+    // Cấu hình cố định Supabase để sử dụng trên nhiều thiết bị mà không cần nhập lại:
+    const SUPABASE_CONFIG = {
+        url: 'https://qwihflkmbuxetebubovi.supabase.co', 
+        key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF3aWhmbGttYnV4ZXRlYnVib3ZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5MDk5OTUsImV4cCI6MjEwMjQ4NTk5NX0.HcxdM6ifXniM66b0xVcf5pmtCZzbApEjQzIgzDhnVss'  
+    };
+
     const MOCK_ADMIN = { id: 'thaytuan', pass: 'minhtuan' };
     const THEMES = { violet: { c1: '#8b5cf6', c2: '#d946ef', s1: '#1e1b4b', s2: '#312e81' }, blue: { c1: '#3b82f6', c2: '#06b6d4', s1: '#0f172a', s2: '#1e293b' }, emerald: { c1: '#10b981', c2: '#14b8a6', s1: '#064e3b', s2: '#022c22' }, rose: { c1: '#f43f5e', c2: '#f97316', s1: '#4c0519', s2: '#881337' } };
     const AVATARS = { male: ["👦", "👨‍🎓", "🧑‍🏫", "🦸‍♂️", "👱‍♂️", "👨‍🚀", "🕵️‍♂️", "👮‍♂️", "🤴", "🧛‍♂️", "🥷", "🧙‍♂️", "💂‍♂️", "👷‍♂️", "👲"], female: ["👧", "👩‍🎓", "👩‍🎤", "🧝‍♀️", "👱‍♀️", "👩‍🚀", "🕵️‍♀️", "👮‍♀️", "👸", "🧛‍♀️", "🧙‍♀️", "🧚‍♀️", "🧜‍♀️", "👩‍🚒", "🧕"], special: ["🐶", "🐱", "🦊", "🐻", "🐼", "🐨", "🐯", "🦁", "🐮", "🐷", "🐸", "🐵", "🦄", "👽", "👻", "🤖"] };
@@ -912,8 +912,8 @@
     window.onload = () => { lucide.createIcons(); initSupabase(); checkAuth(); renderEmptySeatingGrid(); };
 
     function initSupabase() {
-        let url = localStorage.getItem('supabase_url');
-        const key = localStorage.getItem('supabase_key');
+        let url = localStorage.getItem('supabase_url') || SUPABASE_CONFIG.url;
+        const key = localStorage.getItem('supabase_key') || SUPABASE_CONFIG.key;
         
         if (url) {
             if (url.endsWith('/')) url = url.slice(0, -1);
@@ -1201,7 +1201,105 @@
         }
     }
     function toggleAuthMode() { isLoginMode = !isLoginMode; document.getElementById('auth-title').innerText = isLoginMode ? 'Đăng Nhập' : 'Tạo Tài Khoản'; document.getElementById('auth-btn').innerText = isLoginMode ? 'Đăng Nhập' : 'Đăng Ký Nhanh'; document.getElementById('auth-toggle-text').innerText = isLoginMode ? 'Chưa có tài khoản?' : 'Đã có tài khoản?'; document.getElementById('auth-toggle-btn').innerText = isLoginMode ? 'Đăng ký ngay' : 'Đăng nhập'; document.getElementById('auth-error').classList.add('hidden'); }
-    function handleAuth() { const id = document.getElementById('auth-id').value.trim(); const pass = document.getElementById('auth-pass').value.trim(); const errorMsg = document.getElementById('auth-error'); if(!id || !pass) return; if (isLoginMode) { if (id === MOCK_ADMIN.id && pass === MOCK_ADMIN.pass) { let adminData = localStorage.getItem('user_thaytuan'); if(!adminData) { adminData = { id: 'thaytuan' }; localStorage.setItem('user_thaytuan', JSON.stringify(adminData)); } else adminData = JSON.parse(adminData); loginSuccess(adminData); } else { const savedStr = localStorage.getItem('user_' + id); if (savedStr) { const user = JSON.parse(savedStr); if (user.pass === pass) loginSuccess(user); else { errorMsg.innerText = 'Sai mật khẩu!'; errorMsg.classList.remove('hidden'); } } else { errorMsg.innerText = 'Tài khoản không tồn tại!'; errorMsg.classList.remove('hidden'); } } } else { if(id === MOCK_ADMIN.id || localStorage.getItem('user_' + id)) { errorMsg.innerText = 'Tài khoản này đã tồn tại!'; errorMsg.classList.remove('hidden'); return; } const newUser = { id: id, pass: pass }; localStorage.setItem('user_' + id, JSON.stringify(newUser)); loginSuccess(newUser); } }
+    async function handleAuth() {
+        const id = document.getElementById('auth-id').value.trim();
+        const pass = document.getElementById('auth-pass').value.trim();
+        const errorMsg = document.getElementById('auth-error');
+        if(!id || !pass) return;
+
+        if (isLoginMode) {
+            // 1. Try cloud authentication first if connected to Supabase
+            if (isSupabaseConnected && supabaseClient) {
+                try {
+                    errorMsg.innerText = 'Đang xác thực qua đám mây...';
+                    errorMsg.classList.remove('hidden');
+                    
+                    const { data, error } = await supabaseClient
+                        .from('classroom_data')
+                        .select('data')
+                        .eq('id', id)
+                        .single();
+                        
+                    if (data && data.data && data.data.currentUser) {
+                        const cloudUser = data.data.currentUser;
+                        if (cloudUser.pass === pass) {
+                            // Success! Save credentials and restore state on this device
+                            currentUser = cloudUser;
+                            students = data.data.students || [];
+                            seatingCharts = data.data.seatingCharts || [];
+                            timetables = data.data.timetables || [];
+                            attendanceData = data.data.attendanceData || {};
+                            
+                            localStorage.setItem('user_' + id, JSON.stringify(cloudUser));
+                            localStorage.setItem('students_' + id, JSON.stringify(students));
+                            localStorage.setItem('seating_' + id, JSON.stringify(seatingCharts));
+                            localStorage.setItem('timetables_' + id, JSON.stringify(timetables));
+                            localStorage.setItem('attendance_' + id, JSON.stringify(attendanceData));
+                            
+                            loginSuccess(cloudUser);
+                            return;
+                        } else {
+                            errorMsg.innerText = 'Sai mật khẩu!';
+                            errorMsg.classList.remove('hidden');
+                            return;
+                        }
+                    }
+                } catch(e) {
+                    console.warn("Cloud auth check failed, falling back to local credentials:", e);
+                }
+            }
+
+            // 2. Local Fallback Auth
+            if (id === MOCK_ADMIN.id && pass === MOCK_ADMIN.pass) {
+                let adminData = localStorage.getItem('user_thaytuan');
+                if(!adminData) {
+                    adminData = { id: 'thaytuan' };
+                    localStorage.setItem('user_thaytuan', JSON.stringify(adminData));
+                } else adminData = JSON.parse(adminData);
+                loginSuccess(adminData);
+            } else {
+                const savedStr = localStorage.getItem('user_' + id);
+                if (savedStr) {
+                    const user = JSON.parse(savedStr);
+                    if (user.pass === pass) loginSuccess(user);
+                    else {
+                        errorMsg.innerText = 'Sai mật khẩu!';
+                        errorMsg.classList.remove('hidden');
+                    }
+                } else {
+                    errorMsg.innerText = 'Tài khoản không tồn tại trên thiết bị này hoặc đám mây!';
+                    errorMsg.classList.remove('hidden');
+                }
+            }
+        } else {
+            // Register Mode
+            if(id === MOCK_ADMIN.id || localStorage.getItem('user_' + id)) {
+                errorMsg.innerText = 'Tài khoản này đã tồn tại!';
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+            // Check if account already exists on cloud to prevent register hijacking
+            if (isSupabaseConnected && supabaseClient) {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('classroom_data')
+                        .select('id')
+                        .eq('id', id)
+                        .single();
+                    if (data && data.id) {
+                        errorMsg.innerText = 'Tài khoản này đã tồn tại trên đám mây!';
+                        errorMsg.classList.remove('hidden');
+                        return;
+                    }
+                } catch(e) {
+                    console.warn("Cloud duplicate registration check failed:", e);
+                }
+            }
+            const newUser = { id: id, pass: pass };
+            localStorage.setItem('user_' + id, JSON.stringify(newUser));
+            loginSuccess(newUser);
+        }
+    }
     function loginSuccess(user) { currentUser = user; localStorage.setItem('currentUser', JSON.stringify(currentUser)); const authScreen = document.getElementById('auth-screen'); authScreen.classList.add('hidden'); authScreen.classList.remove('flex'); if (!currentUser.className) { const obScreen = document.getElementById('onboarding-screen'); obScreen.classList.remove('hidden'); obScreen.classList.add('flex'); } else loadUserData(); }
     function logout() { localStorage.removeItem('currentUser'); location.reload(); }
     function saveOnboarding() { currentUser.teacherName = document.getElementById('ob-teacher').value || 'Thầy/Cô'; currentUser.className = document.getElementById('ob-class').value || '12A1'; currentUser.year = document.getElementById('ob-year').value || '2026'; currentUser.slogan = document.getElementById('ob-slogan').value || 'Lớp học yêu thương'; currentUser.theme = 'emerald'; currentUser.cover = DEFAULT_COVERS[Math.floor(Math.random() * DEFAULT_COVERS.length)]; if(saveUserToStorage()) { document.getElementById('onboarding-screen').classList.replace('flex', 'hidden'); loadUserData(); } }
