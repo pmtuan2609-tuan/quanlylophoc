@@ -293,7 +293,9 @@
                   <th class="p-3 md:p-4 w-12 text-center">STT</th>
                   <th class="p-3 md:p-4">Mã HS (ID)</th>
                   <th class="p-3 md:p-4">Họ và Tên</th>
+                  <th class="p-3 md:p-4">Giới Tính</th>
                   <th class="p-3 md:p-4">Ngày sinh</th>
+                  <th class="p-3 md:p-4">Căn Cước</th>
                   <th class="p-3 md:p-4 text-center">Avatar</th>
                   <th class="p-3 md:p-4">Điểm</th>
                   <th class="p-3 md:p-4 text-right">Thao tác</th>
@@ -1408,12 +1410,51 @@
             const data = new Uint8Array(event.target.result); const workbook = XLSX.read(data, {type: 'array'});
             const firstSheet = workbook.Sheets[workbook.SheetNames[0]]; const json = XLSX.utils.sheet_to_json(firstSheet, {header: 1, defval: ''});
             let newStudents = []; let indexCounter = 1;
+            
+            const getVal = (val) => (val === undefined || val === null) ? '' : String(val).trim();
+            
             for(let i = 1; i < json.length; i++) {
               let row = json[i];
               if(row && row[1] && String(row[1]).trim() !== '') {
-                let isFemale = row[2] && String(row[2]).toLowerCase().trim() === 'x';
-                let dobStr = parseExcelDate(row[3]); let avatars = isFemale ? AVATARS.female : AVATARS.male;
-                newStudents.push({ id: Date.now() + i, name: String(row[1]).trim(), points: 0, avatar: avatars[Math.floor(Math.random() * avatars.length)], gender: isFemale ? 'Nữ' : 'Nam', dob: dobStr, role: '', history: [], code: generateCode(currentUser.className, currentUser.year, indexCounter) }); indexCounter++;
+                const name = getVal(row[1]);
+                const gender = getVal(row[2]) || 'Nam';
+                const dobStr = parseExcelDate(row[3]);
+                const cccd = getVal(row[4]);
+                const birthplace = getVal(row[5]);
+                const phone = getVal(row[6]);
+                const address = getVal(row[7]);
+                const fatherName = getVal(row[8]);
+                const fatherCccd = getVal(row[9]);
+                const fatherPhone = getVal(row[10]);
+                const motherName = getVal(row[11]);
+                const motherCccd = getVal(row[12]);
+                const motherPhone = getVal(row[13]);
+                
+                let isFemale = gender.toLowerCase() === 'nữ' || gender.toLowerCase() === 'nu' || gender.toLowerCase() === 'x';
+                let avatars = isFemale ? AVATARS.female : AVATARS.male;
+                
+                newStudents.push({ 
+                  id: Date.now() + i, 
+                  name: name, 
+                  points: 0, 
+                  avatar: avatars[Math.floor(Math.random() * avatars.length)], 
+                  gender: isFemale ? 'Nữ' : 'Nam', 
+                  dob: dobStr, 
+                  role: '', 
+                  history: [], 
+                  code: generateCode(currentUser.className, currentUser.year, indexCounter),
+                  cccd: cccd,
+                  birthplace: birthplace,
+                  phone: phone,
+                  address: address,
+                  fatherName: fatherName,
+                  fatherCccd: fatherCccd,
+                  fatherPhone: fatherPhone,
+                  motherName: motherName,
+                  motherCccd: motherCccd,
+                  motherPhone: motherPhone
+                }); 
+                indexCounter++;
               }
             }
             if(newStudents.length > 0) { 
@@ -1717,8 +1758,8 @@
 
     function renderStudentTable() {
       const tbody = document.getElementById('full-student-table'); document.getElementById('student-count').innerText = students.length;
-      if(students.length === 0) { tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400 italic">Chưa có học sinh nào.</td></tr>`; loadAttendance(); renderRecentActivity(); return; }
-      tbody.innerHTML = students.map((s, index) => `<tr class="hover:bg-slate-50 transition border-b border-slate-50"><td class="p-3 md:p-4 font-bold text-slate-400 text-center">${index + 1}</td><td class="p-3 md:p-4"><span class="bg-slate-100 text-slate-600 font-mono text-[10px] md:text-xs px-2 py-1 rounded border border-slate-200">${s.code || '...'}</span></td><td class="p-3 md:p-4"><div class="font-bold text-slate-800 whitespace-nowrap">${s.name} ${s.gender === 'Nữ' ? '<span class="text-rose-400 ml-1 font-normal">♀</span>' : '<span class="text-blue-400 ml-1 font-normal">♂</span>'}</div>${s.role ? `<div class="text-[10px] text-theme font-bold mt-0.5 uppercase">${s.role}</div>` : ''}</td><td class="p-3 md:p-4 text-xs text-slate-500 font-medium whitespace-nowrap">${s.dob || '-'}</td><td class="p-3 md:p-4 text-center"><button onclick="openAvatarModal(${s.id})" class="w-10 h-10 md:w-12 md:h-12 mx-auto flex items-center justify-center text-2xl md:text-3xl hover:scale-110 hover:-translate-y-1 transition-all duration-200 rounded-full bg-slate-50 border border-slate-100 shadow-sm relative group cursor-pointer overflow-hidden" title="Đổi Avatar">${getAvatarHtml(s.avatar)}<span class="absolute inset-0 bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition"><i data-lucide="edit-2" class="w-4 h-4"></i></span></button></td><td class="p-3 md:p-4"><span class="bg-amber-100 text-amber-700 px-2 py-1 rounded-md font-black text-[10px] md:text-xs shadow-sm whitespace-nowrap">${s.points} đ</span></td><td class="p-3 md:p-4 text-right"><div class="flex items-center justify-end gap-1.5"><button class="bg-amber-50 p-1.5 md:p-2 rounded-lg text-amber-500 hover:text-white hover:bg-amber-500 transition shadow-sm" title="Chấm điểm / Lập biên bản" onclick="openGradingModal(${s.id})"><i data-lucide="star" class="w-4 h-4 fill-amber-500 hover:fill-white"></i></button><button class="bg-blue-50 p-1.5 md:p-2 rounded-lg text-blue-500 hover:text-white hover:bg-blue-500 transition shadow-sm" title="Sửa thông tin" onclick="openEditModal(${s.id})"><i data-lucide="pen-line" class="w-4 h-4"></i></button><button class="bg-rose-50 p-1.5 md:p-2 rounded-lg text-rose-400 hover:text-white hover:bg-rose-500 transition shadow-sm" title="Xóa học sinh" onclick="deleteStudent(${s.id})"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></td></tr>`).join(''); lucide.createIcons();
+      if(students.length === 0) { tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-slate-400 italic">Chưa có học sinh nào.</td></tr>`; loadAttendance(); renderRecentActivity(); return; }
+      tbody.innerHTML = students.map((s, index) => `<tr class="hover:bg-slate-50 transition border-b border-slate-50"><td class="p-3 md:p-4 font-bold text-slate-400 text-center">${index + 1}</td><td class="p-3 md:p-4"><span class="bg-slate-100 text-slate-600 font-mono text-[10px] md:text-xs px-2 py-1 rounded border border-slate-200">${s.code || '...'}</span></td><td class="p-3 md:p-4"><div class="font-bold text-slate-800 whitespace-nowrap">${s.name}</div>${s.role ? `<div class="text-[10px] text-theme font-bold mt-0.5 uppercase">${s.role}</div>` : ''}</td><td class="p-3 md:p-4 text-xs text-slate-600 font-medium whitespace-nowrap">${s.gender || '-'}</td><td class="p-3 md:p-4 text-xs text-slate-500 font-medium whitespace-nowrap">${s.dob || '-'}</td><td class="p-3 md:p-4 text-xs text-slate-600 font-medium whitespace-nowrap">${s.cccd || '-'}</td><td class="p-3 md:p-4 text-center"><button onclick="openAvatarModal(${s.id})" class="w-10 h-10 md:w-12 md:h-12 mx-auto flex items-center justify-center text-2xl md:text-3xl hover:scale-110 hover:-translate-y-1 transition-all duration-200 rounded-full bg-slate-50 border border-slate-100 shadow-sm relative group cursor-pointer overflow-hidden" title="Đổi Avatar">${getAvatarHtml(s.avatar)}<span class="absolute inset-0 bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition"><i data-lucide="edit-2" class="w-4 h-4"></i></span></button></td><td class="p-3 md:p-4"><span class="bg-amber-100 text-amber-700 px-2 py-1 rounded-md font-black text-[10px] md:text-xs shadow-sm whitespace-nowrap">${s.points} đ</span></td><td class="p-3 md:p-4 text-right"><div class="flex items-center justify-end gap-1.5"><button class="bg-amber-50 p-1.5 md:p-2 rounded-lg text-amber-500 hover:text-white hover:bg-amber-500 transition shadow-sm" title="Chấm điểm / Lập biên bản" onclick="openGradingModal(${s.id})"><i data-lucide="star" class="w-4 h-4 fill-amber-500 hover:fill-white"></i></button><button class="bg-blue-50 p-1.5 md:p-2 rounded-lg text-blue-500 hover:text-white hover:bg-blue-500 transition shadow-sm" title="Sửa thông tin" onclick="openEditModal(${s.id})"><i data-lucide="pen-line" class="w-4 h-4"></i></button><button class="bg-rose-50 p-1.5 md:p-2 rounded-lg text-rose-400 hover:text-white hover:bg-rose-500 transition shadow-sm" title="Xóa học sinh" onclick="deleteStudent(${s.id})"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></td></tr>`).join(''); lucide.createIcons();
       loadAttendance(); renderRecentActivity();
     }
     
