@@ -143,7 +143,7 @@
     <div class="bg-white p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-md">
       <div class="text-center mb-8">
         <div class="w-16 h-16 bg-theme-grad rounded-2xl mx-auto flex items-center justify-center shadow-lg mb-4 transform rotate-3"><i data-lucide="graduation-cap" class="w-8 h-8 text-white -rotate-3"></i></div>
-        <h2 class="text-2xl font-black text-slate-800 tracking-tight">Đăng Nhập</h2>
+        <h2 id="auth-title" class="text-2xl font-black text-slate-800 tracking-tight">Đăng Nhập</h2>
         <p class="text-sm text-slate-500 mt-1">Hệ thống quản lý lớp học</p>
       </div>
       <div class="space-y-4">
@@ -156,7 +156,7 @@
             </div>
             <span class="text-[9px] text-slate-400 font-black uppercase tracking-widest animate-pulse">Đang kết nối đám mây...</span>
         </div>
-        <button onclick="handleAuth()" class="w-full bg-theme-grad text-white py-3.5 rounded-xl font-bold shadow-lg hover:scale-[1.02] transition-all">Đăng Nhập</button>
+        <button id="auth-btn" onclick="handleAuth()" class="w-full bg-theme-grad text-white py-3.5 rounded-xl font-bold shadow-lg hover:scale-[1.02] transition-all">Đăng Nhập</button>
       </div>
       <div class="mt-4 text-center text-sm"><span class="text-slate-500" id="auth-toggle-text">Chưa có tài khoản?</span> <button onclick="toggleAuthMode()" class="text-theme font-bold hover:underline" id="auth-toggle-btn">Đăng ký ngay</button></div>
     </div>
@@ -1741,11 +1741,47 @@
     }
     function loginSuccess(user) { currentUser = user; localStorage.setItem('currentUser', JSON.stringify(currentUser)); const authScreen = document.getElementById('auth-screen'); authScreen.classList.add('hidden'); authScreen.classList.remove('flex'); if (!currentUser.className) { const obScreen = document.getElementById('onboarding-screen'); obScreen.classList.remove('hidden'); obScreen.classList.add('flex'); } else loadUserData(); }
     function logout() { 
-        localStorage.removeItem('currentUser'); 
-        localStorage.removeItem('currentUserRole'); 
-        localStorage.removeItem('currentStudent'); 
-        localStorage.removeItem('currentTeacherId'); 
-        location.reload(); 
+        // 1. Create a full-screen overlay for the fade-out/dimming transition
+        const overlay = document.createElement('div');
+        overlay.style.position = 'fixed';
+        overlay.style.inset = '0';
+        overlay.style.backgroundColor = 'rgba(15, 23, 42, 0)';
+        overlay.style.backdropFilter = 'blur(0px)';
+        overlay.style.transition = 'all 0.8s ease-in-out';
+        overlay.style.zIndex = '9999';
+        overlay.style.display = 'flex';
+        overlay.style.alignItems = 'center';
+        overlay.style.justifyContent = 'center';
+        
+        overlay.innerHTML = `
+            <div style="transform: scale(0.8); opacity: 0; transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);" id="logout-transition-content" class="flex flex-col items-center gap-4 text-white">
+                <div class="w-16 h-16 bg-white/10 rounded-2xl border border-white/20 flex items-center justify-center shadow-lg"><i data-lucide="log-out" class="w-8 h-8 text-white"></i></div>
+                <span class="text-[10px] font-black uppercase tracking-widest text-white/50">Đang đăng xuất...</span>
+            </div>
+        `;
+        
+        document.body.appendChild(overlay);
+        lucide.createIcons();
+        
+        // 2. Trigger the animations after layout render
+        setTimeout(() => {
+            overlay.style.backgroundColor = 'rgba(15, 23, 42, 0.95)';
+            overlay.style.backdropFilter = 'blur(10px)';
+            const content = document.getElementById('logout-transition-content');
+            if (content) {
+                content.style.transform = 'scale(1)';
+                content.style.opacity = '1';
+            }
+        }, 50);
+        
+        // 3. Clear credentials and reload page after the animation finishes
+        setTimeout(() => {
+            localStorage.removeItem('currentUser'); 
+            localStorage.removeItem('currentUserRole'); 
+            localStorage.removeItem('currentStudent'); 
+            localStorage.removeItem('currentTeacherId'); 
+            location.reload(); 
+        }, 900);
     }
     function saveOnboarding() { currentUser.teacherName = document.getElementById('ob-teacher').value || 'Thầy/Cô'; currentUser.className = document.getElementById('ob-class').value || '12A1'; currentUser.year = document.getElementById('ob-year').value || '2026'; currentUser.slogan = document.getElementById('ob-slogan').value || 'Lớp học yêu thương'; currentUser.theme = 'emerald'; currentUser.cover = DEFAULT_COVERS[Math.floor(Math.random() * DEFAULT_COVERS.length)]; if(saveUserToStorage()) { document.getElementById('onboarding-screen').classList.replace('flex', 'hidden'); loadUserData(); } }
     function saveUserToStorage() { try { saveAppData(); return true; } catch (e) { showModal('error', 'Lỗi bộ nhớ', 'Bộ nhớ đầy! Vui lòng tải ảnh nhẹ hơn.'); return false; } }
