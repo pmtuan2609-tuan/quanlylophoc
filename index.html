@@ -1648,7 +1648,7 @@
       renderEmptySeatingGrid(); 
       const chart = seatingCharts.find(c => c.id === currentChartId); if(!chart) return;
       for (const [seatId, studentId] of Object.entries(chart.layout)) {
-        const student = students.find(s => s.id === studentId); const seatEl = document.getElementById('seat-' + seatId);
+        const student = students.find(s => String(s.id) === String(studentId)); const seatEl = document.getElementById('seat-' + seatId);
         if (student && seatEl) {
           const displayName = getShortName(student);
           seatEl.className = "seat-slot border-2 bg-gradient-to-b from-white to-slate-50 border-theme shadow-md border-solid h-[60px] md:h-[76px] rounded-xl flex flex-col items-center justify-center cursor-pointer transition relative overflow-hidden";
@@ -1673,15 +1673,15 @@
       if(filterText) { const txt = removeAccents(filterText.toLowerCase()); filtered = students.filter(s => removeAccents(s.name.toLowerCase()).includes(txt) || (s.code && s.code.toLowerCase().includes(filterText.toLowerCase()))); }
       if(filtered.length === 0) { listContainer.innerHTML = `<div class="p-4 text-center text-sm text-slate-400 font-medium">Không tìm thấy</div>`; return; }
       listContainer.innerHTML = filtered.map(s => {
-        let seatTxt = ""; for (const [sId, sIdVal] of Object.entries(layout)) { if(sIdVal === s.id) seatTxt = `Đang ngồi: ${sId.split('-')[0].toUpperCase()} - Bàn ${sId.split('-')[1].replace('b','')}`; }
-        const isSel = layout[selectedSeatId] === s.id; const bgClass = isSel ? 'bg-theme-light border-theme' : 'hover:bg-slate-50 border-transparent border-b-slate-100';
-        return `<div onclick="assignStudentToSeat(${s.id})" class="flex items-center gap-3 md:gap-4 p-2 md:p-3 rounded-xl cursor-pointer border-2 ${bgClass} transition"><div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-2xl md:text-3xl bg-white rounded-full shadow-sm overflow-hidden">${getAvatarHtml(s.avatar)}</div><div class="flex-1"><div class="font-black text-xs md:text-sm text-slate-800">${s.name}</div>${seatTxt ? `<div class="text-[9px] md:text-[10px] text-amber-600 font-bold tracking-wide mt-0.5"><i data-lucide="map-pin" class="w-2 h-2 md:w-3 md:h-3 inline mr-0.5"></i>${seatTxt}</div>` : `<div class="text-[9px] md:text-[10px] text-emerald-500 font-bold tracking-wide mt-0.5"><i data-lucide="check" class="w-2 h-2 md:w-3 md:h-3 inline mr-0.5"></i>Chưa xếp chỗ</div>`}</div>${isSel ? `<i data-lucide="check-circle-2" class="w-5 h-5 md:w-6 md:h-6 text-theme"></i>` : ``}</div>`;
+        let seatTxt = ""; for (const [sId, sIdVal] of Object.entries(layout)) { if(String(sIdVal) === String(s.id)) seatTxt = `Đang ngồi: ${sId.split('-')[0].toUpperCase()} - Bàn ${sId.split('-')[1].replace('b','')}`; }
+        const isSel = String(layout[selectedSeatId]) === String(s.id); const bgClass = isSel ? 'bg-theme-light border-theme' : 'hover:bg-slate-50 border-transparent border-b-slate-100';
+        return `<div onclick="assignStudentToSeat('${s.id}')" class="flex items-center gap-3 md:gap-4 p-2 md:p-3 rounded-xl cursor-pointer border-2 ${bgClass} transition"><div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-2xl md:text-3xl bg-white rounded-full shadow-sm overflow-hidden">${getAvatarHtml(s.avatar)}</div><div class="flex-1"><div class="font-black text-xs md:text-sm text-slate-800">${s.name}</div>${seatTxt ? `<div class="text-[9px] md:text-[10px] text-amber-600 font-bold tracking-wide mt-0.5"><i data-lucide="map-pin" class="w-2 h-2 md:w-3 md:h-3 inline mr-0.5"></i>${seatTxt}</div>` : `<div class="text-[9px] md:text-[10px] text-emerald-500 font-bold tracking-wide mt-0.5"><i data-lucide="check" class="w-2 h-2 md:w-3 md:h-3 inline mr-0.5"></i>Chưa xếp chỗ</div>`}</div>${isSel ? `<i data-lucide="check-circle-2" class="w-5 h-5 md:w-6 md:h-6 text-theme"></i>` : ``}</div>`;
       }).join(''); lucide.createIcons();
     }
     
     function filterPickerList() { renderStudentPickerList(document.getElementById('search-student-seat').value); }
     function removeStudentFromCurrentSeat() { const chart = seatingCharts.find(c => c.id === currentChartId); if(chart) delete chart.layout[selectedSeatId]; saveSeatingToStorage(); applyChartLayout(); closeModalUi('pick-student-modal', 'pick-student-content'); }
-    function assignStudentToSeat(studentId) { const chart = seatingCharts.find(c => c.id === currentChartId); if(chart) { for (const [key, val] of Object.entries(chart.layout)) { if(val === studentId) delete chart.layout[key]; } chart.layout[selectedSeatId] = studentId; saveSeatingToStorage(); applyChartLayout(); } closeModalUi('pick-student-modal', 'pick-student-content'); }
+    function assignStudentToSeat(studentId) { const chart = seatingCharts.find(c => c.id === currentChartId); if(chart) { for (const [key, val] of Object.entries(chart.layout)) { if(String(val) === String(studentId)) delete chart.layout[key]; } chart.layout[selectedSeatId] = String(studentId); saveSeatingToStorage(); applyChartLayout(); } closeModalUi('pick-student-modal', 'pick-student-content'); }
 
     // --- Renders Main ---
     function renderPraiseGrid() {
