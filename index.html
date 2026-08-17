@@ -538,41 +538,24 @@
       <section id="tab-gifts" class="tab-section hidden h-full"><div class="flex flex-col items-center justify-center h-full text-slate-400 bg-white rounded-3xl border border-dashed border-slate-200 p-6 md:p-10 text-center shadow-sm"><div class="w-20 h-20 md:w-24 md:h-24 bg-rose-50 rounded-full flex items-center justify-center mb-4 md:mb-6"><i data-lucide="gift" class="w-10 h-10 md:w-12 md:h-12 text-rose-400"></i></div><h3 class="text-xl md:text-2xl font-black text-slate-700">Cửa hàng Quà Tặng</h3><p class="text-xs md:text-sm mt-2 font-medium">Học sinh dùng điểm đổi quà. Đang phát triển.</p></div></section>
 
       <!-- CÀI ĐẶT -->
-      <section id="tab-settings" class="tab-section hidden h-full">
+      <section id="tab-settings" class="tab-section hidden h-full space-y-6">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 max-w-5xl">
-          <div class="bg-white p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm">
-             <h3 class="text-lg md:text-xl font-black text-slate-800 mb-2">Thông tin lớp</h3>
-             <div class="space-y-3 md:space-y-4">
-               <div><label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Họ tên GVCN</label><input type="text" id="set-teacher" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold"></div>
-               <div><label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Lớp</label><input type="text" id="set-class" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold"></div>
-               <div><label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Năm học</label><input type="text" id="set-year" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold"></div>
-               <div><label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Khẩu hiệu</label><input type="text" id="set-slogan" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold"></div>
-               <button onclick="updateSettings()" class="w-full bg-slate-800 text-white px-6 py-3 md:py-3.5 rounded-xl font-bold shadow-lg hover:bg-slate-700 transition mt-2 md:mt-4">Lưu thay đổi cài đặt</button>
-             </div>
-          </div>
+          <!-- LEFT COLUMN -->
           <div class="space-y-4 md:space-y-6">
+              <!-- THÔNG TIN LỚP -->
               <div class="bg-white p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm">
-                 <h3 class="text-lg md:text-xl font-black text-slate-800 mb-2">Quản lý hệ thống & Dữ liệu</h3>
-                 <p class="text-xs md:text-sm text-slate-500 mb-4 md:mb-6 font-medium">Sao lưu, khôi phục hoặc xóa dữ liệu lớp học.</p>
-                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <button onclick="exportData()" class="bg-blue-50 text-blue-600 border border-blue-200 px-4 py-3 rounded-xl font-bold hover:bg-blue-100 transition flex items-center justify-center gap-2 text-xs md:text-sm"><i data-lucide="download-cloud" class="w-4 h-4"></i> Sao lưu dữ liệu</button>
-                    <button onclick="document.getElementById('import-upload').click()" class="bg-emerald-50 text-emerald-600 border border-emerald-200 px-4 py-3 rounded-xl font-bold hover:bg-emerald-100 transition flex items-center justify-center gap-2 text-xs md:text-sm"><i data-lucide="upload-cloud" class="w-4 h-4"></i> Khôi phục dữ liệu</button>
-                    <input type="file" id="import-upload" accept=".json" class="hidden" onchange="importData(event)">
-                    <button onclick="resetAllPoints()" class="sm:col-span-2 bg-rose-50 text-rose-600 border border-rose-200 px-4 py-3 rounded-xl font-bold hover:bg-rose-100 transition flex items-center justify-center gap-2 text-xs md:text-sm mt-1"><i data-lucide="rotate-ccw" class="w-4 h-4"></i> Đặt lại (Reset) toàn bộ điểm số</button>
+                 <h3 class="text-lg md:text-xl font-black text-slate-800 mb-2">Thông tin lớp</h3>
+                 <div class="space-y-3 md:space-y-4">
+                   <div><label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Họ tên GVCN</label><input type="text" id="set-teacher" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold"></div>
+                   <div><label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Lớp</label><input type="text" id="set-class" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold"></div>
+                   <div><label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Năm học</label><input type="text" id="set-year" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold"></div>
+                   <div><label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Khẩu hiệu</label><input type="text" id="set-slogan" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold"></div>
+                   <button onclick="updateSettings()" class="w-full bg-slate-800 text-white px-6 py-3 md:py-3.5 rounded-xl font-bold shadow-lg hover:bg-slate-700 transition mt-2 md:mt-4">Lưu thay đổi cài đặt</button>
                  </div>
               </div>
-              <div class="bg-white p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm h-fit">
-                <h3 class="text-lg md:text-xl font-black text-slate-800 mb-2">Cá nhân hóa</h3>
-                <p class="text-xs md:text-sm text-slate-500 mb-4 md:mb-6 font-medium">Chọn màu sắc chủ đạo (Theme).</p>
-                <div class="grid grid-cols-2 gap-3 md:gap-4">
-                  <button onclick="applyTheme('emerald')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-emerald-400 transition group outline-none focus:ring-4 focus:ring-emerald-200"><div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#10b981] to-[#14b8a6] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Thiên Nhiên</span></button>
-                  <button onclick="applyTheme('violet')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-violet-400 transition group outline-none focus:ring-4 focus:ring-violet-200"><div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Tím Mộng Mơ</span></button>
-                  <button onclick="applyTheme('blue')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-blue-400 transition group outline-none focus:ring-4 focus:ring-blue-200"><div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#3b82f6] to-[#06b6d4] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Đại Dương</span></button>
-                  <button onclick="applyTheme('rose')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-rose-400 transition group outline-none focus:ring-4 focus:ring-rose-200"><div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#f43f5e] to-[#f97316] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Hoàng Hôn</span></button>
-                </div>
-              </div>
-              
-              <div class="bg-white p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm h-fit">
+
+              <!-- ĐÁM MÂY SUPABASE -->
+              <div id="supabase-config-card" class="bg-white p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm h-fit">
                 <h3 class="text-lg md:text-xl font-black text-slate-800 mb-1 flex items-center gap-2"><i data-lucide="cloud-lightning" class="text-theme"></i> Đám mây Supabase</h3>
                 <p class="text-xs md:text-sm text-slate-500 mb-4 font-medium">Lưu trữ dữ liệu trực tuyến đồng bộ tức thì lên đám mây.</p>
                 <div class="space-y-3.5">
@@ -592,27 +575,55 @@
                 </div>
               </div>
           </div>
-          <!-- ADMIN ACCOUNT MANAGER -->
-          <div id="admin-account-manager-card" class="bg-white p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm hidden">
-             <h3 class="text-lg md:text-xl font-black text-slate-800 mb-2 flex items-center gap-2 text-theme"><i data-lucide="shield-check" class="w-5 h-5"></i> Quản trị tài khoản Giáo viên</h3>
-             <p class="text-xs md:text-sm text-slate-500 mb-4 md:mb-6 font-medium">Danh sách các tài khoản giáo viên đã đăng ký trên hệ thống đám mây.</p>
-             <div class="overflow-x-auto custom-scrollbar border border-slate-100 rounded-2xl">
-               <table class="w-full text-left text-xs md:text-sm min-w-[600px] border-collapse">
-                 <thead class="bg-slate-50 text-slate-500 font-bold uppercase tracking-wider text-[10px] md:text-xs">
-                   <tr class="border-b border-slate-100">
-                     <th class="p-3 md:p-4">Tên tài khoản (ID)</th>
-                     <th class="p-3 md:p-4">Họ tên Giáo viên</th>
-                     <th class="p-3 md:p-4">Lớp học</th>
-                     <th class="p-3 md:p-4">Mật khẩu hiện tại</th>
-                     <th class="p-3 md:p-4 text-right">Thao tác</th>
-                   </tr>
-                 </thead>
-                 <tbody id="admin-teachers-tbody" class="divide-y divide-slate-100 font-medium">
-                   <tr><td colspan="5" class="p-4 text-center text-slate-400 italic">Đang tải dữ liệu đám mây...</td></tr>
-                 </tbody>
-               </table>
-             </div>
+
+          <!-- RIGHT COLUMN -->
+          <div class="space-y-4 md:space-y-6">
+              <!-- QUẢN LÝ HỆ THỐNG & DỮ LIỆU -->
+              <div class="bg-white p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm">
+                 <h3 class="text-lg md:text-xl font-black text-slate-800 mb-2">Quản lý hệ thống & Dữ liệu</h3>
+                 <p class="text-xs md:text-sm text-slate-500 mb-4 md:mb-6 font-medium">Sao lưu, khôi phục hoặc xóa dữ liệu lớp học.</p>
+                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <button onclick="exportData()" class="bg-blue-50 text-blue-600 border border-blue-200 px-4 py-3 rounded-xl font-bold hover:bg-blue-100 transition flex items-center justify-center gap-2 text-xs md:text-sm"><i data-lucide="download-cloud" class="w-4 h-4"></i> Sao lưu dữ liệu</button>
+                    <button onclick="document.getElementById('import-upload').click()" class="bg-emerald-50 text-emerald-600 border border-emerald-200 px-4 py-3 rounded-xl font-bold hover:bg-emerald-100 transition flex items-center justify-center gap-2 text-xs md:text-sm"><i data-lucide="upload-cloud" class="w-4 h-4"></i> Khôi phục dữ liệu</button>
+                    <input type="file" id="import-upload" accept=".json" class="hidden" onchange="importData(event)">
+                    <button onclick="resetAllPoints()" class="sm:col-span-2 bg-rose-50 text-rose-600 border border-rose-200 px-4 py-3 rounded-xl font-bold hover:bg-rose-100 transition flex items-center justify-center gap-2 text-xs md:text-sm mt-1"><i data-lucide="rotate-ccw" class="w-4 h-4"></i> Đặt lại (Reset) toàn bộ điểm số</button>
+                 </div>
+              </div>
+
+              <!-- CÁ NHÂN HÓA -->
+              <div class="bg-white p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm h-fit">
+                <h3 class="text-lg md:text-xl font-black text-slate-800 mb-2">Cá nhân hóa</h3>
+                <p class="text-xs md:text-sm text-slate-500 mb-4 md:mb-6 font-medium">Chọn màu sắc chủ đạo (Theme).</p>
+                <div class="grid grid-cols-2 gap-3 md:gap-4">
+                  <button onclick="applyTheme('emerald')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-emerald-400 transition group outline-none focus:ring-4 focus:ring-emerald-200"><div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#10b981] to-[#14b8a6] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Thiên Nhiên</span></button>
+                  <button onclick="applyTheme('violet')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-violet-400 transition group outline-none focus:ring-4 focus:ring-violet-200"><div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Tím Mộng Mơ</span></button>
+                  <button onclick="applyTheme('blue')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-blue-400 transition group outline-none focus:ring-4 focus:ring-blue-200"><div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#3b82f6] to-[#06b6d4] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Đại Dương</span></button>
+                  <button onclick="applyTheme('rose')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-rose-400 transition group outline-none focus:ring-4 focus:ring-rose-200"><div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#f43f5e] to-[#f97316] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Hoàng Hôn</span></button>
+                </div>
+              </div>
           </div>
+        </div>
+
+        <!-- ADMIN ACCOUNT MANAGER - FULL WIDTH -->
+        <div id="admin-account-manager-card" class="bg-white p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm hidden w-full max-w-5xl">
+           <h3 class="text-lg md:text-xl font-black text-slate-800 mb-2 flex items-center gap-2 text-theme"><i data-lucide="shield-check" class="w-5 h-5"></i> Quản trị tài khoản Giáo viên</h3>
+           <p class="text-xs md:text-sm text-slate-500 mb-4 font-medium">Danh sách các tài khoản giáo viên đã đăng ký trên hệ thống đám mây.</p>
+           <div class="overflow-x-auto custom-scrollbar border border-slate-100 rounded-2xl">
+             <table class="w-full text-left text-xs md:text-sm min-w-[600px] border-collapse">
+               <thead class="bg-slate-50 text-slate-500 font-bold uppercase tracking-wider text-[10px] md:text-xs">
+                 <tr class="border-b border-slate-100">
+                   <th class="p-3 md:p-4">Tên tài khoản (ID)</th>
+                   <th class="p-3 md:p-4">Họ tên Giáo viên</th>
+                   <th class="p-3 md:p-4">Lớp học</th>
+                   <th class="p-3 md:p-4">Mật khẩu hiện tại</th>
+                   <th class="p-3 md:p-4 text-right">Thao tác</th>
+                 </tr>
+               </thead>
+               <tbody id="admin-teachers-tbody" class="divide-y divide-slate-100 font-medium">
+                 <tr><td colspan="5" class="p-4 text-center text-slate-400 italic">Đang tải dữ liệu đám mây...</td></tr>
+               </tbody>
+             </table>
+           </div>
         </div>
       </section>
 
@@ -2133,14 +2144,15 @@
         }
         lucide.createIcons();
     }
-
     function renderStudentTable() {
-      const tbody = document.getElementById('full-student-table'); document.getElementById('student-count').innerText = students.length;
+      const tbody = document.getElementById('full-student-table');
+      if(!tbody) return;
+      document.getElementById('student-count').innerText = students.length;
       if(students.length === 0) { tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-slate-400 italic">Chưa có học sinh nào.</td></tr>`; loadAttendance(); renderRecentActivity(); return; }
       tbody.innerHTML = students.map((s, index) => `<tr class="hover:bg-slate-50 transition border-b border-slate-50"><td class="p-3 md:p-4 font-bold text-slate-400 text-center">${index + 1}</td><td class="p-3 md:p-4"><span class="bg-slate-100 text-slate-600 font-mono text-[10px] md:text-xs px-2 py-1 rounded border border-slate-200">${s.code || '...'}</span></td><td class="p-3 md:p-4"><div class="font-bold text-slate-800 whitespace-nowrap">${s.name}</div>${s.role ? `<div class="text-[10px] text-theme font-bold mt-0.5 uppercase">${s.role}</div>` : ''}</td><td class="p-3 md:p-4 text-xs text-slate-600 font-medium whitespace-nowrap">${s.gender || '-'}</td><td class="p-3 md:p-4 text-xs text-slate-500 font-medium whitespace-nowrap">${s.dob || '-'}</td><td class="p-3 md:p-4 text-xs text-slate-600 font-medium whitespace-nowrap">${s.cccd || '-'}</td><td class="p-3 md:p-4 text-center"><button onclick="openAvatarModal(${s.id})" class="w-10 h-10 md:w-12 md:h-12 mx-auto flex items-center justify-center text-2xl md:text-3xl hover:scale-110 hover:-translate-y-1 transition-all duration-200 rounded-full bg-slate-50 border border-slate-100 shadow-sm relative group cursor-pointer overflow-hidden" title="Đổi Avatar">${getAvatarHtml(s.avatar)}<span class="absolute inset-0 bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition"><i data-lucide="edit-2" class="w-4 h-4"></i></span></button></td><td class="p-3 md:p-4"><span class="bg-amber-100 text-amber-700 px-2 py-1 rounded-md font-black text-[10px] md:text-xs shadow-sm whitespace-nowrap">${s.points} đ</span></td><td class="p-3 md:p-4 text-right"><div class="flex items-center justify-end gap-1.5"><button class="bg-amber-50 p-1.5 md:p-2 rounded-lg text-amber-500 hover:text-white hover:bg-amber-500 transition shadow-sm" title="Chấm điểm / Lập biên bản" onclick="openGradingModal(${s.id})"><i data-lucide="star" class="w-4 h-4 fill-amber-500 hover:fill-white"></i></button><button class="bg-blue-50 p-1.5 md:p-2 rounded-lg text-blue-500 hover:text-white hover:bg-blue-500 transition shadow-sm" title="Sửa thông tin" onclick="openEditModal(${s.id})"><i data-lucide="pen-line" class="w-4 h-4"></i></button><button class="bg-rose-50 p-1.5 md:p-2 rounded-lg text-rose-400 hover:text-white hover:bg-rose-500 transition shadow-sm" title="Xóa học sinh" onclick="deleteStudent(${s.id})"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></td></tr>`).join(''); lucide.createIcons();
       loadAttendance(); renderRecentActivity();
     }
-    
+
     function renderNotebook() {
       const queryRaw = document.getElementById('search-notebook').value.trim(); const query = removeAccents(queryRaw.toLowerCase()); const grid = document.getElementById('notebook-grid');
       let filtered = students; if (query) filtered = students.filter(s => removeAccents(s.name.toLowerCase()).includes(query) || (s.code && s.code.toLowerCase().includes(queryRaw.toLowerCase())));
@@ -2148,6 +2160,7 @@
       
       const chart = seatingCharts.find(c => c.id === currentChartId);
       const layout = chart ? chart.layout : {};
+      const isStudent = (currentUserRole === 'student');
 
       grid.innerHTML = filtered.map(s => {
         let history = s.history || [];
@@ -2164,18 +2177,22 @@
         }
         const toStr = to ? ` - TỔ ${to}` : '';
 
+        const avatarClickAttr = isStudent ? '' : `onclick="openAvatarModal(${s.id})"`;
+        const avatarHoverEl = isStudent ? '' : `<span class="absolute inset-0 bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition"><i data-lucide="camera" class="w-4 h-4"></i></span>`;
+        const editBtnHtml = isStudent ? '' : `<button onclick="openEditModal(${s.id})" class="text-slate-300 hover:text-slate-600 transition p-1 shrink-0"><i data-lucide="more-vertical" class="w-5 h-5"></i></button>`;
+
         return `
         <div class="bg-white rounded-[1.5rem] p-4 md:p-5 shadow-sm border border-slate-200 hover:border-theme transition-all flex flex-col relative">
            <div class="flex items-center gap-3 mb-4">
-              <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-3xl shrink-0 overflow-hidden border border-slate-100 cursor-pointer relative group" onclick="openAvatarModal(${s.id})" title="Đổi Avatar">
+              <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-3xl shrink-0 overflow-hidden border border-slate-100 ${isStudent ? '' : 'cursor-pointer'} relative group" ${avatarClickAttr} title="${isStudent ? s.name : 'Đổi Avatar'}">
                  ${getAvatarHtml(s.avatar)}
-                 <span class="absolute inset-0 bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition"><i data-lucide="camera" class="w-4 h-4"></i></span>
+                 ${avatarHoverEl}
               </div>
               <div class="flex-1 min-w-0">
                  <h4 class="text-[15px] font-bold text-slate-800 break-words leading-tight" title="${s.name}">${s.name}</h4>
                  <div class="text-[10px] text-theme font-bold mt-1 uppercase tracking-wider">${s.role ? s.role : 'Học sinh'}${toStr}</div>
               </div>
-              <button onclick="openEditModal(${s.id})" class="text-slate-300 hover:text-slate-600 transition p-1 shrink-0"><i data-lucide="more-vertical" class="w-5 h-5"></i></button>
+              ${editBtnHtml}
            </div>
            
            <div class="space-y-2 mb-4 flex-1">
@@ -2623,6 +2640,8 @@
 
     function configureSidebarForRole() {
         const isStudent = (currentUserRole === 'student');
+        const allowedStudentRoles = ["lớp trưởng", "lớp phó học tập", "bí thư", "lớp phó kỷ luật", "lớp phó kỉ luật"];
+        const hasNotebookAccess = !isStudent || (isStudent && currentStudent && currentStudent.role && allowedStudentRoles.includes(currentStudent.role.toLowerCase().trim()));
         
         const studentHistoryBtn = document.getElementById('btn-tab-student-history');
         if (studentHistoryBtn) {
@@ -2642,8 +2661,13 @@
         teacherButtons.forEach(id => {
             const btn = document.getElementById(id);
             if (btn) {
-                if (isStudent) btn.classList.add('hidden');
-                else btn.classList.remove('hidden');
+                if (id === 'btn-tab-notebook') {
+                    if (hasNotebookAccess) btn.classList.remove('hidden');
+                    else btn.classList.add('hidden');
+                } else {
+                    if (isStudent) btn.classList.add('hidden');
+                    else btn.classList.remove('hidden');
+                }
             }
         });
         
@@ -2731,12 +2755,23 @@
 
     function checkAdminSection() {
         const adminCard = document.getElementById('admin-account-manager-card');
+        const supabaseCard = document.getElementById('supabase-config-card');
+        const isAdmin = (currentUser && currentUser.id === 'thaytuan');
+        
         if (adminCard) {
-            if (currentUser && currentUser.id === 'thaytuan') {
+            if (isAdmin) {
                 adminCard.classList.remove('hidden');
                 loadAllTeachersForAdmin();
             } else {
                 adminCard.classList.add('hidden');
+            }
+        }
+        
+        if (supabaseCard) {
+            if (isAdmin) {
+                supabaseCard.classList.remove('hidden');
+            } else {
+                supabaseCard.classList.add('hidden');
             }
         }
     }
