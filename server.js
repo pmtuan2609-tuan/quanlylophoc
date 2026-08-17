@@ -23,11 +23,19 @@ const server = http.createServer((req, res) => {
     if (req.method === 'GET' && req.url === '/api/data') {
         fs.readFile(DATA_FILE, 'utf8', (err, data) => {
             if (err) {
-                res.writeHead(500, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+                res.writeHead(500, { 
+                    'Content-Type': 'application/json', 
+                    'Access-Control-Allow-Origin': '*',
+                    'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate'
+                });
                 res.end(JSON.stringify({ error: 'Failed to read data' }));
                 return;
             }
-            res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+            res.writeHead(200, { 
+                'Content-Type': 'application/json', 
+                'Access-Control-Allow-Origin': '*',
+                'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate'
+            });
             res.end(data);
         });
     } 
@@ -42,11 +50,19 @@ const server = http.createServer((req, res) => {
                 const parsed = JSON.parse(body);
                 fs.writeFile(DATA_FILE, JSON.stringify(parsed, null, 2), 'utf8', (err) => {
                     if (err) {
-                        res.writeHead(500, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+                        res.writeHead(500, { 
+                            'Content-Type': 'application/json', 
+                            'Access-Control-Allow-Origin': '*',
+                            'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate'
+                        });
                         res.end(JSON.stringify({ error: 'Failed to write data' }));
                         return;
                     }
-                    res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+                    res.writeHead(200, { 
+                        'Content-Type': 'application/json', 
+                        'Access-Control-Allow-Origin': '*',
+                        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate'
+                    });
                     res.end(JSON.stringify({ success: true }));
 
                     // Auto push data.json to GitHub when running server locally
