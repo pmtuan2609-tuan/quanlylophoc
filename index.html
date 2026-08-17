@@ -755,6 +755,17 @@
                <input type="text" id="edit-hs-phone" class="w-full px-3 py-2 border-2 border-slate-100 rounded-xl outline-none focus:border-theme font-bold text-slate-800 bg-white text-xs">
             </div>
           </div>
+          
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+               <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 flex items-center gap-1"><i data-lucide="globe" class="w-3 h-3 text-indigo-500"></i> Dân tộc</label>
+               <input type="text" id="edit-hs-nation" placeholder="Kinh,..." class="w-full px-3 py-2 border-2 border-slate-100 rounded-xl outline-none focus:border-theme font-bold text-slate-800 bg-white text-xs">
+            </div>
+            <div>
+               <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 flex items-center gap-1"><i data-lucide="heart" class="w-3 h-3 text-rose-500"></i> Tôn giáo</label>
+               <input type="text" id="edit-hs-religion" placeholder="Không,..." class="w-full px-3 py-2 border-2 border-slate-100 rounded-xl outline-none focus:border-theme font-bold text-slate-800 bg-white text-xs">
+            </div>
+          </div>
 
           <div>
              <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 flex items-center gap-1"><i data-lucide="home" class="w-3 h-3 text-violet-500"></i> Địa chỉ thường trú</label>
@@ -954,6 +965,16 @@
                       <div>
                           <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Giới tính & Ngày sinh</div>
                           <div class="font-black text-slate-700 text-xs md:text-sm mt-0.5"><span id="lbl-profile-gender">...</span> - <span id="lbl-profile-dob">...</span></div>
+                      </div>
+                  </div>
+                  <div class="grid grid-cols-2 gap-4">
+                      <div>
+                          <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Dân tộc</div>
+                          <div class="font-black text-slate-700 text-xs md:text-sm mt-0.5" id="lbl-profile-nation">...</div>
+                      </div>
+                      <div>
+                          <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Tôn giáo</div>
+                          <div class="font-black text-slate-700 text-xs md:text-sm mt-0.5" id="lbl-profile-religion">...</div>
                       </div>
                   </div>
                   <div>
@@ -1834,6 +1855,8 @@
                   birthplace: birthplace,
                   phone: phone,
                   address: address,
+                  nation: '',
+                  religion: '',
                   fatherName: fatherName,
                   fatherCccd: fatherCccd,
                   fatherPhone: fatherPhone,
@@ -1872,6 +1895,8 @@
       document.getElementById('edit-hs-birthplace').value = s.birthplace || '';
       document.getElementById('edit-hs-phone').value = s.phone || '';
       document.getElementById('edit-hs-address').value = s.address || '';
+      document.getElementById('edit-hs-nation').value = s.nation || '';
+      document.getElementById('edit-hs-religion').value = s.religion || '';
       
       document.getElementById('edit-hs-fatherName').value = s.fatherName || '';
       document.getElementById('edit-hs-fatherCccd').value = s.fatherCccd || '';
@@ -1898,6 +1923,8 @@
         s.birthplace = document.getElementById('edit-hs-birthplace').value.trim();
         s.phone = document.getElementById('edit-hs-phone').value.trim();
         s.address = document.getElementById('edit-hs-address').value.trim();
+        s.nation = document.getElementById('edit-hs-nation').value.trim();
+        s.religion = document.getElementById('edit-hs-religion').value.trim();
         
         s.fatherName = document.getElementById('edit-hs-fatherName').value.trim();
         s.fatherCccd = document.getElementById('edit-hs-fatherCccd').value.trim();
@@ -1974,6 +2001,8 @@
         document.getElementById('lbl-profile-gender').innerText = s.gender || 'Nam';
         document.getElementById('lbl-profile-dob').innerText = s.dob || 'Chưa cập nhật';
         document.getElementById('lbl-profile-address').innerText = s.address || 'Chưa cập nhật';
+        document.getElementById('lbl-profile-nation').innerText = s.nation || 'Chưa cập nhật';
+        document.getElementById('lbl-profile-religion').innerText = s.religion || 'Chưa cập nhật';
         
         document.getElementById('lbl-profile-fatherName').innerText = s.fatherName || 'Chưa cập nhật';
         document.getElementById('lbl-profile-fatherCccd').innerText = s.fatherCccd || 'Chưa cập nhật';
