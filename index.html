@@ -40,6 +40,14 @@
     .mode-horse { animation: gallop 0.3s linear infinite; border: 4px solid #8b5cf6 !important; background-color: #f3e8ff !important; position: relative; }
     .mode-horse::after { content: "🐎"; position: absolute; bottom: -12px; right: -12px; font-size: 24px; }
     
+    @keyframes loading-bar-progress {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(300%); }
+    }
+    .animate-loading-bar {
+      animation: loading-bar-progress 1.5s infinite linear;
+    }
+    
     .table-sticky th:first-child, .table-sticky td:first-child { position: sticky; left: 0; background-color: white; z-index: 10; border-right: 2px solid #f1f5f9; }
     .table-sticky th:first-child { z-index: 20; background-color: #f8fafc; }
     
@@ -142,6 +150,12 @@
         <div><label class="text-xs font-bold text-slate-600 uppercase tracking-wider">Tài khoản (ID)</label><input type="text" id="auth-id" class="w-full mt-1.5 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl ring-theme outline-none"></div>
         <div><label class="text-xs font-bold text-slate-600 uppercase tracking-wider">Mật khẩu</label><input type="password" id="auth-pass" class="w-full mt-1.5 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl ring-theme outline-none"></div>
         <p id="auth-error" class="text-xs text-rose-500 font-bold hidden bg-rose-50 p-2 rounded-lg text-center">Sai tài khoản hoặc mật khẩu!</p>
+        <div id="auth-loading" class="hidden w-full flex flex-col items-center gap-2.5 my-3 bg-slate-50 border border-slate-100 p-3 rounded-2xl shadow-sm">
+            <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden relative">
+                <div class="bg-gradient-to-r from-theme to-cyan-500 h-full w-1/3 rounded-full absolute top-0 left-0 animate-loading-bar shadow-sm"></div>
+            </div>
+            <span class="text-[9px] text-slate-400 font-black uppercase tracking-widest animate-pulse">Đang kết nối đám mây...</span>
+        </div>
         <button onclick="handleAuth()" class="w-full bg-theme-grad text-white py-3.5 rounded-xl font-bold shadow-lg hover:scale-[1.02] transition-all">Đăng Nhập</button>
       </div>
       <div class="mt-4 text-center text-sm"><span class="text-slate-500" id="auth-toggle-text">Chưa có tài khoản?</span> <button onclick="toggleAuthMode()" class="text-theme font-bold hover:underline" id="auth-toggle-btn">Đăng ký ngay</button></div>
@@ -1527,7 +1541,7 @@
             }
         }
     }
-    function toggleAuthMode() { isLoginMode = !isLoginMode; document.getElementById('auth-title').innerText = isLoginMode ? 'Đăng Nhập' : 'Tạo Tài Khoản'; document.getElementById('auth-btn').innerText = isLoginMode ? 'Đăng Nhập' : 'Đăng Ký Nhanh'; document.getElementById('auth-toggle-text').innerText = isLoginMode ? 'Chưa có tài khoản?' : 'Đã có tài khoản?'; document.getElementById('auth-toggle-btn').innerText = isLoginMode ? 'Đăng ký ngay' : 'Đăng nhập'; document.getElementById('auth-error').classList.add('hidden'); }
+    function toggleAuthMode() { isLoginMode = !isLoginMode; document.getElementById('auth-title').innerText = isLoginMode ? 'Đăng Nhập' : 'Tạo Tài Khoản'; document.getElementById('auth-btn').innerText = isLoginMode ? 'Đăng Nhập' : 'Đăng Ký Nhanh'; document.getElementById('auth-toggle-text').innerText = isLoginMode ? 'Chưa có tài khoản?' : 'Đã có tài khoản?'; document.getElementById('auth-toggle-btn').innerText = isLoginMode ? 'Đăng ký ngay' : 'Đăng nhập'; document.getElementById('auth-error').classList.add('hidden'); const authLoading = document.getElementById('auth-loading'); if (authLoading) authLoading.classList.add('hidden'); }
     async function handleAuth() {
         const id = document.getElementById('auth-id').value.trim();
         const pass = document.getElementById('auth-pass').value.trim();
@@ -1537,9 +1551,10 @@
         if (isLoginMode) {
             // 1. Try teacher cloud authentication first if connected to Supabase
             if (isSupabaseConnected) {
+                const authLoading = document.getElementById('auth-loading');
+                if (authLoading) authLoading.classList.remove('hidden');
+                errorMsg.classList.add('hidden');
                 try {
-                    errorMsg.innerText = 'Đang xác thực qua đám mây...';
-                    errorMsg.classList.remove('hidden');
                     
                     const row = await callSupabaseRest('GET', id);
                     if (row && row.data && row.data.currentUser) {
@@ -1626,6 +1641,8 @@
                     }
                 } catch(e) {
                     console.warn("Cloud auth check failed, falling back to local credentials:", e);
+                } finally {
+                    if (authLoading) authLoading.classList.add('hidden');
                 }
             }
 
