@@ -8,6 +8,7 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
       --c1: #10b981; 
@@ -495,6 +496,25 @@
                   <button onclick="applyTheme('violet')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-violet-400 transition group outline-none focus:ring-4 focus:ring-violet-200"><div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Tím Mộng Mơ</span></button>
                   <button onclick="applyTheme('blue')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-blue-400 transition group outline-none focus:ring-4 focus:ring-blue-200"><div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#3b82f6] to-[#06b6d4] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Đại Dương</span></button>
                   <button onclick="applyTheme('rose')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-rose-400 transition group outline-none focus:ring-4 focus:ring-rose-200"><div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#f43f5e] to-[#f97316] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Hoàng Hôn</span></button>
+              </div>
+              
+              <div class="bg-white p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm h-fit">
+                <h3 class="text-lg md:text-xl font-black text-slate-800 mb-1 flex items-center gap-2"><i data-lucide="cloud-lightning" class="text-theme"></i> Đám mây Supabase</h3>
+                <p class="text-xs md:text-sm text-slate-500 mb-4 font-medium">Lưu trữ dữ liệu trực tuyến đồng bộ tức thì lên đám mây.</p>
+                <div class="space-y-3.5">
+                  <div>
+                    <label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Supabase URL</label>
+                    <input type="text" id="set-supabase-url" placeholder="https://your-project.supabase.co" class="w-full mt-1 px-3 md:px-4 py-2 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 outline-none text-sm font-semibold">
+                  </div>
+                  <div>
+                    <label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Supabase Anon Key</label>
+                    <input type="password" id="set-supabase-key" placeholder="your-anon-public-key" class="w-full mt-1 px-3 md:px-4 py-2 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 outline-none text-sm font-semibold">
+                  </div>
+                  <div class="flex gap-2.5 pt-2">
+                    <button onclick="testAndSaveSupabase()" class="flex-1 bg-theme-grad text-white px-4 py-2.5 rounded-xl font-bold shadow-md hover:scale-[1.02] transition text-xs flex items-center justify-center gap-1.5"><i data-lucide="link" class="w-4 h-4"></i> Kết nối & Đồng bộ</button>
+                    <button onclick="disconnectSupabase()" class="bg-rose-50 text-rose-600 border border-rose-100 px-4 py-2.5 rounded-xl font-bold hover:bg-rose-100 transition text-xs flex items-center justify-center gap-1.5"><i data-lucide="link-2" class="w-4 h-4"></i> Ngắt kết nối</button>
+                  </div>
+                  <div id="supabase-status-text" class="text-[10px] md:text-xs font-bold text-slate-400 mt-1.5 flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-slate-300 inline-block animate-pulse"></span> Chưa kết nối đám mây</div>
                 </div>
               </div>
           </div>
@@ -885,7 +905,96 @@
     let studentToEditAvatar = null; let tempReportImage = null; let hiddenWheelIds = [];
     let modalTimeouts = {}; let attendanceData = {}; let timetables = []; let currentTimetableId = null;
 
-    window.onload = () => { lucide.createIcons(); checkAuth(); renderEmptySeatingGrid(); };
+    let supabase = null;
+    let isSupabaseConnected = false;
+
+    window.onload = () => { lucide.createIcons(); initSupabase(); checkAuth(); renderEmptySeatingGrid(); };
+
+    function initSupabase() {
+        const url = localStorage.getItem('supabase_url');
+        const key = localStorage.getItem('supabase_key');
+        const urlInput = document.getElementById('set-supabase-url');
+        const keyInput = document.getElementById('set-supabase-key');
+        
+        if (urlInput) urlInput.value = url || '';
+        if (keyInput) keyInput.value = key || '';
+        
+        if (url && key && window.supabase) {
+            try {
+                supabase = window.supabase.createClient(url, key);
+                isSupabaseConnected = true;
+                updateSupabaseStatus(true, "Đã kết nối đám mây");
+            } catch (e) {
+                console.error("Failed to initialize Supabase:", e);
+                isSupabaseConnected = false;
+                updateSupabaseStatus(false, "Lỗi kết nối: Cấu hình sai");
+            }
+        } else {
+            isSupabaseConnected = false;
+            updateSupabaseStatus(false, "Chưa kết nối đám mây");
+        }
+    }
+
+    function updateSupabaseStatus(connected, text) {
+        const statusEl = document.getElementById('supabase-status-text');
+        if (!statusEl) return;
+        if (connected) {
+            statusEl.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span> ${text}`;
+            statusEl.className = "text-[10px] md:text-xs font-bold text-emerald-500 mt-1.5 flex items-center gap-1.5";
+        } else {
+            statusEl.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-slate-300 inline-block animate-pulse"></span> ${text}`;
+            statusEl.className = "text-[10px] md:text-xs font-bold text-slate-400 mt-1.5 flex items-center gap-1.5";
+        }
+    }
+
+    async function testAndSaveSupabase() {
+        const url = document.getElementById('set-supabase-url').value.trim();
+        const key = document.getElementById('set-supabase-key').value.trim();
+        
+        if (!url || !key) {
+            return showModal('warning', 'Thiếu thông tin', 'Vui lòng nhập đầy đủ Supabase URL và Anon Key!');
+        }
+        
+        updateSupabaseStatus(false, "Đang kiểm tra kết nối...");
+        
+        try {
+            if (!window.supabase) throw new Error("Supabase library not loaded!");
+            const client = window.supabase.createClient(url, key);
+            
+            // Test read to check table connectivity
+            const { data, error } = await client.from('classroom_data').select('id').limit(1);
+            if (error && error.code !== 'PGRST116') { // PGRST116 is no rows, which is acceptable
+                throw error;
+            }
+            
+            localStorage.setItem('supabase_url', url);
+            localStorage.setItem('supabase_key', key);
+            supabase = client;
+            isSupabaseConnected = true;
+            updateSupabaseStatus(true, "Kết nối thành công & Đồng bộ");
+            
+            showModal('success', 'Thành công', 'Đã kết nối với Supabase và kiểm tra bảng classroom_data thành công!');
+            
+            if (currentUser) {
+                saveAppData();
+            }
+        } catch (e) {
+            console.error("Supabase test failed:", e);
+            updateSupabaseStatus(false, "Kết nối thất bại");
+            showModal('error', 'Lỗi kết nối', `Không thể kết nối Supabase. Lỗi: ${e.message || 'Hãy kiểm tra lại URL/Key hoặc chắc chắn đã chạy SQL tạo bảng classroom_data trên Supabase'}`);
+        }
+    }
+
+    function disconnectSupabase() {
+        localStorage.removeItem('supabase_url');
+        localStorage.removeItem('supabase_key');
+        supabase = null;
+        isSupabaseConnected = false;
+        document.getElementById('set-supabase-url').value = '';
+        document.getElementById('set-supabase-key').value = '';
+        updateSupabaseStatus(false, "Đã ngắt kết nối");
+        showModal('info', 'Thông báo', 'Đã ngắt kết nối đám mây. Hệ thống sẽ lưu trữ offline/local.');
+    }
 
     function removeAccents(str) { return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D'); }
     function saveAppData() {
@@ -907,6 +1016,18 @@
             timetables: timetables,
             attendanceData: attendanceData
         };
+
+        // Sync to Supabase if connected
+        if (isSupabaseConnected && supabase) {
+            supabase
+                .from('classroom_data')
+                .upsert({ id: currentUser.id, data: payload, updated_at: new Date() })
+                .then(({ error }) => {
+                    if (error) console.error("Supabase sync error:", error);
+                    else console.log("Data synced to Supabase successfully!");
+                });
+        }
+
         fetch('/api/data', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -953,24 +1074,57 @@
     async function checkAuth() {
         const authScreen = document.getElementById('auth-screen');
         let loaded = false;
-        try {
-            const res = await fetch('/api/data');
-            if (res.ok) {
-                const backendData = await res.json();
-                const userObj = backendData.currentUser || backendData.user;
-                if (userObj) {
-                    currentUser = userObj;
-                    students = backendData.students || [];
-                    seatingCharts = backendData.seatingCharts || [];
-                    timetables = backendData.timetables || [];
-                    attendanceData = backendData.attendanceData || {};
-                    loaded = true;
+
+        // 1. Try to load from Supabase first if configured
+        if (isSupabaseConnected && supabase) {
+            try {
+                const savedUserStr = localStorage.getItem('currentUser');
+                if (savedUserStr) {
+                    const savedUser = JSON.parse(savedUserStr);
+                    const { data, error } = await supabase
+                        .from('classroom_data')
+                        .select('data')
+                        .eq('id', savedUser.id)
+                        .single();
+                        
+                    if (data && data.data) {
+                        const cloudData = data.data;
+                        currentUser = cloudData.currentUser || cloudData.user;
+                        students = cloudData.students || [];
+                        seatingCharts = cloudData.seatingCharts || [];
+                        timetables = cloudData.timetables || [];
+                        attendanceData = cloudData.attendanceData || {};
+                        loaded = true;
+                        console.log("Loaded data from Supabase successfully!");
+                    }
                 }
+            } catch (e) {
+                console.warn("Supabase fetch failed, trying local server:", e);
             }
-        } catch(e) {
-            console.warn("Server API not available, trying static file...");
         }
 
+        // 2. Fallback to Local Server API
+        if (!loaded) {
+            try {
+                const res = await fetch('/api/data');
+                if (res.ok) {
+                    const backendData = await res.json();
+                    const userObj = backendData.currentUser || backendData.user;
+                    if (userObj) {
+                        currentUser = userObj;
+                        students = backendData.students || [];
+                        seatingCharts = backendData.seatingCharts || [];
+                        timetables = backendData.timetables || [];
+                        attendanceData = backendData.attendanceData || {};
+                        loaded = true;
+                    }
+                }
+            } catch(e) {
+                console.warn("Server API not available, trying static file...");
+            }
+        }
+
+        // 3. Fallback to static data.json
         if (!loaded) {
             try {
                 const res = await fetch('./data.json');
@@ -1036,12 +1190,48 @@
     function saveUserToStorage() { try { saveAppData(); return true; } catch (e) { showModal('error', 'Lỗi bộ nhớ', 'Bộ nhớ đầy! Vui lòng tải ảnh nhẹ hơn.'); return false; } }
     function updateSettings() { currentUser.teacherName = document.getElementById('set-teacher').value; currentUser.className = document.getElementById('set-class').value; currentUser.year = document.getElementById('set-year').value; currentUser.slogan = document.getElementById('set-slogan').value; if(saveUserToStorage()) { showModal('success', 'Thành công', 'Đã lưu thay đổi cài đặt hệ thống!'); updateUI(); } }
     
-    function loadUserData() { 
+    async function loadUserData() { 
         applyTheme(currentUser.theme || 'emerald'); 
-        document.getElementById('set-teacher').value = currentUser.teacherName || ''; document.getElementById('set-class').value = currentUser.className || ''; document.getElementById('set-year').value = currentUser.year || ''; document.getElementById('set-slogan').value = currentUser.slogan || ''; 
-        const savedStudents = localStorage.getItem('students_' + currentUser.id); students = savedStudents ? JSON.parse(savedStudents) : []; ensureStudentCodes(); 
-        const savedCharts = localStorage.getItem('seating_' + currentUser.id); seatingCharts = savedCharts ? JSON.parse(savedCharts) : []; 
-        initAttendance(); initTimetables(); updateUI(); renderAll(); initSeatingCharts(); 
+        document.getElementById('set-teacher').value = currentUser.teacherName || ''; 
+        document.getElementById('set-class').value = currentUser.className || ''; 
+        document.getElementById('set-year').value = currentUser.year || ''; 
+        document.getElementById('set-slogan').value = currentUser.slogan || ''; 
+        
+        let loadedFromCloud = false;
+        if (isSupabaseConnected && supabase) {
+            try {
+                const { data, error } = await supabase
+                    .from('classroom_data')
+                    .select('data')
+                    .eq('id', currentUser.id)
+                    .single();
+                if (data && data.data) {
+                    const cloudData = data.data;
+                    students = cloudData.students || [];
+                    seatingCharts = cloudData.seatingCharts || [];
+                    timetables = cloudData.timetables || [];
+                    attendanceData = cloudData.attendanceData || {};
+                    loadedFromCloud = true;
+                    console.log("Loaded student data from Supabase successfully!");
+                }
+            } catch(e) {
+                console.warn("Failed to load student data from Supabase, trying local storage:", e);
+            }
+        }
+
+        if (!loadedFromCloud) {
+            const savedStudents = localStorage.getItem('students_' + currentUser.id); 
+            students = savedStudents ? JSON.parse(savedStudents) : []; 
+            const savedCharts = localStorage.getItem('seating_' + currentUser.id); 
+            seatingCharts = savedCharts ? JSON.parse(savedCharts) : []; 
+        }
+        
+        ensureStudentCodes(); 
+        initAttendance(); 
+        initTimetables(); 
+        updateUI(); 
+        renderAll(); 
+        initSeatingCharts(); 
     }
 
     function applyTheme(themeName) { const t = THEMES[themeName] || THEMES.emerald; document.documentElement.style.setProperty('--c1', t.c1); document.documentElement.style.setProperty('--c2', t.c2); document.documentElement.style.setProperty('--s1', t.s1); document.documentElement.style.setProperty('--s2', t.s2); if(currentUser) { currentUser.theme = themeName; saveUserToStorage(); } }
