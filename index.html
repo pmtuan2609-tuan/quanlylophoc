@@ -889,6 +889,15 @@
       <input type="text" id="new-chart-name" placeholder="VD: Sơ đồ thi HK1" class="w-full border-2 border-slate-100 rounded-xl px-4 py-3 outline-none ring-theme mb-6 font-medium text-sm">
       <div class="flex justify-end gap-3"><button onclick="closeModalUi('new-chart-modal', 'new-chart-content')" class="px-5 py-2.5 text-slate-500 font-bold hover:bg-slate-100 rounded-xl transition">Hủy</button><button onclick="confirmCreateChart()" class="px-5 py-2.5 bg-theme-grad text-white font-bold rounded-xl shadow-lg transition">Tạo mới</button></div>
     </div>
+  </div>
+
+  <!-- Modal Chọn Học Sinh Xếp Chỗ -->
+  <div id="pick-student-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[500] p-4 opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-3xl p-6 md:p-8 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col max-h-[80vh]" id="pick-student-content">
+      <div class="flex justify-between items-center mb-4 shrink-0">
+         <h3 class="font-black text-lg md:text-xl text-slate-800"><i data-lucide="users" class="w-5 h-5 inline text-theme mr-1"></i> Xếp Chỗ Học Sinh</h3>
+         <button onclick="closeModalUi('pick-student-modal', 'pick-student-content')" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-full text-slate-500 transition"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
       <button id="btn-remove-seat" onclick="removeStudentFromCurrentSeat()" class="hidden w-full mb-3 md:mb-4 bg-rose-50 text-rose-600 py-2.5 md:py-3 rounded-xl text-xs md:text-sm font-bold border border-rose-100 hover:bg-rose-100 transition shadow-sm">Gỡ học sinh khỏi chỗ này</button>
       <input type="text" id="search-student-seat" placeholder="Tìm tên..." onkeyup="filterPickerList()" class="w-full border-2 border-slate-100 rounded-xl px-4 py-2.5 text-sm outline-none ring-theme mb-3 md:mb-4 shrink-0 font-medium bg-slate-50">
       <div class="overflow-y-auto flex-1 custom-scrollbar space-y-2 pr-1 md:pr-2 min-h-[200px]" id="picker-list"></div>
@@ -1672,7 +1681,7 @@
       for(let d=1; d<=4; d++) { 
           html += `<div class="flex flex-col gap-2 md:gap-3 bg-slate-100/50 p-3 md:p-4 rounded-3xl border border-slate-200 shadow-sm"><div class="text-center font-black text-[10px] md:text-xs text-slate-400 mb-1 md:mb-2 tracking-widest uppercase border-b border-slate-200 pb-2 md:pb-3">Dãy ${d}</div>`; 
           for(let b=1; b<=7; b++) { 
-              html += `<div class="bg-white border border-slate-200 p-1.5 md:p-2 rounded-2xl grid grid-cols-2 gap-1.5 md:gap-2 shadow-sm relative group hover:border-[var(--c1)] transition"><div class="absolute -left-4 md:-left-6 top-1/2 -translate-y-1/2 text-[8px] md:text-[10px] text-white font-bold bg-slate-300 rounded-full w-4 h-4 md:w-5 md:h-5 flex items-center justify-center shadow-inner group-hover:bg-[var(--c1)] transition">${b}</div><div id="seat-d${d}-b${b}-1" onclick="handleSeatClick('d${d}-b${b}-1')" class="seat-slot border-2 border-dashed border-slate-200 h-[60px] md:h-[76px] rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-theme-light hover:border-[var(--c1)] transition relative overflow-hidden bg-slate-50/50"><i data-lucide="plus" class="w-4 h-4 md:w-5 md:h-5 text-slate-300"></i></div><div id="seat-d${d}-b${b}-2" onclick="handleSeatClick('d${d}-b${b}-2')" class="seat-slot border-2 border-dashed border-slate-200 h-[60px] md:h-[76px] rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-theme-light hover:border-[var(--c1)] transition relative overflow-hidden bg-slate-50/50"><i data-lucide="plus" class="w-4 h-4 md:w-5 md:h-5 text-slate-300"></i></div></div>`; 
+              html += `<div class="bg-white border border-slate-200 p-1.5 md:p-2 rounded-2xl grid grid-cols-2 gap-1.5 md:gap-2 shadow-sm relative group hover:border-[var(--c1)] transition"><div class="absolute -left-4 md:-left-6 top-1/2 -translate-y-1/2 text-[8px] md:text-[10px] text-white font-bold bg-slate-300 rounded-full w-4 h-4 md:w-5 md:h-5 flex items-center justify-center shadow-inner group-hover:bg-[var(--c1)] transition">${b}</div><div id="seat-d${d}-b${b}-1" onclick="handleSeatClick('d${d}-b${b}-1')" class="seat-slot border-2 border-dashed border-slate-200 h-[36px] md:h-[44px] rounded-xl flex items-center justify-center cursor-pointer hover:bg-theme-light hover:border-[var(--c1)] transition relative overflow-hidden bg-slate-50/50"><i data-lucide="plus" class="w-3.5 h-3.5 md:w-4.5 md:h-4.5 text-slate-300"></i></div><div id="seat-d${d}-b${b}-2" onclick="handleSeatClick('d${d}-b${b}-2')" class="seat-slot border-2 border-dashed border-slate-200 h-[36px] md:h-[44px] rounded-xl flex items-center justify-center cursor-pointer hover:bg-theme-light hover:border-[var(--c1)] transition relative overflow-hidden bg-slate-50/50"><i data-lucide="plus" class="w-3.5 h-3.5 md:w-4.5 md:h-4.5 text-slate-300"></i></div></div>`; 
           } html += `</div>`; 
       } grid.innerHTML = html; lucide.createIcons(); 
     }
@@ -1692,8 +1701,8 @@
         const student = students.find(s => String(s.id) === String(studentId)); const seatEl = document.getElementById('seat-' + seatId);
         if (student && seatEl) {
           const displayName = getShortName(student);
-          seatEl.className = "seat-slot border-2 bg-gradient-to-b from-white to-slate-50 border-theme shadow-md border-solid h-[60px] md:h-[76px] rounded-xl flex flex-col items-center justify-center cursor-pointer transition relative overflow-hidden";
-          seatEl.innerHTML = `<div class="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center text-2xl md:text-[32px] mt-1 rounded-full overflow-hidden shadow-sm">${getAvatarHtml(student.avatar)}</div><span class="font-black text-[9px] md:text-[10px] text-theme leading-tight truncate w-full text-center px-0.5 md:px-1 mt-1 uppercase tracking-wide" title="${student.name}">${displayName}</span>`;
+          seatEl.className = "seat-slot border-2 bg-gradient-to-b from-white to-slate-50 border-theme shadow-md border-solid h-[36px] md:h-[44px] rounded-xl flex items-center justify-center cursor-pointer transition relative overflow-hidden";
+          seatEl.innerHTML = `<span class="font-black text-[9px] md:text-[10px] text-theme leading-tight truncate w-full text-center px-0.5 md:px-1 uppercase tracking-wide" title="${student.name}">${displayName}</span>`;
         } else if (!student && seatEl) { delete chart.layout[seatId]; } 
       }
     }
