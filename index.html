@@ -661,28 +661,38 @@
 
   <!-- Modal Chấm Điểm / Biên Bản -->
   <div id="grading-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[600] p-4 opacity-0 transition-opacity duration-300">
-    <div class="bg-white rounded-3xl p-6 md:p-8 w-full max-w-md shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col" id="grading-content">
+    <div class="bg-white rounded-3xl p-6 md:p-8 w-full max-w-2xl shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col" id="grading-content">
       <div class="flex justify-between items-center mb-6 border-b pb-4"><h3 class="font-black text-lg md:text-xl text-slate-800 flex items-center gap-2"><i data-lucide="star" class="text-theme"></i> Đánh Giá Điểm</h3><button onclick="closeModalUi('grading-modal', 'grading-content')" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-full text-slate-500 transition"><i data-lucide="x" class="w-4 h-4"></i></button></div>
-      <div class="space-y-4">
-        <input type="hidden" id="grade-hs-id">
-        <div class="bg-slate-50 border border-slate-100 rounded-xl p-3 flex items-center gap-3">
-           <div id="grade-hs-avatar" class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm overflow-hidden"></div>
-           <div><div id="grade-hs-name" class="font-black text-slate-800 text-lg">...</div><div id="grade-hs-role" class="text-[10px] text-theme font-bold uppercase tracking-widest">Học sinh</div></div>
+      <div class="flex flex-col md:flex-row gap-6">
+        <!-- Cột trái: Học sinh & Loại đánh giá -->
+        <div class="flex-1 flex flex-col gap-4">
+          <div class="bg-slate-50 border border-slate-100 rounded-xl p-4 flex items-center gap-3 shadow-inner">
+             <div id="grade-hs-avatar" class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm overflow-hidden"></div>
+             <div><div id="grade-hs-name" class="font-black text-slate-800 text-lg">...</div><div id="grade-hs-role" class="text-[10px] text-theme font-bold uppercase tracking-widest">Học sinh</div></div>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-1 gap-3">
+             <button id="btn-type-add" onclick="selectGradeType('add')" class="py-3.5 rounded-xl font-bold border-2 transition flex items-center justify-center gap-1.5 shadow-sm"><i data-lucide="plus-circle" class="w-4 h-4"></i> CỘNG ĐIỂM</button>
+             <button id="btn-type-sub" onclick="selectGradeType('sub')" class="py-3.5 rounded-xl font-bold border-2 transition flex items-center justify-center gap-1.5 shadow-sm"><i data-lucide="minus-circle" class="w-4 h-4"></i> TRỪ ĐIỂM</button>
+          </div>
         </div>
-        <div class="grid grid-cols-2 gap-3"><button id="btn-type-add" onclick="selectGradeType('add')" class="py-3 rounded-xl font-bold border-2 transition flex items-center justify-center gap-1"><i data-lucide="plus-circle" class="w-4 h-4"></i> CỘNG ĐIỂM</button><button id="btn-type-sub" onclick="selectGradeType('sub')" class="py-3 rounded-xl font-bold border-2 transition flex items-center justify-center gap-1"><i data-lucide="minus-circle" class="w-4 h-4"></i> TRỪ ĐIỂM</button></div>
-        <input type="hidden" id="grade-type" value="add">
-        <div><label class="text-xs font-bold text-slate-600 uppercase">Lý do</label><select id="grade-reason" class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl outline-none ring-theme font-medium bg-white"></select></div>
-        <div><label class="text-xs font-bold text-slate-600 uppercase">Mức điểm</label><input type="number" id="grade-points" value="5" min="1" class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl outline-none ring-theme font-black text-theme text-lg"></div>
-        <div id="grade-report-box" class="hidden">
-           <label class="text-xs font-bold text-slate-600 uppercase flex items-center gap-1"><i data-lucide="camera" class="w-3 h-3 text-rose-500"></i> Đính kèm Biên bản</label>
-           <div class="mt-1.5 border-2 border-dashed border-slate-300 rounded-xl p-4 text-center hover:bg-slate-50 transition cursor-pointer relative" onclick="document.getElementById('grade-image').click()">
-              <input type="file" id="grade-image" accept="image/*" class="hidden" onchange="previewReportImage(event)">
-              <div id="report-preview" class="hidden w-full h-32 bg-contain bg-center bg-no-repeat rounded-lg shadow-sm border border-slate-200"></div>
-              <div id="report-placeholder" class="text-slate-400 flex flex-col items-center"><i data-lucide="upload-cloud" class="w-6 h-6 mb-2 opacity-50"></i><span class="text-xs font-bold">Chạm để tải ảnh</span></div>
-           </div>
+        
+        <!-- Cột phải: Lý do & Mức điểm -->
+        <div class="flex-[1.2] flex flex-col gap-4">
+          <input type="hidden" id="grade-hs-id">
+          <input type="hidden" id="grade-type" value="add">
+          <div><label class="text-[11px] font-black text-slate-400 uppercase tracking-wider">Lý do</label><select id="grade-reason" class="w-full mt-1 px-4 py-3 border border-slate-200 rounded-xl outline-none ring-theme font-bold text-slate-700 bg-white shadow-sm transition-all text-sm"></select></div>
+          <div><label class="text-[11px] font-black text-slate-400 uppercase tracking-wider">Mức điểm</label><input type="number" id="grade-points" value="5" min="1" class="w-full mt-1 px-4 py-3 border border-slate-200 rounded-xl outline-none ring-theme font-black text-theme text-lg shadow-sm"></div>
+          <div id="grade-report-box" class="hidden">
+             <label class="text-[11px] font-black text-slate-400 uppercase tracking-wider flex items-center gap-1"><i data-lucide="camera" class="w-3 h-3 text-rose-500"></i> Đính kèm Biên bản</label>
+             <div class="mt-1 border-2 border-dashed border-slate-300 rounded-xl p-3 text-center hover:bg-slate-50 transition cursor-pointer relative" onclick="document.getElementById('grade-image').click()">
+                <input type="file" id="grade-image" accept="image/*" class="hidden" onchange="previewReportImage(event)">
+                <div id="report-preview" class="hidden w-full h-24 bg-contain bg-center bg-no-repeat rounded-lg shadow-sm border border-slate-200"></div>
+                <div id="report-placeholder" class="text-slate-400 flex flex-col items-center justify-center py-1"><i data-lucide="upload-cloud" class="w-5 h-5 mb-1 opacity-50"></i><span class="text-[11px] font-bold">Chạm để tải ảnh</span></div>
+             </div>
+          </div>
         </div>
       </div>
-      <button onclick="confirmGrading()" class="w-full bg-theme-grad text-white font-black py-4 rounded-xl shadow-lg mt-6 hover:scale-[1.02] transition">XÁC NHẬN LƯU</button>
+      <button onclick="confirmGrading()" class="w-full bg-theme-grad text-white font-black py-4 rounded-xl shadow-lg mt-6 hover:scale-[1.01] transition text-sm uppercase tracking-wider">XÁC NHẬN LƯU</button>
     </div>
   </div>
 
