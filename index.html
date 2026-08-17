@@ -393,6 +393,7 @@
                 </table>
             </div>
         </div>
+      </section>
       <!-- TAB KHEN THƯỞNG & VI PHẠM (DÀNH CHO HỌC SINH) -->
       <section id="tab-student-history" class="tab-section hidden space-y-4 h-full flex-col">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-slate-100 shrink-0 gap-4">
@@ -1269,18 +1270,7 @@
                         attendanceData = cloudData.attendanceData || {};
                         loaded = true;
                         
-                        currentUserRole = localStorage.getItem('currentUserRole') || 'teacher';
-                        if (currentUserRole === 'student') {
-                            const savedStudent = localStorage.getItem('currentStudent');
-                            if (savedStudent) {
-                                const stObj = JSON.parse(savedStudent);
-                                const updatedStudent = students.find(s => String(s.id) === String(stObj.id));
-                                if (updatedStudent) {
-                                    currentStudent = updatedStudent;
-                                    localStorage.setItem('currentStudent', JSON.stringify(updatedStudent));
-                                }
-                            }
-                        }
+                        restoreRoleState();
                         console.log("Loaded data from Supabase successfully!");
                     }
                 }
@@ -1333,6 +1323,7 @@
         }
 
         if (loaded) {
+            restoreRoleState();
             authScreen.classList.add('hidden');
             authScreen.classList.remove('flex');
             if (!currentUser.className) {
@@ -1610,6 +1601,7 @@
             seatingCharts = savedCharts ? JSON.parse(savedCharts) : []; 
         }
         
+        restoreRoleState();
         ensureStudentCodes(); 
         initAttendance(); 
         initTimetables(); 
@@ -2608,6 +2600,22 @@
 
     function viewReportImage(imgData) {
         showModal('info', 'Ảnh minh chứng / Biên bản', `<div class="w-full max-h-[60vh] overflow-auto rounded-2xl border bg-slate-50"><img src="${imgData}" class="w-full h-auto object-contain mx-auto"></div>`);
+    }
+
+    function restoreRoleState() {
+        currentUserRole = localStorage.getItem('currentUserRole') || 'teacher';
+        const savedStudent = localStorage.getItem('currentStudent');
+        if (savedStudent) {
+            try {
+                const stObj = JSON.parse(savedStudent);
+                const updatedStudent = students.find(s => String(s.id) === String(stObj.id));
+                currentStudent = updatedStudent || stObj;
+            } catch(e) {
+                currentStudent = null;
+            }
+        } else {
+            currentStudent = null;
+        }
     }
 
     function configureSidebarForRole() {
