@@ -496,6 +496,7 @@
                   <button onclick="applyTheme('violet')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-violet-400 transition group outline-none focus:ring-4 focus:ring-violet-200"><div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Tím Mộng Mơ</span></button>
                   <button onclick="applyTheme('blue')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-blue-400 transition group outline-none focus:ring-4 focus:ring-blue-200"><div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#3b82f6] to-[#06b6d4] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Đại Dương</span></button>
                   <button onclick="applyTheme('rose')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-rose-400 transition group outline-none focus:ring-4 focus:ring-rose-200"><div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#f43f5e] to-[#f97316] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Hoàng Hôn</span></button>
+                </div>
               </div>
               
               <div class="bg-white p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm h-fit">
@@ -905,14 +906,21 @@
     let studentToEditAvatar = null; let tempReportImage = null; let hiddenWheelIds = [];
     let modalTimeouts = {}; let attendanceData = {}; let timetables = []; let currentTimetableId = null;
 
-    let supabase = null;
+    let supabaseClient = null;
     let isSupabaseConnected = false;
 
     window.onload = () => { lucide.createIcons(); initSupabase(); checkAuth(); renderEmptySeatingGrid(); };
 
     function initSupabase() {
-        const url = localStorage.getItem('supabase_url');
+        let url = localStorage.getItem('supabase_url');
         const key = localStorage.getItem('supabase_key');
+        
+        if (url) {
+            if (url.endsWith('/')) url = url.slice(0, -1);
+            if (url.includes('/rest/v1')) url = url.replace('/rest/v1', '');
+            localStorage.setItem('supabase_url', url);
+        }
+        
         const urlInput = document.getElementById('set-supabase-url');
         const keyInput = document.getElementById('set-supabase-key');
         
@@ -921,7 +929,7 @@
         
         if (url && key && window.supabase) {
             try {
-                supabase = window.supabase.createClient(url, key);
+                supabaseClient = window.supabase.createClient(url, key);
                 isSupabaseConnected = true;
                 updateSupabaseStatus(true, "Đã kết nối đám mây");
             } catch (e) {
@@ -948,13 +956,23 @@
     }
 
     async function testAndSaveSupabase() {
-        const url = document.getElementById('set-supabase-url').value.trim();
+        let url = document.getElementById('set-supabase-url').value.trim();
         const key = document.getElementById('set-supabase-key').value.trim();
         
         if (!url || !key) {
             return showModal('warning', 'Thiếu thông tin', 'Vui lòng nhập đầy đủ Supabase URL và Anon Key!');
         }
         
+        // Auto-clean URL: remove trailing slash and '/rest/v1' suffix if present
+        if (url.endsWith('/')) {
+            url = url.slice(0, -1);
+        }
+        if (url.includes('/rest/v1')) {
+            url = url.replace('/rest/v1', '');
+        }
+        
+        // Update input field visually
+        document.getElementById('set-supabase-url').value = url;
         updateSupabaseStatus(false, "Đang kiểm tra kết nối...");
         
         try {
@@ -969,7 +987,7 @@
             
             localStorage.setItem('supabase_url', url);
             localStorage.setItem('supabase_key', key);
-            supabase = client;
+            supabaseClient = client;
             isSupabaseConnected = true;
             updateSupabaseStatus(true, "Kết nối thành công & Đồng bộ");
             
@@ -988,7 +1006,7 @@
     function disconnectSupabase() {
         localStorage.removeItem('supabase_url');
         localStorage.removeItem('supabase_key');
-        supabase = null;
+        supabaseClient = null;
         isSupabaseConnected = false;
         document.getElementById('set-supabase-url').value = '';
         document.getElementById('set-supabase-key').value = '';
@@ -1018,8 +1036,8 @@
         };
 
         // Sync to Supabase if connected
-        if (isSupabaseConnected && supabase) {
-            supabase
+        if (isSupabaseConnected && supabaseClient) {
+            supabaseClient
                 .from('classroom_data')
                 .upsert({ id: currentUser.id, data: payload, updated_at: new Date() })
                 .then(({ error }) => {
@@ -1076,12 +1094,12 @@
         let loaded = false;
 
         // 1. Try to load from Supabase first if configured
-        if (isSupabaseConnected && supabase) {
+        if (isSupabaseConnected && supabaseClient) {
             try {
                 const savedUserStr = localStorage.getItem('currentUser');
                 if (savedUserStr) {
                     const savedUser = JSON.parse(savedUserStr);
-                    const { data, error } = await supabase
+                    const { data, error } = await supabaseClient
                         .from('classroom_data')
                         .select('data')
                         .eq('id', savedUser.id)
@@ -1198,9 +1216,9 @@
         document.getElementById('set-slogan').value = currentUser.slogan || ''; 
         
         let loadedFromCloud = false;
-        if (isSupabaseConnected && supabase) {
+        if (isSupabaseConnected && supabaseClient) {
             try {
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('classroom_data')
                     .select('data')
                     .eq('id', currentUser.id)
