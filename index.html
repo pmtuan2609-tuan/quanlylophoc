@@ -387,7 +387,7 @@
               <i data-lucide="plus" class="w-4 h-4"></i> Thêm mới
             </button>
           </div>
-          <button onclick="deleteCurrentChart()" class="w-full sm:w-auto flex justify-center text-rose-500 bg-rose-50 hover:bg-rose-100 px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold transition items-center gap-2 border border-rose-100 shadow-sm"><i data-lucide="trash-2" class="w-4 h-4"></i> Xóa sơ đồ</button>
+          <button id="btn-delete-chart" onclick="deleteCurrentChart()" class="w-full sm:w-auto flex justify-center text-rose-500 bg-rose-50 hover:bg-rose-100 px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold transition items-center gap-2 border border-rose-100 shadow-sm"><i data-lucide="trash-2" class="w-4 h-4"></i> Xóa sơ đồ</button>
         </div>
 
         <div class="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-slate-100 overflow-auto custom-scrollbar flex-1 relative">
@@ -1701,7 +1701,7 @@
     }
     
     function initSeatingCharts() { if(seatingCharts.length === 0) { seatingCharts.push({ id: Date.now().toString(), name: "Sơ đồ mặc định", layout: {} }); saveSeatingToStorage(); } currentChartId = seatingCharts[0].id; renderChartSelect(); applyChartLayout(); }
-    function renderChartSelect() { const select = document.getElementById('seating-select'); select.innerHTML = seatingCharts.map(c => `<option value="${c.id}">${c.name}</option>`).join(''); select.value = currentChartId; document.getElementById('btn-delete-chart').classList.toggle('hidden', seatingCharts.length <= 1); }
+    function renderChartSelect() { const select = document.getElementById('seating-select'); if(select) { select.innerHTML = seatingCharts.map(c => `<option value="${c.id}">${c.name}</option>`).join(''); select.value = currentChartId; } const btnDelete = document.getElementById('btn-delete-chart'); if(btnDelete) btnDelete.classList.toggle('hidden', seatingCharts.length <= 1); }
     function changeSeatingChart() { currentChartId = document.getElementById('seating-select').value; applyChartLayout(); }
     function openNewChartModal() { document.getElementById('new-chart-name').value = ''; openModalUi('new-chart-modal', 'new-chart-content'); }
     function confirmCreateChart() { const name = document.getElementById('new-chart-name').value.trim(); if(!name) return showModal('warning', 'Thiếu thông tin', 'Vui lòng nhập tên sơ đồ!'); const newChart = { id: Date.now().toString(), name: name, layout: {} }; seatingCharts.push(newChart); saveSeatingToStorage(); currentChartId = newChart.id; renderChartSelect(); applyChartLayout(); closeModalUi('new-chart-modal', 'new-chart-content'); }
