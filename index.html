@@ -643,10 +643,10 @@
                  <h3 class="text-lg md:text-xl font-black text-slate-800 mb-2">Quản lý hệ thống & Dữ liệu</h3>
                  <p class="text-xs md:text-sm text-slate-500 mb-4 md:mb-6 font-medium">Sao lưu, khôi phục hoặc xóa dữ liệu lớp học.</p>
                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <button onclick="exportData()" class="bg-blue-50 text-blue-600 border border-blue-200 px-4 py-3 rounded-xl font-bold hover:bg-blue-100 transition flex items-center justify-center gap-2 text-xs md:text-sm"><i data-lucide="download-cloud" class="w-4 h-4"></i> Sao lưu dữ liệu</button>
-                    <button onclick="document.getElementById('import-upload').click()" class="bg-emerald-50 text-emerald-600 border border-emerald-200 px-4 py-3 rounded-xl font-bold hover:bg-emerald-100 transition flex items-center justify-center gap-2 text-xs md:text-sm"><i data-lucide="upload-cloud" class="w-4 h-4"></i> Khôi phục dữ liệu</button>
+                    <button onclick="exportData()" class="bg-blue-50 text-blue-600 border border-blue-200 px-4 py-3 rounded-xl font-bold hover:bg-blue-100 transition flex items-center justify-center gap-2 text-xs md:text-sm"><i data-lucide="download-cloud" class="w-4 h-4"></i> Sao lưu</button>
+                    <button onclick="document.getElementById('import-upload').click()" class="bg-emerald-50 text-emerald-600 border border-emerald-200 px-4 py-3 rounded-xl font-bold hover:bg-emerald-100 transition flex items-center justify-center gap-2 text-xs md:text-sm"><i data-lucide="upload-cloud" class="w-4 h-4"></i> Khôi phục</button>
                     <input type="file" id="import-upload" accept=".json" class="hidden" onchange="importData(event)">
-                    <button onclick="resetAllPoints()" class="bg-rose-50 text-rose-600 border border-rose-200 px-4 py-3 rounded-xl font-bold hover:bg-rose-100 transition flex items-center justify-center gap-2 text-xs md:text-sm"><i data-lucide="rotate-ccw" class="w-4 h-4"></i> Đặt lại toàn bộ điểm số</button>
+                    <button onclick="resetAllPoints()" class="bg-rose-50 text-rose-600 border border-rose-200 px-4 py-3 rounded-xl font-bold hover:bg-rose-100 transition flex items-center justify-center gap-2 text-xs md:text-sm"><i data-lucide="rotate-ccw" class="w-4 h-4"></i> Reset</button>
                  </div>
               </div>
  
