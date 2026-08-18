@@ -583,7 +583,7 @@
 
       <!-- CÀI ĐẶT -->
       <section id="tab-settings" class="tab-section hidden h-full space-y-6">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 max-w-5xl">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 max-w-5xl items-start">
               <!-- THÔNG TIN LỚP -->
               <div class="bg-emerald-50 p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between">
                  <div>
@@ -615,12 +615,12 @@
               </div>
 
               <!-- QUẢN LÝ HỆ THỐNG & DỮ LIỆU -->
-              <div class="bg-rose-50 p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between">
+              <div class="bg-rose-50 p-5 md:p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col">
                  <div>
                    <h3 class="text-lg md:text-xl font-black text-slate-800 mb-2">Quản lý hệ thống & Dữ liệu</h3>
                    <p class="text-xs md:text-sm text-slate-500 mb-4 md:mb-6 font-medium">Sao lưu, khôi phục hoặc xóa dữ liệu lớp học.</p>
                  </div>
-                 <div class="flex flex-wrap gap-2.5 mt-auto pt-2 justify-start">
+                 <div class="flex flex-wrap gap-2.5 pt-3 justify-start">
                     <button onclick="exportData()" class="bg-blue-50 text-blue-600 border border-blue-200 px-3.5 py-2 rounded-xl font-bold hover:bg-blue-100 transition flex items-center justify-center gap-1.5 text-xs"><i data-lucide="download-cloud" class="w-3.5 h-3.5"></i> Sao lưu</button>
                     <button onclick="document.getElementById('import-upload').click()" class="bg-emerald-50 text-emerald-600 border border-emerald-200 px-3.5 py-2 rounded-xl font-bold hover:bg-emerald-100 transition flex items-center justify-center gap-1.5 text-xs"><i data-lucide="upload-cloud" class="w-3.5 h-3.5"></i> Khôi phục</button>
                     <input type="file" id="import-upload" accept=".json" class="hidden" onchange="importData(event)">
@@ -654,12 +654,12 @@
               </div>
 
               <!-- CÁ NHÂN HÓA -->
-              <div class="bg-indigo-50 p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between">
+              <div class="bg-indigo-50 p-5 md:p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col">
                 <div>
                   <h3 class="text-lg md:text-xl font-black text-slate-800 mb-1">Cá nhân hóa</h3>
                   <p class="text-xs md:text-sm text-slate-500 mb-4 font-medium">Chọn màu sắc chủ đạo hệ thống:</p>
                 </div>
-                <div class="flex flex-wrap gap-3 mt-auto pt-2" id="theme-swatches-container"></div>
+                <div class="flex flex-wrap gap-3 pt-3" id="theme-swatches-container"></div>
               </div>
         </div>
  
