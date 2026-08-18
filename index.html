@@ -587,7 +587,7 @@
           <!-- LEFT COLUMN -->
           <div class="space-y-4 md:space-y-6">
               <!-- THÔNG TIN LỚP -->
-              <div class="bg-white p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm">
+              <div class="bg-emerald-50/10 p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm">
                  <h3 class="text-lg md:text-xl font-black text-slate-800 mb-2">Thông tin lớp</h3>
                  <div class="space-y-3 md:space-y-4">
                    <div class="grid grid-cols-2 gap-3.5">
@@ -600,12 +600,12 @@
                        <input type="text" id="set-year" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold">
                      </div>
                    </div>
-                   <div class="grid grid-cols-2 gap-3.5">
-                     <div>
+                   <div class="grid grid-cols-4 gap-3.5">
+                     <div class="col-span-1">
                        <label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Lớp</label>
                        <input type="text" id="set-class" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold">
                      </div>
-                     <div>
+                     <div class="col-span-3">
                        <label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Khẩu hiệu</label>
                        <input type="text" id="set-slogan" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold">
                      </div>
@@ -615,9 +615,9 @@
               </div>
 
               <!-- ĐÁM MÂY SUPABASE -->
-              <div id="supabase-config-card" class="bg-white p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm h-fit">
+              <div id="supabase-config-card" class="bg-sky-50/10 p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm h-fit">
                 <h3 class="text-lg md:text-xl font-black text-slate-800 mb-1 flex items-center gap-2"><i data-lucide="cloud-lightning" class="text-theme"></i> Đám mây Supabase</h3>
-                <p class="text-xs md:text-sm text-slate-500 mb-4 font-medium">Lưu trữ dữ liệu trực tuyến đồng bộ tức thì lên đám mây.</p>
+                <p class="text-xs md:sm text-slate-500 mb-4 font-medium">Lưu trữ dữ liệu trực tuyến đồng bộ tức thì lên đám mây.</p>
                 <div class="space-y-3.5">
                   <div>
                     <label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Supabase URL</label>
@@ -639,7 +639,7 @@
           <!-- RIGHT COLUMN -->
           <div class="space-y-4 md:space-y-6">
               <!-- QUẢN LÝ HỆ THỐNG & DỮ LIỆU -->
-              <div class="bg-white p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm">
+              <div class="bg-rose-50/10 p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm">
                  <h3 class="text-lg md:text-xl font-black text-slate-800 mb-2">Quản lý hệ thống & Dữ liệu</h3>
                  <p class="text-xs md:text-sm text-slate-500 mb-4 md:mb-6 font-medium">Sao lưu, khôi phục hoặc xóa dữ liệu lớp học.</p>
                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -649,9 +649,9 @@
                     <button onclick="resetAllPoints()" class="sm:col-span-2 bg-rose-50 text-rose-600 border border-rose-200 px-4 py-3 rounded-xl font-bold hover:bg-rose-100 transition flex items-center justify-center gap-2 text-xs md:text-sm mt-1"><i data-lucide="rotate-ccw" class="w-4 h-4"></i> Đặt lại (Reset) toàn bộ điểm số</button>
                  </div>
               </div>
-
+ 
               <!-- CÁ NHÂN HÓA -->
-              <div class="bg-white p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm h-fit">
+              <div class="bg-indigo-50/10 p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm h-fit">
                 <h3 class="text-lg md:text-xl font-black text-slate-800 mb-2">Cá nhân hóa</h3>
                 <p class="text-xs md:text-sm text-slate-500 mb-4 md:mb-6 font-medium">Chọn màu sắc chủ đạo (Theme).</p>
                 <div class="grid grid-cols-2 gap-3 md:gap-4">
@@ -663,9 +663,9 @@
               </div>
           </div>
         </div>
-
+ 
         <!-- ADMIN ACCOUNT MANAGER - FULL WIDTH -->
-        <div id="admin-account-manager-card" class="bg-white p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm hidden w-full max-w-5xl">
+        <div id="admin-account-manager-card" class="bg-amber-50/10 p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm hidden w-full max-w-5xl">
            <h3 class="text-lg md:text-xl font-black text-slate-800 mb-2 flex items-center gap-2 text-theme"><i data-lucide="shield-check" class="w-5 h-5"></i> Quản trị tài khoản Giáo viên</h3>
            <p class="text-xs md:text-sm text-slate-500 mb-4 font-medium">Danh sách các tài khoản giáo viên đã đăng ký trên hệ thống đám mây.</p>
            <div class="overflow-x-auto custom-scrollbar border border-slate-100 rounded-2xl">
@@ -683,8 +683,8 @@
                  <tr><td colspan="5" class="p-4 text-center text-slate-400 italic">Đang tải dữ liệu đám mây...</td></tr>
                </tbody>
              </table>
-           </div>
-        </div>
+            </div>
+         </div>
       </section>
 
     </div>
