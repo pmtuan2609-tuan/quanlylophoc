@@ -587,7 +587,7 @@
           <!-- LEFT COLUMN -->
           <div class="space-y-4 md:space-y-6">
               <!-- THÔNG TIN LỚP -->
-              <div class="bg-emerald-50/10 p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm">
+              <div class="bg-emerald-50 p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm">
                  <h3 class="text-lg md:text-xl font-black text-slate-800 mb-2">Thông tin lớp</h3>
                  <div class="space-y-3 md:space-y-4">
                    <div class="grid grid-cols-2 gap-3.5">
@@ -615,7 +615,7 @@
               </div>
 
               <!-- ĐÁM MÂY SUPABASE -->
-              <div id="supabase-config-card" class="bg-sky-50/10 p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm h-fit">
+              <div id="supabase-config-card" class="bg-sky-50 p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm h-fit">
                 <h3 class="text-lg md:text-xl font-black text-slate-800 mb-1 flex items-center gap-2"><i data-lucide="cloud-lightning" class="text-theme"></i> Đám mây Supabase</h3>
                 <p class="text-xs md:sm text-slate-500 mb-4 font-medium">Lưu trữ dữ liệu trực tuyến đồng bộ tức thì lên đám mây.</p>
                 <div class="space-y-3.5">
@@ -639,7 +639,7 @@
           <!-- RIGHT COLUMN -->
           <div class="space-y-4 md:space-y-6">
               <!-- QUẢN LÝ HỆ THỐNG & DỮ LIỆU -->
-              <div class="bg-rose-50/10 p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm">
+              <div class="bg-rose-50 p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm">
                  <h3 class="text-lg md:text-xl font-black text-slate-800 mb-2">Quản lý hệ thống & Dữ liệu</h3>
                  <p class="text-xs md:text-sm text-slate-500 mb-4 md:mb-6 font-medium">Sao lưu, khôi phục hoặc xóa dữ liệu lớp học.</p>
                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -651,10 +651,10 @@
               </div>
  
               <!-- CÁ NHÂN HÓA -->
-              <div class="bg-indigo-50/10 p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm h-fit">
+              <div class="bg-indigo-50 p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm h-fit">
                 <h3 class="text-lg md:text-xl font-black text-slate-800 mb-2">Cá nhân hóa</h3>
                 <p class="text-xs md:text-sm text-slate-500 mb-4 md:mb-6 font-medium">Chọn màu sắc chủ đạo (Theme).</p>
-                <div class="grid grid-cols-2 gap-3 md:gap-4">
+                <div class="grid grid-cols-4 gap-3 md:gap-4">
                   <button onclick="applyTheme('emerald')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-emerald-400 transition group outline-none focus:ring-4 focus:ring-emerald-200"><div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#10b981] to-[#14b8a6] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Thiên Nhiên</span></button>
                   <button onclick="applyTheme('violet')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-violet-400 transition group outline-none focus:ring-4 focus:ring-violet-200"><div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Tím Mộng Mơ</span></button>
                   <button onclick="applyTheme('blue')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-blue-400 transition group outline-none focus:ring-4 focus:ring-blue-200"><div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#3b82f6] to-[#06b6d4] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Đại Dương</span></button>
@@ -665,7 +665,7 @@
         </div>
  
         <!-- ADMIN ACCOUNT MANAGER - FULL WIDTH -->
-        <div id="admin-account-manager-card" class="bg-amber-50/10 p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm hidden w-full max-w-5xl">
+        <div id="admin-account-manager-card" class="bg-amber-50 p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm hidden w-full max-w-5xl">
            <h3 class="text-lg md:text-xl font-black text-slate-800 mb-2 flex items-center gap-2 text-theme"><i data-lucide="shield-check" class="w-5 h-5"></i> Quản trị tài khoản Giáo viên</h3>
            <p class="text-xs md:text-sm text-slate-500 mb-4 font-medium">Danh sách các tài khoản giáo viên đã đăng ký trên hệ thống đám mây.</p>
            <div class="overflow-x-auto custom-scrollbar border border-slate-100 rounded-2xl">
