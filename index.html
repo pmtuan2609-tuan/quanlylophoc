@@ -590,10 +590,26 @@
               <div class="bg-white p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm">
                  <h3 class="text-lg md:text-xl font-black text-slate-800 mb-2">Thông tin lớp</h3>
                  <div class="space-y-3 md:space-y-4">
-                   <div><label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Họ tên GVCN</label><input type="text" id="set-teacher" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold"></div>
-                   <div><label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Lớp</label><input type="text" id="set-class" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold"></div>
-                   <div><label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Năm học</label><input type="text" id="set-year" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold"></div>
-                   <div><label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Khẩu hiệu</label><input type="text" id="set-slogan" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold"></div>
+                   <div class="grid grid-cols-2 gap-3.5">
+                     <div>
+                       <label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Họ tên GVCN</label>
+                       <input type="text" id="set-teacher" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold">
+                     </div>
+                     <div>
+                       <label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Năm học</label>
+                       <input type="text" id="set-year" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold">
+                     </div>
+                   </div>
+                   <div class="grid grid-cols-2 gap-3.5">
+                     <div>
+                       <label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Lớp</label>
+                       <input type="text" id="set-class" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold">
+                     </div>
+                     <div>
+                       <label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Khẩu hiệu</label>
+                       <input type="text" id="set-slogan" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold">
+                     </div>
+                   </div>
                    <button onclick="updateSettings()" class="w-full bg-slate-800 text-white px-6 py-3 md:py-3.5 rounded-xl font-bold shadow-lg hover:bg-slate-700 transition mt-2 md:mt-4">Lưu thay đổi cài đặt</button>
                  </div>
               </div>
