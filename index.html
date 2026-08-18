@@ -652,14 +652,9 @@
  
               <!-- CÁ NHÂN HÓA -->
               <div class="bg-indigo-50 p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm h-fit">
-                <h3 class="text-lg md:text-xl font-black text-slate-800 mb-2">Cá nhân hóa</h3>
-                <p class="text-xs md:text-sm text-slate-500 mb-4 md:mb-6 font-medium">Chọn màu sắc chủ đạo (Theme).</p>
-                <div class="grid grid-cols-4 gap-3 md:gap-4">
-                  <button onclick="applyTheme('emerald')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-emerald-400 transition group outline-none focus:ring-4 focus:ring-emerald-200"><div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#10b981] to-[#14b8a6] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Thiên Nhiên</span></button>
-                  <button onclick="applyTheme('violet')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-violet-400 transition group outline-none focus:ring-4 focus:ring-violet-200"><div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Tím Mộng Mơ</span></button>
-                  <button onclick="applyTheme('blue')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-blue-400 transition group outline-none focus:ring-4 focus:ring-blue-200"><div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#3b82f6] to-[#06b6d4] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Đại Dương</span></button>
-                  <button onclick="applyTheme('rose')" class="flex flex-col items-center p-3 md:p-4 border-2 border-slate-100 rounded-2xl hover:border-rose-400 transition group outline-none focus:ring-4 focus:ring-rose-200"><div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#f43f5e] to-[#f97316] mb-2 md:mb-3 shadow-md group-hover:scale-110 transition"></div><span class="font-bold text-xs md:text-sm text-slate-700 whitespace-nowrap">Hoàng Hôn</span></button>
-                </div>
+                <h3 class="text-lg md:text-xl font-black text-slate-800 mb-1">Cá nhân hóa</h3>
+                <p class="text-xs md:text-sm text-slate-500 mb-4 font-medium">Chọn màu sắc chủ đạo hệ thống:</p>
+                <div class="flex flex-wrap gap-3" id="theme-swatches-container"></div>
               </div>
           </div>
         </div>
@@ -1225,7 +1220,16 @@
     };
 
     const MOCK_ADMIN = { id: 'thaytuan', pass: 'minhtuan' };
-    const THEMES = { violet: { c1: '#8b5cf6', c2: '#d946ef', s1: '#1e1b4b', s2: '#312e81' }, blue: { c1: '#3b82f6', c2: '#06b6d4', s1: '#0f172a', s2: '#1e293b' }, emerald: { c1: '#10b981', c2: '#14b8a6', s1: '#064e3b', s2: '#022c22' }, rose: { c1: '#f43f5e', c2: '#f97316', s1: '#4c0519', s2: '#881337' } };
+    const THEMES = { 
+        emerald: { c1: '#10b981', c2: '#14b8a6', s1: '#064e3b', s2: '#022c22' }, 
+        violet: { c1: '#8b5cf6', c2: '#d946ef', s1: '#1e1b4b', s2: '#312e81' }, 
+        blue: { c1: '#3b82f6', c2: '#06b6d4', s1: '#0f172a', s2: '#1e293b' }, 
+        rose: { c1: '#f43f5e', c2: '#f97316', s1: '#4c0519', s2: '#881337' },
+        amber: { c1: '#f59e0b', c2: '#eab308', s1: '#451a03', s2: '#78350f' },
+        indigo: { c1: '#6366f1', c2: '#4f46e5', s1: '#171717', s2: '#262626' },
+        orange: { c1: '#f97316', c2: '#ea580c', s1: '#431407', s2: '#7c2d12' },
+        pink: { c1: '#ec4899', c2: '#f43f5e', s1: '#500724', s2: '#831843' }
+    };
     const AVATARS = { male: ["👦", "👨‍🎓", "🧑‍🏫", "🦸‍♂️", "👱‍♂️", "👨‍🚀", "🕵️‍♂️", "👮‍♂️", "🤴", "🧛‍♂️", "🥷", "🧙‍♂️", "💂‍♂️", "👷‍♂️", "👲"], female: ["👧", "👩‍🎓", "👩‍🎤", "🧝‍♀️", "👱‍♀️", "👩‍🚀", "🕵️‍♀️", "👮‍♀️", "👸", "🧛‍♀️", "🧙‍♀️", "🧚‍♀️", "🧜‍♀️", "👩‍🚒", "🧕"], special: ["🐶", "🐱", "🦊", "🐻", "🐼", "🐨", "🐯", "🦁", "🐮", "🐷", "🐸", "🐵", "🦄", "👽", "👻", "🤖"] };
     const GRADING_REASONS = { add: ["Làm việc tốt", "Có tiến bộ", "Phát biểu xây dựng bài", "Đạt điểm cao", "Giúp đỡ bạn bè", "Tham gia phong trào", "Khác..."], sub: ["Vi phạm đồng phục", "Tóc màu", "Đeo khuyên tai", "Mang dép", "Không thắt lưng", "Đi trễ", "Nghỉ học không phép", "Nói chuyện riêng", "Không làm bài tập", "Sử dụng điện thoại", "Khác..."] };
     const DEFAULT_COVERS = ['https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80', 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80'];
@@ -1885,7 +1889,36 @@
         checkAdminSection();
     }
 
-    function applyTheme(themeName) { const t = THEMES[themeName] || THEMES.emerald; document.documentElement.style.setProperty('--c1', t.c1); document.documentElement.style.setProperty('--c2', t.c2); document.documentElement.style.setProperty('--s1', t.s1); document.documentElement.style.setProperty('--s2', t.s2); if(currentUser) { currentUser.theme = themeName; saveUserToStorage(); } }
+    function applyTheme(themeName) { const t = THEMES[themeName] || THEMES.emerald; document.documentElement.style.setProperty('--c1', t.c1); document.documentElement.style.setProperty('--c2', t.c2); document.documentElement.style.setProperty('--s1', t.s1); document.documentElement.style.setProperty('--s2', t.s2); if(currentUser) { currentUser.theme = themeName; saveUserToStorage(); } renderThemeSwatches(); }
+    function renderThemeSwatches() {
+        const container = document.getElementById('theme-swatches-container');
+        if (!container) return;
+        const activeTheme = (currentUser && currentUser.theme) || 'emerald';
+        const names = {
+            emerald: 'Thiên Nhiên',
+            violet: 'Tím Mơ',
+            blue: 'Đại Dương',
+            rose: 'Hoàng Hôn',
+            amber: 'Vàng Nắng',
+            indigo: 'Mực Tím',
+            orange: 'Trái Cam',
+            pink: 'Kẹo Ngọt'
+        };
+        container.innerHTML = Object.keys(THEMES).map(key => {
+            const t = THEMES[key];
+            const isActive = key === activeTheme;
+            const activeRing = isActive ? 'ring-4 ring-slate-800 ring-offset-2 scale-110 shadow-lg' : 'hover:scale-105 hover:ring-2 hover:ring-slate-400';
+            return `
+                <button onclick="applyTheme('${key}')" 
+                        title="${names[key]}" 
+                        class="w-10 h-10 rounded-full transition-all flex items-center justify-center relative shrink-0 border-2 border-white shadow-md ${activeRing}" 
+                        style="background-image: linear-gradient(to right, ${t.c1}, ${t.c2})">
+                    ${isActive ? '<i data-lucide="check" class="w-4 h-4 text-white drop-shadow-md"></i>' : ''}
+                </button>
+            `;
+        }).join('');
+        lucide.createIcons();
+    }
     function toggleSidebar() { const sidebar = document.getElementById('main-sidebar'); const overlay = document.getElementById('mobile-overlay'); sidebar.classList.toggle('-translate-x-full'); overlay.classList.toggle('hidden'); }
     function switchTab(tabId) { document.querySelectorAll('.tab-section').forEach(sec => sec.classList.add('hidden')); document.querySelectorAll('.tab-btn').forEach(btn => { btn.classList.remove('bg-theme-grad', 'text-white', 'shadow-lg', 'font-bold'); btn.classList.add('hover:bg-white/10', 'text-white/70'); }); document.getElementById(tabId).classList.remove('hidden'); const activeBtn = document.getElementById('btn-' + tabId); if(activeBtn) { activeBtn.classList.remove('hover:bg-white/10', 'text-white/70'); activeBtn.classList.add('bg-theme-grad', 'text-white', 'shadow-lg', 'font-bold'); } const titles = { 'tab-overview': 'Tổng Quan Lớp', 'tab-student-history': 'Nhật Ký Thi Đua Cá Nhân', 'tab-students': 'Danh Sách Lớp', 'tab-attendance': 'Điểm Danh Hàng Ngày', 'tab-timetable': 'Thời Khoá Biểu', 'tab-seating': 'Sơ Đồ Chỗ Ngồi', 'tab-notebook': 'Sổ Theo Dõi', 'tab-wheel': 'Vòng Quay May Mắn', 'tab-praise': 'Tuyên Dương', 'tab-points': 'Thành Tích', 'tab-gifts': 'Quà Tặng', 'tab-settings': 'Cài Đặt & Giao Diện' }; document.getElementById('header-title').innerText = titles[tabId] || 'Hệ Thống'; if(tabId === 'tab-wheel') handleModeChange(); if(window.innerWidth < 1024) toggleSidebar(); }
     function updateUI() { 
