@@ -666,30 +666,17 @@
                 </div>
                 <div class="flex flex-wrap gap-3 pt-3" id="theme-swatches-container"></div>
               </div>
+
+              <!-- QUẢN TRỊ TÀI KHOẢN GIÁO VIÊN -->
+              <div id="admin-account-manager-card" class="bg-amber-50 p-5 md:p-6 rounded-3xl border border-slate-100 shadow-sm hidden flex-col">
+                 <h3 class="text-lg md:text-xl font-black text-slate-800 mb-1 flex items-center gap-2"><i data-lucide="shield-check" class="w-5 h-5 text-amber-600"></i> Quản trị Giáo viên</h3>
+                 <p class="text-xs text-slate-500 mb-3 font-medium">Danh sách tài khoản giáo viên đã đăng ký trên đám mây.</p>
+                 <div id="admin-teachers-list" class="space-y-3 max-h-[300px] overflow-y-auto custom-scrollbar pr-1">
+                     <div class="text-center text-slate-400 italic py-4 text-xs">Đang tải dữ liệu đám mây...</div>
+                 </div>
+              </div>
           </div>
         </div>
- 
-        <!-- ADMIN ACCOUNT MANAGER - FULL WIDTH -->
-        <div id="admin-account-manager-card" class="bg-amber-50 p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm hidden w-full max-w-5xl">
-           <h3 class="text-lg md:text-xl font-black text-slate-800 mb-2 flex items-center gap-2 text-theme"><i data-lucide="shield-check" class="w-5 h-5"></i> Quản trị tài khoản Giáo viên</h3>
-           <p class="text-xs md:text-sm text-slate-500 mb-4 font-medium">Danh sách các tài khoản giáo viên đã đăng ký trên hệ thống đám mây.</p>
-           <div class="overflow-x-auto custom-scrollbar border border-slate-100 rounded-2xl">
-             <table class="w-full text-left text-xs md:text-sm min-w-[600px] border-collapse">
-               <thead class="bg-slate-50 text-slate-500 font-bold uppercase tracking-wider text-[10px] md:text-xs">
-                 <tr class="border-b border-slate-100">
-                   <th class="p-3 md:p-4">Tên tài khoản (ID)</th>
-                   <th class="p-3 md:p-4">Họ tên Giáo viên</th>
-                   <th class="p-3 md:p-4">Lớp học</th>
-                   <th class="p-3 md:p-4">Mật khẩu hiện tại</th>
-                   <th class="p-3 md:p-4 text-right">Thao tác</th>
-                 </tr>
-               </thead>
-               <tbody id="admin-teachers-tbody" class="divide-y divide-slate-100 font-medium">
-                 <tr><td colspan="5" class="p-4 text-center text-slate-400 italic">Đang tải dữ liệu đám mây...</td></tr>
-               </tbody>
-             </table>
-            </div>
-         </div>
       </section>
 
     </div>
@@ -3160,10 +3147,10 @@
     }
 
     async function loadAllTeachersForAdmin() {
-        const tbody = document.getElementById('admin-teachers-tbody');
-        if(!tbody) return;
+        const listEl = document.getElementById('admin-teachers-list');
+        if(!listEl) return;
         if (!isSupabaseConnected) {
-            tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-rose-500 italic">Chưa kết nối đám mây.</td></tr>`;
+            listEl.innerHTML = `<div class="text-center text-rose-500 italic py-4 text-xs font-semibold">Chưa kết nối đám mây.</div>`;
             return;
         }
         try {
@@ -3179,11 +3166,11 @@
             const rows = await res.json();
             
             if (!rows || rows.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400 italic">Không có tài khoản giáo viên nào khác trên hệ thống.</td></tr>`;
+                listEl.innerHTML = `<div class="text-center text-slate-400 italic py-4 text-xs">Không có giáo viên nào khác trên hệ thống.</div>`;
                 return;
             }
             
-            tbody.innerHTML = rows.map(r => {
+            listEl.innerHTML = rows.map(r => {
                 const cloudData = r.data || {};
                 const cloudUser = cloudData.currentUser || cloudData.user || {};
                 const name = cloudUser.teacherName || 'Chưa cập nhật';
@@ -3191,23 +3178,39 @@
                 const pass = cloudUser.pass || 'minhtuan';
                 const isSelf = r.id === currentUser.id;
                 
-                const btnChangePass = `<button onclick="adminChangePassword('${r.id}', '${pass}')" class="bg-amber-50 text-amber-600 hover:bg-amber-500 hover:text-white px-2 py-1 rounded-lg text-[10px] md:text-xs font-bold transition shadow-sm mr-2 inline-flex items-center gap-1"><i class="w-3 h-3" data-lucide="key-round"></i> Đổi mật khẩu</button>`;
-                const btnDelete = isSelf ? `<span class="text-slate-400 text-xs italic">Tài khoản của bạn</span>` : `<button onclick="adminDeleteAccount('${r.id}')" class="bg-rose-50 text-rose-600 hover:bg-rose-500 hover:text-white px-2 py-1 rounded-lg text-[10px] md:text-xs font-bold transition shadow-sm inline-flex items-center gap-1"><i class="w-3 h-3" data-lucide="trash-2"></i> Xóa</button>`;
+                // Initials avatar
+                const nameParts = name.trim().split(/\s+/);
+                const initials = nameParts.length > 1 
+                    ? (nameParts[0].charAt(0) + nameParts[nameParts.length - 1].charAt(0)).toUpperCase()
+                    : name.substring(0, 2).toUpperCase();
+
+                const btnChangePass = `<button onclick="adminChangePassword('${r.id}', '${pass}')" class="bg-amber-100 hover:bg-amber-500 hover:text-white text-amber-700 p-2 rounded-xl text-xs font-bold transition shadow-sm flex items-center justify-center" title="Đổi mật khẩu"><i class="w-3.5 h-3.5" data-lucide="key-round"></i></button>`;
+                const btnDelete = isSelf 
+                    ? `<span class="text-[9px] text-amber-600 font-black bg-amber-100 px-2 py-1 rounded-lg whitespace-nowrap">Bạn</span>` 
+                    : `<button onclick="adminDeleteAccount('${r.id}')" class="bg-rose-100 hover:bg-rose-500 hover:text-white text-rose-700 p-2 rounded-xl text-xs font-bold transition shadow-sm flex items-center justify-center" title="Xóa tài khoản"><i class="w-3.5 h-3.5" data-lucide="trash-2"></i></button>`;
                 
                 return `
-                <tr class="hover:bg-slate-50 transition border-b border-slate-100">
-                    <td class="p-3 md:p-4 font-mono font-bold text-slate-700">${r.id}</td>
-                    <td class="p-3 md:p-4 text-slate-800 font-bold">${name}</td>
-                    <td class="p-3 md:p-4 text-slate-600">${className}</td>
-                    <td class="p-3 md:p-4 text-slate-400 font-mono">${pass}</td>
-                    <td class="p-3 md:p-4 text-right whitespace-nowrap">${btnChangePass} ${btnDelete}</td>
-                </tr>
+                <div class="flex items-center gap-3 p-3 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow transition">
+                    <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-400 to-amber-500 text-white flex items-center justify-center font-bold text-xs shadow-inner shrink-0">${initials}</div>
+                    <div class="flex-1 min-w-0">
+                        <div class="font-bold text-slate-800 text-xs truncate" title="${name}">${name}</div>
+                        <div class="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                            <span class="text-[8px] bg-slate-100 text-slate-600 px-1 py-0.5 rounded font-black uppercase whitespace-nowrap">${className}</span>
+                            <span class="text-[8px] bg-blue-50 text-blue-600 px-1 py-0.5 rounded font-mono font-bold whitespace-nowrap">${r.id}</span>
+                            <span class="text-[8px] text-slate-400 font-mono font-medium whitespace-nowrap">Key: ${pass}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        ${btnChangePass}
+                        ${btnDelete}
+                    </div>
+                </div>
                 `;
             }).join('');
             lucide.createIcons();
         } catch (err) {
             console.error("Admin fetch teachers failed:", err);
-            tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-rose-500 italic">Lỗi kết nối hoặc không đủ quyền truy cập.</td></tr>`;
+            listEl.innerHTML = `<div class="text-center text-rose-500 italic py-4 text-xs font-semibold">Lỗi kết nối hoặc không đủ quyền.</div>`;
         }
     }
 
