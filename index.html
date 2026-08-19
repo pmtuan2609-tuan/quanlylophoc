@@ -604,8 +604,8 @@
                      <div class="grid grid-cols-4 gap-3.5">
                        <div class="col-span-1">
                          <label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Lớp</label>
-                         <input type="text" id="set-class" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold">
-                       </div>
+                          <input type="text" id="set-class" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold">
+                        </div>
                        <div class="col-span-3">
                          <label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Khẩu hiệu</label>
                          <input type="text" id="set-slogan" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold">
@@ -613,7 +613,10 @@
                      </div>
                    </div>
                  </div>
-                 <button onclick="updateSettings()" class="w-full bg-slate-800 text-white px-6 py-3 md:py-3.5 rounded-xl font-bold shadow-lg hover:bg-slate-700 transition mt-4 shrink-0">Lưu thay đổi cài đặt</button>
+                 <div class="flex gap-2.5 mt-4 shrink-0">
+                     <button onclick="updateSettings()" class="flex-1 bg-slate-800 text-white px-4 py-3 md:py-3.5 rounded-xl font-bold shadow-lg hover:bg-slate-700 transition">Lưu cài đặt</button>
+                     <button onclick="teacherSelfChangePassword()" class="bg-amber-100 hover:bg-amber-200 text-amber-800 px-4 py-3 md:py-3.5 rounded-xl font-bold transition flex items-center justify-center gap-1.5 text-xs md:text-sm"><i data-lucide="key-round" class="w-4 h-4"></i> Đổi mật khẩu</button>
+                  </div>
               </div>
 
               <!-- LƯU TRỮ ĐÁM MÂY -->
@@ -944,6 +947,7 @@
                   <div class="flex flex-wrap justify-center sm:justify-start items-center gap-2">
                      <span id="profile-code" class="text-[10px] md:text-xs font-mono font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200 shadow-sm">ID: ...</span>
                      <span id="profile-role" class="text-[10px] md:text-xs font-bold text-white bg-amber-500 px-2.5 py-1 rounded-lg shadow-sm hidden">...</span>
+                     <button id="btn-profile-change-password" onclick="studentSelfChangePassword()" class="hidden text-[10px] md:text-xs font-bold text-teal-600 hover:text-white bg-teal-50 hover:bg-teal-600 px-2.5 py-1 rounded-lg border border-teal-200 transition shadow-sm items-center gap-1"><i data-lucide="key-round" class="w-3 h-3"></i> Đổi mật khẩu</button>
                   </div>
               </div>
           </div>
@@ -1676,7 +1680,7 @@
                             const classStudents = classroomData.students || [];
                             const student = classStudents.find(s => String(s.code) === id || String(s.id) === id);
                             if (student) {
-                                const expectedPass = generateStudentPassword(student.name);
+                                const expectedPass = student.pass || generateStudentPassword(student.name);
                                 if (expectedPass === pass) {
                                     currentUser = classroomData.currentUser || classroomData.user || {};
                                     students = classStudents;
@@ -1751,7 +1755,7 @@
                     const localStudents = JSON.parse(localStorage.getItem(key));
                     const student = localStudents.find(s => String(s.code) === id || String(s.id) === id);
                     if (student) {
-                        const expectedPass = generateStudentPassword(student.name);
+                        const expectedPass = student.pass || generateStudentPassword(student.name);
                         if (expectedPass === pass) {
                             const tId = key.replace('students_', '');
                             currentUser = JSON.parse(localStorage.getItem('user_' + tId) || localStorage.getItem('currentUser') || '{}');
@@ -2209,6 +2213,16 @@
             if (!currentStudent || String(currentStudent.id) !== String(id)) {
                 showModal('error', 'Lỗi bảo mật', 'Bạn không có quyền xem sơ yếu lý lịch của học sinh khác.');
                 return;
+            }
+        }
+        const changePassBtn = document.getElementById('btn-profile-change-password');
+        if (changePassBtn) {
+            if (isStudent && currentStudent && String(currentStudent.id) === String(id)) {
+                changePassBtn.classList.remove('hidden');
+                changePassBtn.classList.add('inline-flex');
+            } else {
+                changePassBtn.classList.add('hidden');
+                changePassBtn.classList.remove('inline-flex');
             }
         }
         const s = students.find(x => x.id === id); if(!s) return; 
@@ -3442,6 +3456,43 @@
         } else {
             showModal('error', 'Lỗi', 'Không thể xác định thông tin học sinh hiện tại.');
         }
+    }
+
+    function studentSelfChangePassword() {
+        if (!currentStudent) return;
+        const currentPass = currentStudent.pass || generateStudentPassword(currentStudent.name);
+        showPrompt("Đổi Mật Khẩu Cá Nhân", "Nhập mật khẩu mới của bạn (tối thiểu 4 ký tự):", currentPass, (newPass) => {
+            const trimmed = newPass.trim();
+            if (trimmed.length < 4) {
+                return showModal('error', 'Lỗi', 'Mật khẩu quá ngắn, vui lòng nhập tối thiểu 4 ký tự!');
+            }
+            
+            const sIdx = students.findIndex(x => x.id === currentStudent.id);
+            if (sIdx !== -1) {
+                students[sIdx].pass = trimmed;
+                currentStudent.pass = trimmed;
+                localStorage.setItem('currentStudent', JSON.stringify(currentStudent));
+                saveAppData();
+                showModal('success', 'Thành công', 'Đã đổi mật khẩu cá nhân thành công!');
+            } else {
+                showModal('error', 'Lỗi', 'Không tìm thấy học sinh trong cơ sở dữ liệu lớp học.');
+            }
+        });
+    }
+
+    function teacherSelfChangePassword() {
+        if (!currentUser) return;
+        const currentPass = currentUser.pass || 'minhtuan';
+        showPrompt("Đổi Mật Khẩu Giáo Viên", "Nhập mật khẩu mới của bạn (tối thiểu 4 ký tự):", currentPass, (newPass) => {
+            const trimmed = newPass.trim();
+            if (trimmed.length < 4) {
+                return showModal('error', 'Lỗi', 'Mật khẩu quá ngắn, vui lòng nhập tối thiểu 4 ký tự!');
+            }
+            
+            currentUser.pass = trimmed;
+            saveAppData();
+            showModal('success', 'Thành công', 'Đã đổi mật khẩu Giáo viên thành công!');
+        });
     }
 
     function renderAll() { renderStudentTable(); renderStage(); renderOverview(); renderNotebook(); renderPraiseGrid(); applyChartLayout(); renderGiftsStore(); renderGiftsLog(); }
