@@ -458,9 +458,12 @@
       <section id="tab-notebook" class="tab-section hidden space-y-4 h-full flex-col">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-slate-100 shrink-0 gap-4">
            <h3 class="font-bold text-slate-700 text-base md:text-lg flex items-center gap-2 whitespace-nowrap"><i data-lucide="contact" class="w-5 h-5 text-theme"></i> Sổ theo dõi</h3>
-           <div class="relative w-full sm:w-auto">
-             <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-             <input type="text" id="search-notebook" oninput="renderNotebook()" placeholder="Tra cứu Tên / ID..." class="pl-10 pr-4 py-2.5 border border-slate-200 rounded-xl text-sm ring-theme w-full sm:w-72 bg-slate-50 shadow-inner font-medium outline-none">
+           <div class="flex items-center gap-3 w-full sm:w-auto">
+              <button onclick="openTrackingChartModal()" class="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border border-indigo-100 px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-2 shadow-sm whitespace-nowrap"><i data-lucide="trending-up" class="w-4 h-4"></i> Sơ đồ theo dõi</button>
+              <div class="relative flex-1 sm:flex-none">
+                <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="search-notebook" oninput="renderNotebook()" placeholder="Tra cứu Tên / ID..." class="pl-10 pr-4 py-2.5 border border-slate-200 rounded-xl text-sm ring-theme w-full sm:w-72 bg-slate-50 shadow-inner font-medium outline-none">
+              </div>
            </div>
         </div>
         <div class="flex-1 overflow-y-auto custom-scrollbar p-1">
@@ -700,6 +703,51 @@
          <button onclick="closeModalUi('all-activities-modal', 'all-activities-content')" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-full text-slate-500 transition"><i data-lucide="x" class="w-4 h-4"></i></button>
       </div>
       <div class="overflow-y-auto flex-1 custom-scrollbar space-y-3 pr-1 md:pr-2 min-h-[300px]" id="all-activities-list"></div>
+    </div>
+  </div>
+
+  <!-- Modal Sơ Đồ Theo Dõi Tiến Bộ & Biên Bản -->
+  <div id="tracking-chart-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[600] p-4 opacity-0 transition-opacity duration-300">
+    <div class="bg-[#f8fafc] rounded-[2rem] w-full max-w-2xl shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col max-h-[85vh] overflow-hidden" id="tracking-chart-content">
+      
+      <!-- Header -->
+      <div class="px-6 py-4 bg-white border-b border-slate-100 flex justify-between items-center shrink-0">
+         <h3 class="font-black text-lg md:text-xl text-slate-800 flex items-center gap-2">
+            <i data-lucide="trending-up" class="w-5 h-5 text-indigo-600"></i> Sơ đồ & Thống kê theo dõi
+         </h3>
+         <button onclick="closeModalUi('tracking-chart-modal', 'tracking-chart-content')" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-full text-slate-500 transition">
+            <i data-lucide="x" class="w-4 h-4"></i>
+         </button>
+      </div>
+
+      <!-- Sub Tabs Headers -->
+      <div class="px-6 py-3 bg-white border-b border-slate-100 flex gap-2 shrink-0 overflow-x-auto custom-scrollbar font-black text-xs">
+          <button onclick="switchTrackingTab('progress')" id="btn-track-progress" class="px-4 py-2.5 rounded-xl transition bg-theme-grad text-white shadow flex items-center gap-1.5 whitespace-nowrap"><i data-lucide="line-chart" class="w-3.5 h-3.5"></i> Học sinh tiến bộ</button>
+          <button onclick="switchTrackingTab('regress')" id="btn-track-regress" class="px-4 py-2.5 rounded-xl transition hover:bg-slate-100 text-slate-600 flex items-center gap-1.5 whitespace-nowrap"><i data-lucide="trending-down" class="w-3.5 h-3.5"></i> Học sinh cần lưu ý</button>
+          <button onclick="switchTrackingTab('records')" id="btn-track-records" class="px-4 py-2.5 rounded-xl transition hover:bg-slate-100 text-slate-600 flex items-center gap-1.5 whitespace-nowrap"><i data-lucide="file-text" class="w-3.5 h-3.5"></i> Thống kê Biên bản</button>
+      </div>
+
+      <!-- Content Area -->
+      <div class="flex-1 overflow-y-auto custom-scrollbar p-6 bg-slate-50/50 space-y-4">
+          <!-- Progress Tab -->
+          <div id="track-tab-progress" class="space-y-3.5">
+              <p class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Top học sinh có điểm cộng cao nhất</p>
+              <div id="track-progress-list" class="space-y-3"></div>
+          </div>
+          
+          <!-- Regress Tab -->
+          <div id="track-tab-regress" class="space-y-3.5 hidden">
+              <p class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Top học sinh bị trừ điểm nhiều nhất</p>
+              <div id="track-regress-list" class="space-y-3"></div>
+          </div>
+          
+          <!-- Records Tab -->
+          <div id="track-tab-records" class="space-y-3.5 hidden">
+              <p class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Danh sách học sinh có biên bản vi phạm (Giảm dần)</p>
+              <div id="track-records-list" class="space-y-3"></div>
+          </div>
+      </div>
+      
     </div>
   </div>
 
@@ -3496,6 +3544,136 @@
             saveAppData();
             showModal('success', 'Thành công', 'Đã đổi mật khẩu Giáo viên thành công!');
         });
+    }
+
+    function switchTrackingTab(tabId) {
+        const tabs = ['progress', 'regress', 'records'];
+        tabs.forEach(t => {
+            const btn = document.getElementById('btn-track-' + t);
+            const content = document.getElementById('track-tab-' + t);
+            if (t === tabId) {
+                btn.classList.add('bg-theme-grad', 'text-white', 'shadow');
+                btn.classList.remove('hover:bg-slate-100', 'text-slate-600');
+                content.classList.remove('hidden');
+            } else {
+                btn.classList.remove('bg-theme-grad', 'text-white', 'shadow');
+                btn.classList.add('hover:bg-slate-100', 'text-slate-600');
+                content.classList.add('hidden');
+            }
+        });
+    }
+
+    function openTrackingChartModal() {
+        if (!students || students.length === 0) {
+            return showModal('info', 'Trống', 'Chưa có học sinh nào trong lớp để thống kê!');
+        }
+
+        // Calculate stats for each student
+        const stats = students.map(s => {
+            const history = s.history || [];
+            let progressPoints = 0;
+            let regressPoints = 0;
+            let violationRecordsCount = 0;
+
+            history.forEach(h => {
+                const pts = Math.abs(parseInt(h.points) || 0);
+                if (h.type === 'add') {
+                    progressPoints += pts;
+                } else if (h.type === 'sub') {
+                    regressPoints += pts;
+                }
+                if (h.image) {
+                    violationRecordsCount++;
+                }
+            });
+
+            return {
+                id: s.id,
+                name: s.name,
+                avatar: s.avatar,
+                code: s.code,
+                progressPoints,
+                regressPoints,
+                violationRecordsCount
+            };
+        });
+
+        // Maximum values for charts scaling
+        const maxProgress = Math.max(...stats.map(s => s.progressPoints), 1);
+        const maxRegress = Math.max(...stats.map(s => s.regressPoints), 1);
+
+        // Render Progressing Students
+        const progressList = document.getElementById('track-progress-list');
+        const sortedProgress = [...stats].sort((a, b) => b.progressPoints - a.progressPoints);
+        progressList.innerHTML = sortedProgress.map(s => {
+            const pct = Math.min((s.progressPoints / maxProgress) * 100, 100);
+            const displayColor = s.progressPoints > 0 ? 'bg-emerald-500' : 'bg-slate-300';
+            return `
+            <div class="flex items-center gap-3 bg-white p-3 rounded-2xl border border-slate-100 shadow-sm">
+                <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-bold text-xs shrink-0 overflow-hidden">${getAvatarHtml(s.avatar)}</div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-xs font-bold text-slate-700 truncate">${s.name}</span>
+                        <span class="text-xs font-black text-emerald-600">+${s.progressPoints}đ</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                        <div class="${displayColor} h-full rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+                    </div>
+                </div>
+            </div>
+            `;
+        }).join('');
+
+        // Render Struggling Students
+        const regressList = document.getElementById('track-regress-list');
+        const sortedRegress = [...stats].sort((a, b) => b.regressPoints - a.regressPoints);
+        regressList.innerHTML = sortedRegress.map(s => {
+            const pct = Math.min((s.regressPoints / maxRegress) * 100, 100);
+            const displayColor = s.regressPoints > 0 ? 'bg-rose-500' : 'bg-slate-300';
+            return `
+            <div class="flex items-center gap-3 bg-white p-3 rounded-2xl border border-slate-100 shadow-sm">
+                <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-bold text-xs shrink-0 overflow-hidden">${getAvatarHtml(s.avatar)}</div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-xs font-bold text-slate-700 truncate">${s.name}</span>
+                        <span class="text-xs font-black text-rose-600">-${s.regressPoints}đ</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                        <div class="${displayColor} h-full rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+                    </div>
+                </div>
+            </div>
+            `;
+        }).join('');
+
+        // Render Violation Records (Biên bản)
+        const recordsList = document.getElementById('track-records-list');
+        const sortedRecords = [...stats].filter(s => s.violationRecordsCount > 0).sort((a, b) => b.violationRecordsCount - a.violationRecordsCount);
+        if (sortedRecords.length === 0) {
+            recordsList.innerHTML = `<div class="text-center text-slate-400 italic py-8 text-xs">Chưa có học sinh nào bị lập biên bản vi phạm.</div>`;
+        } else {
+            recordsList.innerHTML = sortedRecords.map(s => {
+                return `
+                <div class="flex items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-slate-100 shadow-sm">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center font-bold text-xs shrink-0 overflow-hidden">${getAvatarHtml(s.avatar)}</div>
+                        <div class="min-w-0">
+                            <div class="text-xs font-bold text-slate-800 truncate">${s.name}</div>
+                            <div class="text-[9px] text-slate-400 mt-0.5">ID: ${s.code || s.id}</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <span class="text-[10px] font-black text-rose-600 bg-rose-50 border border-rose-100 px-2 py-1 rounded-lg">${s.violationRecordsCount} biên bản</span>
+                        <button onclick="openProfileModal('${s.id}')" class="bg-indigo-50 hover:bg-indigo-500 hover:text-white text-indigo-600 p-2 rounded-xl text-xs font-bold transition flex items-center justify-center" title="Xem chi tiết hồ sơ"><i class="w-3.5 h-3.5" data-lucide="external-link"></i></button>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        switchTrackingTab('progress');
+        lucide.createIcons();
+        openModalUi('tracking-chart-modal', 'tracking-chart-content');
     }
 
     function renderAll() { renderStudentTable(); renderStage(); renderOverview(); renderNotebook(); renderPraiseGrid(); applyChartLayout(); renderGiftsStore(); renderGiftsLog(); }
