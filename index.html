@@ -175,12 +175,24 @@
       <h2 class="text-2xl font-black text-theme mb-2">Thông tin lớp học</h2>
       <p class="text-sm text-slate-500 mb-6">Cập nhật thông tin cơ bản để hệ thống tạo Mã ID cho học sinh.</p>
       <div class="space-y-4">
-        <div><label class="text-xs font-bold text-slate-600">Họ tên GVCN</label><input type="text" id="ob-teacher" class="w-full mt-1 px-4 py-3 border border-slate-200 rounded-xl ring-theme outline-none" placeholder="VD: Phạm Minh Tuấn"></div>
         <div class="grid grid-cols-2 gap-4">
-          <div><label class="text-xs font-bold text-slate-600">Lớp</label><input type="text" id="ob-class" class="w-full mt-1 px-4 py-3 border border-slate-200 rounded-xl ring-theme outline-none" placeholder="VD: 12A17"></div>
-          <div><label class="text-xs font-bold text-slate-600">Năm học</label><input type="text" id="ob-year" class="w-full mt-1 px-4 py-3 border border-slate-200 rounded-xl ring-theme outline-none" placeholder="VD: 2026 - 2027"></div>
+          <div>
+            <label class="text-xs font-bold text-slate-600">Họ tên GVCN</label>
+            <input type="text" id="ob-teacher" class="w-full mt-1 px-4 py-3 border border-slate-200 rounded-xl ring-theme outline-none text-sm" placeholder="VD: Phạm Minh Tuấn">
+          </div>
+          <div>
+            <label class="text-xs font-bold text-slate-600">Giới tính GVCN</label>
+            <select id="ob-gender" class="w-full mt-1 px-4 py-3 border border-slate-200 rounded-xl ring-theme outline-none bg-white cursor-pointer font-bold text-slate-700 text-sm">
+              <option value="Nam">Nam (Thầy)</option>
+              <option value="Nữ">Nữ (Cô)</option>
+            </select>
+          </div>
         </div>
-        <div><label class="text-xs font-bold text-slate-600">Khẩu hiệu</label><input type="text" id="ob-slogan" class="w-full mt-1 px-4 py-3 border border-slate-200 rounded-xl ring-theme outline-none" placeholder="VD: Chuyến Tàu Tuổi Trẻ"></div>
+        <div class="grid grid-cols-2 gap-4">
+          <div><label class="text-xs font-bold text-slate-600">Lớp</label><input type="text" id="ob-class" class="w-full mt-1 px-4 py-3 border border-slate-200 rounded-xl ring-theme outline-none text-sm" placeholder="VD: 12A17"></div>
+          <div><label class="text-xs font-bold text-slate-600">Năm học</label><input type="text" id="ob-year" class="w-full mt-1 px-4 py-3 border border-slate-200 rounded-xl ring-theme outline-none text-sm" placeholder="VD: 2026 - 2027"></div>
+        </div>
+        <div><label class="text-xs font-bold text-slate-600">Khẩu hiệu</label><input type="text" id="ob-slogan" class="w-full mt-1 px-4 py-3 border border-slate-200 rounded-xl ring-theme outline-none text-sm" placeholder="VD: Chuyến Tàu Tuổi Trẻ"></div>
         <button onclick="saveOnboarding()" class="w-full bg-theme-grad text-white py-3.5 rounded-xl font-bold shadow-lg hover:scale-[1.02] transition mt-4">Lưu & Bắt đầu</button>
       </div>
     </div>
@@ -386,7 +398,7 @@
                 <div onclick="document.getElementById('avatar-upload').click()" class="absolute inset-0 bg-black/45 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300 cursor-pointer text-xs font-bold gap-1"><i data-lucide="camera" class="w-3.5 h-3.5"></i> Đổi ảnh</div>
               </div>
               
-              <div class="space-y-4 flex-1">
+              <div class="space-y-4 flex-1 pl-28 md:pl-36">
                 <!-- Badges row -->
                 <div class="flex flex-wrap gap-2 text-[10px] font-black uppercase tracking-wider text-slate-500">
                   <span id="banner-badge-year" class="bg-white border border-slate-200/60 px-2.5 py-1 rounded-lg flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3 text-theme"></i> Niên khóa ...</span>
@@ -405,7 +417,7 @@
               <!-- Action buttons inside banner -->
               <div class="flex flex-wrap gap-2 shrink-0 md:mb-1">
                 <button onclick="switchTab('tab-attendance')" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="user-check" class="w-4 h-4"></i> Điểm danh</button>
-                <button onclick="document.getElementById('excel-upload').click()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="user-plus" class="w-4 h-4"></i> Nhập học sinh</button>
+                <button onclick="switchTab('tab-notebook')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="contact" class="w-4 h-4"></i> Sổ theo dõi</button>
                 <button onclick="switchTab('tab-wheel')" class="bg-theme-grad text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="rotate-cw" class="w-4 h-4"></i> Vòng quay</button>
               </div>
             </div>
@@ -797,16 +809,23 @@
                  <div>
                    <h3 class="text-lg md:text-xl font-black text-slate-800 mb-2">Thông tin lớp</h3>
                    <div class="space-y-3 md:space-y-4">
-                     <div class="grid grid-cols-2 gap-3.5">
-                       <div>
-                         <label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Họ tên GVCN</label>
-                         <input type="text" id="set-teacher" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold">
-                       </div>
-                       <div>
-                         <label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Năm học</label>
-                         <input type="text" id="set-year" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold">
-                       </div>
-                     </div>
+                     <div class="grid grid-cols-3 gap-3.5">
+                        <div>
+                          <label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Họ tên GVCN</label>
+                          <input type="text" id="set-teacher" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold">
+                        </div>
+                        <div>
+                          <label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Giới tính</label>
+                          <select id="set-gender" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold cursor-pointer">
+                            <option value="Nam">Nam (Thầy)</option>
+                            <option value="Nữ">Nữ (Cô)</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Năm học</label>
+                          <input type="text" id="set-year" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold">
+                        </div>
+                      </div>
                      <div class="grid grid-cols-4 gap-3.5">
                        <div class="col-span-1">
                          <label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Lớp</label>
@@ -2145,13 +2164,36 @@
             location.reload(); 
         }, 900);
     }
-    function saveOnboarding() { currentUser.teacherName = document.getElementById('ob-teacher').value || 'Thầy/Cô'; currentUser.className = document.getElementById('ob-class').value || '12A1'; currentUser.year = document.getElementById('ob-year').value || '2026'; currentUser.slogan = document.getElementById('ob-slogan').value || 'Lớp học yêu thương'; currentUser.theme = 'emerald'; currentUser.cover = DEFAULT_COVERS[Math.floor(Math.random() * DEFAULT_COVERS.length)]; if(saveUserToStorage()) { document.getElementById('onboarding-screen').classList.replace('flex', 'hidden'); loadUserData(); } }
+    function saveOnboarding() { 
+        currentUser.teacherName = document.getElementById('ob-teacher').value || 'Thầy/Cô'; 
+        currentUser.gender = document.getElementById('ob-gender').value || 'Nam'; 
+        currentUser.className = document.getElementById('ob-class').value || '12A1'; 
+        currentUser.year = document.getElementById('ob-year').value || '2026'; 
+        currentUser.slogan = document.getElementById('ob-slogan').value || 'Lớp học yêu thương'; 
+        currentUser.theme = 'emerald'; 
+        currentUser.cover = DEFAULT_COVERS[Math.floor(Math.random() * DEFAULT_COVERS.length)]; 
+        if(saveUserToStorage()) { 
+            document.getElementById('onboarding-screen').classList.replace('flex', 'hidden'); 
+            loadUserData(); 
+        } 
+    }
     function saveUserToStorage() { try { saveAppData(); return true; } catch (e) { showModal('error', 'Lỗi bộ nhớ', 'Bộ nhớ đầy! Vui lòng tải ảnh nhẹ hơn.'); return false; } }
-    function updateSettings() { currentUser.teacherName = document.getElementById('set-teacher').value; currentUser.className = document.getElementById('set-class').value; currentUser.year = document.getElementById('set-year').value; currentUser.slogan = document.getElementById('set-slogan').value; if(saveUserToStorage()) { showModal('success', 'Thành công', 'Đã lưu thay đổi cài đặt hệ thống!'); updateUI(); } }
+    function updateSettings() { 
+        currentUser.teacherName = document.getElementById('set-teacher').value; 
+        currentUser.gender = document.getElementById('set-gender').value; 
+        currentUser.className = document.getElementById('set-class').value; 
+        currentUser.year = document.getElementById('set-year').value; 
+        currentUser.slogan = document.getElementById('set-slogan').value; 
+        if(saveUserToStorage()) { 
+            showModal('success', 'Thành công', 'Đã lưu thay đổi cài đặt hệ thống!'); 
+            updateUI(); 
+        } 
+    }
     
     async function loadUserData() { 
         applyTheme(currentUser.theme || 'emerald'); 
         document.getElementById('set-teacher').value = currentUser.teacherName || ''; 
+        document.getElementById('set-gender').value = currentUser.gender || 'Nam'; 
         document.getElementById('set-class').value = currentUser.className || ''; 
         document.getElementById('set-year').value = currentUser.year || ''; 
         document.getElementById('set-slogan').value = currentUser.slogan || ''; 
@@ -2279,7 +2321,10 @@
             const teacherClassNameEl = document.getElementById('teacher-class-name');
             if (teacherClassNameEl) teacherClassNameEl.innerText = currentUser.className || '';
             const teacherHeaderNameEl = document.getElementById('teacher-header-name');
-            if (teacherHeaderNameEl) teacherHeaderNameEl.innerText = currentUser.teacherName || 'Thầy/Cô';
+            if (teacherHeaderNameEl) {
+                const title = currentUser.gender === 'Nữ' ? 'Cô' : 'Thầy';
+                teacherHeaderNameEl.innerText = `${title}. ${currentUser.teacherName || 'Thầy/Cô'}`;
+            }
             
             const bannerBadgeYear = document.getElementById('banner-badge-year');
             if (bannerBadgeYear) bannerBadgeYear.innerHTML = `<i data-lucide="calendar" class="w-3 h-3 text-theme"></i> Niên khóa ${currentUser.year || ''}`;
@@ -2295,7 +2340,10 @@
             const teacherBannerGreeting = document.getElementById('teacher-banner-greeting');
             if (teacherBannerGreeting) teacherBannerGreeting.innerText = greeting;
             const teacherBannerName = document.getElementById('teacher-banner-name');
-            if (teacherBannerName) teacherBannerName.innerText = currentUser.teacherName || 'Thầy/Cô';
+            if (teacherBannerName) {
+                const title = currentUser.gender === 'Nữ' ? 'Cô' : 'Thầy';
+                teacherBannerName.innerText = `${title} ${currentUser.teacherName || 'Thầy/Cô'}`;
+            }
             const teacherBannerClass = document.getElementById('teacher-banner-class');
             if (teacherBannerClass) teacherBannerClass.innerText = currentUser.className || '';
             
