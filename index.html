@@ -615,9 +615,10 @@
       <!-- TAB THỜI KHOÁ BIỂU -->
       <section id="tab-timetable" class="tab-section hidden space-y-4 h-full flex-col">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-slate-100 shrink-0 gap-4">
-           <h3 class="font-bold text-slate-700 text-base md:text-lg flex items-center gap-2 whitespace-nowrap"><i data-lucide="table" class="w-5 h-5 text-blue-500"></i> Thời Khóa Biểu (Sáng)</h3>
+           <h3 class="font-bold text-slate-700 text-base md:text-lg flex items-center gap-2 whitespace-nowrap"><i data-lucide="table" class="w-5 h-5 text-blue-500"></i> Thời Khóa Biểu</h3>
            <div class="flex flex-wrap items-center gap-2 md:gap-3 w-full sm:w-auto">
              <select id="timetable-select" class="flex-1 sm:flex-none border border-slate-200 rounded-xl px-3 md:px-4 py-2.5 text-xs md:text-sm bg-slate-50 ring-theme font-bold text-slate-700 outline-none cursor-pointer" onchange="changeTimetable()"></select>
+             <button id="btn-use-timetable" onclick="setActiveTimetable()" class="bg-emerald-50 text-emerald-600 hover:bg-emerald-100 px-3 md:px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1 border border-emerald-100 shadow-sm whitespace-nowrap"><i data-lucide="check" class="w-4 h-4"></i> Áp dụng</button>
              <button onclick="addTimetable()" class="bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 md:px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1 border border-blue-100 shadow-sm whitespace-nowrap"><i data-lucide="plus" class="w-4 h-4"></i> Thêm TKB</button>
              <button onclick="deleteTimetable()" class="w-full sm:w-auto flex justify-center text-rose-500 bg-rose-50 hover:bg-rose-100 px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold transition items-center gap-1 border border-rose-100 shadow-sm"><i data-lucide="trash-2" class="w-4 h-4"></i> Xóa TKB</button>
            </div>
@@ -2317,12 +2318,55 @@
     function handleAvatarUpload(e) { const file = e.target.files[0]; if(!file) return; compressImage(file, 300, 300, function(dataUrl) { currentUser.avatar = dataUrl; if(saveUserToStorage()) updateUI(); }, 0.8); e.target.value = ''; }
 
     // --- TIMETABLES ---
-    function initTimetables() { const saved = localStorage.getItem('timetables_' + currentUser.id); if (saved) timetables = JSON.parse(saved); if (!timetables || timetables.length === 0) { timetables = [{ id: 'tkb_' + Date.now(), name: 'TKB Lần 1', data: {} }]; saveTimetables(); } currentTimetableId = timetables[0].id; renderTimetableSelect(); applyTimetable(); }
+    function initTimetables() { 
+        const saved = localStorage.getItem('timetables_' + currentUser.id); 
+        if (saved) timetables = JSON.parse(saved); 
+        if (!timetables || timetables.length === 0) { 
+            timetables = [{ id: 'tkb_' + Date.now(), name: 'TKB Lần 1', data: {} }]; 
+            saveTimetables(); 
+        } 
+        currentTimetableId = currentUser.activeTimetableId || timetables[0].id; 
+        if (!timetables.some(t => t.id === currentTimetableId)) {
+            currentTimetableId = timetables[0].id;
+        }
+        renderTimetableSelect(); 
+        applyTimetable(); 
+    }
     function saveTimetables() { saveAppData(); }
-    function renderTimetableSelect() { const sel = document.getElementById('timetable-select'); sel.innerHTML = timetables.map(t => `<option value="${t.id}">${t.name}</option>`).join(''); sel.value = currentTimetableId; }
+    function renderTimetableSelect() { 
+        const sel = document.getElementById('timetable-select'); 
+        const activeId = currentUser.activeTimetableId || (timetables[0] ? timetables[0].id : null);
+        sel.innerHTML = timetables.map(t => {
+            const isUsed = t.id === activeId ? ' (Đang dùng)' : '';
+            return `<option value="${t.id}">${t.name}${isUsed}</option>`;
+        }).join(''); 
+        sel.value = currentTimetableId; 
+    }
     function changeTimetable() { currentTimetableId = document.getElementById('timetable-select').value; applyTimetable(); }
     function addTimetable() { const newName = `TKB Lần ${timetables.length + 1}`; const newTkb = { id: 'tkb_' + Date.now(), name: newName, data: {} }; timetables.push(newTkb); saveTimetables(); currentTimetableId = newTkb.id; renderTimetableSelect(); applyTimetable(); showModal('success', 'Thành công', `Đã thêm ${newName}`); }
-    function deleteTimetable() { if(timetables.length <= 1) return showModal('error', 'Không thể xóa', 'Phải có ít nhất 1 TKB!'); showModal('confirm', 'Xóa TKB', 'Bạn có chắc chắn muốn xóa thời khóa biểu này?', () => { timetables = timetables.filter(t => t.id !== currentTimetableId); currentTimetableId = timetables[0].id; saveTimetables(); renderTimetableSelect(); applyTimetable(); }); }
+    function deleteTimetable() { 
+        if(timetables.length <= 1) return showModal('error', 'Không thể xóa', 'Phải có ít nhất 1 TKB!'); 
+        showModal('confirm', 'Xóa TKB', 'Bạn có chắc chắn muốn xóa thời khóa biểu này?', () => { 
+            const deletedId = currentTimetableId;
+            timetables = timetables.filter(t => t.id !== currentTimetableId); 
+            currentTimetableId = timetables[0].id; 
+            if (currentUser.activeTimetableId === deletedId) {
+                currentUser.activeTimetableId = currentTimetableId;
+            }
+            saveUserToStorage(); 
+            renderTimetableSelect(); 
+            applyTimetable(); 
+            renderOverview();
+        }); 
+    }
+    function setActiveTimetable() {
+        if (!currentUser) return;
+        currentUser.activeTimetableId = currentTimetableId;
+        saveUserToStorage();
+        updateUI();
+        renderOverview();
+        showModal('success', 'Thành công', `Đã áp dụng TKB "${timetables.find(t => t.id === currentTimetableId).name}" cho toàn hệ thống!`);
+    }
     function applyTimetable() { const t = timetables.find(x => x.id === currentTimetableId); if(!t) return; const tbody = document.getElementById('timetable-tbody'); const isStudent = (currentUserRole === 'student'); let html = ''; for(let period = 1; period <= 5; period++) { html += `<tr><td class="border border-slate-200 p-2 font-black text-slate-400 bg-slate-50 w-20 text-[10px] md:text-xs tracking-widest uppercase">Tiết ${period}</td>`; for(let day = 2; day <= 7; day++) { const key = `d${day}_p${period}`; const val = t.data[key] || ''; html += `<td class="border border-slate-100 p-1 md:p-2"><input type="text" value="${val}" onchange="saveTimetableCell('${key}', this.value)" ${isStudent ? 'disabled' : ''} class="w-full h-full text-center px-2 py-2 md:py-3 rounded-xl outline-none focus:ring-2 focus:ring-theme focus:bg-theme-light transition bg-transparent font-bold text-slate-700 placeholder-slate-200 text-xs md:text-sm" placeholder="..."></td>`; } html += `</tr>`; } tbody.innerHTML = html; }
     function saveTimetableCell(key, value) { const t = timetables.find(x => x.id === currentTimetableId); if(t) { t.data[key] = value.trim(); saveTimetables(); } }
 
@@ -3595,6 +3639,16 @@
         if (delTkbBtn) {
             if (isStudent) delTkbBtn.classList.add('hidden');
             else delTkbBtn.classList.remove('hidden');
+        }
+        const useTkbBtn = document.getElementById('btn-use-timetable');
+        if (useTkbBtn) {
+            if (isStudent) useTkbBtn.classList.add('hidden');
+            else useTkbBtn.classList.remove('hidden');
+        }
+        const tkbSelect = document.getElementById('timetable-select');
+        if (tkbSelect) {
+            if (isStudent) tkbSelect.classList.add('hidden');
+            else tkbSelect.classList.remove('hidden');
         }
         
         const newChartBtn = document.querySelector('button[onclick="openNewChartModal()"]');
