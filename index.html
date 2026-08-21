@@ -490,7 +490,7 @@
                 <button onclick="switchTab('tab-timetable')" class="text-xs font-bold text-theme bg-theme-light border border-theme/10 hover:bg-theme-light/80 px-3 py-1.5 rounded-lg transition flex items-center gap-1">Xem cả tuần <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></button>
               </div>
               <!-- Horizontally scrollable list of today's periods -->
-              <div id="teacher-today-timetable-list" class="grid grid-cols-1 sm:grid-cols-5 gap-3">
+              <div id="teacher-today-timetable-list" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-9 gap-3">
                 <!-- Dynamically filled card slots -->
               </div>
             </div>
@@ -2586,14 +2586,28 @@
             2: "07:45 - 08:30",
             3: "08:55 - 09:40",
             4: "09:40 - 10:25",
-            5: "10:25 - 11:10"
+            5: "10:25 - 11:10",
+            6: "14:00 - 14:45",
+            7: "14:45 - 15:30",
+            8: "15:45 - 16:30",
+            9: "16:30 - 17:15"
         };
         
         let html = ''; 
-        for(let period = 1; period <= 5; period++) { 
+        for(let period = 1; period <= 9; period++) { 
+            if (period === 6) {
+                html += `<tr>
+                    <td colspan="7" class="bg-indigo-50/50 text-indigo-700 font-black text-xs md:text-sm py-2.5 uppercase tracking-widest text-center border border-slate-200">
+                        <div class="flex items-center justify-center gap-1.5"><i data-lucide="sun" class="w-4 h-4 text-indigo-600"></i> Buổi Chiều</div>
+                    </td>
+                </tr>`;
+            }
+            
+            const periodLabel = period <= 5 ? `Tiết ${period}` : `Tiết ${period - 5} (Chiều)`;
+            
             html += `<tr>
                 <td class="border border-slate-200 p-2 font-black bg-slate-50 w-24 text-center">
-                    <div class="text-slate-500 font-extrabold text-[10px] md:text-xs tracking-widest uppercase">Tiết ${period}</div>
+                    <div class="text-slate-500 font-extrabold text-[10px] md:text-xs tracking-widest uppercase">${periodLabel}</div>
                     <div class="text-[9px] text-slate-400 font-bold mt-0.5 whitespace-nowrap">${periodTimes[period]}</div>
                 </td>`; 
             for(let day = 2; day <= 7; day++) { 
@@ -2654,7 +2668,8 @@
             subject = val;
         }
         
-        document.getElementById('timetable-period-modal-title').innerText = `Tiết ${period} - Thứ ${day}`;
+        const periodLabel = period <= 5 ? `Tiết ${period}` : `Tiết ${period - 5} (Chiều)`;
+        document.getElementById('timetable-period-modal-title').innerText = `${periodLabel} - Thứ ${day}`;
         document.getElementById('modal-period-subject').value = subject;
         
         const grid = document.getElementById('modal-subjects-list-grid');
@@ -3519,7 +3534,11 @@
               { num: 2, time: "07:45 - 08:30" },
               { num: 3, time: "08:55 - 09:40" },
               { num: 4, time: "09:40 - 10:25" },
-              { num: 5, time: "10:25 - 11:10" }
+              { num: 5, time: "10:25 - 11:10" },
+              { num: 6, time: "14:00 - 14:45" },
+              { num: 7, time: "14:45 - 15:30" },
+              { num: 8, time: "15:45 - 16:30" },
+              { num: 9, time: "16:30 - 17:15" }
           ];
           
           let html = '';
@@ -3542,10 +3561,12 @@
                   }
               }
               
+              const periodLabel = p.num <= 5 ? `Tiết ${p.num}` : `Tiết ${p.num - 5} (Chiều)`;
+              
               html += `
               <div class="bg-slate-50 border border-slate-100 p-4 rounded-2xl flex flex-col justify-between hover:bg-slate-100/50 transition shadow-sm">
                 <div>
-                  <div class="text-[9px] uppercase font-bold tracking-wider text-slate-400 mb-0.5">Tiết ${p.num}</div>
+                  <div class="text-[9px] uppercase font-bold tracking-wider text-slate-400 mb-0.5">${periodLabel}</div>
                   <div class="text-[10px] font-bold text-slate-500 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> ${p.time}</div>
                 </div>
                 <div class="mt-3">
