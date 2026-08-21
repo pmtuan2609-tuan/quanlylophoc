@@ -413,6 +413,7 @@
                 <button onclick="switchTab('tab-attendance')" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="user-check" class="w-4 h-4"></i> Điểm danh</button>
                 <button onclick="switchTab('tab-notebook')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="contact" class="w-4 h-4"></i> Sổ theo dõi</button>
                 <button onclick="openSubjectTeachersModal()" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="users" class="w-4 h-4"></i> GVBM</button>
+                <button onclick="openTeacherInfoModal()" class="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="user" class="w-4 h-4"></i> GVCN</button>
                 <button onclick="switchTab('tab-wheel')" class="bg-theme-grad text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="rotate-cw" class="w-4 h-4"></i> Vòng quay</button>
               </div>
             </div>
@@ -799,43 +800,6 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 max-w-5xl items-start">
           <!-- LEFT COLUMN -->
           <div class="space-y-4 md:space-y-6">
-              <!-- THÔNG TIN LỚP -->
-              <div class="bg-emerald-50 p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between">
-                 <div>
-                   <h3 class="text-lg md:text-xl font-black text-slate-800 mb-2">Thông tin lớp</h3>
-                   <div class="space-y-3 md:space-y-4">
-                      <div class="grid grid-cols-4 gap-3.5">
-                        <div class="col-span-4 sm:col-span-3">
-                          <label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Họ tên GVCN</label>
-                          <input type="text" id="set-teacher" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold">
-                        </div>
-                        <div class="col-span-4 sm:col-span-1">
-                          <label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Giới tính</label>
-                          <select id="set-gender" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold cursor-pointer">
-                            <option value="Nam">Nam (Thầy)</option>
-                            <option value="Nữ">Nữ (Cô)</option>
-                          </select>
-                        </div>
-                        <div class="col-span-2 sm:col-span-1">
-                          <label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Lớp</label>
-                          <input type="text" id="set-class" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold">
-                        </div>
-                        <div class="col-span-2 sm:col-span-1">
-                          <label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Năm học</label>
-                          <input type="text" id="set-year" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold">
-                        </div>
-                        <div class="col-span-4 sm:col-span-2">
-                          <label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Khẩu hiệu</label>
-                          <input type="text" id="set-slogan" class="w-full mt-1 px-3 md:px-4 py-2.5 border-2 border-slate-100 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold">
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="flex gap-2.5 mt-4 shrink-0">
-                      <button onclick="updateSettings()" class="flex-1 bg-slate-800 text-white px-4 py-3 md:py-3.5 rounded-xl font-bold shadow-lg hover:bg-slate-700 transition">Lưu cài đặt</button>
-                      <button onclick="teacherSelfChangePassword()" class="bg-amber-100 hover:bg-amber-200 text-amber-800 px-4 py-3 md:py-3.5 rounded-xl font-bold transition flex items-center justify-center gap-1.5 text-xs md:text-sm"><i data-lucide="key-round" class="w-4 h-4"></i> Đổi mật khẩu</button>
-                   </div>
-               </div>
                
                <!-- LƯU TRỮ ĐÁM MÂY -->
               <div id="supabase-config-card" class="bg-sky-50 p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between">
@@ -2589,6 +2553,39 @@
         }
     }
     
+    function openTeacherInfoModal() {
+        document.getElementById('set-teacher').value = currentUser.teacherName || ''; 
+        document.getElementById('set-gender').value = currentUser.gender || 'Nam'; 
+        document.getElementById('set-class').value = currentUser.className || ''; 
+        document.getElementById('set-year').value = currentUser.year || ''; 
+        document.getElementById('set-slogan').value = currentUser.slogan || ''; 
+        openModalUi('teacher-info-modal', 'teacher-info-content');
+        lucide.createIcons();
+    }
+    
+    function saveTeacherInfoModal() {
+        const teacherName = document.getElementById('set-teacher').value.trim();
+        const gender = document.getElementById('set-gender').value;
+        const className = document.getElementById('set-class').value.trim();
+        const year = document.getElementById('set-year').value.trim();
+        const slogan = document.getElementById('set-slogan').value.trim();
+        
+        if(!teacherName || !className || !year) {
+            return showModal('error', 'Lỗi', 'Vui lòng điền đầy đủ Họ tên, Lớp và Năm học.');
+        }
+        
+        currentUser.teacherName = teacherName;
+        currentUser.gender = gender;
+        currentUser.className = className;
+        currentUser.year = year;
+        currentUser.slogan = slogan;
+        
+        saveUserToStorage();
+        updateUI();
+        closeModalUi('teacher-info-modal', 'teacher-info-content');
+        showModal('success', 'Thành công', 'Đã lưu thay đổi thông tin giáo viên và lớp!');
+    }
+
     function openSubjectTeachersModal() {
         renderSubjectTeachersModalGrid();
         openModalUi('subject-teachers-modal', 'subject-teachers-content');
