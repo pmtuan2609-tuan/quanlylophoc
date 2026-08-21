@@ -878,6 +878,18 @@
                  </div>
               </div>
 
+              <!-- PHÂN CÔNG GIÁO VIÊN BỘ MÔN -->
+              <div class="bg-amber-50/50 p-5 md:p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col">
+                 <div>
+                   <h3 class="text-lg md:text-xl font-black text-slate-800 mb-1 flex items-center gap-1.5"><i data-lucide="users" class="text-amber-500 w-5 h-5"></i> Phân công Giáo viên</h3>
+                   <p class="text-xs text-slate-500 mb-4 font-medium">Nhập tên Giáo viên bộ môn tương ứng để tự động điền khi tạo Thời khóa biểu.</p>
+                   
+                   <div class="grid grid-cols-2 gap-3.5 max-h-[300px] overflow-y-auto custom-scrollbar p-1" id="subject-teachers-grid">
+                     <!-- Automatically generated inputs for subjects -->
+                   </div>
+                 </div>
+              </div>
+
               <!-- CÁ NHÂN HÓA -->
               <div class="bg-indigo-50 p-5 md:p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col">
                 <div>
@@ -982,6 +994,46 @@
       <div class="flex gap-3 w-full">
          <button id="btn-prompt-cancel" class="flex-[0.4] bg-slate-100 text-slate-500 font-black py-3 rounded-xl hover:bg-slate-200 hover:text-slate-700 transition text-xs uppercase tracking-wider">Hủy</button>
          <button id="btn-prompt-submit" class="flex-1 bg-theme-grad text-white font-black py-3 rounded-xl hover:scale-[1.02] transition shadow-lg text-xs uppercase tracking-wider">Xác nhận</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Chọn Môn Học Cho Thời Khóa Biểu -->
+  <div id="timetable-period-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[700] p-4 opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-[2rem] p-6 md:p-8 w-full max-w-lg shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col border border-white/20" id="timetable-period-content">
+      <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
+        <div>
+          <h3 class="text-lg md:text-xl font-black text-slate-800 tracking-tight">Chọn môn học</h3>
+          <p id="timetable-period-modal-title" class="text-xs text-slate-400 font-bold">Cập nhật tiết học</p>
+        </div>
+        <button onclick="closeModalUi('timetable-period-modal', 'timetable-period-content')" class="text-slate-400 hover:text-slate-600 bg-slate-50 p-2 rounded-full transition"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      
+      <!-- Subjects Grid -->
+      <div class="mb-4">
+        <label class="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wide block mb-2">Môn học theo CT GDPT 2018 (Cấp 3)</label>
+        <div class="grid grid-cols-3 gap-2 max-h-[220px] overflow-y-auto custom-scrollbar p-1" id="modal-subjects-list-grid">
+          <!-- Dynamic buttons generated via javascript -->
+        </div>
+      </div>
+      
+      <!-- Fields -->
+      <div class="grid grid-cols-2 gap-4 mb-6">
+        <div>
+          <label class="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wide">Môn học</label>
+          <input type="text" id="modal-period-subject" class="w-full mt-1.5 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl ring-theme outline-none font-bold text-slate-800 text-sm" placeholder="Tên môn...">
+        </div>
+        <div>
+          <label class="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wide">Giáo viên bộ môn</label>
+          <input type="text" id="modal-period-teacher" class="w-full mt-1.5 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl ring-theme outline-none font-bold text-slate-800 text-sm" placeholder="Tên GV...">
+        </div>
+      </div>
+      
+      <!-- Actions -->
+      <div class="flex gap-2">
+         <button id="btn-period-clear" class="flex-none bg-rose-50 hover:bg-rose-100 text-rose-600 font-black px-4 py-3 rounded-xl transition text-xs uppercase tracking-wider">Xóa tiết</button>
+         <button onclick="closeModalUi('timetable-period-modal', 'timetable-period-content')" class="flex-[0.4] bg-slate-100 text-slate-500 font-black py-3 rounded-xl hover:bg-slate-200 hover:text-slate-700 transition text-xs uppercase tracking-wider">Hủy</button>
+         <button id="btn-period-save" class="flex-1 bg-theme-grad text-white font-black py-3 rounded-xl hover:scale-[1.02] transition shadow-lg text-xs uppercase tracking-wider">Lưu tiết</button>
       </div>
     </div>
   </div>
@@ -2189,6 +2241,7 @@
         document.getElementById('set-class').value = currentUser.className || ''; 
         document.getElementById('set-year').value = currentUser.year || ''; 
         document.getElementById('set-slogan').value = currentUser.slogan || ''; 
+        renderSubjectTeachersSettings(); 
         
         let loadedFromCloud = false;
         if (isSupabaseConnected) {
@@ -2434,36 +2487,119 @@
                 const subject = parts[0] || '';
                 const teacher = parts[1] || '';
                 
-                html += `
-                <td class="border border-slate-100 p-1 md:p-2 bg-white hover:bg-slate-50/50 transition-colors">
-                  <div class="flex flex-col gap-1 w-full h-full justify-center">
-                    <input type="text" value="${subject}" onchange="saveTimetableCellParts('${key}', this.value, 'subject')" ${isStudent ? 'disabled' : ''} class="w-full text-center px-1.5 py-1 rounded-lg outline-none focus:ring-2 focus:ring-theme/35 focus:bg-theme-light transition bg-transparent font-extrabold text-slate-700 placeholder-slate-200 text-xs md:text-sm border border-transparent hover:border-slate-100" placeholder="...">
-                    <input type="text" value="${teacher}" onchange="saveTimetableCellParts('${key}', this.value, 'teacher')" ${isStudent ? 'disabled' : ''} class="w-full text-center px-1.5 py-0.5 rounded-lg outline-none focus:ring-2 focus:ring-theme/35 focus:bg-theme-light transition bg-transparent font-medium text-slate-400 placeholder-slate-200 text-[10px] md:text-xs border border-transparent hover:border-slate-100" placeholder="...">
-                  </div>
-                </td>`; 
+                if (isStudent) {
+                    html += `
+                    <td class="border border-slate-100 p-2 bg-white text-center">
+                      <div class="flex flex-col justify-center min-h-[52px]">
+                        <span class="font-extrabold text-slate-700 text-xs md:text-sm">${subject || '...'}</span>
+                        <span class="font-medium text-slate-400 text-[9px] md:text-xs mt-0.5">${teacher || ''}</span>
+                      </div>
+                    </td>`;
+                } else {
+                    html += `
+                    <td onclick="openPeriodModal('${key}', ${day}, ${period})" class="border border-slate-100 p-2 bg-white hover:bg-slate-50 transition-all cursor-pointer group">
+                      <div class="flex flex-col justify-center min-h-[52px] relative">
+                        <span class="font-extrabold text-slate-700 text-xs md:text-sm group-hover:text-theme transition-colors">${subject || '...'}</span>
+                        <span class="font-medium text-slate-400 text-[9px] md:text-xs mt-0.5">${teacher || 'Chưa phân công'}</span>
+                        <div class="absolute inset-0 border-2 border-dashed border-slate-200 rounded-xl opacity-0 group-hover:opacity-100 transition duration-200 flex items-center justify-center bg-slate-50/90 gap-1">
+                          <i data-lucide="edit-3" class="w-3.5 h-3.5 text-theme"></i>
+                          <span class="text-[9px] font-black text-theme uppercase tracking-wider">Sửa</span>
+                        </div>
+                      </div>
+                    </td>`;
+                }
             } 
             html += `</tr>`; 
         } 
         tbody.innerHTML = html; 
+        lucide.createIcons();
     }
-    function saveTimetableCellParts(key, value, partType) { 
-        const t = timetables.find(x => x.id === currentTimetableId); 
-        if(t) { 
-            const currentVal = t.data[key] || '';
-            const parts = currentVal.split('|');
-            let subject = parts[0] || '';
-            let teacher = parts[1] || '';
-            
-            if (partType === 'subject') {
-                subject = value.trim();
-            } else if (partType === 'teacher') {
-                teacher = value.trim();
-            }
-            
-            t.data[key] = `${subject}|${teacher}`;
-            saveTimetables(); 
+    
+    let activeEditCellKey = null;
+    function openPeriodModal(key, day, period) {
+        activeEditCellKey = key;
+        const t = timetables.find(x => x.id === currentTimetableId);
+        if(!t) return;
+        
+        const val = t.data[key] || '';
+        const parts = val.split('|');
+        const subject = parts[0] || '';
+        const teacher = parts[1] || '';
+        
+        document.getElementById('timetable-period-modal-title').innerText = `Tiết ${period} - Thứ ${day}`;
+        document.getElementById('modal-period-subject').value = subject;
+        document.getElementById('modal-period-teacher').value = teacher;
+        
+        const grid = document.getElementById('modal-subjects-list-grid');
+        const subjects = [
+            "Toán", "Ngữ văn", "Tiếng Anh", "Vật lí", "Hóa học", "Sinh học", 
+            "Lịch sử", "Địa lí", "GDKT & Pháp luật", "Tin học", "Công nghệ", 
+            "HĐ Trải nghiệm, HN", "GD địa phương", "SHDC", "SHCN"
+        ];
+        
+        grid.innerHTML = subjects.map(sub => {
+            return `<button onclick="selectModalSubject('${sub}')" class="bg-slate-50 hover:bg-theme-light border border-slate-200 rounded-xl px-2 py-2 text-center text-xs font-black text-slate-700 hover:text-theme transition truncate" title="${sub}">${sub}</button>`;
+        }).join('');
+        
+        document.getElementById('btn-period-clear').onclick = () => {
+            savePeriodData('', '');
+            closeModalUi('timetable-period-modal', 'timetable-period-content');
+        };
+        
+        document.getElementById('btn-period-save').onclick = () => {
+            const subVal = document.getElementById('modal-period-subject').value.trim();
+            const teachVal = document.getElementById('modal-period-teacher').value.trim();
+            savePeriodData(subVal, teachVal);
+            closeModalUi('timetable-period-modal', 'timetable-period-content');
+        };
+        
+        openModalUi('timetable-period-modal', 'timetable-period-content');
+        lucide.createIcons();
+    }
+    
+    function selectModalSubject(subject) {
+        document.getElementById('modal-period-subject').value = subject;
+        const teachers = currentUser.subjectTeachers || {};
+        document.getElementById('modal-period-teacher').value = teachers[subject] || '';
+    }
+    
+    function savePeriodData(subject, teacher) {
+        const t = timetables.find(x => x.id === currentTimetableId);
+        if(t && activeEditCellKey) {
+            t.data[activeEditCellKey] = `${subject}|${teacher}`;
+            saveTimetables();
+            applyTimetable();
             renderOverview();
-        } 
+        }
+    }
+    
+    function renderSubjectTeachersSettings() {
+        const grid = document.getElementById('subject-teachers-grid');
+        if (!grid) return;
+        
+        const subjects = [
+            "Toán", "Ngữ văn", "Tiếng Anh", "Vật lí", "Hóa học", "Sinh học", 
+            "Lịch sử", "Địa lí", "GDKT & Pháp luật", "Tin học", "Công nghệ", 
+            "HĐ Trải nghiệm, HN", "GD địa phương", "SHDC", "SHCN"
+        ];
+        
+        const teachers = currentUser.subjectTeachers || {};
+        
+        grid.innerHTML = subjects.map(sub => {
+            const val = teachers[sub] || '';
+            return `
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase">${sub}</label>
+                    <input type="text" value="${val}" onchange="saveSubjectTeacher('${sub}', this.value)" class="w-full px-3 py-1.5 border border-slate-200 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none text-xs font-bold text-slate-700" placeholder="Tên GV...">
+                </div>
+            `;
+        }).join('');
+    }
+    
+    function saveSubjectTeacher(subject, teacherName) {
+        if (!currentUser.subjectTeachers) currentUser.subjectTeachers = {};
+        currentUser.subjectTeachers[subject] = teacherName.trim();
+        saveUserToStorage();
     }
 
     // --- ATTENDANCE ---
