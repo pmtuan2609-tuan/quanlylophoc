@@ -412,6 +412,7 @@
               <div class="flex flex-wrap gap-2 shrink-0 md:mb-1">
                 <button onclick="switchTab('tab-attendance')" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="user-check" class="w-4 h-4"></i> Điểm danh</button>
                 <button onclick="switchTab('tab-notebook')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="contact" class="w-4 h-4"></i> Sổ theo dõi</button>
+                <button onclick="openSubjectTeachersModal()" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="users" class="w-4 h-4"></i> GVBM</button>
                 <button onclick="switchTab('tab-wheel')" class="bg-theme-grad text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="rotate-cw" class="w-4 h-4"></i> Vòng quay</button>
               </div>
             </div>
@@ -875,18 +876,6 @@
                     <button onclick="document.getElementById('import-upload').click()" class="bg-emerald-50 text-emerald-600 border border-emerald-200 px-3.5 py-2 rounded-xl font-bold hover:bg-emerald-100 transition flex items-center justify-center gap-1.5 text-xs"><i data-lucide="upload-cloud" class="w-3.5 h-3.5"></i> Khôi phục</button>
                     <input type="file" id="import-upload" accept=".json" class="hidden" onchange="importData(event)">
                     <button onclick="resetAllPoints()" class="bg-rose-50 text-rose-600 border border-rose-200 px-3.5 py-2 rounded-xl font-bold hover:bg-rose-100 transition flex items-center justify-center gap-1.5 text-xs"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Reset</button>
-                 </div>
-              </div>
-
-              <!-- PHÂN CÔNG GIÁO VIÊN BỘ MÔN -->
-              <div class="bg-amber-50/50 p-5 md:p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col">
-                 <div>
-                   <h3 class="text-lg md:text-xl font-black text-slate-800 mb-1 flex items-center gap-1.5"><i data-lucide="users" class="text-amber-500 w-5 h-5"></i> Phân công Giáo viên</h3>
-                   <p class="text-xs text-slate-500 mb-2 font-medium">Cấu hình danh sách Giáo viên phụ trách từng môn học để tự động đồng bộ Thời khóa biểu.</p>
-                   
-                   <button onclick="openSubjectTeachersModal()" class="w-full mt-2 bg-amber-500 hover:bg-amber-600 text-white py-3 rounded-xl font-bold transition flex items-center justify-center gap-1.5 shadow-md hover:scale-[1.01]">
-                     <i data-lucide="users" class="w-4 h-4"></i> Phân công Giáo viên Bộ môn
-                   </button>
                  </div>
               </div>
 
