@@ -2028,6 +2028,54 @@
 
             // 3. Local Fallback Auth for Teacher
             if (id === MOCK_ADMIN.id && pass === MOCK_ADMIN.pass) {
+                try {
+                    const res = await fetch('/api/data?t=' + Date.now());
+                    if (res.ok) {
+                        const backendData = await res.json();
+                        const userObj = backendData.currentUser || backendData.user;
+                        if (userObj && userObj.id === 'thaytuan') {
+                            currentUser = userObj;
+                            students = backendData.students || [];
+                            seatingCharts = backendData.seatingCharts || [];
+                            timetables = backendData.timetables || [];
+                            attendanceData = backendData.attendanceData || {};
+                            
+                            currentUserRole = 'teacher';
+                            currentStudent = null;
+                            localStorage.setItem('currentUserRole', 'teacher');
+                            localStorage.setItem('user_thaytuan', JSON.stringify(currentUser));
+                            loginSuccess(currentUser);
+                            return;
+                        }
+                    }
+                } catch(e) {
+                    console.log("Failed to fetch from server on login, trying static file...");
+                }
+                
+                try {
+                    const res = await fetch('./data.json');
+                    if (res.ok) {
+                        const backendData = await res.json();
+                        const userObj = backendData.currentUser || backendData.user;
+                        if (userObj && userObj.id === 'thaytuan') {
+                            currentUser = userObj;
+                            students = backendData.students || [];
+                            seatingCharts = backendData.seatingCharts || [];
+                            timetables = backendData.timetables || [];
+                            attendanceData = backendData.attendanceData || {};
+                            
+                            currentUserRole = 'teacher';
+                            currentStudent = null;
+                            localStorage.setItem('currentUserRole', 'teacher');
+                            localStorage.setItem('user_thaytuan', JSON.stringify(currentUser));
+                            loginSuccess(currentUser);
+                            return;
+                        }
+                    }
+                } catch(e) {
+                    console.log("Failed to fetch from static data on login, trying local storage...");
+                }
+
                 let adminData = localStorage.getItem('user_thaytuan');
                 if(!adminData) {
                     adminData = { id: 'thaytuan' };
