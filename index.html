@@ -1010,50 +1010,73 @@
 
   <!-- Modal Cập nhật Thông tin GVCN & Lớp -->
   <div id="teacher-info-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[700] p-4 opacity-0 transition-opacity duration-300">
-    <div class="bg-white rounded-[2rem] p-6 md:p-8 w-full max-w-lg shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col border border-white/20" id="teacher-info-content">
-      <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
+    <div class="bg-white rounded-[2rem] p-6 md:p-8 w-full max-w-xl shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col border border-white/20" id="teacher-info-content">
+      <div class="flex justify-between items-center mb-6 pb-2 border-b border-slate-100">
         <div>
-          <h3 class="text-lg md:text-xl font-black text-slate-800 tracking-tight">Thông tin lớp & GVCN</h3>
-          <p class="text-xs text-slate-400 font-bold">Cập nhật thông tin tập thể lớp và giáo viên chủ nhiệm</p>
+          <h3 class="text-lg md:text-xl font-black text-slate-800 tracking-tight flex items-center gap-2">
+            <i data-lucide="school" class="w-6 h-6 text-indigo-500"></i> Thông tin lớp & GVCN
+          </h3>
+          <p class="text-xs text-slate-400 font-bold mt-0.5">Cập nhật thông tin tập thể lớp và giáo viên chủ nhiệm</p>
         </div>
         <button onclick="closeModalUi('teacher-info-modal', 'teacher-info-content')" class="text-slate-400 hover:text-slate-600 bg-slate-50 p-2 rounded-full transition"><i data-lucide="x" class="w-4 h-4"></i></button>
       </div>
       
       <!-- Fields -->
-      <div class="space-y-4 mb-6">
-        <div class="grid grid-cols-3 gap-3.5">
-          <div class="col-span-2">
-            <label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Họ tên GVCN</label>
-            <input type="text" id="set-teacher" class="w-full mt-1.5 px-3 md:px-4 py-2.5 border border-slate-200 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold text-slate-700 text-sm">
+      <div class="space-y-5 mb-6">
+        <div class="grid grid-cols-3 gap-4">
+          <div class="col-span-2 relative">
+            <label class="text-[10px] md:text-xs font-black text-slate-500 uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="user" class="w-3.5 h-3.5 text-indigo-500"></i> Họ tên GVCN</label>
+            <div class="relative mt-1.5">
+              <i data-lucide="graduation-cap" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5 pointer-events-none"></i>
+              <input type="text" id="set-teacher" class="w-full pl-11 pr-4 py-3 border border-slate-200 rounded-2xl bg-slate-50/50 focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none font-bold text-slate-700 text-sm transition-all duration-200">
+            </div>
           </div>
-          <div>
-            <label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Giới tính</label>
-            <select id="set-gender" class="w-full mt-1.5 px-3 md:px-4 py-2.5 border border-slate-200 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold text-slate-700 text-sm cursor-pointer">
-              <option value="Nam">Nam (Thầy)</option>
-              <option value="Nữ">Nữ (Cô)</option>
-            </select>
+          <div class="relative">
+            <label class="text-[10px] md:text-xs font-black text-slate-500 uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="venus-mars" class="w-3.5 h-3.5 text-pink-500"></i> Giới tính</label>
+            <div class="relative mt-1.5">
+              <i data-lucide="users-2" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5 pointer-events-none"></i>
+              <select id="set-gender" class="w-full pl-11 pr-8 py-3 border border-slate-200 rounded-2xl bg-slate-50/50 focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none font-bold text-slate-700 text-sm transition-all duration-200 appearance-none cursor-pointer">
+                <option value="Nam">Nam (Thầy)</option>
+                <option value="Nữ">Nữ (Cô)</option>
+              </select>
+              <i data-lucide="chevron-down" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4 pointer-events-none"></i>
+            </div>
           </div>
         </div>
-        <div class="grid grid-cols-3 gap-3.5">
-          <div>
-            <label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Lớp</label>
-            <input type="text" id="set-class" class="w-full mt-1.5 px-3 md:px-4 py-2.5 border border-slate-200 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold text-slate-700 text-sm">
+        
+        <div class="grid grid-cols-3 gap-4">
+          <div class="relative">
+            <label class="text-[10px] md:text-xs font-black text-slate-500 uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="bookmark" class="w-3.5 h-3.5 text-emerald-500"></i> Lớp</label>
+            <div class="relative mt-1.5">
+              <i data-lucide="award" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5 pointer-events-none"></i>
+              <input type="text" id="set-class" class="w-full pl-11 pr-4 py-3 border border-slate-200 rounded-2xl bg-slate-50/50 focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none font-bold text-slate-700 text-sm transition-all duration-200">
+            </div>
           </div>
-          <div>
-            <label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Năm học</label>
-            <input type="text" id="set-year" class="w-full mt-1.5 px-3 md:px-4 py-2.5 border border-slate-200 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold text-slate-700 text-sm">
+          <div class="relative">
+            <label class="text-[10px] md:text-xs font-black text-slate-500 uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-amber-500"></i> Năm học</label>
+            <div class="relative mt-1.5">
+              <i data-lucide="calendar-days" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5 pointer-events-none"></i>
+              <input type="text" id="set-year" class="w-full pl-11 pr-4 py-3 border border-slate-200 rounded-2xl bg-slate-50/50 focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none font-bold text-slate-700 text-sm transition-all duration-200">
+            </div>
           </div>
-          <div>
-            <label class="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Khẩu hiệu</label>
-            <input type="text" id="set-slogan" class="w-full mt-1.5 px-3 md:px-4 py-2.5 border border-slate-200 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none font-bold text-slate-700 text-sm">
+          <div class="relative">
+            <label class="text-[10px] md:text-xs font-black text-slate-500 uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="sparkles" class="w-3.5 h-3.5 text-purple-500"></i> Khẩu hiệu</label>
+            <div class="relative mt-1.5">
+              <i data-lucide="quote" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5 pointer-events-none"></i>
+              <input type="text" id="set-slogan" class="w-full pl-11 pr-4 py-3 border border-slate-200 rounded-2xl bg-slate-50/50 focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none font-bold text-slate-700 text-sm transition-all duration-200">
+            </div>
           </div>
         </div>
       </div>
       
       <!-- Actions -->
-      <div class="flex gap-2.5">
-         <button onclick="teacherSelfChangePassword()" class="bg-amber-100 hover:bg-amber-200 text-amber-800 px-4 py-3 rounded-xl font-bold transition flex items-center justify-center gap-1.5 text-xs"><i data-lucide="key-round" class="w-4 h-4"></i> Đổi mật khẩu</button>
-         <button onclick="saveTeacherInfoModal()" class="flex-1 bg-theme-grad text-white font-black py-3 rounded-xl hover:scale-[1.02] transition shadow-lg text-xs uppercase tracking-wider">Lưu thay đổi</button>
+      <div class="flex gap-3">
+         <button onclick="teacherSelfChangePassword()" class="bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200/50 rounded-2xl px-5 py-3.5 font-bold transition flex items-center justify-center gap-2 text-sm shadow-sm active:scale-[0.98]">
+           <i data-lucide="key-round" class="w-4 h-4"></i> Đổi mật khẩu
+         </button>
+         <button onclick="saveTeacherInfoModal()" class="flex-1 bg-theme-grad text-white font-black py-3.5 rounded-2xl hover:scale-[1.01] active:scale-[0.99] transition shadow-lg hover:shadow-indigo-500/20 text-sm uppercase tracking-wider flex items-center justify-center gap-2">
+           <i data-lucide="check" class="w-4 h-4"></i> Lưu thay đổi
+         </button>
       </div>
     </div>
   </div>
