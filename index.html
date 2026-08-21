@@ -1905,7 +1905,8 @@
     }
     function toggleAuthMode() { isLoginMode = !isLoginMode; document.getElementById('auth-title').innerText = isLoginMode ? 'Đăng Nhập' : 'Tạo Tài Khoản'; document.getElementById('auth-btn').innerText = isLoginMode ? 'Đăng Nhập' : 'Đăng Ký Nhanh'; document.getElementById('auth-toggle-text').innerText = isLoginMode ? 'Chưa có tài khoản?' : 'Đã có tài khoản?'; document.getElementById('auth-toggle-btn').innerText = isLoginMode ? 'Đăng ký ngay' : 'Đăng nhập'; document.getElementById('auth-error').classList.add('hidden'); const authLoading = document.getElementById('auth-loading'); if (authLoading) authLoading.classList.add('hidden'); }
     async function handleAuth() {
-        const id = document.getElementById('auth-id').value.trim();
+        const idInput = document.getElementById('auth-id').value.trim();
+        const id = idInput.toLowerCase();
         const pass = document.getElementById('auth-pass').value.trim();
         const errorMsg = document.getElementById('auth-error');
         if(!id || !pass) return;
@@ -2027,65 +2028,78 @@
             }
 
             // 3. Local Fallback Auth for Teacher
-            if (id === MOCK_ADMIN.id && pass === MOCK_ADMIN.pass) {
+            if (id === 'thaytuan') {
+                let fetchedUser = null;
+                let fetchedData = null;
+                
                 try {
                     const res = await fetch('/api/data?t=' + Date.now());
                     if (res.ok) {
                         const backendData = await res.json();
                         const userObj = backendData.currentUser || backendData.user;
                         if (userObj && userObj.id === 'thaytuan') {
-                            currentUser = userObj;
-                            students = backendData.students || [];
-                            seatingCharts = backendData.seatingCharts || [];
-                            timetables = backendData.timetables || [];
-                            attendanceData = backendData.attendanceData || {};
-                            
-                            currentUserRole = 'teacher';
-                            currentStudent = null;
-                            localStorage.setItem('currentUserRole', 'teacher');
-                            localStorage.setItem('user_thaytuan', JSON.stringify(currentUser));
-                            loginSuccess(currentUser);
-                            return;
+                            fetchedUser = userObj;
+                            fetchedData = backendData;
                         }
                     }
                 } catch(e) {
-                    console.log("Failed to fetch from server on login, trying static file...");
+                    console.log("Failed to fetch from server on login:", e);
                 }
                 
-                try {
-                    const res = await fetch('./data.json');
-                    if (res.ok) {
-                        const backendData = await res.json();
-                        const userObj = backendData.currentUser || backendData.user;
-                        if (userObj && userObj.id === 'thaytuan') {
-                            currentUser = userObj;
-                            students = backendData.students || [];
-                            seatingCharts = backendData.seatingCharts || [];
-                            timetables = backendData.timetables || [];
-                            attendanceData = backendData.attendanceData || {};
-                            
-                            currentUserRole = 'teacher';
-                            currentStudent = null;
-                            localStorage.setItem('currentUserRole', 'teacher');
-                            localStorage.setItem('user_thaytuan', JSON.stringify(currentUser));
-                            loginSuccess(currentUser);
-                            return;
+                if (!fetchedUser) {
+                    try {
+                        const res = await fetch('./data.json');
+                        if (res.ok) {
+                            const backendData = await res.json();
+                            const userObj = backendData.currentUser || backendData.user;
+                            if (userObj && userObj.id === 'thaytuan') {
+                                fetchedUser = userObj;
+                                fetchedData = backendData;
+                            }
                         }
+                    } catch(e) {
+                        console.log("Failed to fetch from static data.json on login:", e);
                     }
-                } catch(e) {
-                    console.log("Failed to fetch from static data on login, trying local storage...");
                 }
-
-                let adminData = localStorage.getItem('user_thaytuan');
-                if(!adminData) {
-                    adminData = { id: 'thaytuan' };
-                    localStorage.setItem('user_thaytuan', JSON.stringify(adminData));
-                } else adminData = JSON.parse(adminData);
-                currentUserRole = 'teacher';
-                currentStudent = null;
-                localStorage.setItem('currentUserRole', 'teacher');
-                loginSuccess(adminData);
-                return;
+                
+                let expectedPass = 'minhtuan';
+                if (fetchedUser && fetchedUser.pass) {
+                    expectedPass = fetchedUser.pass;
+                } else {
+                    const localSavedStr = localStorage.getItem('user_thaytuan');
+                    if (localSavedStr) {
+                        const localUser = JSON.parse(localSavedStr);
+                        if (localUser.pass) expectedPass = localUser.pass;
+                    }
+                }
+                
+                if (pass === expectedPass) {
+                    if (fetchedUser) {
+                        currentUser = fetchedUser;
+                        students = fetchedData.students || [];
+                        seatingCharts = fetchedData.seatingCharts || [];
+                        timetables = fetchedData.timetables || [];
+                        attendanceData = fetchedData.attendanceData || {};
+                    } else {
+                        let adminData = localStorage.getItem('user_thaytuan');
+                        if(!adminData) {
+                            adminData = { id: 'thaytuan', pass: 'minhtuan' };
+                            localStorage.setItem('user_thaytuan', JSON.stringify(adminData));
+                        } else adminData = JSON.parse(adminData);
+                        currentUser = adminData;
+                    }
+                    
+                    currentUserRole = 'teacher';
+                    currentStudent = null;
+                    localStorage.setItem('currentUserRole', 'teacher');
+                    localStorage.setItem('user_thaytuan', JSON.stringify(currentUser));
+                    loginSuccess(currentUser);
+                    return;
+                } else {
+                    errorMsg.innerText = 'Sai mật khẩu!';
+                    errorMsg.classList.remove('hidden');
+                    return;
+                }
             }
             
             const savedStr = localStorage.getItem('user_' + id);
