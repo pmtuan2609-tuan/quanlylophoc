@@ -2580,9 +2580,22 @@
         if(!t) return; 
         const tbody = document.getElementById('timetable-tbody'); 
         const isStudent = (currentUserRole === 'student'); 
+        
+        const periodTimes = {
+            1: "07:00 - 07:45",
+            2: "07:45 - 08:30",
+            3: "08:55 - 09:40",
+            4: "09:40 - 10:25",
+            5: "10:25 - 11:10"
+        };
+        
         let html = ''; 
         for(let period = 1; period <= 5; period++) { 
-            html += `<tr><td class="border border-slate-200 p-2 font-black text-slate-400 bg-slate-50 w-20 text-[10px] md:text-xs tracking-widest uppercase">Tiết ${period}</td>`; 
+            html += `<tr>
+                <td class="border border-slate-200 p-2 font-black bg-slate-50 w-24 text-center">
+                    <div class="text-slate-500 font-extrabold text-[10px] md:text-xs tracking-widest uppercase">Tiết ${period}</div>
+                    <div class="text-[9px] text-slate-400 font-bold mt-0.5 whitespace-nowrap">${periodTimes[period]}</div>
+                </td>`; 
             for(let day = 2; day <= 7; day++) { 
                 const key = `d${day}_p${period}`; 
                 const val = t.data[key] || ''; 
@@ -3502,11 +3515,11 @@
           }
           
           const periods = [
-              { num: 1, time: "07:30 - 08:10" },
-              { num: 2, time: "08:15 - 08:55" },
-              { num: 3, time: "09:10 - 09:50" },
-              { num: 4, time: "09:55 - 10:35" },
-              { num: 5, time: "10:40 - 11:20" }
+              { num: 1, time: "07:00 - 07:45" },
+              { num: 2, time: "07:45 - 08:30" },
+              { num: 3, time: "08:55 - 09:40" },
+              { num: 4, time: "09:40 - 10:25" },
+              { num: 5, time: "10:25 - 11:10" }
           ];
           
           let html = '';
