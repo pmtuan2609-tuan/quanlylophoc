@@ -2560,7 +2560,11 @@
     function selectModalSubject(subject) {
         document.getElementById('modal-period-subject').value = subject;
         const teachers = currentUser.subjectTeachers || {};
-        document.getElementById('modal-period-teacher').value = teachers[subject] || '';
+        const teacherName = teachers[subject] || '';
+        document.getElementById('modal-period-teacher').value = teacherName;
+        
+        savePeriodData(subject, teacherName);
+        closeModalUi('timetable-period-modal', 'timetable-period-content');
     }
     
     function savePeriodData(subject, teacher) {
