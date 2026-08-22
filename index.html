@@ -2459,11 +2459,38 @@
         if (sloganEl) sloganEl.innerText = currentUser.slogan; 
         let statCountEl = document.getElementById('stat-student-count'); 
         if (statCountEl) statCountEl.innerText = students.length; 
-        if(currentUser.avatar) document.getElementById('header-avatar').innerHTML = `<img src="${currentUser.avatar}" class="w-full h-full object-cover">`; 
+        const isStudent = (currentUserRole === 'student');
+        const headerAvatarEl = document.getElementById('header-avatar');
+        const headerAvatarWrapper = headerAvatarEl ? headerAvatarEl.parentElement : null;
+        if (headerAvatarEl) {
+            if (isStudent && currentStudent) {
+                if (headerAvatarWrapper) {
+                    headerAvatarWrapper.setAttribute('title', 'Đổi ảnh đại diện HS');
+                }
+                if (currentStudent.avatar) {
+                    headerAvatarEl.innerHTML = getAvatarHtml(currentStudent.avatar);
+                } else {
+                    const stName = currentStudent.name || 'Học sinh';
+                    const nameParts = stName.trim().split(/\s+/);
+                    const initials = nameParts.length > 1 
+                        ? (nameParts[0].charAt(0) + nameParts[nameParts.length - 1].charAt(0)).toUpperCase()
+                        : stName.substring(0, 2).toUpperCase();
+                    headerAvatarEl.innerHTML = initials;
+                }
+            } else {
+                if (headerAvatarWrapper) {
+                    headerAvatarWrapper.setAttribute('title', 'Đổi ảnh đại diện GV');
+                }
+                if (currentUser.avatar) {
+                    headerAvatarEl.innerHTML = `<img src="${currentUser.avatar}" class="w-full h-full object-cover">`;
+                } else {
+                    headerAvatarEl.innerHTML = 'GV';
+                }
+            }
+        }
         if(currentUser.cover) document.getElementById('cover-photo').style.backgroundImage = `url('${currentUser.cover}')`; 
         
         // Show/hide appropriate overview container based on role
-        const isStudent = (currentUserRole === 'student');
         const studentContainer = document.getElementById('student-overview-container');
         const teacherContainer = document.getElementById('teacher-overview-container');
         if (isStudent) {
@@ -2534,7 +2561,28 @@
         lucide.createIcons(); 
     }
     function handleCoverUpload(e) { const file = e.target.files[0]; if(!file) return; compressImage(file, 1200, 800, function(dataUrl) { currentUser.cover = dataUrl; if(saveUserToStorage()) { document.getElementById('cover-photo').style.backgroundImage = `url('${currentUser.cover}')`; const tCover = document.getElementById('teacher-banner-cover'); if (tCover) tCover.style.backgroundImage = `url('${currentUser.cover}')`; } }, 0.85); e.target.value = ''; }
-    function handleAvatarUpload(e) { const file = e.target.files[0]; if(!file) return; compressImage(file, 300, 300, function(dataUrl) { currentUser.avatar = dataUrl; if(saveUserToStorage()) updateUI(); }, 0.8); e.target.value = ''; }
+    function handleAvatarUpload(e) {
+        const file = e.target.files[0];
+        if(!file) return;
+        compressImage(file, 300, 300, function(dataUrl) {
+            if (currentUserRole === 'student' && currentStudent) {
+                const s = students.find(x => String(x.id) === String(currentStudent.id));
+                if (s) {
+                    s.avatar = dataUrl;
+                }
+                currentStudent.avatar = dataUrl;
+                localStorage.setItem('currentStudent', JSON.stringify(currentStudent));
+                if(saveUserToStorage()) {
+                    updateUI();
+                    renderAll();
+                }
+            } else {
+                currentUser.avatar = dataUrl;
+                if(saveUserToStorage()) updateUI();
+            }
+        }, 0.8);
+        e.target.value = '';
+    }
 
     // --- TIMETABLES ---
     function initTimetables() { 
@@ -4051,7 +4099,16 @@
         const avatarIcon = document.getElementById('sidebar-teacher-avatar-icon');
         if (avatarIcon) {
             if (isStudent && currentStudent) {
-                avatarIcon.innerHTML = getAvatarHtml(currentStudent.avatar);
+                if (currentStudent.avatar) {
+                    avatarIcon.innerHTML = getAvatarHtml(currentStudent.avatar);
+                } else {
+                    const stName = currentStudent.name || 'Học sinh';
+                    const nameParts = stName.trim().split(/\s+/);
+                    const initials = nameParts.length > 1 
+                        ? (nameParts[0].charAt(0) + nameParts[nameParts.length - 1].charAt(0)).toUpperCase()
+                        : stName.substring(0, 2).toUpperCase();
+                    avatarIcon.innerHTML = `<span class="font-bold text-[10px] text-white">${initials}</span>`;
+                }
             } else {
                 avatarIcon.innerHTML = `<i data-lucide="user" class="w-4 h-4 text-white"></i>`;
             }
