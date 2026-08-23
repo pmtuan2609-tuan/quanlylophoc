@@ -141,6 +141,22 @@
     #sidebar-class-logo:hover {
       transform: scale(1.08) rotate(-2deg);
     }
+
+    /* Hiệu ứng chuyển tab mượt mà */
+    @keyframes tabFadeIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.99) translateY(8px);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+    .tab-section:not(.hidden) {
+      animation: tabFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      will-change: transform, opacity;
+    }
   </style>
 </head>
 <body class="bg-[#f3f4f6] font-sans text-slate-800 h-screen flex relative overflow-hidden">
@@ -266,7 +282,7 @@
       </div>
     </header>
 
-    <div class="p-4 md:p-8 flex-1 overflow-y-auto custom-scrollbar relative">
+    <div id="tab-container" class="p-4 md:p-8 flex-1 overflow-y-auto custom-scrollbar relative">
       
       <!-- TAB TỔNG QUAN -->
       <section id="tab-overview" class="tab-section space-y-4 md:space-y-6">
@@ -2424,7 +2440,49 @@
         lucide.createIcons();
     }
     function toggleSidebar() { const sidebar = document.getElementById('main-sidebar'); const overlay = document.getElementById('mobile-overlay'); sidebar.classList.toggle('-translate-x-full'); overlay.classList.toggle('hidden'); }
-    function switchTab(tabId) { document.querySelectorAll('.tab-section').forEach(sec => sec.classList.add('hidden')); document.querySelectorAll('.tab-btn').forEach(btn => { btn.classList.remove('bg-theme-grad', 'text-white', 'shadow-lg', 'font-bold'); btn.classList.add('hover:bg-white/10', 'text-white/70'); }); document.getElementById(tabId).classList.remove('hidden'); const activeBtn = document.getElementById('btn-' + tabId); if(activeBtn) { activeBtn.classList.remove('hover:bg-white/10', 'text-white/70'); activeBtn.classList.add('bg-theme-grad', 'text-white', 'shadow-lg', 'font-bold'); } const titles = { 'tab-overview': 'Tổng Quan Lớp', 'tab-student-history': 'Nhật Ký Thi Đua Cá Nhân', 'tab-students': 'Danh Sách Lớp', 'tab-attendance': 'Điểm Danh Hàng Ngày', 'tab-timetable': 'Thời Khoá Biểu', 'tab-seating': 'Sơ Đồ Chỗ Ngồi', 'tab-notebook': 'Sổ Theo Dõi', 'tab-wheel': 'Vòng Quay May Mắn', 'tab-praise': 'Tuyên Dương', 'tab-points': 'Thành Tích', 'tab-gifts': 'Quà Tặng', 'tab-settings': 'Cài Đặt & Giao Diện' }; document.getElementById('header-title').innerText = titles[tabId] || 'Hệ Thống'; if(tabId === 'tab-wheel') handleModeChange(); if(window.innerWidth < 1024) toggleSidebar(); }
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-section').forEach(sec => sec.classList.add('hidden'));
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('bg-theme-grad', 'text-white', 'shadow-lg', 'font-bold');
+            btn.classList.add('hover:bg-white/10', 'text-white/70');
+        });
+        
+        const activeSec = document.getElementById(tabId);
+        if (activeSec) {
+            activeSec.classList.remove('hidden');
+        }
+
+        // Reset scroll position to top
+        const tabContainer = document.getElementById('tab-container');
+        if (tabContainer) {
+            tabContainer.scrollTop = 0;
+        }
+
+        const activeBtn = document.getElementById('btn-' + tabId);
+        if(activeBtn) {
+            activeBtn.classList.remove('hover:bg-white/10', 'text-white/70');
+            activeBtn.classList.add('bg-theme-grad', 'text-white', 'shadow-lg', 'font-bold');
+        }
+        
+        const titles = {
+            'tab-overview': 'Tổng Quan Lớp',
+            'tab-student-history': 'Nhật Ký Thi Đua Cá Nhân',
+            'tab-students': 'Danh Sách Lớp',
+            'tab-attendance': 'Điểm Danh Hàng Ngày',
+            'tab-timetable': 'Thời Khoá Biểu',
+            'tab-seating': 'Sơ Đồ Chỗ Ngồi',
+            'tab-notebook': 'Sổ Theo Dõi',
+            'tab-wheel': 'Vòng Quay May Mắn',
+            'tab-praise': 'Tuyên Dương',
+            'tab-points': 'Thành Tích',
+            'tab-gifts': 'Quà Tặng',
+            'tab-settings': 'Cài Đặt & Giao Diện'
+        };
+        
+        document.getElementById('header-title').innerText = titles[tabId] || 'Hệ Thống';
+        if(tabId === 'tab-wheel') handleModeChange();
+        if(window.innerWidth < 1024) toggleSidebar();
+    }
     let isClockStarted = false;
     function startClockOnce() {
         if (isClockStarted) return;
