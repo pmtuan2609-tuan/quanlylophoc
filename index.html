@@ -662,8 +662,15 @@
       <!-- TAB THỜI KHOÁ BIỂU -->
       <section id="tab-timetable" class="tab-section hidden space-y-4 h-full flex-col">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-slate-100 shrink-0 gap-4">
-           <h3 class="font-bold text-slate-700 text-base md:text-lg flex items-center gap-2 whitespace-nowrap"><i data-lucide="table" class="w-5 h-5 text-blue-500"></i> Thời Khóa Biểu</h3>
-           <div class="flex flex-wrap items-center gap-2 md:gap-3 w-full sm:w-auto">
+           <div class="flex flex-wrap items-center gap-3">
+              <h3 class="font-bold text-slate-700 text-base md:text-lg flex items-center gap-2 whitespace-nowrap"><i data-lucide="table" class="w-5 h-5 text-blue-500"></i> Thời Khóa Biểu</h3>
+              <!-- Toggle buttons for Teacher ONLY -->
+              <div id="tkb-mode-toggle" class="hidden items-center bg-slate-100 p-1 rounded-xl">
+                 <button onclick="setTkbMode('class')" id="btn-tkb-mode-class" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-slate-800 shadow-sm">TKB Lớp</button>
+                 <button onclick="setTkbMode('teacher')" id="btn-tkb-mode-teacher" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500 hover:text-slate-800">TKB GV</button>
+              </div>
+           </div>
+           <div id="class-timetable-controls" class="flex flex-wrap items-center gap-2 md:gap-3 w-full sm:w-auto">
              <select id="timetable-select" class="flex-1 sm:flex-none border border-slate-200 rounded-xl px-3 md:px-4 py-2.5 text-xs md:text-sm bg-slate-50 ring-theme font-bold text-slate-700 outline-none cursor-pointer" onchange="changeTimetable()"></select>
              <button id="btn-use-timetable" onclick="setActiveTimetable()" class="bg-emerald-50 text-emerald-600 hover:bg-emerald-100 px-3 md:px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1 border border-emerald-100 shadow-sm whitespace-nowrap"><i data-lucide="check" class="w-4 h-4"></i> Áp dụng</button>
              <button onclick="addTimetable()" class="bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 md:px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1 border border-blue-100 shadow-sm whitespace-nowrap"><i data-lucide="plus" class="w-4 h-4"></i> Thêm TKB</button>
@@ -986,7 +993,7 @@
     <div class="bg-white rounded-[2rem] p-6 md:p-8 w-full max-w-lg shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col border border-white/20" id="timetable-period-content">
       <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
         <div>
-          <h3 class="text-lg md:text-xl font-black text-slate-800 tracking-tight">Chọn môn học</h3>
+          <h3 id="timetable-period-modal-header" class="text-lg md:text-xl font-black text-slate-800 tracking-tight">Chọn môn học</h3>
           <p id="timetable-period-modal-title" class="text-xs text-slate-400 font-bold">Cập nhật tiết học</p>
         </div>
         <button onclick="closeModalUi('timetable-period-modal', 'timetable-period-content')" class="text-slate-400 hover:text-slate-600 bg-slate-50 p-2 rounded-full transition"><i data-lucide="x" class="w-4 h-4"></i></button>
@@ -994,7 +1001,7 @@
       
       <!-- Subjects Grid -->
       <div class="mb-4">
-        <label class="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wide block mb-2">Môn học theo CT GDPT 2018 (Cấp 3)</label>
+        <label id="timetable-period-modal-grid-label" class="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wide block mb-2">Môn học theo CT GDPT 2018 (Cấp 3)</label>
         <div class="grid grid-cols-3 gap-2 max-h-[220px] overflow-y-auto custom-scrollbar p-1" id="modal-subjects-list-grid">
           <!-- Dynamic buttons generated via javascript -->
         </div>
@@ -1002,7 +1009,7 @@
       
       <!-- Fields -->
       <div class="mb-6">
-        <label class="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wide">Môn học (Nhập môn khác nếu không có ở trên)</label>
+        <label id="timetable-period-modal-input-label" class="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wide">Môn học (Nhập môn khác nếu không có ở trên)</label>
         <input type="text" id="modal-period-subject" class="w-full mt-1.5 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl ring-theme outline-none font-bold text-slate-800 text-sm" placeholder="Tên môn học...">
       </div>
       
@@ -1650,6 +1657,8 @@
     let seatingCharts = []; let currentChartId = null; let selectedSeatId = null; 
     let studentToEditAvatar = null; let tempReportImage = null; let hiddenWheelIds = [];
     let modalTimeouts = {}; let attendanceData = {}; let timetables = []; let currentTimetableId = null;
+    let teacherTimetable = { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} };
+    let currentTimetableViewMode = 'class'; // 'class' or 'teacher'
     let currentUserRole = 'teacher'; let currentStudent = null; let currentTeacherId = '';
 
     let isSupabaseConnected = null; // Holds { url, key } when connected, otherwise null
@@ -1801,6 +1810,7 @@
             localStorage.setItem('students_' + currentUser.id, JSON.stringify(students));
             localStorage.setItem('seating_' + currentUser.id, JSON.stringify(seatingCharts));
             localStorage.setItem('timetables_' + currentUser.id, JSON.stringify(timetables));
+            localStorage.setItem('teacherTimetable_' + currentUser.id, JSON.stringify(teacherTimetable));
             localStorage.setItem('attendance_' + currentUser.id, JSON.stringify(attendanceData));
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
             localStorage.setItem('user_' + currentUser.id, JSON.stringify(currentUser));
@@ -1812,6 +1822,7 @@
             students: students,
             seatingCharts: seatingCharts,
             timetables: timetables,
+            teacherTimetable: teacherTimetable,
             attendanceData: attendanceData
         };
 
@@ -1912,6 +1923,7 @@
                         students = cloudData.students || [];
                         seatingCharts = cloudData.seatingCharts || [];
                         timetables = cloudData.timetables || [];
+                        teacherTimetable = cloudData.teacherTimetable || { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} };
                         attendanceData = cloudData.attendanceData || {};
                         loaded = true;
                         
@@ -1937,6 +1949,7 @@
                         students = backendData.students || [];
                         seatingCharts = backendData.seatingCharts || [];
                         timetables = backendData.timetables || [];
+                        teacherTimetable = backendData.teacherTimetable || { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} };
                         attendanceData = backendData.attendanceData || {};
                         loaded = true;
                     }
@@ -1958,6 +1971,7 @@
                         students = backendData.students || [];
                         seatingCharts = backendData.seatingCharts || [];
                         timetables = backendData.timetables || [];
+                        teacherTimetable = backendData.teacherTimetable || { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} };
                         attendanceData = backendData.attendanceData || {};
                         loaded = true;
                     }
@@ -2034,6 +2048,7 @@
                             students = row.data.students || [];
                             seatingCharts = row.data.seatingCharts || [];
                             timetables = row.data.timetables || [];
+                            teacherTimetable = row.data.teacherTimetable || { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} };
                             attendanceData = row.data.attendanceData || {};
                             currentUserRole = 'teacher';
                             currentStudent = null;
@@ -2046,6 +2061,7 @@
                             localStorage.setItem('students_' + id, JSON.stringify(students));
                             localStorage.setItem('seating_' + id, JSON.stringify(seatingCharts));
                             localStorage.setItem('timetables_' + id, JSON.stringify(timetables));
+                            localStorage.setItem('teacherTimetable_' + id, JSON.stringify(teacherTimetable));
                             localStorage.setItem('attendance_' + id, JSON.stringify(attendanceData));
                             
                             loginSuccess(cloudUser);
@@ -2081,6 +2097,7 @@
                                     students = classStudents;
                                     seatingCharts = classroomData.seatingCharts || [];
                                     timetables = classroomData.timetables || [];
+                                    teacherTimetable = classroomData.teacherTimetable || { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} };
                                     attendanceData = classroomData.attendanceData || {};
                                     
                                     currentUserRole = 'student';
@@ -2094,6 +2111,7 @@
                                     localStorage.setItem('students_' + r.id, JSON.stringify(students));
                                     localStorage.setItem('seating_' + r.id, JSON.stringify(seatingCharts));
                                     localStorage.setItem('timetables_' + r.id, JSON.stringify(timetables));
+                                    localStorage.setItem('teacherTimetable_' + r.id, JSON.stringify(teacherTimetable));
                                     localStorage.setItem('attendance_' + r.id, JSON.stringify(attendanceData));
                                     
                                     const payload = {
@@ -2101,6 +2119,7 @@
                                         students: students,
                                         seatingCharts: seatingCharts,
                                         timetables: timetables,
+                                        teacherTimetable: teacherTimetable,
                                         attendanceData: attendanceData
                                     };
                                     callSupabaseRest('UPSERT', r.id, payload)
@@ -2182,7 +2201,14 @@
                         students = fetchedData.students || [];
                         seatingCharts = fetchedData.seatingCharts || [];
                         timetables = fetchedData.timetables || [];
+                        teacherTimetable = fetchedData.teacherTimetable || { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} };
                         attendanceData = fetchedData.attendanceData || {};
+                        
+                        localStorage.setItem('students_' + currentUser.id, JSON.stringify(students));
+                        localStorage.setItem('seating_' + currentUser.id, JSON.stringify(seatingCharts));
+                        localStorage.setItem('timetables_' + currentUser.id, JSON.stringify(timetables));
+                        localStorage.setItem('teacherTimetable_' + currentUser.id, JSON.stringify(teacherTimetable));
+                        localStorage.setItem('attendance_' + currentUser.id, JSON.stringify(attendanceData));
                     } else {
                         let adminData = localStorage.getItem('user_thaytuan');
                         if(!adminData) {
@@ -2236,6 +2262,7 @@
                             students = localStudents;
                             seatingCharts = JSON.parse(localStorage.getItem('seating_' + tId) || '[]');
                             timetables = JSON.parse(localStorage.getItem('timetables_' + tId) || '[]');
+                            teacherTimetable = JSON.parse(localStorage.getItem('teacherTimetable_' + tId) || '{"id":"teacher_tkb","name":"TKB Giáo viên","data":{}}');
                             attendanceData = JSON.parse(localStorage.getItem('attendance_' + tId) || '{}');
                             
                             currentUserRole = 'student';
@@ -2247,12 +2274,14 @@
                             localStorage.setItem('currentTeacherId', tId);
                             localStorage.setItem('currentUser', JSON.stringify(currentUser));
                             localStorage.setItem('students_' + tId, JSON.stringify(students));
+                            localStorage.setItem('teacherTimetable_' + tId, JSON.stringify(teacherTimetable));
                             
                             const payload = {
                                 currentUser: currentUser,
                                 students: students,
                                 seatingCharts: seatingCharts,
                                 timetables: timetables,
+                                teacherTimetable: teacherTimetable,
                                 attendanceData: attendanceData
                             };
                             fetch('/api/data', {
@@ -2647,6 +2676,36 @@
     }
 
     // --- TIMETABLES ---
+    function setTkbMode(mode) {
+        currentTimetableViewMode = mode;
+        const btnClass = document.getElementById('btn-tkb-mode-class');
+        const btnTeacher = document.getElementById('btn-tkb-mode-teacher');
+        const controls = document.getElementById('class-timetable-controls');
+        
+        if (mode === 'class') {
+            if (btnClass) {
+                btnClass.classList.add('bg-white', 'text-slate-800', 'shadow-sm');
+                btnClass.classList.remove('text-slate-500', 'hover:text-slate-800');
+            }
+            if (btnTeacher) {
+                btnTeacher.classList.remove('bg-white', 'text-slate-800', 'shadow-sm');
+                btnTeacher.classList.add('text-slate-500', 'hover:text-slate-800');
+            }
+            if (controls) controls.classList.remove('hidden');
+        } else {
+            if (btnClass) {
+                btnClass.classList.remove('bg-white', 'text-slate-800', 'shadow-sm');
+                btnClass.classList.add('text-slate-500', 'hover:text-slate-800');
+            }
+            if (btnTeacher) {
+                btnTeacher.classList.add('bg-white', 'text-slate-800', 'shadow-sm');
+                btnTeacher.classList.remove('text-slate-500', 'hover:text-slate-800');
+            }
+            if (controls) controls.classList.add('hidden');
+        }
+        applyTimetable();
+    }
+
     function initTimetables() { 
         const saved = localStorage.getItem('timetables_' + currentUser.id); 
         if (saved) timetables = JSON.parse(saved); 
@@ -2654,6 +2713,12 @@
             timetables = [{ id: 'tkb_' + Date.now(), name: 'TKB Lần 1', data: {} }]; 
             saveTimetables(); 
         } 
+        const savedTeacher = localStorage.getItem('teacherTimetable_' + currentUser.id);
+        if (savedTeacher) {
+            teacherTimetable = JSON.parse(savedTeacher);
+        } else {
+            teacherTimetable = { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} };
+        }
         currentTimetableId = currentUser.activeTimetableId || timetables[0].id; 
         if (!timetables.some(t => t.id === currentTimetableId)) {
             currentTimetableId = timetables[0].id;
@@ -2729,13 +2794,52 @@
         renderOverview();
         showModal('success', 'Thành công', `Đã áp dụng TKB "${timetables.find(t => t.id === currentTimetableId).name}" cho toàn hệ thống!`);
     }
+    function getPastelColorClass(str) {
+        if (!str) return 'bg-white text-slate-700 border-slate-100';
+        
+        const cleanStr = str.trim().toLowerCase();
+        if (cleanStr === '...' || cleanStr === '') return 'bg-white text-slate-700 border-slate-100';
+        
+        let hash = 0;
+        for (let i = 0; i < cleanStr.length; i++) {
+            hash = cleanStr.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        
+        const palettes = [
+            'bg-rose-50 text-rose-700 border-rose-100',
+            'bg-amber-50 text-amber-700 border-amber-100',
+            'bg-emerald-50 text-emerald-700 border-emerald-100',
+            'bg-blue-50 text-blue-700 border-blue-100',
+            'bg-indigo-50 text-indigo-700 border-indigo-100',
+            'bg-violet-50 text-violet-700 border-violet-100',
+            'bg-teal-50 text-teal-700 border-teal-100',
+            'bg-cyan-50 text-cyan-700 border-cyan-100',
+            'bg-orange-50 text-orange-700 border-orange-100',
+            'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-100',
+            'bg-pink-50 text-pink-700 border-pink-100',
+            'bg-sky-50 text-sky-700 border-sky-100',
+            'bg-lime-50 text-lime-700 border-lime-100'
+        ];
+        
+        const index = Math.abs(hash) % palettes.length;
+        return palettes[index];
+    }
+
     function applyTimetable() { 
-        const t = timetables.find(x => x.id === currentTimetableId); 
+        let t;
+        if (currentTimetableViewMode === 'teacher') {
+            t = teacherTimetable;
+        } else {
+            t = timetables.find(x => x.id === currentTimetableId);
+        }
         if(!t) return; 
         const tbody = document.getElementById('timetable-tbody'); 
         const isStudent = (currentUserRole === 'student'); 
         const allowedTkbRoles = ["lớp trưởng", "lớp phó học tập"];
-        const canEditTkb = !isStudent || (isStudent && currentStudent && currentStudent.role && allowedTkbRoles.includes(currentStudent.role.toLowerCase().trim()));
+        let canEditTkb = !isStudent || (isStudent && currentStudent && currentStudent.role && allowedTkbRoles.includes(currentStudent.role.toLowerCase().trim()));
+        if (currentTimetableViewMode === 'teacher') {
+            canEditTkb = (currentUserRole === 'teacher');
+        }
         
         const periodTimes = {
             1: "07:00 - 07:45",
@@ -2772,31 +2876,39 @@
                 
                 let subject = '';
                 let teacher = '';
-                if (val.includes('|')) {
-                    const parts = val.split('|');
-                    subject = parts[0] || '';
-                    teacher = parts[1] || '';
-                } else {
+                if (currentTimetableViewMode === 'teacher') {
                     subject = val;
-                    const teachers = currentUser.subjectTeachers || {};
-                    teacher = val ? (teachers[val] || '') : '';
+                    teacher = '';
+                } else {
+                    if (val.includes('|')) {
+                        const parts = val.split('|');
+                        subject = parts[0] || '';
+                        teacher = parts[1] || '';
+                    } else {
+                        subject = val;
+                        const teachers = currentUser.subjectTeachers || {};
+                        teacher = val ? (teachers[val] || '') : '';
+                    }
                 }
+                
+                const colorClass = subject ? getPastelColorClass(subject) : 'bg-white text-slate-700 border-slate-100';
+                const subtext = currentTimetableViewMode === 'teacher' ? '' : (teacher || (subject ? 'Chưa phân công' : ''));
                 
                 if (!canEditTkb) {
                     html += `
-                    <td class="border border-slate-100 p-2 bg-white text-center">
+                    <td class="border border-slate-100 p-2 ${colorClass} text-center">
                       <div class="flex flex-col justify-center min-h-[52px]">
-                        <span class="font-extrabold text-slate-700 text-xs md:text-sm">${subject || '...'}</span>
-                        <span class="font-medium text-slate-400 text-[9px] md:text-xs mt-0.5">${teacher || ''}</span>
+                        <span class="font-extrabold text-xs md:text-sm">${subject || '...'}</span>
+                        <span class="font-medium text-[9px] md:text-xs mt-0.5 ${subject ? 'text-slate-500/80' : 'text-slate-400'}">${subtext}</span>
                       </div>
                     </td>`;
                 } else {
                     html += `
-                    <td onclick="openPeriodModal('${key}', ${day}, ${period})" class="border border-slate-100 p-2 bg-white hover:bg-slate-50 transition-all cursor-pointer group">
+                    <td onclick="openPeriodModal('${key}', ${day}, ${period})" class="border border-slate-100 p-2 ${colorClass} hover:opacity-90 transition-all cursor-pointer group">
                       <div class="flex flex-col justify-center min-h-[52px] relative">
-                        <span class="font-extrabold text-slate-700 text-xs md:text-sm group-hover:text-theme transition-colors">${subject || '...'}</span>
-                        <span class="font-medium text-slate-400 text-[9px] md:text-xs mt-0.5">${teacher || (subject ? 'Chưa phân công' : '')}</span>
-                        <div class="absolute inset-0 border-2 border-dashed border-slate-200 rounded-xl opacity-0 group-hover:opacity-100 transition duration-200 flex items-center justify-center bg-slate-50/90 gap-1">
+                        <span class="font-extrabold text-xs md:text-sm group-hover:text-theme transition-colors">${subject || '...'}</span>
+                        <span class="font-medium text-[9px] md:text-xs mt-0.5 ${subject ? 'text-slate-500/80' : 'text-slate-400'}">${subtext}</span>
+                        <div class="absolute inset-0 border-2 border-dashed border-slate-300 rounded-xl opacity-0 group-hover:opacity-100 transition duration-200 flex items-center justify-center bg-slate-50/95 gap-1">
                           <i data-lucide="edit-3" class="w-3.5 h-3.5 text-theme"></i>
                           <span class="text-[9px] font-black text-theme uppercase tracking-wider">Sửa</span>
                         </div>
@@ -2813,10 +2925,17 @@
     let activeEditCellKey = null;
     function openPeriodModal(key, day, period) {
         activeEditCellKey = key;
-        const t = timetables.find(x => x.id === currentTimetableId);
-        if(!t) return;
+        const isTeacherMode = (currentTimetableViewMode === 'teacher');
         
-        const val = t.data[key] || '';
+        let val = '';
+        if (isTeacherMode) {
+            val = teacherTimetable.data[key] || '';
+        } else {
+            const t = timetables.find(x => x.id === currentTimetableId);
+            if(!t) return;
+            val = t.data[key] || '';
+        }
+        
         let subject = '';
         if (val.includes('|')) {
             subject = val.split('|')[0] || '';
@@ -2828,16 +2947,48 @@
         document.getElementById('timetable-period-modal-title').innerText = `${periodLabel} - Thứ ${day}`;
         document.getElementById('modal-period-subject').value = subject;
         
-        const grid = document.getElementById('modal-subjects-list-grid');
-        const subjects = [
-            "Toán", "Văn", "Anh", "Lý", "Hóa", "Sinh", 
-            "Sử", "Địa", "GDKT-PL", "Tin", "Công nghệ", 
-            "HĐTN", "SHDC", "SHCN"
-        ];
+        const headerEl = document.getElementById('timetable-period-modal-header');
+        const gridLabelEl = document.getElementById('timetable-period-modal-grid-label');
+        const inputLabelEl = document.getElementById('timetable-period-modal-input-label');
+        const inputEl = document.getElementById('modal-period-subject');
         
-        grid.innerHTML = subjects.map(sub => {
-            return `<button onclick="selectModalSubject('${sub}')" class="bg-slate-50 hover:bg-theme-light border border-slate-200 rounded-xl px-2 py-2 text-center text-xs font-black text-slate-700 hover:text-theme transition truncate" title="${sub}">${sub}</button>`;
-        }).join('');
+        const grid = document.getElementById('modal-subjects-list-grid');
+        
+        if (isTeacherMode) {
+            if (headerEl) headerEl.innerText = "Chọn lớp học";
+            if (gridLabelEl) gridLabelEl.innerText = "Gợi ý lớp học";
+            if (inputLabelEl) inputLabelEl.innerText = "Lớp học (Nhập lớp khác nếu không có ở trên)";
+            if (inputEl) inputEl.placeholder = "Tên lớp học... (ví dụ: 10A1)";
+            
+            const classes = [
+                "10A1", "10A2", "10A3", "10A4", "10A5", 
+                "11A1", "11A2", "11A3", "11A4", "11A5",
+                "12A1", "12A2", "12A3", "12A4", "12A5"
+            ];
+            const ownClass = currentUser.className;
+            if (ownClass && !classes.includes(ownClass)) {
+                classes.unshift(ownClass);
+            }
+            
+            grid.innerHTML = classes.map(cls => {
+                return `<button onclick="selectModalSubject('${cls}')" class="bg-slate-50 hover:bg-theme-light border border-slate-200 rounded-xl px-2 py-2 text-center text-xs font-black text-slate-700 hover:text-theme transition truncate" title="${cls}">${cls}</button>`;
+            }).join('');
+        } else {
+            if (headerEl) headerEl.innerText = "Chọn môn học";
+            if (gridLabelEl) gridLabelEl.innerText = "Môn học theo CT GDPT 2018 (Cấp 3)";
+            if (inputLabelEl) inputLabelEl.innerText = "Môn học (Nhập môn khác nếu không có ở trên)";
+            if (inputEl) inputEl.placeholder = "Tên môn học...";
+            
+            const subjects = [
+                "Toán", "Văn", "Anh", "Lý", "Hóa", "Sinh", 
+                "Sử", "Địa", "GDKT-PL", "Tin", "Công nghệ", 
+                "HĐTN", "SHDC", "SHCN"
+            ];
+            
+            grid.innerHTML = subjects.map(sub => {
+                return `<button onclick="selectModalSubject('${sub}')" class="bg-slate-50 hover:bg-theme-light border border-slate-200 rounded-xl px-2 py-2 text-center text-xs font-black text-slate-700 hover:text-theme transition truncate" title="${sub}">${sub}</button>`;
+            }).join('');
+        }
         
         document.getElementById('btn-period-clear').onclick = () => {
             savePeriodData('');
@@ -2861,12 +3012,21 @@
     }
     
     function savePeriodData(subject) {
-        const t = timetables.find(x => x.id === currentTimetableId);
-        if(t && activeEditCellKey) {
-            t.data[activeEditCellKey] = subject;
-            saveTimetables();
-            applyTimetable();
-            renderOverview();
+        if (activeEditCellKey) {
+            if (currentTimetableViewMode === 'teacher') {
+                teacherTimetable.data[activeEditCellKey] = subject;
+                saveTimetables();
+                applyTimetable();
+                renderOverview();
+            } else {
+                const t = timetables.find(x => x.id === currentTimetableId);
+                if(t) {
+                    t.data[activeEditCellKey] = subject;
+                    saveTimetables();
+                    applyTimetable();
+                    renderOverview();
+                }
+            }
         }
     }
     
@@ -4107,8 +4267,8 @@
 
     // --- Quản Lý Hệ Thống ---
     function resetAllPoints() { showModal('confirm', 'Reset Toàn Bộ Điểm', 'CẢNH BÁO: Đặt điểm của TOÀN BỘ học sinh về 0, đồng thời xóa sạch lịch sử đánh giá. Phù hợp khi bắt đầu Học Kỳ mới. Bạn chắc chắn chứ?', () => { students.forEach(s => { s.points = 0; s.history = []; }); saveAppData(); renderAll(); setTimeout(() => showModal('success', 'Hoàn tất', 'Tất cả điểm số và lịch sử đã được đặt về 0.'), 350); }); }
-    function exportData() { const data = { user: currentUser, students: students, seatingCharts: seatingCharts, timetables: timetables, attendanceData: attendanceData }; const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data)); const downloadAnchorNode = document.createElement('a'); downloadAnchorNode.setAttribute("href", dataStr); downloadAnchorNode.setAttribute("download", `Data_LopHoc_${currentUser.className}.json`); document.body.appendChild(downloadAnchorNode); downloadAnchorNode.click(); downloadAnchorNode.remove(); showModal('success', 'Thành công', 'Đã lưu file dữ liệu (Backup) về máy!'); }
-    function importData(event) { const file = event.target.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = function(e) { try { const data = JSON.parse(e.target.result); const userObj = data.currentUser || data.user; if(userObj && data.students) { showModal('confirm', 'Khôi phục dữ liệu', 'Bạn có muốn GHI ĐÈ toàn bộ dữ liệu hiện tại bằng dữ liệu từ file Backup không?', () => { currentUser = userObj; students = data.students || []; seatingCharts = data.seatingCharts || []; timetables = data.timetables || []; attendanceData = data.attendanceData || {}; saveAppData(); initTimetables(); initSeatingCharts(); initAttendance(); renderAll(); updateUI(); setTimeout(()=>showModal('success', 'Thành công', 'Đã khôi phục dữ liệu thành công!'), 400); }); } else throw new Error("Invalid"); } catch(error) { showModal('error', 'Lỗi', 'File dữ liệu không hợp lệ.'); } }; reader.readAsText(file); event.target.value = ''; }
+    function exportData() { const data = { user: currentUser, students: students, seatingCharts: seatingCharts, timetables: timetables, teacherTimetable: teacherTimetable, attendanceData: attendanceData }; const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data)); const downloadAnchorNode = document.createElement('a'); downloadAnchorNode.setAttribute("href", dataStr); downloadAnchorNode.setAttribute("download", `Data_LopHoc_${currentUser.className}.json`); document.body.appendChild(downloadAnchorNode); downloadAnchorNode.click(); downloadAnchorNode.remove(); showModal('success', 'Thành công', 'Đã lưu file dữ liệu (Backup) về máy!'); }
+    function importData(event) { const file = event.target.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = function(e) { try { const data = JSON.parse(e.target.result); const userObj = data.currentUser || data.user; if(userObj && data.students) { showModal('confirm', 'Khôi phục dữ liệu', 'Bạn có muốn GHI ĐÈ toàn bộ dữ liệu hiện tại bằng dữ liệu từ file Backup không?', () => { currentUser = userObj; students = data.students || []; seatingCharts = data.seatingCharts || []; timetables = data.timetables || []; teacherTimetable = data.teacherTimetable || { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} }; attendanceData = data.attendanceData || {}; saveAppData(); initTimetables(); initSeatingCharts(); initAttendance(); renderAll(); updateUI(); setTimeout(()=>showModal('success', 'Thành công', 'Đã khôi phục dữ liệu thành công!'), 400); }); } else throw new Error("Invalid"); } catch(error) { showModal('error', 'Lỗi', 'File dữ liệu không hợp lệ.'); } }; reader.readAsText(file); event.target.value = ''; }
 
     // --- Xem Tất Cả Hoạt Động & Quản Trị Hệ Thống ---
     function openAllActivitiesModal() {
@@ -4163,6 +4323,18 @@
         const allowedStudentRoles = ["lớp trưởng", "lớp phó học tập", "bí thư", "lớp phó kỷ luật", "lớp phó kỉ luật"];
         const hasNotebookAccess = !isStudent || (isStudent && currentStudent && currentStudent.role && allowedStudentRoles.includes(currentStudent.role.toLowerCase().trim()));
         
+        const tkbModeToggle = document.getElementById('tkb-mode-toggle');
+        if (tkbModeToggle) {
+            if (isStudent) {
+                tkbModeToggle.classList.add('hidden');
+                tkbModeToggle.classList.remove('flex');
+                setTkbMode('class');
+            } else {
+                tkbModeToggle.classList.remove('hidden');
+                tkbModeToggle.classList.add('flex');
+            }
+        }
+
         const studentHistoryBtn = document.getElementById('btn-tab-student-history');
         if (studentHistoryBtn) {
             if (isStudent) studentHistoryBtn.classList.remove('hidden');
