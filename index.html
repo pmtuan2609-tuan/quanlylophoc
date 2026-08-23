@@ -714,6 +714,9 @@
             <button onclick="openNewChartModal()" class="text-theme bg-theme-light hover-bg-theme-light px-3 md:px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1 md:gap-2 shadow-sm whitespace-nowrap">
               <i data-lucide="plus" class="w-4 h-4"></i> Thêm mới
             </button>
+            <button id="btn-rename-chart" onclick="renameSeatingChart()" class="bg-amber-50 text-amber-600 hover:bg-amber-100 px-3 md:px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1 md:gap-2 shadow-sm whitespace-nowrap">
+              <i data-lucide="edit-3" class="w-4 h-4"></i> Đổi tên sơ đồ
+            </button>
           </div>
           <button id="btn-delete-chart" onclick="deleteCurrentChart()" class="w-full sm:w-auto flex justify-center text-rose-500 bg-rose-50 hover:bg-rose-100 px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold transition items-center gap-2 border border-rose-100 shadow-sm"><i data-lucide="trash-2" class="w-4 h-4"></i> Xóa sơ đồ</button>
         </div>
@@ -3324,8 +3327,39 @@
     function initSeatingCharts() { if(seatingCharts.length === 0) { seatingCharts.push({ id: Date.now().toString(), name: "Sơ đồ mặc định", layout: {} }); saveSeatingToStorage(); } currentChartId = seatingCharts[0].id; renderChartSelect(); applyChartLayout(); }
     function renderChartSelect() { const select = document.getElementById('seating-select'); if(select) { select.innerHTML = seatingCharts.map(c => `<option value="${c.id}">${c.name}</option>`).join(''); select.value = currentChartId; } const btnDelete = document.getElementById('btn-delete-chart'); if(btnDelete) btnDelete.classList.toggle('hidden', seatingCharts.length <= 1); }
     function changeSeatingChart() { currentChartId = document.getElementById('seating-select').value; applyChartLayout(); }
-    function openNewChartModal() { document.getElementById('new-chart-name').value = ''; openModalUi('new-chart-modal', 'new-chart-content'); }
-    function confirmCreateChart() { const name = document.getElementById('new-chart-name').value.trim(); if(!name) return showModal('warning', 'Thiếu thông tin', 'Vui lòng nhập tên sơ đồ!'); const newChart = { id: Date.now().toString(), name: name, layout: {} }; seatingCharts.push(newChart); saveSeatingToStorage(); currentChartId = newChart.id; renderChartSelect(); applyChartLayout(); closeModalUi('new-chart-modal', 'new-chart-content'); }
+    function openNewChartModal() {
+        const defaultName = `Sơ đồ lớp ${seatingCharts.length + 1}`;
+        showPrompt('Tạo Sơ Đồ Lớp Mới', 'Nhập tên cho sơ đồ lớp mới:', defaultName, (name) => {
+            const trimmedName = name ? name.trim() : '';
+            if (!trimmedName) {
+                showModal('error', 'Lỗi', 'Tên sơ đồ lớp không được để trống!');
+                return;
+            }
+            const newChart = { id: Date.now().toString(), name: trimmedName, layout: {} };
+            seatingCharts.push(newChart);
+            saveSeatingToStorage();
+            currentChartId = newChart.id;
+            renderChartSelect();
+            applyChartLayout();
+            showModal('success', 'Thành công', `Đã tạo sơ đồ "${trimmedName}"`);
+        });
+    }
+    function renameSeatingChart() {
+        const chart = seatingCharts.find(c => c.id === currentChartId);
+        if (!chart) return;
+        showPrompt('Đổi tên Sơ Đồ Lớp', 'Nhập tên mới cho sơ đồ lớp này:', chart.name, (newName) => {
+            const trimmedName = newName ? newName.trim() : '';
+            if (!trimmedName) {
+                showModal('error', 'Lỗi', 'Tên sơ đồ lớp không được để trống!');
+                return;
+            }
+            chart.name = trimmedName;
+            saveSeatingToStorage();
+            renderChartSelect();
+            applyChartLayout();
+            showModal('success', 'Thành công', `Đã đổi tên sơ đồ lớp thành "${trimmedName}"`);
+        });
+    }
     function deleteCurrentChart() { if(seatingCharts.length <= 1) return showModal('error', 'Không thể xóa', 'Bắt buộc phải có ít nhất 1 sơ đồ!'); showModal('confirm', 'Xác nhận xóa', 'Xóa sơ đồ lớp này?', () => { seatingCharts = seatingCharts.filter(c => c.id !== currentChartId); currentChartId = seatingCharts[0].id; saveSeatingToStorage(); renderChartSelect(); applyChartLayout(); }); }
     function saveSeatingToStorage() { saveAppData(); }
     
@@ -4272,6 +4306,11 @@
         if (delChartBtn) {
             if (isStudent) delChartBtn.classList.add('hidden');
             else delChartBtn.classList.remove('hidden');
+        }
+        const renameChartBtn = document.getElementById('btn-rename-chart');
+        if (renameChartBtn) {
+            if (isStudent) renameChartBtn.classList.add('hidden');
+            else renameChartBtn.classList.remove('hidden');
         }
         
         const actTitle = document.getElementById('overview-activities-title');
