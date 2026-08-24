@@ -229,6 +229,7 @@
 
       <nav class="mt-2 px-4 space-y-1.5 font-medium pb-6">
         <button onclick="switchTab('tab-overview')" id="btn-tab-overview" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition bg-theme-grad text-white shadow-lg font-bold"><i data-lucide="layout-dashboard" class="w-5 h-5"></i> Tổng quan</button>
+        <button onclick="switchTab('tab-announcements')" id="btn-tab-announcements" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70"><i data-lucide="bell" class="w-5 h-5 text-amber-300"></i> Bảng thông báo</button>
         <button onclick="switchTab('tab-student-history')" id="btn-tab-student-history" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70 hidden"><i data-lucide="award" class="w-5 h-5 text-amber-400"></i> Khen thưởng & Vi phạm</button>
         <button onclick="openMyProfile()" id="btn-tab-my-profile" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70 hidden"><i data-lucide="user-cog" class="w-5 h-5 text-teal-400"></i> Hồ sơ cá nhân</button>
         <button onclick="switchTab('tab-students')" id="btn-tab-students" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70"><i data-lucide="users" class="w-5 h-5"></i> Danh sách học sinh</button>
@@ -340,6 +341,15 @@
                 </div>
               </div>
             </div>
+          </div>
+
+          <!-- THÔNG BÁO MỚI NHẤT -->
+          <div id="student-latest-announcements-card" class="bg-white p-5 md:p-6 rounded-3xl shadow-sm border border-slate-100 mt-4 md:mt-6 hidden">
+              <div class="flex justify-between items-center mb-4 border-b pb-3">
+                <h3 class="font-black flex items-center gap-2 text-slate-800 text-sm md:text-base"><i data-lucide="bell" class="w-5 h-5 text-amber-500 animate-swing"></i> THÔNG BÁO MỚI NHẤT</h3>
+                <button onclick="switchTab('tab-announcements')" class="text-xs font-bold text-theme bg-theme-light hover:bg-theme-light border border-theme/20 px-3 py-1.5 rounded-lg transition flex items-center gap-1"><i data-lucide="eye" class="w-3.5 h-3.5"></i> Xem tất cả</button>
+              </div>
+              <div id="student-latest-announcements-list" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
           </div>
 
           <div class="bg-white p-5 md:p-6 rounded-3xl shadow-sm border border-slate-100 mt-4 md:mt-6">
@@ -535,6 +545,15 @@
             </div>
           </div>
           
+          <!-- 4.5. LATEST ANNOUNCEMENTS -->
+          <div id="teacher-latest-announcements-card" class="bg-white p-5 md:p-6 rounded-[2rem] border border-slate-100 shadow-sm mt-4 md:mt-6 hidden">
+            <div class="flex justify-between items-center mb-4 border-b pb-3">
+              <h3 class="font-black flex items-center gap-2 text-slate-800 text-sm md:text-base"><i data-lucide="bell" class="w-5 h-5 text-amber-500 animate-swing"></i> THÔNG BÁO MỚI NHẤT</h3>
+              <button onclick="switchTab('tab-announcements')" class="text-xs font-bold text-theme bg-theme-light border border-theme/20 px-3 py-1.5 rounded-lg transition flex items-center gap-1">Quản lý thông báo <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></button>
+            </div>
+            <div id="teacher-latest-announcements-list" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
+          </div>
+
           <!-- 5. RECENT ACTIVITIES -->
           <div class="bg-white p-5 md:p-6 rounded-[2rem] border border-slate-100 shadow-sm">
             <div class="flex justify-between items-center mb-4 border-b pb-3">
@@ -830,6 +849,24 @@
                 </div>
             </div>
          </div>
+      </section>
+
+      <!-- TAB THÔNG BÁO -->
+      <section id="tab-announcements" class="tab-section hidden space-y-4 h-full flex flex-col">
+        <div class="flex justify-between items-center shrink-0 border-b pb-3">
+          <h3 class="font-black flex items-center gap-2 text-slate-800 text-base md:text-lg uppercase tracking-tight">
+            <i data-lucide="bell" class="w-6 h-6 text-amber-500"></i> Bảng Thông Báo Lớp Học
+          </h3>
+          <button id="btn-add-announcement" onclick="openAddAnnouncementModal()" class="bg-theme-grad text-white px-4 py-2 rounded-xl font-bold shadow-md hover:scale-[1.02] transition text-xs flex items-center gap-1.5 hidden">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i> Thêm thông báo
+          </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto custom-scrollbar pr-1">
+          <div id="announcements-list" class="space-y-4 py-2">
+            <!-- Rendered list of announcements -->
+          </div>
+        </div>
       </section>
 
       <!-- CÀI ĐẶT -->
@@ -1598,6 +1635,45 @@
     </div>
   </div>
 
+  <!-- Modal Thêm/Sửa Thông Báo -->
+  <div id="announcement-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[600] p-4 opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-[2rem] w-full max-w-lg shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col overflow-hidden border border-white/20" id="announcement-modal-content">
+      <!-- Header -->
+      <div class="bg-theme-grad p-5 md:p-6 text-white flex justify-between items-center relative overflow-hidden rounded-t-[2rem]">
+         <div class="absolute top-0 right-0 w-40 h-40 bg-white/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+         <div class="relative z-10 flex items-center gap-3">
+            <div class="w-10 h-10 bg-white/20 rounded-xl backdrop-blur-md shadow-inner border border-white/30 flex items-center justify-center shrink-0"><i data-lucide="bell" class="w-5 h-5 text-white"></i></div>
+            <div>
+               <h3 id="announcement-modal-title" class="font-black text-lg md:text-xl drop-shadow-sm leading-tight">Thêm thông báo mới</h3>
+               <p class="text-[9px] font-bold text-white/80 uppercase tracking-widest mt-0.5">Tạo thông báo hiển thị cho học sinh</p>
+            </div>
+         </div>
+         <button onclick="closeModalUi('announcement-modal', 'announcement-modal-content')" class="relative z-10 p-1.5 bg-black/10 hover:bg-black/20 rounded-full transition"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      <!-- Body -->
+      <div class="p-6 bg-white space-y-4">
+         <input type="hidden" id="announcement-id">
+         <div>
+            <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 flex items-center gap-1"><i data-lucide="type" class="w-3 h-3 text-emerald-500"></i> Tiêu đề</label>
+            <input type="text" id="announcement-title" class="w-full px-3 py-2 border-2 border-slate-100 rounded-xl outline-none focus:border-theme font-bold text-slate-800 bg-white text-xs" placeholder="Nhập tiêu đề thông báo...">
+         </div>
+         <div>
+            <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 flex items-center gap-1"><i data-lucide="align-left" class="w-3 h-3 text-blue-500"></i> Nội dung</label>
+            <textarea id="announcement-content" rows="6" class="w-full px-3 py-2 border-2 border-slate-100 rounded-xl outline-none focus:border-theme font-semibold text-slate-800 bg-white text-xs resize-none" placeholder="Nhập nội dung thông báo..."></textarea>
+         </div>
+         <div class="flex items-center gap-2">
+            <input type="checkbox" id="announcement-pin" class="w-4 h-4 text-theme focus:ring-theme border-slate-300 rounded cursor-pointer">
+            <label for="announcement-pin" class="text-xs font-bold text-slate-600 cursor-pointer">Ghim thông báo này lên đầu</label>
+         </div>
+      </div>
+      <!-- Footer -->
+      <div class="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-2">
+         <button onclick="closeModalUi('announcement-modal', 'announcement-modal-content')" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-xs transition">Hủy</button>
+         <button onclick="saveAnnouncement()" class="px-5 py-2 bg-theme-grad text-white font-bold rounded-xl text-xs transition shadow-md">Lưu thông báo</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ========================================== -->
   <!-- JAVASCRIPT ĐIỀU KHIỂN CHÍNH                  -->
   <!-- ========================================== -->
@@ -1660,6 +1736,7 @@
     let teacherTimetable = { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} };
     let currentTimetableViewMode = 'class'; // 'class' or 'teacher'
     let currentUserRole = 'teacher'; let currentStudent = null; let currentTeacherId = '';
+    let announcements = [];
 
     let isSupabaseConnected = null; // Holds { url, key } when connected, otherwise null
 
@@ -1812,6 +1889,7 @@
             localStorage.setItem('timetables_' + currentUser.id, JSON.stringify(timetables));
             localStorage.setItem('teacherTimetable_' + currentUser.id, JSON.stringify(teacherTimetable));
             localStorage.setItem('attendance_' + currentUser.id, JSON.stringify(attendanceData));
+            localStorage.setItem('announcements_' + currentUser.id, JSON.stringify(announcements));
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
             localStorage.setItem('user_' + currentUser.id, JSON.stringify(currentUser));
         } catch(e) {
@@ -1823,7 +1901,8 @@
             seatingCharts: seatingCharts,
             timetables: timetables,
             teacherTimetable: teacherTimetable,
-            attendanceData: attendanceData
+            attendanceData: attendanceData,
+            announcements: announcements
         };
 
         // Sync to Supabase if connected
@@ -1925,6 +2004,7 @@
                         timetables = cloudData.timetables || [];
                         teacherTimetable = cloudData.teacherTimetable || { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} };
                         attendanceData = cloudData.attendanceData || {};
+                        announcements = cloudData.announcements || [];
                         loaded = true;
                         
                         restoreRoleState();
@@ -1951,6 +2031,7 @@
                         timetables = backendData.timetables || [];
                         teacherTimetable = backendData.teacherTimetable || { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} };
                         attendanceData = backendData.attendanceData || {};
+                        announcements = backendData.announcements || [];
                         loaded = true;
                     }
                 }
@@ -1973,6 +2054,7 @@
                         timetables = backendData.timetables || [];
                         teacherTimetable = backendData.teacherTimetable || { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} };
                         attendanceData = backendData.attendanceData || {};
+                        announcements = backendData.announcements || [];
                         loaded = true;
                     }
                 }
@@ -2050,6 +2132,7 @@
                             timetables = row.data.timetables || [];
                             teacherTimetable = row.data.teacherTimetable || { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} };
                             attendanceData = row.data.attendanceData || {};
+                            announcements = row.data.announcements || [];
                             currentUserRole = 'teacher';
                             currentStudent = null;
                             currentTeacherId = '';
@@ -2063,6 +2146,7 @@
                             localStorage.setItem('timetables_' + id, JSON.stringify(timetables));
                             localStorage.setItem('teacherTimetable_' + id, JSON.stringify(teacherTimetable));
                             localStorage.setItem('attendance_' + id, JSON.stringify(attendanceData));
+                            localStorage.setItem('announcements_' + id, JSON.stringify(announcements));
                             
                             loginSuccess(cloudUser);
                             return;
@@ -2099,6 +2183,7 @@
                                     timetables = classroomData.timetables || [];
                                     teacherTimetable = classroomData.teacherTimetable || { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} };
                                     attendanceData = classroomData.attendanceData || {};
+                                    announcements = classroomData.announcements || [];
                                     
                                     currentUserRole = 'student';
                                     currentStudent = student;
@@ -2113,6 +2198,7 @@
                                     localStorage.setItem('timetables_' + r.id, JSON.stringify(timetables));
                                     localStorage.setItem('teacherTimetable_' + r.id, JSON.stringify(teacherTimetable));
                                     localStorage.setItem('attendance_' + r.id, JSON.stringify(attendanceData));
+                                    localStorage.setItem('announcements_' + r.id, JSON.stringify(announcements));
                                     
                                     const payload = {
                                         currentUser: currentUser,
@@ -2120,7 +2206,8 @@
                                         seatingCharts: seatingCharts,
                                         timetables: timetables,
                                         teacherTimetable: teacherTimetable,
-                                        attendanceData: attendanceData
+                                        attendanceData: attendanceData,
+                                        announcements: announcements
                                     };
                                     callSupabaseRest('UPSERT', r.id, payload)
                                         .then(() => console.log("Cloud student login count updated successfully"))
@@ -2203,12 +2290,14 @@
                         timetables = fetchedData.timetables || [];
                         teacherTimetable = fetchedData.teacherTimetable || { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} };
                         attendanceData = fetchedData.attendanceData || {};
+                        announcements = fetchedData.announcements || [];
                         
                         localStorage.setItem('students_' + currentUser.id, JSON.stringify(students));
                         localStorage.setItem('seating_' + currentUser.id, JSON.stringify(seatingCharts));
                         localStorage.setItem('timetables_' + currentUser.id, JSON.stringify(timetables));
                         localStorage.setItem('teacherTimetable_' + currentUser.id, JSON.stringify(teacherTimetable));
                         localStorage.setItem('attendance_' + currentUser.id, JSON.stringify(attendanceData));
+                        localStorage.setItem('announcements_' + currentUser.id, JSON.stringify(announcements));
                     } else {
                         let adminData = localStorage.getItem('user_thaytuan');
                         if(!adminData) {
@@ -2264,6 +2353,7 @@
                             timetables = JSON.parse(localStorage.getItem('timetables_' + tId) || '[]');
                             teacherTimetable = JSON.parse(localStorage.getItem('teacherTimetable_' + tId) || '{"id":"teacher_tkb","name":"TKB Giáo viên","data":{}}');
                             attendanceData = JSON.parse(localStorage.getItem('attendance_' + tId) || '{}');
+                            announcements = JSON.parse(localStorage.getItem('announcements_' + tId) || '[]');
                             
                             currentUserRole = 'student';
                             currentStudent = student;
@@ -2275,6 +2365,7 @@
                             localStorage.setItem('currentUser', JSON.stringify(currentUser));
                             localStorage.setItem('students_' + tId, JSON.stringify(students));
                             localStorage.setItem('teacherTimetable_' + tId, JSON.stringify(teacherTimetable));
+                            localStorage.setItem('announcements_' + tId, JSON.stringify(announcements));
                             
                             const payload = {
                                 currentUser: currentUser,
@@ -2282,7 +2373,8 @@
                                 seatingCharts: seatingCharts,
                                 timetables: timetables,
                                 teacherTimetable: teacherTimetable,
-                                attendanceData: attendanceData
+                                attendanceData: attendanceData,
+                                announcements: announcements
                             };
                             fetch('/api/data', {
                                 method: 'POST',
@@ -2416,6 +2508,7 @@
                     seatingCharts = cloudData.seatingCharts || [];
                     timetables = cloudData.timetables || [];
                     attendanceData = cloudData.attendanceData || {};
+                    announcements = cloudData.announcements || [];
                     loadedFromCloud = true;
                     console.log("Loaded student data from Supabase successfully!");
                 }
@@ -2430,6 +2523,8 @@
             students = savedStudents ? JSON.parse(savedStudents) : []; 
             const savedCharts = localStorage.getItem('seating_' + currentUser.id); 
             seatingCharts = savedCharts ? JSON.parse(savedCharts) : []; 
+            const savedAnnouncements = localStorage.getItem('announcements_' + currentUser.id);
+            announcements = savedAnnouncements ? JSON.parse(savedAnnouncements) : []; 
         }
         
         restoreRoleState();
@@ -2499,6 +2594,7 @@
         
         const titles = {
             'tab-overview': 'Tổng Quan Lớp',
+            'tab-announcements': 'Bảng Thông Báo',
             'tab-student-history': 'Nhật Ký Thi Đua Cá Nhân',
             'tab-students': 'Danh Sách Lớp',
             'tab-attendance': 'Điểm Danh Hàng Ngày',
@@ -4267,8 +4363,8 @@
 
     // --- Quản Lý Hệ Thống ---
     function resetAllPoints() { showModal('confirm', 'Reset Toàn Bộ Điểm', 'CẢNH BÁO: Đặt điểm của TOÀN BỘ học sinh về 0, đồng thời xóa sạch lịch sử đánh giá. Phù hợp khi bắt đầu Học Kỳ mới. Bạn chắc chắn chứ?', () => { students.forEach(s => { s.points = 0; s.history = []; }); saveAppData(); renderAll(); setTimeout(() => showModal('success', 'Hoàn tất', 'Tất cả điểm số và lịch sử đã được đặt về 0.'), 350); }); }
-    function exportData() { const data = { user: currentUser, students: students, seatingCharts: seatingCharts, timetables: timetables, teacherTimetable: teacherTimetable, attendanceData: attendanceData }; const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data)); const downloadAnchorNode = document.createElement('a'); downloadAnchorNode.setAttribute("href", dataStr); downloadAnchorNode.setAttribute("download", `Data_LopHoc_${currentUser.className}.json`); document.body.appendChild(downloadAnchorNode); downloadAnchorNode.click(); downloadAnchorNode.remove(); showModal('success', 'Thành công', 'Đã lưu file dữ liệu (Backup) về máy!'); }
-    function importData(event) { const file = event.target.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = function(e) { try { const data = JSON.parse(e.target.result); const userObj = data.currentUser || data.user; if(userObj && data.students) { showModal('confirm', 'Khôi phục dữ liệu', 'Bạn có muốn GHI ĐÈ toàn bộ dữ liệu hiện tại bằng dữ liệu từ file Backup không?', () => { currentUser = userObj; students = data.students || []; seatingCharts = data.seatingCharts || []; timetables = data.timetables || []; teacherTimetable = data.teacherTimetable || { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} }; attendanceData = data.attendanceData || {}; saveAppData(); initTimetables(); initSeatingCharts(); initAttendance(); renderAll(); updateUI(); setTimeout(()=>showModal('success', 'Thành công', 'Đã khôi phục dữ liệu thành công!'), 400); }); } else throw new Error("Invalid"); } catch(error) { showModal('error', 'Lỗi', 'File dữ liệu không hợp lệ.'); } }; reader.readAsText(file); event.target.value = ''; }
+    function exportData() { const data = { user: currentUser, students: students, seatingCharts: seatingCharts, timetables: timetables, teacherTimetable: teacherTimetable, attendanceData: attendanceData, announcements: announcements }; const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data)); const downloadAnchorNode = document.createElement('a'); downloadAnchorNode.setAttribute("href", dataStr); downloadAnchorNode.setAttribute("download", `Data_LopHoc_${currentUser.className}.json`); document.body.appendChild(downloadAnchorNode); downloadAnchorNode.click(); downloadAnchorNode.remove(); showModal('success', 'Thành công', 'Đã lưu file dữ liệu (Backup) về máy!'); }
+    function importData(event) { const file = event.target.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = function(e) { try { const data = JSON.parse(e.target.result); const userObj = data.currentUser || data.user; if(userObj && data.students) { showModal('confirm', 'Khôi phục dữ liệu', 'Bạn có muốn GHI ĐÈ toàn bộ dữ liệu hiện tại bằng dữ liệu từ file Backup không?', () => { currentUser = userObj; students = data.students || []; seatingCharts = data.seatingCharts || []; timetables = data.timetables || []; teacherTimetable = data.teacherTimetable || { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} }; attendanceData = data.attendanceData || {}; announcements = data.announcements || []; saveAppData(); initTimetables(); initSeatingCharts(); initAttendance(); renderAll(); updateUI(); setTimeout(()=>showModal('success', 'Thành công', 'Đã khôi phục dữ liệu thành công!'), 400); }); } else throw new Error("Invalid"); } catch(error) { showModal('error', 'Lỗi', 'File dữ liệu không hợp lệ.'); } }; reader.readAsText(file); event.target.value = ''; }
 
     // --- Xem Tất Cả Hoạt Động & Quản Trị Hệ Thống ---
     function openAllActivitiesModal() {
@@ -4348,6 +4444,7 @@
         
         const buttonConfig = {
             'btn-tab-overview': true,
+            'btn-tab-announcements': true,
             'btn-tab-student-history': isStudent,
             'btn-tab-my-profile': isStudent,
             'btn-tab-attendance': true,
@@ -4980,7 +5077,233 @@
         openModalUi('tracking-chart-modal', 'tracking-chart-content');
     }
 
-    function renderAll() { renderStudentTable(); renderStage(); renderOverview(); renderNotebook(); renderPraiseGrid(); applyChartLayout(); renderGiftsStore(); renderGiftsLog(); }
+    // --- ANNOUNCEMENTS LOGIC ---
+    function openAddAnnouncementModal() {
+        document.getElementById('announcement-id').value = '';
+        document.getElementById('announcement-title').value = '';
+        document.getElementById('announcement-content').value = '';
+        document.getElementById('announcement-pin').checked = false;
+        document.getElementById('announcement-modal-title').innerText = 'Thêm thông báo mới';
+        openModalUi('announcement-modal', 'announcement-modal-content');
+    }
+
+    function openEditAnnouncementModal(id) {
+        const ann = announcements.find(x => x.id === id);
+        if (!ann) return;
+        document.getElementById('announcement-id').value = ann.id;
+        document.getElementById('announcement-title').value = ann.title || '';
+        document.getElementById('announcement-content').value = ann.content || '';
+        document.getElementById('announcement-pin').checked = !!ann.pin;
+        document.getElementById('announcement-modal-title').innerText = 'Sửa thông báo';
+        openModalUi('announcement-modal', 'announcement-modal-content');
+    }
+
+    function saveAnnouncement() {
+        const id = document.getElementById('announcement-id').value;
+        const title = document.getElementById('announcement-title').value.trim();
+        const content = document.getElementById('announcement-content').value.trim();
+        const pin = document.getElementById('announcement-pin').checked;
+        
+        if (!title || !content) {
+            return showModal('warning', 'Lỗi', 'Vui lòng điền đầy đủ tiêu đề và nội dung.');
+        }
+        
+        if (id) {
+            // Edit existing
+            const ann = announcements.find(x => String(x.id) === String(id));
+            if (ann) {
+                ann.title = title;
+                ann.content = content;
+                ann.pin = pin;
+            }
+        } else {
+            // Create new
+            const dateNow = new Date();
+            const dateStr = `${dateNow.getDate().toString().padStart(2,'0')}/${(dateNow.getMonth()+1).toString().padStart(2,'0')}/${dateNow.getFullYear()} ${dateNow.getHours().toString().padStart(2,'0')}:${dateNow.getMinutes().toString().padStart(2,'0')}`;
+            const authorName = currentUser ? (currentUser.gender === 'Nữ' ? 'Cô ' : 'Thầy ') + (currentUser.teacherName || 'chủ nhiệm') : 'GVCN';
+            const newAnn = {
+                id: Date.now(),
+                title: title,
+                content: content,
+                pin: pin,
+                date: dateStr,
+                dateCompare: Date.now(),
+                author: authorName
+            };
+            announcements.push(newAnn);
+        }
+        
+        saveAppData();
+        renderAnnouncements();
+        renderLatestAnnouncements();
+        closeModalUi('announcement-modal', 'announcement-modal-content');
+        showModal('success', 'Thành công', 'Đã lưu thông báo thành công!');
+    }
+
+    function deleteAnnouncement(id) {
+        showModal('confirm', 'Xác nhận xóa', 'Bạn có chắc chắn muốn xóa thông báo này không?', () => {
+            announcements = announcements.filter(ann => ann.id !== id);
+            saveAppData();
+            renderAnnouncements();
+            renderLatestAnnouncements();
+        });
+    }
+
+    function togglePinAnnouncement(id) {
+        const ann = announcements.find(x => x.id === id);
+        if (ann) {
+            ann.pin = !ann.pin;
+            saveAppData();
+            renderAnnouncements();
+            renderLatestAnnouncements();
+        }
+    }
+
+    function renderAnnouncements() {
+        const listEl = document.getElementById('announcements-list');
+        if (!listEl) return;
+        
+        const addBtn = document.getElementById('btn-add-announcement');
+        if (addBtn) {
+            if (currentUserRole === 'teacher') addBtn.classList.remove('hidden');
+            else addBtn.classList.add('hidden');
+        }
+        
+        if (!announcements || announcements.length === 0) {
+            listEl.innerHTML = `
+                <div class="flex flex-col items-center justify-center py-20 text-slate-400 bg-white rounded-3xl border border-dashed border-slate-200 p-6 text-center shadow-sm">
+                    <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+                        <i data-lucide="bell-off" class="w-8 h-8 text-slate-400"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-700">Chưa có thông báo nào</h3>
+                    <p class="text-xs mt-1 font-medium text-slate-400">Các thông báo mới từ GVCN sẽ được hiển thị tại đây.</p>
+                </div>
+            `;
+            lucide.createIcons();
+            return;
+        }
+        
+        const sorted = [...announcements].sort((a, b) => {
+            if (a.pin && !b.pin) return -1;
+            if (!a.pin && b.pin) return 1;
+            return b.dateCompare - a.dateCompare || b.id - a.id;
+        });
+        
+        const isTeacher = (currentUserRole === 'teacher');
+        
+        listEl.innerHTML = sorted.map(ann => {
+            const pinBtnText = ann.pin ? 'Bỏ ghim' : 'Ghim lên đầu';
+            const pinIcon = ann.pin ? 'pin-off' : 'pin';
+            const pinBadge = ann.pin ? `
+                <span class="inline-flex items-center gap-1 bg-amber-100 text-amber-800 text-[10px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider shadow-sm">
+                    <i data-lucide="pin" class="w-2.5 h-2.5 fill-amber-800"></i> Đã ghim
+                </span>
+            ` : '';
+            
+            const teacherActions = isTeacher ? `
+                <div class="flex items-center gap-2 border-t border-slate-100 pt-3 mt-3">
+                    <button onclick="togglePinAnnouncement(${ann.id})" class="text-slate-500 hover:text-amber-600 transition text-[11px] font-bold flex items-center gap-1 bg-slate-50 hover:bg-amber-50 px-2.5 py-1.5 rounded-lg border border-slate-200/60" title="${pinBtnText}">
+                        <i data-lucide="${pinIcon}" class="w-3.5 h-3.5"></i> ${pinBtnText}
+                    </button>
+                    <button onclick="openEditAnnouncementModal(${ann.id})" class="text-slate-500 hover:text-blue-600 transition text-[11px] font-bold flex items-center gap-1 bg-slate-50 hover:bg-blue-50 px-2.5 py-1.5 rounded-lg border border-slate-200/60" title="Sửa thông báo">
+                        <i data-lucide="edit-2" class="w-3.5 h-3.5"></i> Sửa
+                    </button>
+                    <button onclick="deleteAnnouncement(${ann.id})" class="text-rose-500 hover:text-white hover:bg-rose-500 transition text-[11px] font-bold flex items-center gap-1 bg-rose-50 px-2.5 py-1.5 rounded-lg border border-rose-100/60 ml-auto" title="Xóa thông báo">
+                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Xóa
+                    </button>
+                </div>
+            ` : '';
+            
+            const formattedContent = (ann.content || '').replace(/\n/g, '<br>');
+            
+            return `
+                <div class="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm relative group hover:shadow-md transition-all duration-200">
+                    <div class="flex justify-between items-start gap-4 mb-2">
+                        <div class="space-y-1">
+                            <h4 class="font-black text-slate-800 text-sm md:text-base leading-tight">${ann.title}</h4>
+                            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-slate-400 font-semibold">
+                                <span class="flex items-center gap-1"><i data-lucide="user" class="w-3 h-3 text-slate-400"></i> ${ann.author || 'GVCN'}</span>
+                                <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3 text-slate-400"></i> ${ann.date}</span>
+                                ${pinBadge}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-xs md:text-sm text-slate-600 font-medium leading-relaxed mt-3 break-words">
+                        ${formattedContent}
+                    </div>
+                    ${teacherActions}
+                </div>
+            `;
+        }).join('');
+        lucide.createIcons();
+    }
+
+    function renderLatestAnnouncements() {
+        const studentListEl = document.getElementById('student-latest-announcements-list');
+        const teacherListEl = document.getElementById('teacher-latest-announcements-list');
+        
+        const renderListHtml = () => {
+            if (!announcements || announcements.length === 0) {
+                return `
+                    <div class="text-center text-slate-400 italic py-6 text-xs font-semibold col-span-3">
+                        Chưa có thông báo nào.
+                    </div>
+                `;
+            }
+            
+            const sorted = [...announcements].sort((a, b) => {
+                if (a.pin && !b.pin) return -1;
+                if (!a.pin && b.pin) return 1;
+                return b.dateCompare - a.dateCompare || b.id - a.id;
+            });
+            
+            const top3 = sorted.slice(0, 3);
+            
+            return top3.map(ann => {
+                const pinBadge = ann.pin ? `
+                    <span class="inline-flex items-center gap-0.5 bg-amber-100 text-amber-800 text-[9px] px-1.5 py-0.5 rounded font-black uppercase tracking-wider">
+                        <i data-lucide="pin" class="w-2.5 h-2.5 fill-amber-800"></i> Ghim
+                    </span>
+                ` : '';
+                return `
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100 flex flex-col gap-1.5 hover:bg-slate-100 hover:shadow-sm transition cursor-pointer" onclick="switchTab('tab-announcements')">
+                        <div class="flex justify-between items-start gap-3">
+                            <h5 class="font-bold text-slate-800 text-xs md:text-sm line-clamp-1">${ann.title}</h5>
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                ${pinBadge}
+                                <span class="text-[9px] text-slate-400 font-bold whitespace-nowrap">${ann.date.split(' ')[0]}</span>
+                            </div>
+                        </div>
+                        <p class="text-slate-500 font-medium text-xs line-clamp-2 leading-relaxed break-words">${ann.content}</p>
+                    </div>
+                `;
+            }).join('');
+        };
+        
+        const html = renderListHtml();
+        
+        if (studentListEl) {
+            studentListEl.innerHTML = html;
+            const card = document.getElementById('student-latest-announcements-card');
+            if (card) {
+                if (announcements && announcements.length > 0) card.classList.remove('hidden');
+                else card.classList.add('hidden');
+            }
+        }
+        
+        if (teacherListEl) {
+            teacherListEl.innerHTML = html;
+            const card = document.getElementById('teacher-latest-announcements-card');
+            if (card) {
+                if (announcements && announcements.length > 0) card.classList.remove('hidden');
+                else card.classList.add('hidden');
+            }
+        }
+        
+        lucide.createIcons();
+    }
+
+    function renderAll() { renderStudentTable(); renderStage(); renderOverview(); renderNotebook(); renderPraiseGrid(); applyChartLayout(); renderGiftsStore(); renderGiftsLog(); renderAnnouncements(); renderLatestAnnouncements(); }
   </script>
 </body>
 </html>
