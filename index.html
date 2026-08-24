@@ -5078,6 +5078,13 @@
     }
 
     // --- ANNOUNCEMENTS LOGIC ---
+    function linkify(text) {
+        if (!text) return '';
+        let replacedText = text.replace(/(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim, '<a href="$1" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="text-blue-500 hover:underline font-bold break-all">$1</a>');
+        replacedText = replacedText.replace(/(^|[^\/])(www\.[^\s\t\r\n]+)/gim, '$1<a href="http://$2" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="text-blue-500 hover:underline font-bold break-all">$2</a>');
+        return replacedText;
+    }
+
     function openAddAnnouncementModal() {
         document.getElementById('announcement-id').value = '';
         document.getElementById('announcement-title').value = '';
@@ -5214,7 +5221,7 @@
                 </div>
             ` : '';
             
-            const formattedContent = (ann.content || '').replace(/\n/g, '<br>');
+            const formattedContent = linkify(ann.content || '').replace(/\n/g, '<br>');
             
             return `
                 <div class="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm relative group hover:shadow-md transition-all duration-200">
@@ -5274,7 +5281,7 @@
                                 <span class="text-[9px] text-slate-400 font-bold whitespace-nowrap">${ann.date.split(' ')[0]}</span>
                             </div>
                         </div>
-                        <p class="text-slate-500 font-medium text-xs line-clamp-2 leading-relaxed break-words">${ann.content}</p>
+                        <p class="text-slate-500 font-medium text-xs line-clamp-2 leading-relaxed break-words">${linkify(ann.content)}</p>
                     </div>
                 `;
             }).join('');
