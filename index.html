@@ -3341,9 +3341,53 @@
               if(students.length > 0) {
                   closeModalUi('custom-modal', 'custom-modal-content');
                   setTimeout(() => {
-                      showModal('confirm', 'Tải danh sách', `Đã tìm thấy ${newStudents.length} HS trong file.\nBạn muốn XÓA BỎ danh sách lớp cũ để ĐÈ LÊN MỚI không?`, () => { 
-                          students = newStudents; seatingCharts.forEach(c => c.layout = {}); saveAppData(); renderAll(); updateUI(); 
-                          showModal('success', 'Thành công', `Đã tạo danh sách mới gồm ${newStudents.length} học sinh!`); 
+                      showModal('confirm', 'Tải danh sách', `Đã tìm thấy ${newStudents.length} học sinh trong file.\nBạn có muốn CẬP NHẬT (ghi đè thông tin HS trùng Tên & Ngày sinh, thêm mới HS chưa có) không?`, () => { 
+                          let updatedCount = 0;
+                          let addedCount = 0;
+                          let mergeIndexCounter = students.length + 1;
+                          
+                          newStudents.forEach(ns => {
+                            const normalizedNewName = ns.name.trim().toLowerCase().replace(/\s+/g, ' ');
+                            const normalizedNewDob = ns.dob.trim().replace(/[-.]/g, '/');
+                            
+                            let existingStudent = students.find(s => {
+                              const sName = (s.name || '').trim().toLowerCase().replace(/\s+/g, ' ');
+                              const sDob = (s.dob || '').trim().replace(/[-.]/g, '/');
+                              return sName === normalizedNewName && sDob === normalizedNewDob;
+                            });
+                            
+                            if (existingStudent) {
+                              // Update details if they are not empty in the excel file
+                              if (ns.gender !== '') {
+                                let isFemale = ns.gender === 'Nữ';
+                                let currentIsFemale = existingStudent.gender === 'Nữ';
+                                if (currentIsFemale !== isFemale) {
+                                  existingStudent.gender = ns.gender;
+                                  let avatars = isFemale ? AVATARS.female : AVATARS.male;
+                                  existingStudent.avatar = avatars[Math.floor(Math.random() * avatars.length)];
+                                }
+                              }
+                              if (ns.cccd !== '') existingStudent.cccd = ns.cccd;
+                              if (ns.birthplace !== '') existingStudent.birthplace = ns.birthplace;
+                              if (ns.phone !== '') existingStudent.phone = ns.phone;
+                              if (ns.address !== '') existingStudent.address = ns.address;
+                              if (ns.fatherName !== '') existingStudent.fatherName = ns.fatherName;
+                              if (ns.fatherCccd !== '') existingStudent.fatherCccd = ns.fatherCccd;
+                              if (ns.fatherPhone !== '') existingStudent.fatherPhone = ns.fatherPhone;
+                              if (ns.motherName !== '') existingStudent.motherName = ns.motherName;
+                              if (ns.motherCccd !== '') existingStudent.motherCccd = ns.motherCccd;
+                              if (ns.motherPhone !== '') existingStudent.motherPhone = ns.motherPhone;
+                              updatedCount++;
+                            } else {
+                              // Add as new student
+                              ns.code = generateCode(currentUser.className, currentUser.year, mergeIndexCounter);
+                              students.push(ns);
+                              mergeIndexCounter++;
+                              addedCount++;
+                            }
+                          });
+                          saveAppData(); renderAll(); updateUI(); 
+                          showModal('success', 'Thành công', `Đã cập nhật ${updatedCount} học sinh và thêm mới ${addedCount} học sinh!`); 
                       });
                   }, 400);
               } else { students = newStudents; saveAppData(); renderAll(); updateUI(); closeModalUi('custom-modal'); setTimeout(() => showModal('success', 'Thành công', `Đã nhập ${students.length} học sinh!`), 400); }
