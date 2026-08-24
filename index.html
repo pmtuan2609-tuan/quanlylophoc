@@ -5197,6 +5197,7 @@
         });
         
         const isTeacher = (currentUserRole === 'teacher');
+        const latestAnn = announcements.reduce((max, ann) => (ann.id > max.id ? ann : max), announcements[0]);
         
         listEl.innerHTML = sorted.map(ann => {
             const pinBtnText = ann.pin ? 'Bỏ ghim' : 'Ghim lên đầu';
@@ -5204,6 +5205,13 @@
             const pinBadge = ann.pin ? `
                 <span class="inline-flex items-center gap-1 bg-amber-100 text-amber-800 text-[10px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider shadow-sm">
                     <i data-lucide="pin" class="w-2.5 h-2.5 fill-amber-800"></i> Đã ghim
+                </span>
+            ` : '';
+            
+            const isLatest = (latestAnn && ann.id === latestAnn.id);
+            const hotBadge = isLatest ? `
+                <span class="inline-flex items-center gap-0.5 bg-rose-500 text-white text-[9px] px-1.5 py-0.5 rounded font-black uppercase tracking-wider animate-pulse">
+                    HOT 🔥
                 </span>
             ` : '';
             
@@ -5227,7 +5235,7 @@
                 <div class="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm relative group hover:shadow-md transition-all duration-200">
                     <div class="flex justify-between items-start gap-4 mb-2">
                         <div class="space-y-1">
-                            <h4 class="font-black text-slate-800 text-sm md:text-base leading-tight">${ann.title}</h4>
+                            <h4 class="font-black text-slate-800 text-sm md:text-base leading-tight flex items-center gap-2">${ann.title} ${hotBadge}</h4>
                             <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-slate-400 font-semibold">
                                 <span class="flex items-center gap-1"><i data-lucide="user" class="w-3 h-3 text-slate-400"></i> ${ann.author || 'GVCN'}</span>
                                 <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3 text-slate-400"></i> ${ann.date}</span>
@@ -5258,6 +5266,7 @@
                 `;
             }
             
+            const latestAnn = announcements.reduce((max, ann) => (ann.id > max.id ? ann : max), announcements[0]);
             const sorted = [...announcements].sort((a, b) => {
                 if (a.pin && !b.pin) return -1;
                 if (!a.pin && b.pin) return 1;
@@ -5272,10 +5281,18 @@
                         <i data-lucide="pin" class="w-2.5 h-2.5 fill-amber-800"></i> Ghim
                     </span>
                 ` : '';
+                
+                const isLatest = (latestAnn && ann.id === latestAnn.id);
+                const hotBadge = isLatest ? `
+                    <span class="inline-flex items-center gap-0.5 bg-rose-500 text-white text-[8px] px-1.5 py-0.5 rounded font-black uppercase tracking-wider animate-pulse">
+                        HOT
+                    </span>
+                ` : '';
+                
                 return `
                     <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100 flex flex-col gap-1.5 hover:bg-slate-100 hover:shadow-sm transition cursor-pointer" onclick="switchTab('tab-announcements')">
                         <div class="flex justify-between items-start gap-3">
-                            <h5 class="font-bold text-slate-800 text-xs md:text-sm line-clamp-1">${ann.title}</h5>
+                            <h5 class="font-bold text-slate-800 text-xs md:text-sm line-clamp-1 flex items-center gap-1.5">${ann.title} ${hotBadge}</h5>
                             <div class="flex items-center gap-1.5 shrink-0">
                                 ${pinBadge}
                                 <span class="text-[9px] text-slate-400 font-bold whitespace-nowrap">${ann.date.split(' ')[0]}</span>
