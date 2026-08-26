@@ -3647,9 +3647,9 @@
             return sName;
         };
         
-        // If there's already a manual suffix, just return firstName + suffix
+        // If there's already a manual suffix, return middleAndFirstName + suffix
         if (suffix) {
-            return `${firstName} ${suffix}`;
+            return `${middleAndFirstName} ${suffix}`;
         }
         
         // Count how many students share the same middle and first name
@@ -3688,7 +3688,7 @@
         if (duplicates.length > 1) {
             duplicates.sort((a, b) => a.id - b.id);
             const index = duplicates.findIndex(s => s.id === student.id);
-            return `${firstName} ${String.fromCharCode(65 + index)}`;
+            return `${middleAndFirstName} ${String.fromCharCode(65 + index)}`;
         }
         
         return student.name;
