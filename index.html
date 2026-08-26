@@ -3618,49 +3618,79 @@
     // --- Seating Chart ---
     function getShortName(student) {
         if (!student || !student.name) return "";
-        const parts = student.name.trim().split(/\s+/).filter(Boolean);
-        if (parts.length <= 1) return student.name;
+        
+        let fullName = student.name.trim();
+        let suffix = "";
+        
+        // Detect distinction suffix (like A, B, C...) at the end of the name
+        const match = fullName.match(/\s*(?:-|–)?\s*(?:\(?([a-zA-Z])\)?\.?)$/);
+        if (match) {
+            suffix = match[1].toUpperCase(); // "A", "B", etc.
+            fullName = fullName.slice(0, match.index).trim(); // "Nguyễn Minh Thư"
+        }
+        
+        const parts = fullName.split(/\s+/).filter(Boolean);
+        if (parts.length === 0) return student.name;
+        if (parts.length === 1) return suffix ? `${parts[0]} ${suffix}` : parts[0];
         
         const firstName = parts[parts.length - 1];
         const middleAndFirstName = parts.slice(-2).join(' ');
         const familyAndFirstName = `${parts[0]} ${firstName}`;
         
-        // Count how many students share the same first name
+        // Helper to strip suffix from any student name for comparison
+        const getBaseName = (nameStr) => {
+            let sName = nameStr.trim();
+            const sMatch = sName.match(/\s*(?:-|–)?\s*(?:\(?([a-zA-Z])\)?\.?)$/);
+            if (sMatch) sName = sName.slice(0, sMatch.index).trim();
+            return sName;
+        };
+        
+        // Count how many students share the same first name (ignoring suffix)
         const sameFirstNameCount = students.filter(s => {
-            const p = s.name.trim().split(/\s+/).filter(Boolean);
+            const baseName = getBaseName(s.name);
+            const p = baseName.split(/\s+/).filter(Boolean);
             return p.length > 0 && p[p.length - 1].toLowerCase() === firstName.toLowerCase();
         }).length;
         
         if (sameFirstNameCount === 1) {
-            return firstName;
+            return suffix ? `${firstName} ${suffix}` : firstName;
         }
         
         // Count how many students share the same middle and first name
         const sameMiddleAndFirstNameCount = students.filter(s => {
-            const p = s.name.trim().split(/\s+/).filter(Boolean);
+            const baseName = getBaseName(s.name);
+            const p = baseName.split(/\s+/).filter(Boolean);
             if (p.length < 2) return false;
             return p.slice(-2).join(' ').toLowerCase() === middleAndFirstName.toLowerCase();
         }).length;
         
         if (sameMiddleAndFirstNameCount === 1) {
-            return middleAndFirstName;
+            return suffix ? `${middleAndFirstName} ${suffix}` : middleAndFirstName;
         }
         
         // Count how many students share the same family and first name (Họ + Tên)
         const sameFamilyAndFirstNameCount = students.filter(s => {
-            const p = s.name.trim().split(/\s+/).filter(Boolean);
+            const baseName = getBaseName(s.name);
+            const p = baseName.split(/\s+/).filter(Boolean);
             if (p.length < 2) return false;
             const sFamilyAndFirstName = `${p[0]} ${p[p.length - 1]}`;
             return sFamilyAndFirstName.toLowerCase() === familyAndFirstName.toLowerCase();
         }).length;
         
         if (sameFamilyAndFirstNameCount === 1) {
-            return familyAndFirstName;
+            return suffix ? `${familyAndFirstName} ${suffix}` : familyAndFirstName;
         }
         
-        // If they share family and first name, resolve by appending A, B, C... to first name
+        // If they share family and first name:
+        // If there's already a manual suffix, just return firstName + suffix
+        if (suffix) {
+            return `${firstName} ${suffix}`;
+        }
+        
+        // If no manual suffix, resolve automatically by appending A, B, C... to first name
         const duplicates = students.filter(s => {
-            const p = s.name.trim().split(/\s+/).filter(Boolean);
+            const baseName = getBaseName(s.name);
+            const p = baseName.split(/\s+/).filter(Boolean);
             if (p.length < 2) return false;
             const sFamilyAndFirstName = `${p[0]} ${p[p.length - 1]}`;
             return sFamilyAndFirstName.toLowerCase() === familyAndFirstName.toLowerCase();
@@ -3672,7 +3702,6 @@
             return `${firstName} ${String.fromCharCode(65 + index)}`;
         }
         
-        // Otherwise, return full name
         return student.name;
     }
     
@@ -3746,10 +3775,10 @@
           
           if (isOwnSeat) {
             seatEl.className = "seat-slot border-2 bg-gradient-to-r from-amber-400 to-amber-500 border-amber-500 shadow-lg text-white font-black h-[36px] md:h-[44px] rounded-xl flex items-center justify-center cursor-default transition relative overflow-hidden ring-4 ring-amber-300 animate-pulse";
-            seatEl.innerHTML = `<span class="font-black ${fontClass} ${leadingClass} text-white w-full text-center px-0.5 md:px-1 uppercase tracking-wide whitespace-normal break-words" title="Chỗ ngồi của bạn: ${student.name}">${displayName} (BẠN)</span>`;
+            seatEl.innerHTML = `<div class="font-black ${fontClass} ${leadingClass} text-white w-full text-center px-0.5 md:px-1 uppercase tracking-wide whitespace-normal break-words" title="Chỗ ngồi của bạn: ${student.name}">${displayName} (BẠN)</div>`;
           } else {
             seatEl.className = "seat-slot border-2 bg-gradient-to-b from-white to-slate-50 border-theme shadow-md border-solid h-[36px] md:h-[44px] rounded-xl flex items-center justify-center cursor-pointer transition relative overflow-hidden";
-            seatEl.innerHTML = `<span class="font-black ${fontClass} ${leadingClass} text-theme w-full text-center px-0.5 md:px-1 uppercase tracking-wide whitespace-normal break-words" title="${student.name}">${displayName}</span>`;
+            seatEl.innerHTML = `<div class="font-black ${fontClass} ${leadingClass} text-theme w-full text-center px-0.5 md:px-1 uppercase tracking-wide whitespace-normal break-words" title="${student.name}">${displayName}</div>`;
           }
         } else if (!student && seatEl) { delete chart.layout[seatId]; } 
       }
