@@ -763,8 +763,11 @@
                        <span>BÀN GV</span>
                        <div class="absolute -bottom-2.5 w-10 h-1.5 bg-slate-400/50 rounded-full"></div>
                    </div>
+                   <div class="absolute right-0 bottom-0 bg-white border-2 border-slate-100 shadow-lg p-3 rounded-2xl w-56 text-[10px] md:text-xs font-semibold text-slate-700 flex flex-col gap-1 z-10">
+                       <div class="font-black text-slate-800 border-b border-slate-100 pb-1.5 mb-1.5 flex items-center gap-1.5 uppercase tracking-wider text-[9px] md:text-[10px]"><i data-lucide="award" class="w-3.5 h-3.5 text-amber-500"></i> Ban Cán Sự Lớp</div>
+                       <div id="seating-monitor-list" class="space-y-1.5 max-h-24 overflow-y-auto custom-scrollbar"></div>
+                   </div>
                </div>
-               <div class="grid grid-cols-4 gap-4 md:gap-8" id="seating-grid"></div>
            </div>
         </div>
       </section>
@@ -3680,6 +3683,30 @@
             seatEl.innerHTML = `<span class="font-black text-[9px] md:text-[10px] text-theme leading-tight truncate w-full text-center px-0.5 md:px-1 uppercase tracking-wide" title="${student.name}">${displayName}</span>`;
           }
         } else if (!student && seatEl) { delete chart.layout[seatId]; } 
+      }
+
+      // Render Class Officers list
+      const monitorListEl = document.getElementById('seating-monitor-list');
+      if (monitorListEl) {
+        const roleOrder = ["Lớp trưởng", "Lớp phó học tập", "Lớp phó kỷ luật", "Lớp phó LĐ-VS", "Bí thư chi đoàn", "Thủ quỹ", "Tổ trưởng"];
+        let officers = students.filter(s => s.role && s.role.trim() !== '');
+        officers.sort((a, b) => {
+          let idxA = roleOrder.indexOf(a.role);
+          let idxB = roleOrder.indexOf(b.role);
+          if (idxA === -1) idxA = 999;
+          if (idxB === -1) idxB = 999;
+          return idxA - idxB;
+        });
+        if (officers.length > 0) {
+          monitorListEl.innerHTML = officers.map(s => `
+            <div class="flex justify-between items-center py-0.5 border-b border-dashed border-slate-100 last:border-0 text-[10px] md:text-[11px]">
+              <span class="text-slate-500 font-bold">${s.role}:</span>
+              <span class="font-black text-slate-800 hover:text-theme transition cursor-pointer" onclick="openProfileModal(${s.id})">${s.name}</span>
+            </div>
+          `).join('');
+        } else {
+          monitorListEl.innerHTML = `<div class="text-slate-400 italic text-[10px] text-center py-1">Chưa bổ nhiệm (Sửa HS để đặt chức vụ)</div>`;
+        }
       }
     }
     
