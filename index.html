@@ -8,6 +8,7 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     :root {
       --c1: #10b981; 
@@ -743,6 +744,9 @@
             <button id="btn-rename-chart" onclick="renameSeatingChart()" class="bg-amber-50 text-amber-600 hover:bg-amber-100 px-3 md:px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1 md:gap-2 shadow-sm whitespace-nowrap">
               <i data-lucide="edit-3" class="w-4 h-4"></i> Đổi tên sơ đồ
             </button>
+            <button id="btn-export-chart-image" onclick="exportSeatingChartImage()" class="bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-100 px-3 md:px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1 md:gap-2 shadow-sm whitespace-nowrap">
+              <i data-lucide="download" class="w-4 h-4"></i> Xuất ảnh (4K)
+            </button>
           </div>
           <button id="btn-delete-chart" onclick="deleteCurrentChart()" class="w-full sm:w-auto flex justify-center text-rose-500 bg-rose-50 hover:bg-rose-100 px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold transition items-center gap-2 border border-rose-100 shadow-sm"><i data-lucide="trash-2" class="w-4 h-4"></i> Xóa sơ đồ</button>
         </div>
@@ -752,11 +756,12 @@
              <i data-lucide="info" class="w-3 h-3 md:w-4 md:h-4 text-theme"></i> Click ô trống để xếp chỗ. Click HS để đổi.
            </div>
            
-           <div class="min-w-[800px] pb-10 relative">
+           <div id="seating-chart-capture-area" class="min-w-[800px] pb-10 relative bg-white p-6 rounded-3xl border border-slate-100">
                <div class="grid grid-cols-4 gap-4 md:gap-8" id="seating-grid"></div>
                <div class="relative flex justify-center items-end mt-10 h-16 md:h-20 w-full">
-                   <div class="bg-[#1e293b] shadow-xl text-white w-[50%] py-4 rounded-xl text-center font-black text-sm md:text-base tracking-[0.3em] border-4 border-slate-600 relative flex items-center justify-center z-10">
+                   <div class="bg-[#1e293b] shadow-xl text-white w-[50%] py-4 rounded-xl text-center font-black text-sm md:text-base tracking-[0.3em] border-4 border-slate-600 relative flex flex-col items-center justify-center z-10">
                        <span class="opacity-90">BẢNG ĐEN</span>
+                       <span id="seating-teacher-name" class="text-[9px] md:text-[10px] text-slate-300 font-bold tracking-normal mt-1">GVCN: ...</span>
                        <div class="absolute bottom-2 right-4 w-12 h-1 bg-white/30 rounded-full"></div>
                    </div>
                    <div class="absolute left-0 bottom-0 bg-theme-sidebar shadow-2xl text-white w-24 md:w-32 py-3 md:py-4 rounded-2xl text-center font-black text-[10px] md:text-xs tracking-widest flex flex-col items-center border-b-4 border-slate-900 z-10">
@@ -3708,6 +3713,55 @@
           monitorListEl.innerHTML = `<div class="text-slate-400 italic text-[10px] text-center py-1">Chưa bổ nhiệm (Sửa HS để đặt chức vụ)</div>`;
         }
       }
+
+      // Render Homeroom Teacher name
+      const teacherNameEl = document.getElementById('seating-teacher-name');
+      if (teacherNameEl && currentUser) {
+        const title = currentUser.gender === 'Nữ' ? 'Cô' : (currentUser.gender === 'Nam' ? 'Thầy' : 'Thầy/Cô');
+        teacherNameEl.innerText = `GVCN: ${title} ${currentUser.teacherName || 'Chưa cập nhật'}`;
+      }
+    }
+
+    function exportSeatingChartImage() {
+      const area = document.getElementById('seating-chart-capture-area');
+      if (!area) return showModal('error', 'Lỗi', 'Không tìm thấy vùng sơ đồ chỗ ngồi để xuất!');
+      
+      showModal('info', 'Đang xử lý...', 'Hệ thống đang xuất sơ đồ thành ảnh chất lượng cao 4K. Vui lòng đợi trong giây lát...');
+      
+      // Use html2canvas to capture the element
+      // scale: 4 for high-definition 4K image quality
+      html2canvas(area, {
+        scale: 4,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        logging: false
+      }).then(canvas => {
+        closeModalUi('custom-modal', 'custom-modal-content');
+        
+        // Convert canvas to image and trigger download
+        try {
+          const chart = seatingCharts.find(c => c.id === currentChartId);
+          const chartName = chart ? chart.name.replace(/\s+/g, '_') : 'So_do_lop';
+          const className = currentUser ? currentUser.className.replace(/\s+/g, '_') : 'Class';
+          const filename = `So_do_cho_ngoi_${className}_${chartName}.png`;
+          
+          const link = document.createElement('a');
+          link.download = filename;
+          link.href = canvas.toDataURL('image/png');
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          
+          setTimeout(() => {
+            showModal('success', 'Thành công', 'Đã xuất và tải ảnh sơ đồ 4K thành công!');
+          }, 350);
+        } catch (err) {
+          showModal('error', 'Lỗi', 'Không thể tạo file ảnh. Lỗi: ' + err.message);
+        }
+      }).catch(err => {
+        closeModalUi('custom-modal', 'custom-modal-content');
+        showModal('error', 'Lỗi xuất ảnh', 'Có lỗi xảy ra trong quá trình dựng ảnh: ' + err.message);
+      });
     }
     
     function handleSeatClick(seatId) {
