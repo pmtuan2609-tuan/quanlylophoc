@@ -3623,6 +3623,7 @@
         
         const firstName = parts[parts.length - 1];
         const middleAndFirstName = parts.slice(-2).join(' ');
+        const familyAndFirstName = `${parts[0]} ${firstName}`;
         
         // Count how many students share the same first name
         const sameFirstNameCount = students.filter(s => {
@@ -3643,6 +3644,18 @@
         
         if (sameMiddleAndFirstNameCount === 1) {
             return middleAndFirstName;
+        }
+        
+        // Count how many students share the same family and first name (Họ + Tên)
+        const sameFamilyAndFirstNameCount = students.filter(s => {
+            const p = s.name.trim().split(/\s+/).filter(Boolean);
+            if (p.length < 2) return false;
+            const sFamilyAndFirstName = `${p[0]} ${p[p.length - 1]}`;
+            return sFamilyAndFirstName.toLowerCase() === familyAndFirstName.toLowerCase();
+        }).length;
+        
+        if (sameFamilyAndFirstNameCount === 1) {
+            return familyAndFirstName;
         }
         
         // Otherwise, return full name
@@ -3706,12 +3719,23 @@
         if (student && seatEl) {
           const displayName = getShortName(student);
           const isOwnSeat = (currentUserRole === 'student' && currentStudent && String(student.id) === String(currentStudent.id));
+          
+          let fontClass = "text-[9px] md:text-[10px]";
+          let leadingClass = "leading-tight";
+          if (displayName.length > 12) {
+            fontClass = "text-[7.5px] md:text-[8.5px]";
+            leadingClass = "leading-[1.1]";
+          } else if (displayName.length > 9) {
+            fontClass = "text-[8px] md:text-[9px]";
+            leadingClass = "leading-[1.1]";
+          }
+          
           if (isOwnSeat) {
             seatEl.className = "seat-slot border-2 bg-gradient-to-r from-amber-400 to-amber-500 border-amber-500 shadow-lg text-white font-black h-[36px] md:h-[44px] rounded-xl flex items-center justify-center cursor-default transition relative overflow-hidden ring-4 ring-amber-300 animate-pulse";
-            seatEl.innerHTML = `<span class="font-black text-[9px] md:text-[10px] text-white leading-tight truncate w-full text-center px-0.5 md:px-1 uppercase tracking-wide" title="Chỗ ngồi của bạn: ${student.name}">${displayName} (BẠN)</span>`;
+            seatEl.innerHTML = `<span class="font-black ${fontClass} ${leadingClass} text-white w-full text-center px-0.5 md:px-1 uppercase tracking-wide whitespace-normal break-words" title="Chỗ ngồi của bạn: ${student.name}">${displayName} (BẠN)</span>`;
           } else {
             seatEl.className = "seat-slot border-2 bg-gradient-to-b from-white to-slate-50 border-theme shadow-md border-solid h-[36px] md:h-[44px] rounded-xl flex items-center justify-center cursor-pointer transition relative overflow-hidden";
-            seatEl.innerHTML = `<span class="font-black text-[9px] md:text-[10px] text-theme leading-tight truncate w-full text-center px-0.5 md:px-1 uppercase tracking-wide" title="${student.name}">${displayName}</span>`;
+            seatEl.innerHTML = `<span class="font-black ${fontClass} ${leadingClass} text-theme w-full text-center px-0.5 md:px-1 uppercase tracking-wide whitespace-normal break-words" title="${student.name}">${displayName}</span>`;
           }
         } else if (!student && seatEl) { delete chart.layout[seatId]; } 
       }
