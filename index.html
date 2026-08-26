@@ -3647,15 +3647,9 @@
             return sName;
         };
         
-        // Count how many students share the same first name (ignoring suffix)
-        const sameFirstNameCount = students.filter(s => {
-            const baseName = getBaseName(s.name);
-            const p = baseName.split(/\s+/).filter(Boolean);
-            return p.length > 0 && p[p.length - 1].toLowerCase() === firstName.toLowerCase();
-        }).length;
-        
-        if (sameFirstNameCount === 1) {
-            return suffix ? `${firstName} ${suffix}` : firstName;
+        // If there's already a manual suffix, just return firstName + suffix
+        if (suffix) {
+            return `${firstName} ${suffix}`;
         }
         
         // Count how many students share the same middle and first name
@@ -3667,7 +3661,7 @@
         }).length;
         
         if (sameMiddleAndFirstNameCount === 1) {
-            return suffix ? `${middleAndFirstName} ${suffix}` : middleAndFirstName;
+            return middleAndFirstName;
         }
         
         // Count how many students share the same family and first name (Họ + Tên)
@@ -3679,13 +3673,7 @@
         }).length;
         
         if (sameFamilyAndFirstNameCount === 1) {
-            return suffix ? `${familyAndFirstName} ${suffix}` : familyAndFirstName;
-        }
-        
-        // If they share family and first name:
-        // If there's already a manual suffix, just return firstName + suffix
-        if (suffix) {
-            return `${firstName} ${suffix}`;
+            return familyAndFirstName;
         }
         
         // If no manual suffix, resolve automatically by appending A, B, C... to first name
