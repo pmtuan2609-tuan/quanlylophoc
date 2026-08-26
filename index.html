@@ -3658,6 +3658,20 @@
             return familyAndFirstName;
         }
         
+        // If they share family and first name, resolve by appending A, B, C... to first name
+        const duplicates = students.filter(s => {
+            const p = s.name.trim().split(/\s+/).filter(Boolean);
+            if (p.length < 2) return false;
+            const sFamilyAndFirstName = `${p[0]} ${p[p.length - 1]}`;
+            return sFamilyAndFirstName.toLowerCase() === familyAndFirstName.toLowerCase();
+        });
+        
+        if (duplicates.length > 1) {
+            duplicates.sort((a, b) => a.id - b.id);
+            const index = duplicates.findIndex(s => s.id === student.id);
+            return `${firstName} ${String.fromCharCode(65 + index)}`;
+        }
+        
         // Otherwise, return full name
         return student.name;
     }
