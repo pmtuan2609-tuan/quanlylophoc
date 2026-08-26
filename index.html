@@ -3616,11 +3616,37 @@
     }
 
     // --- Seating Chart ---
-    function getShortName(student) { 
-        if(!student || !student.name) return ""; let parts = student.name.trim().split(' ').filter(Boolean); if(parts.length === 1) return parts[0]; let shortName = parts.slice(-2).join(' '); 
-        let conflicts = students.filter(s => { let p = s.name.trim().split(' ').filter(Boolean); if(p.length === 1) return p[0].toLowerCase() === shortName.toLowerCase(); return p.slice(-2).join(' ').toLowerCase() === shortName.toLowerCase(); }); 
-        if(conflicts.length > 1) { if(parts.length >= 3) shortName = parts.slice(-3).join(' '); let exactConflicts = conflicts.filter(s => { let p = s.name.trim().split(' ').filter(Boolean); let sName = p.length >= 3 ? p.slice(-3).join(' ') : p.join(' '); return removeAccents(sName.toLowerCase()) === removeAccents(shortName.toLowerCase()); }); if(exactConflicts.length > 1) { exactConflicts.sort((a,b) => a.id - b.id); let idx = exactConflicts.findIndex(s => s.id === student.id); shortName = parts[parts.length-1] + " " + String.fromCharCode(65 + idx); } } 
-        return shortName; 
+    function getShortName(student) {
+        if (!student || !student.name) return "";
+        const parts = student.name.trim().split(/\s+/).filter(Boolean);
+        if (parts.length <= 1) return student.name;
+        
+        const firstName = parts[parts.length - 1];
+        const middleAndFirstName = parts.slice(-2).join(' ');
+        
+        // Count how many students share the same first name
+        const sameFirstNameCount = students.filter(s => {
+            const p = s.name.trim().split(/\s+/).filter(Boolean);
+            return p.length > 0 && p[p.length - 1].toLowerCase() === firstName.toLowerCase();
+        }).length;
+        
+        if (sameFirstNameCount === 1) {
+            return firstName;
+        }
+        
+        // Count how many students share the same middle and first name
+        const sameMiddleAndFirstNameCount = students.filter(s => {
+            const p = s.name.trim().split(/\s+/).filter(Boolean);
+            if (p.length < 2) return false;
+            return p.slice(-2).join(' ').toLowerCase() === middleAndFirstName.toLowerCase();
+        }).length;
+        
+        if (sameMiddleAndFirstNameCount === 1) {
+            return middleAndFirstName;
+        }
+        
+        // Otherwise, return full name
+        return student.name;
     }
     
     function renderEmptySeatingGrid() { 
