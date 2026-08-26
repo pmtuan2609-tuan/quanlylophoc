@@ -3622,8 +3622,10 @@
         let fullName = student.name.trim();
         let suffix = "";
         
-        // Detect distinction suffix (like A, B, C...) at the end of the name
-        const match = fullName.match(/\s*(?:-|–)?\s*(?:\(?([a-zA-Z])\)?\.?)$/);
+        // Detect distinction suffix (like A, B, C...) at the end of the name.
+        // Requires a space or separator before the letter to prevent matching letters from normal names (e.g. N in Nhàn).
+        const suffixRegex = /(?:\s+(?:-|–)?\s*|\s*(?:-|–)\s*|\s+\()([a-zA-Z])\)?\.?$/;
+        const match = fullName.match(suffixRegex);
         if (match) {
             suffix = match[1].toUpperCase(); // "A", "B", etc.
             fullName = fullName.slice(0, match.index).trim(); // "Nguyễn Minh Thư"
@@ -3640,7 +3642,7 @@
         // Helper to strip suffix from any student name for comparison
         const getBaseName = (nameStr) => {
             let sName = nameStr.trim();
-            const sMatch = sName.match(/\s*(?:-|–)?\s*(?:\(?([a-zA-Z])\)?\.?)$/);
+            const sMatch = sName.match(suffixRegex);
             if (sMatch) sName = sName.slice(0, sMatch.index).trim();
             return sName;
         };
@@ -3670,8 +3672,7 @@
         
         // Count how many students share the same family and first name (Họ + Tên)
         const sameFamilyAndFirstNameCount = students.filter(s => {
-            const baseName = getBaseName(s.name);
-            const p = baseName.split(/\s+/).filter(Boolean);
+            const p = s.name.trim().split(/\s+/).filter(Boolean);
             if (p.length < 2) return false;
             const sFamilyAndFirstName = `${p[0]} ${p[p.length - 1]}`;
             return sFamilyAndFirstName.toLowerCase() === familyAndFirstName.toLowerCase();
