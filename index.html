@@ -524,7 +524,7 @@
                     <!-- Morning slots -->
                   </div>
                 </div>
-                <div>
+                <div id="teacher-today-timetable-afternoon-container">
                   <div class="text-[10px] md:text-xs font-black text-slate-400 mb-2 uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="sunset" class="w-3.5 h-3.5 text-indigo-500"></i> Buổi Chiều</div>
                   <div id="teacher-today-timetable-list-afternoon" class="grid grid-cols-2 sm:grid-cols-5 gap-3">
                     <!-- Afternoon slots -->
@@ -696,6 +696,9 @@
              <button onclick="addTimetable()" class="bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 md:px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1 border border-blue-100 shadow-sm whitespace-nowrap"><i data-lucide="plus" class="w-4 h-4"></i> Thêm TKB</button>
              <button onclick="renameTimetable()" class="bg-amber-50 text-amber-600 hover:bg-amber-100 px-3 md:px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1 border border-amber-100 shadow-sm whitespace-nowrap"><i data-lucide="edit-3" class="w-4 h-4"></i> Đổi tên TKB</button>
              <button onclick="deleteTimetable()" class="w-full sm:w-auto flex justify-center text-rose-500 bg-rose-50 hover:bg-rose-100 px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold transition items-center gap-1 border border-rose-100 shadow-sm"><i data-lucide="trash-2" class="w-4 h-4"></i> Xóa TKB</button>
+           </div>
+           <div id="teacher-timetable-controls" class="hidden flex flex-wrap items-center gap-2 md:gap-3 w-full sm:w-auto">
+              <div id="teacher-tkb-stats" class="flex flex-wrap items-center gap-1.5 text-xs font-bold bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-slate-700"></div>
            </div>
         </div>
         <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex-1 p-4 md:p-6 overflow-x-auto custom-scrollbar">
@@ -2781,11 +2784,25 @@
     }
 
     // --- TIMETABLES ---
+    function getTeacherClassCounts(excludeKey = null) {
+        const counts = { "12A17": 0, "12A12": 0, "12A32": 0 };
+        if (teacherTimetable && teacherTimetable.data) {
+            for (const [key, cls] of Object.entries(teacherTimetable.data)) {
+                if (excludeKey && key === excludeKey) continue;
+                if (cls && counts.hasOwnProperty(cls)) {
+                    counts[cls] = (counts[cls] || 0) + 1;
+                }
+            }
+        }
+        return counts;
+    }
+
     function setTkbMode(mode) {
         currentTimetableViewMode = mode;
         const btnClass = document.getElementById('btn-tkb-mode-class');
         const btnTeacher = document.getElementById('btn-tkb-mode-teacher');
         const controls = document.getElementById('class-timetable-controls');
+        const teacherControls = document.getElementById('teacher-timetable-controls');
         
         if (mode === 'class') {
             if (btnClass) {
@@ -2797,6 +2814,7 @@
                 btnTeacher.classList.add('text-slate-500', 'hover:text-slate-800');
             }
             if (controls) controls.classList.remove('hidden');
+            if (teacherControls) teacherControls.classList.add('hidden');
         } else {
             if (btnClass) {
                 btnClass.classList.remove('bg-white', 'text-slate-800', 'shadow-sm');
@@ -2807,6 +2825,7 @@
                 btnTeacher.classList.remove('text-slate-500', 'hover:text-slate-800');
             }
             if (controls) controls.classList.add('hidden');
+            if (teacherControls) teacherControls.classList.remove('hidden');
         }
         applyTimetable();
     }
@@ -2946,6 +2965,22 @@
             canEditTkb = (currentUserRole === 'teacher');
         }
         
+        // Render stats for Teacher Timetable
+        if (currentTimetableViewMode === 'teacher') {
+            const statsEl = document.getElementById('teacher-tkb-stats');
+            if (statsEl) {
+                const counts = getTeacherClassCounts();
+                const total = (counts['12A17'] || 0) + (counts['12A12'] || 0) + (counts['12A32'] || 0);
+                statsEl.innerHTML = `
+                    <span class="flex items-center gap-1 text-slate-500 mr-1"><i data-lucide="award" class="w-3.5 h-3.5 text-blue-500"></i> Tiến độ TKB:</span>
+                    <span class="px-2 py-0.5 rounded-lg ${counts['12A17'] >= 4 ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-50 text-blue-700 border border-blue-100'}">12A17: <b>${counts['12A17'] || 0}/4</b></span>
+                    <span class="px-2 py-0.5 rounded-lg ${counts['12A12'] >= 4 ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-50 text-blue-700 border border-blue-100'}">12A12: <b>${counts['12A12'] || 0}/4</b></span>
+                    <span class="px-2 py-0.5 rounded-lg ${counts['12A32'] >= 4 ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-50 text-blue-700 border border-blue-100'}">12A32: <b>${counts['12A32'] || 0}/4</b></span>
+                    <span class="text-slate-400 font-semibold ml-1">(Tổng: ${total}/12 tiết)</span>
+                `;
+            }
+        }
+        
         const periodTimes = {
             1: "07:00 - 07:45",
             2: "07:45 - 08:30",
@@ -2958,8 +2993,11 @@
             9: "15:30 - 16:15"
         };
         
+        // When in class mode (TKB HS), only show morning (periods 1 to 5)
+        const maxPeriods = (currentTimetableViewMode === 'class') ? 5 : 9;
+        
         let html = ''; 
-        for(let period = 1; period <= 9; period++) { 
+        for(let period = 1; period <= maxPeriods; period++) { 
             if (period === 6) {
                 html += `<tr>
                     <td colspan="7" class="bg-indigo-50/50 text-indigo-700 font-black text-xs md:text-sm py-2.5 uppercase tracking-widest text-center border border-slate-200">
@@ -3060,24 +3098,34 @@
         const grid = document.getElementById('modal-subjects-list-grid');
         
         if (isTeacherMode) {
-            if (headerEl) headerEl.innerText = "Chọn lớp học";
-            if (gridLabelEl) gridLabelEl.innerText = "Gợi ý lớp học";
-            if (inputLabelEl) inputLabelEl.innerText = "Lớp học (Nhập lớp khác nếu không có ở trên)";
-            if (inputEl) inputEl.placeholder = "Tên lớp học... (ví dụ: 10A1)";
+            if (headerEl) headerEl.innerText = "Chọn lớp giảng dạy";
+            if (gridLabelEl) gridLabelEl.innerText = "Danh sách lớp phụ trách (Mỗi lớp 4 tiết/tuần)";
+            if (inputLabelEl) inputLabelEl.innerText = "Lớp học";
+            if (inputEl) inputEl.placeholder = "Tên lớp học (12A17, 12A12, 12A32)...";
             
-            const classes = [
-                "10A1", "10A2", "10A3", "10A4", "10A5", 
-                "11A1", "11A2", "11A3", "11A4", "11A5",
-                "12A1", "12A2", "12A3", "12A4", "12A5"
-            ];
-            const ownClass = currentUser.className;
-            if (ownClass && !classes.includes(ownClass)) {
-                classes.unshift(ownClass);
+            const teacherClasses = ["12A17", "12A12", "12A32"];
+            const maxPeriods = 4;
+            const counts = getTeacherClassCounts(key); // exclude current cell
+            
+            // Available classes that have not reached 4 periods
+            const availableClasses = teacherClasses.filter(cls => (counts[cls] || 0) < maxPeriods);
+            
+            if (availableClasses.length > 0) {
+                grid.innerHTML = availableClasses.map(cls => {
+                    const currentCount = counts[cls] || 0;
+                    return `<button onclick="selectModalSubject('${cls}')" class="bg-slate-50 hover:bg-theme-light border border-slate-200 rounded-xl p-3 text-center transition group flex flex-col items-center justify-center gap-1 shadow-sm hover:border-theme" title="Chọn ${cls}">
+                        <span class="text-sm font-black text-slate-800 group-hover:text-theme">${cls}</span>
+                        <span class="text-[10px] font-bold text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded-full">${currentCount}/4 tiết</span>
+                    </button>`;
+                }).join('');
+            } else {
+                grid.innerHTML = `
+                    <div class="col-span-full py-5 px-4 text-center rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 space-y-1">
+                        <div class="font-black text-xs md:text-sm flex items-center justify-center gap-1.5"><i data-lucide="check-circle" class="w-4 h-4 text-amber-600"></i> Đã xếp đủ số tiết</div>
+                        <p class="text-[11px] font-medium text-amber-700">Tất cả 3 lớp (12A17, 12A12, 12A32) đã được xếp đủ định mức 4 tiết/lớp trong tuần.</p>
+                    </div>
+                `;
             }
-            
-            grid.innerHTML = classes.map(cls => {
-                return `<button onclick="selectModalSubject('${cls}')" class="bg-slate-50 hover:bg-theme-light border border-slate-200 rounded-xl px-2 py-2 text-center text-xs font-black text-slate-700 hover:text-theme transition truncate" title="${cls}">${cls}</button>`;
-            }).join('');
         } else {
             if (headerEl) headerEl.innerText = "Chọn môn học";
             if (gridLabelEl) gridLabelEl.innerText = "Môn học theo CT GDPT 2018 (Cấp 3)";
@@ -3119,6 +3167,14 @@
     function savePeriodData(subject) {
         if (activeEditCellKey) {
             if (currentTimetableViewMode === 'teacher') {
+                if (subject) {
+                    const counts = getTeacherClassCounts(activeEditCellKey);
+                    const teacherClasses = ["12A17", "12A12", "12A32"];
+                    if (teacherClasses.includes(subject) && (counts[subject] || 0) >= 4) {
+                        showModal('error', 'Đã đủ tiết', `Lớp ${subject} đã được xếp đủ 4 tiết trong tuần!`);
+                        return;
+                    }
+                }
                 teacherTimetable.data[activeEditCellKey] = subject;
                 saveTimetables();
                 applyTimetable();
@@ -4187,9 +4243,20 @@
       const newAvgPointsEl = document.getElementById('new-overview-stat-avg-points');
       if (newAvgPointsEl) newAvgPointsEl.innerText = `${avgPoints} sao / em`;
 
-      // Render Today's Timetable for Teacher
+      // Render Today's Timetable for Teacher / Student
       const morningList = document.getElementById('teacher-today-timetable-list-morning');
       const afternoonList = document.getElementById('teacher-today-timetable-list-afternoon');
+      const afternoonContainer = document.getElementById('teacher-today-timetable-afternoon-container');
+      
+      // Hide afternoon on overview for student role
+      if (afternoonContainer) {
+          if (currentUserRole === 'student') {
+              afternoonContainer.classList.add('hidden');
+          } else {
+              afternoonContainer.classList.remove('hidden');
+          }
+      }
+
       if (morningList && afternoonList) {
           const activeTkb = timetables.find(x => x.id === currentTimetableId) || timetables[0];
           let dayNum = new Date().getDay() + 1; // 1 = Sunday, 2 = Monday, ...
