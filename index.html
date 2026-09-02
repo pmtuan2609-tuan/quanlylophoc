@@ -1418,97 +1418,109 @@
     </div>
   </div>
 
-  <!-- Modal Đánh Lỗi Vi Phạm Cho GVBM -->
+  <!-- Modal Đánh Lỗi Vi Phạm Cho GVBM (Thiết Kế Mới Rộng Rãi, Đẹp Mắt) -->
   <div id="gvbm-violation-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[750] p-4 opacity-0 transition-opacity duration-300">
-    <div class="bg-white rounded-[2rem] p-6 md:p-8 w-full max-w-lg shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col border border-white/20" id="gvbm-violation-content">
-      <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
-        <div class="flex items-center gap-2.5">
-          <div class="w-10 h-10 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold shadow-xs">
-            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+    <div class="bg-white rounded-[2rem] p-6 md:p-8 w-full max-w-3xl lg:max-w-4xl shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col border border-white/20" id="gvbm-violation-content">
+      <!-- Header -->
+      <div class="flex justify-between items-center mb-5 pb-3.5 border-b border-slate-100">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold shadow-sm">
+            <i data-lucide="alert-triangle" class="w-6 h-6"></i>
           </div>
           <div>
-            <h3 class="text-base md:text-lg font-black text-slate-800">Ghi Nhận Lỗi Vi Phạm Học Sinh</h3>
-            <p class="text-[10px] md:text-xs text-slate-400 font-bold">Giáo viên Bộ môn đánh lỗi nề nếp & trừ điểm</p>
+            <h3 class="text-lg md:text-xl font-black text-slate-800 tracking-tight">Ghi Nhận Lỗi Vi Phạm Học Sinh</h3>
+            <p class="text-xs text-slate-400 font-bold mt-0.5">Giáo viên Bộ môn đánh lỗi nề nếp & trừ điểm học sinh theo tiết học</p>
           </div>
         </div>
-        <button onclick="closeModalUi('gvbm-violation-modal', 'gvbm-violation-content')" class="text-slate-400 hover:text-slate-600 bg-slate-50 p-2 rounded-full transition"><i data-lucide="x" class="w-4 h-4"></i></button>
+        <button onclick="closeModalUi('gvbm-violation-modal', 'gvbm-violation-content')" class="text-slate-400 hover:text-slate-600 bg-slate-100/80 hover:bg-slate-200 p-2.5 rounded-full transition"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
 
-      <div class="space-y-3.5 max-h-[65vh] overflow-y-auto custom-scrollbar pr-1">
-        <!-- 1. Chọn học sinh -->
-        <div>
-          <label class="text-[11px] font-black uppercase tracking-wider text-slate-500 mb-1 block">Học sinh vi phạm</label>
-          <select id="gvbm-vio-student" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none ring-theme cursor-pointer" onchange="handleGvbmStudentSelect()"></select>
-        </div>
-
-        <!-- 2. Môn học & Tiết học -->
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="text-[11px] font-black uppercase tracking-wider text-slate-500 mb-1 block">Môn học</label>
-            <select id="gvbm-vio-subject" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none ring-theme cursor-pointer" onchange="handleGvbmSubjectChange()">
-              <option value="Toán">Toán</option>
-              <option value="Ngữ Văn">Ngữ Văn</option>
-              <option value="Tiếng Anh">Tiếng Anh</option>
-              <option value="Vật Lý">Vật Lý</option>
-              <option value="Hóa Học">Hóa Học</option>
-              <option value="Sinh Học">Sinh Học</option>
-              <option value="Lịch Sử">Lịch Sử</option>
-              <option value="Địa Lý">Địa Lý</option>
-              <option value="GDKT-PL">GDKT-PL (GDCD)</option>
-              <option value="Tin Học">Tin Học</option>
-              <option value="Công Nghệ">Công Nghệ</option>
-              <option value="Thể Dục">Thể Dục</option>
-              <option value="GDQP">GDQP - AN</option>
-              <option value="HĐTN">HĐTN - HN</option>
-            </select>
+      <div class="space-y-4 max-h-[72vh] overflow-y-auto custom-scrollbar pr-1">
+        <!-- 1. Hàng thông tin học sinh & Môn học (2 Cột rộng rãi) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Cột Trái: Chọn học sinh -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-black uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
+              <i data-lucide="user" class="w-4 h-4 text-rose-500"></i> Học sinh vi phạm
+            </label>
+            <select id="gvbm-vio-student" class="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-rose-400 focus:bg-white transition cursor-pointer shadow-inner" onchange="handleGvbmStudentSelect()"></select>
           </div>
-          <div>
-            <label class="text-[11px] font-black uppercase tracking-wider text-slate-500 mb-1 block">Tiết học</label>
-            <select id="gvbm-vio-period" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none ring-theme cursor-pointer">
-              <option value="1">Tiết 1 (07:00 - 07:45)</option>
-              <option value="2">Tiết 2 (07:45 - 08:30)</option>
-              <option value="3">Tiết 3 (08:55 - 09:40)</option>
-              <option value="4">Tiết 4 (09:40 - 10:25)</option>
-              <option value="5">Tiết 5 (10:25 - 11:10)</option>
-            </select>
+
+          <!-- Cột Phải: Môn học, Tiết học & Tên GVBM -->
+          <div class="grid grid-cols-3 gap-2.5">
+            <div class="space-y-1.5">
+              <label class="text-xs font-black uppercase tracking-wider text-slate-600">Môn học</label>
+              <select id="gvbm-vio-subject" class="w-full px-3 py-3 bg-slate-50 border-2 border-slate-200 rounded-2xl text-xs font-bold text-slate-800 outline-none focus:border-rose-400 focus:bg-white transition cursor-pointer" onchange="handleGvbmSubjectChange()">
+                <option value="Toán">Toán</option>
+                <option value="Ngữ Văn">Ngữ Văn</option>
+                <option value="Tiếng Anh">Tiếng Anh</option>
+                <option value="Vật Lý">Vật Lý</option>
+                <option value="Hóa Học">Hóa Học</option>
+                <option value="Sinh Học">Sinh Học</option>
+                <option value="Lịch Sử">Lịch Sử</option>
+                <option value="Địa Lý">Địa Lý</option>
+                <option value="GDKT-PL">GDKT-PL</option>
+                <option value="Tin Học">Tin Học</option>
+                <option value="Công Nghệ">Công Nghệ</option>
+                <option value="Thể Dục">Thể Dục</option>
+                <option value="GDQP">GDQP - AN</option>
+                <option value="HĐTN">HĐTN - HN</option>
+              </select>
+            </div>
+            <div class="space-y-1.5">
+              <label class="text-xs font-black uppercase tracking-wider text-slate-600">Tiết học</label>
+              <select id="gvbm-vio-period" class="w-full px-3 py-3 bg-slate-50 border-2 border-slate-200 rounded-2xl text-xs font-bold text-slate-800 outline-none focus:border-rose-400 focus:bg-white transition cursor-pointer">
+                <option value="1">Tiết 1</option>
+                <option value="2">Tiết 2</option>
+                <option value="3">Tiết 3</option>
+                <option value="4">Tiết 4</option>
+                <option value="5">Tiết 5</option>
+              </select>
+            </div>
+            <div class="space-y-1.5">
+              <label class="text-xs font-black uppercase tracking-wider text-slate-600">Tên GVBM</label>
+              <input type="text" id="gvbm-vio-teacher-name" class="w-full px-3 py-3 bg-slate-50 border-2 border-slate-200 rounded-2xl text-xs font-bold text-slate-800 outline-none focus:border-rose-400 focus:bg-white transition" placeholder="VD: Thầy Nam...">
+            </div>
           </div>
         </div>
 
-        <!-- 3. Tên GVBM ghi nhận -->
-        <div>
-          <label class="text-[11px] font-black uppercase tracking-wider text-slate-500 mb-1 block">Tên Giáo viên Bộ môn ghi nhận</label>
-          <input type="text" id="gvbm-vio-teacher-name" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none ring-theme" placeholder="VD: Cô Hạnh, Thầy Nam...">
-        </div>
-
-        <!-- 4. Chọn nhanh lỗi vi phạm -->
-        <div>
-          <label class="text-[11px] font-black uppercase tracking-wider text-slate-500 mb-1.5 block">Chọn lỗi vi phạm (Click để chọn nhanh)</label>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-bold max-h-56 overflow-y-auto custom-scrollbar p-0.5" id="gvbm-vio-quick-reasons">
+        <!-- 2. Chọn nhanh lỗi vi phạm (Lưới 3 Cột rộng rãi, nút bấm lớn) -->
+        <div class="space-y-2 pt-1">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-black uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
+              <i data-lucide="check-circle-2" class="w-4 h-4 text-rose-500"></i> Chọn lỗi vi phạm phổ biến (Click chọn nhanh)
+            </label>
+            <span class="text-[11px] text-slate-400 font-bold italic">Tự động điền điểm trừ</span>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-2.5 max-h-72 overflow-y-auto custom-scrollbar p-1" id="gvbm-vio-quick-reasons">
             <!-- Buttons generated dynamically -->
           </div>
         </div>
 
-        <!-- 5. Điểm trừ & Ghi chú -->
-        <div class="grid grid-cols-3 gap-3">
-          <div class="col-span-1">
-            <label class="text-[11px] font-black uppercase tracking-wider text-slate-500 mb-1 block">Điểm trừ</label>
-            <div class="flex items-center gap-1">
-              <span class="text-rose-600 font-black text-sm">-</span>
-              <input type="number" id="gvbm-vio-points" value="2" min="1" max="50" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-black text-rose-600 outline-none ring-theme">
-              <span class="text-xs font-bold text-slate-400">sao</span>
+        <!-- 3. Điểm trừ & Chi tiết cụ thể -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-3.5 pt-2 border-t border-slate-100">
+          <div class="space-y-1.5 md:col-span-1">
+            <label class="text-xs font-black uppercase tracking-wider text-slate-600">Điểm trừ</label>
+            <div class="flex items-center gap-1.5 bg-slate-50 border-2 border-slate-200 rounded-2xl px-3 py-2.5 focus-within:border-rose-400 focus-within:bg-white transition">
+              <span class="text-rose-600 font-black text-base">-</span>
+              <input type="number" id="gvbm-vio-points" value="5" min="1" max="50" class="w-full bg-transparent text-sm font-black text-rose-600 outline-none">
+              <span class="text-xs font-bold text-slate-400">điểm</span>
             </div>
           </div>
-          <div class="col-span-2">
-            <label class="text-[11px] font-black uppercase tracking-wider text-slate-500 mb-1 block">Chi tiết vi phạm</label>
-            <input type="text" id="gvbm-vio-reason-custom" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 outline-none ring-theme" placeholder="Nội dung cụ thể...">
+          <div class="space-y-1.5 md:col-span-3">
+            <label class="text-xs font-black uppercase tracking-wider text-slate-600">Nội dung / Chi tiết vi phạm cụ thể</label>
+            <input type="text" id="gvbm-vio-reason-custom" class="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-2xl text-xs md:text-sm font-bold text-slate-800 outline-none focus:border-rose-400 focus:bg-white transition shadow-inner" placeholder="Chọn lỗi ở trên hoặc tự gõ nội dung vi phạm...">
           </div>
         </div>
       </div>
 
-      <div class="flex gap-2 pt-4 border-t border-slate-100 mt-4">
-        <button onclick="closeModalUi('gvbm-violation-modal', 'gvbm-violation-content')" class="flex-[0.35] bg-slate-100 hover:bg-slate-200 text-slate-600 font-black py-3 rounded-xl transition text-xs uppercase tracking-wider">Đóng</button>
-        <button onclick="confirmGvbmViolation()" class="flex-1 bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 text-white font-black py-3 rounded-xl hover:scale-[1.01] transition shadow-lg shadow-rose-500/20 flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
-          <i data-lucide="check" class="w-4 h-4"></i> Ghi nhận vi phạm
+      <!-- Action buttons -->
+      <div class="flex items-center gap-3 pt-5 border-t border-slate-100 mt-5">
+        <button onclick="closeModalUi('gvbm-violation-modal', 'gvbm-violation-content')" class="flex-[0.3] bg-slate-100 hover:bg-slate-200 text-slate-700 font-black py-3.5 rounded-2xl transition text-xs md:text-sm uppercase tracking-wider">
+          Đóng
+        </button>
+        <button onclick="confirmGvbmViolation()" class="flex-1 bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 text-white font-black py-3.5 rounded-2xl hover:scale-[1.01] transition shadow-lg shadow-rose-500/25 flex items-center justify-center gap-2 text-xs md:text-sm uppercase tracking-wider">
+          <i data-lucide="check" class="w-5 h-5"></i> Ghi nhận vi phạm
         </button>
       </div>
     </div>
@@ -3509,6 +3521,15 @@
                         </div>
                     `;
                 }
+                
+                const bannerButtons = document.querySelector('#teacher-overview-container .shrink-0.md\\:mb-1');
+                if (bannerButtons) {
+                    bannerButtons.innerHTML = `
+                        <button onclick="openGvbmViolationModal()" class="bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 text-white px-4 py-2.5 rounded-xl text-xs font-black shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="alert-triangle" class="w-4 h-4"></i> Đánh lỗi vi phạm</button>
+                        <button onclick="switchTab('tab-seating')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="map-pin" class="w-4 h-4"></i> Sơ đồ lớp</button>
+                        <button onclick="switchTab('tab-students')" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="users" class="w-4 h-4"></i> Danh sách lớp</button>
+                    `;
+                }
             } else {
                 if (teacherBannerName) {
                     const title = currentUser.gender === 'Nữ' ? 'Cô' : 'Thầy';
@@ -4161,18 +4182,21 @@
         if (studentSelect) {
             studentSelect.innerHTML = `<option value="">-- Chọn học sinh vi phạm --</option>` + students.map(s => {
                 const isSel = (studentId !== null && String(s.id) === String(studentId)) ? 'selected' : '';
-                return `<option value="${s.id}" ${isSel}>${s.id}. ${s.name} ${s.role && s.role !== 'Học sinh' ? `(${s.role})` : ''}</option>`;
+                return `<option value="${s.id}" ${isSel}>${s.name}${s.role && s.role !== 'Học sinh' ? ` (${s.role})` : ''}</option>`;
             }).join('');
         }
 
-        // Render quick violation buttons
+        // Render quick violation buttons with larger, comfortable click targets
         const quickGrid = document.getElementById('gvbm-vio-quick-reasons');
         if (quickGrid) {
             quickGrid.innerHTML = GVBM_COMMON_VIOLATIONS.map((v, idx) => {
                 return `
-                <button type="button" onclick="selectGvbmQuickReason('${v.reason}', ${v.points}, this)" class="gvbm-reason-btn p-2.5 rounded-xl border border-slate-200 bg-white hover:border-rose-300 hover:bg-rose-50 text-left transition flex items-center justify-between group">
-                    <span class="text-xs font-bold text-slate-700 group-hover:text-rose-700 truncate">${v.icon} ${v.reason}</span>
-                    <span class="text-[10px] font-black text-rose-500 bg-rose-50 px-1.5 py-0.5 rounded shrink-0">-${v.points}đ</span>
+                <button type="button" onclick="selectGvbmQuickReason('${v.reason}', ${v.points}, this)" class="gvbm-reason-btn p-3 rounded-2xl border-2 border-slate-200/80 bg-white hover:border-rose-400 hover:bg-rose-50/70 text-left transition flex items-center justify-between group shadow-xs hover:shadow-sm">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <span class="text-base shrink-0">${v.icon}</span>
+                        <span class="text-xs font-bold text-slate-700 group-hover:text-rose-700 leading-snug truncate" title="${v.reason}">${v.reason}</span>
+                    </div>
+                    <span class="text-[10px] font-black text-rose-600 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-lg shrink-0 ml-1">-${v.points}đ</span>
                 </button>
                 `;
             }).join('');
@@ -6613,7 +6637,7 @@
             'btn-tab-wheel': !isStudent && !isGVBM,
             'btn-tab-praise': !isStudent,
             'btn-tab-settings': !isStudent && !isGVBM,
-            'btn-tab-notebook': hasNotebookAccess || isGVBM
+            'btn-tab-notebook': hasNotebookAccess && !isGVBM
         };
         
         Object.keys(buttonConfig).forEach(id => {
