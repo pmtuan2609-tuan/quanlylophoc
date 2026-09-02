@@ -708,9 +708,25 @@
            </div>
            <div id="teacher-timetable-controls" class="hidden flex flex-wrap items-center gap-2 md:gap-3 w-full sm:w-auto">
               <div id="teacher-tkb-stats" class="flex flex-wrap items-center gap-1.5 text-xs font-bold bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-slate-700"></div>
-           </div>
+            </div>
+            <!-- Nút Xuất ảnh 4K cho cả HS & GV -->
+            <button id="btn-export-timetable" onclick="exportTimetableImage()" class="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white font-black px-4 py-2.5 rounded-xl text-xs md:text-sm transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg hover:scale-[1.02] whitespace-nowrap ml-auto sm:ml-0" title="Xuất ảnh Thời khóa biểu sắc nét 4K"><i data-lucide="image-down" class="w-4 h-4"></i> Xuất ảnh 4K</button>
         </div>
         <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex-1 p-4 md:p-6 overflow-x-auto custom-scrollbar">
+          <div id="timetable-capture-area" class="min-w-[850px] p-5 md:p-6 bg-white rounded-2xl border border-slate-100 relative">
+            <!-- Header trên ảnh xuất -->
+            <div class="mb-4 pb-3 border-b-2 border-slate-100 flex justify-between items-end">
+              <div>
+                <h2 id="timetable-capture-title" class="text-xl md:text-2xl font-black text-theme uppercase tracking-tight">THỜI KHÓA BIỂU</h2>
+                <p id="timetable-capture-subtitle" class="text-xs font-bold text-slate-500 mt-0.5">Lớp học | Năm học</p>
+              </div>
+              <div class="text-right">
+                <div id="timetable-capture-teacher" class="text-xs font-black text-slate-700">GVCN: ...</div>
+                <div class="text-[10px] text-slate-400 font-semibold italic">Hệ thống Quản lý Lớp học Thông minh</div>
+              </div>
+            </div>
+
+            <!-- Bảng TKB -->
             <table class="w-full text-center border-collapse min-w-[700px] h-full">
                 <thead>
                     <tr>
@@ -725,6 +741,13 @@
                 </thead>
                 <tbody id="timetable-tbody"></tbody>
             </table>
+
+            <!-- Footer trên ảnh xuất -->
+            <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center text-[10px] font-bold text-slate-400">
+              <span id="timetable-capture-footer-left">Buổi Sáng: Tiết 1 đến Tiết 5</span>
+              <span>© Bản quyền thuộc Thầy Tuấn GV Toán TT GDNN - GDTX Quận 12</span>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -3288,6 +3311,27 @@
             html += `</tr>`; 
         } 
         tbody.innerHTML = html; 
+        
+        // Cập nhật tiêu đề trên vùng chụp ảnh TKB
+        const capTitle = document.getElementById('timetable-capture-title');
+        const capSubtitle = document.getElementById('timetable-capture-subtitle');
+        const capTeacher = document.getElementById('timetable-capture-teacher');
+        const capFooter = document.getElementById('timetable-capture-footer-left');
+        
+        if (currentTimetableViewMode === 'teacher') {
+            if (capTitle) capTitle.innerText = "THỜI KHÓA BIỂU GIẢNG DẠY";
+            if (capSubtitle) capSubtitle.innerText = `Giáo viên: ${currentUser.teacherName || 'Chưa cập nhật'} | Năm học: ${currentUser.year || ''}`;
+            if (capTeacher) capTeacher.innerText = "Lớp phụ trách: 12A17, 12A12, 12A32 (4 tiết/lớp)";
+            if (capFooter) capFooter.innerText = "Thời khóa biểu giảng dạy cá nhân (Buổi Sáng & Buổi Chiều)";
+        } else {
+            const currentTkbObj = timetables.find(x => x.id === currentTimetableId);
+            const tkbName = currentTkbObj ? currentTkbObj.name : 'Chính khóa';
+            if (capTitle) capTitle.innerText = `THỜI KHÓA BIỂU LỚP ${currentUser.className || ''}`;
+            if (capSubtitle) capSubtitle.innerText = `${tkbName} | Năm học: ${currentUser.year || ''}`;
+            if (capTeacher) capTeacher.innerText = `GVCN: ${currentUser.teacherName || 'Chưa cập nhật'}`;
+            if (capFooter) capFooter.innerText = "Buổi Sáng: Tiết 1 (07:00 - 07:45) đến Tiết 5 (10:25 - 11:10)";
+        }
+
         lucide.createIcons();
     }
     
@@ -4334,6 +4378,52 @@
       if (teacherNameEl && currentUser) {
         teacherNameEl.innerText = `GVCN: ${currentUser.teacherName || 'Chưa cập nhật'}`;
       }
+    }
+
+        function exportTimetableImage() {
+        const area = document.getElementById('timetable-capture-area');
+        if (!area) return showModal('error', 'Lỗi', 'Không tìm thấy bảng Thời khóa biểu để xuất!');
+        
+        const isTeacher = (currentTimetableViewMode === 'teacher');
+        const titleText = isTeacher ? 'TKB Giáo viên' : 'TKB Lớp';
+        showModal('info', 'Đang xử lý...', `Hệ thống đang xuất ${titleText} thành ảnh sắc nét chuẩn 4K. Vui lòng đợi trong giây lát...`);
+        
+        html2canvas(area, {
+            scale: 4,
+            useCORS: true,
+            backgroundColor: '#ffffff',
+            logging: false
+        }).then(canvas => {
+            closeModalUi('custom-modal', 'custom-modal-content');
+            try {
+                let filename = '';
+                if (isTeacher) {
+                    const teacherName = currentUser ? (currentUser.teacherName || 'GiaoVien').replace(/\s+/g, '_') : 'GiaoVien';
+                    filename = `TKB_GV_${teacherName}_4K.png`;
+                } else {
+                    const className = currentUser ? (currentUser.className || 'Class').replace(/\s+/g, '_') : 'Class';
+                    const currentTkb = timetables.find(x => x.id === currentTimetableId);
+                    const tkbName = currentTkb ? currentTkb.name.replace(/\s+/g, '_') : 'TKB';
+                    filename = `TKB_Lop_${className}_${tkbName}_4K.png`;
+                }
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                setTimeout(() => {
+                    showModal('success', 'Thành công', `Đã xuất và tải ảnh ${titleText} 4K thành công!`);
+                }, 350);
+            } catch (err) {
+                showModal('error', 'Lỗi', 'Không thể tạo file ảnh: ' + err.message);
+            }
+        }).catch(err => {
+            closeModalUi('custom-modal', 'custom-modal-content');
+            showModal('error', 'Lỗi xuất ảnh', 'Có lỗi xảy ra khi dựng ảnh: ' + err.message);
+        });
     }
 
     function exportSeatingChartImage() {
