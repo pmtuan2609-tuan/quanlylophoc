@@ -351,6 +351,42 @@
             </div>
           </div>
 
+          <!-- Student Today's Timetable (Buổi Sáng - 5 Tiết) -->
+          <div class="bg-white p-5 md:p-6 rounded-3xl shadow-sm border border-slate-100 mt-4 md:mt-6 space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+              <div class="flex items-center gap-2.5">
+                <h3 class="font-black text-slate-800 text-sm md:text-base flex items-center gap-2"><i data-lucide="calendar" class="w-5 h-5 text-blue-500"></i> Thời Khóa Biểu Hôm Nay</h3>
+                <span id="student-overview-today-badge" class="bg-blue-50 text-blue-600 border border-blue-200 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full flex items-center gap-1"><i data-lucide="sun" class="w-3 h-3 text-amber-500"></i> Buổi Sáng (5 Tiết)</span>
+              </div>
+              <button onclick="switchTab('tab-timetable')" class="text-xs font-bold text-theme bg-theme-light border border-theme/10 hover:bg-theme-light/80 px-3 py-1.5 rounded-lg transition flex items-center gap-1">Xem TKB tuần <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></button>
+            </div>
+            <div id="student-today-timetable-list" class="grid grid-cols-2 sm:grid-cols-5 gap-3"></div>
+          </div>
+
+          <!-- Student Duty Roster & Birthdays -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mt-4 md:mt-6">
+            <div class="bg-white p-5 md:p-6 rounded-3xl shadow-sm border border-slate-100 space-y-4 flex flex-col justify-between">
+              <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="font-black text-slate-800 text-xs md:text-sm flex items-center gap-2"><i data-lucide="sparkles" class="w-4 h-4 text-emerald-500"></i> Phân Công Trực Nhật Tuần</h3>
+                <span id="student-today-duty-badge" class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-100">Hôm nay: ...</span>
+              </div>
+              <div id="student-duty-roster" class="space-y-2"></div>
+              <div class="pt-2 border-t border-slate-100 text-[10px] font-bold text-slate-400 text-center">
+                Giữ gìn vệ sinh lớp học xanh - sạch - đẹp
+              </div>
+            </div>
+            <div class="bg-white p-5 md:p-6 rounded-3xl shadow-sm border border-slate-100 space-y-4 flex flex-col justify-between">
+              <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="font-black text-slate-800 text-xs md:text-sm flex items-center gap-2"><i data-lucide="cake" class="w-4 h-4 text-rose-500"></i> Sinh Nhật Tháng <span id="student-birthday-month">...</span></h3>
+                <span id="student-birthday-count-badge" class="text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-lg border border-rose-100">0 bạn</span>
+              </div>
+              <div id="student-birthday-list" class="space-y-2 max-h-56 overflow-y-auto custom-scrollbar pr-1"></div>
+              <div class="pt-2 border-t border-slate-100 text-[10px] font-bold text-slate-400 text-center">
+                🎉 Chúc mừng tuổi mới các bạn trong lớp!
+              </div>
+            </div>
+          </div>
+
           <!-- THÔNG BÁO MỚI NHẤT -->
           <div id="student-latest-announcements-card" class="bg-white p-5 md:p-6 rounded-3xl shadow-sm border border-slate-100 mt-4 md:mt-6 hidden">
               <div class="flex justify-between items-center mb-4 border-b pb-3">
@@ -517,26 +553,18 @@
 
           <!-- 4. BOTTOM GRID: TIMETABLE & LEADERBOARD -->
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Today's Timetable (Left column span 2) -->
+            <!-- Today's Timetable (Left column span 2) - ONLY MORNING -->
             <div class="lg:col-span-2 bg-white p-5 md:p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4">
               <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                <h3 class="font-black text-slate-800 text-sm md:text-base flex items-center gap-2"><i data-lucide="calendar" class="w-5 h-5 text-blue-500"></i> Thời Khóa Biểu Hôm Nay</h3>
-                <button onclick="switchTab('tab-timetable')" class="text-xs font-bold text-theme bg-theme-light border border-theme/10 hover:bg-theme-light/80 px-3 py-1.5 rounded-lg transition flex items-center gap-1">Xem cả tuần <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></button>
+                <div class="flex items-center gap-2.5">
+                  <h3 class="font-black text-slate-800 text-sm md:text-base flex items-center gap-2"><i data-lucide="calendar" class="w-5 h-5 text-blue-500"></i> Thời Khóa Biểu Hôm Nay</h3>
+                  <span id="overview-today-badge" class="bg-blue-50 text-blue-600 border border-blue-200 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full flex items-center gap-1"><i data-lucide="sun" class="w-3 h-3 text-amber-500"></i> Buổi Sáng (5 Tiết)</span>
+                </div>
+                <button onclick="switchTab('tab-timetable')" class="text-xs font-bold text-theme bg-theme-light border border-theme/10 hover:bg-theme-light/80 px-3 py-1.5 rounded-lg transition flex items-center gap-1">Xem TKB tuần <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></button>
               </div>
-              <!-- Horizontally scrollable list of today's periods -->
-              <div class="space-y-4">
-                <div>
-                  <div class="text-[10px] md:text-xs font-black text-slate-400 mb-2 uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="sun" class="w-3.5 h-3.5 text-amber-500"></i> Buổi Sáng</div>
-                  <div id="teacher-today-timetable-list-morning" class="grid grid-cols-2 sm:grid-cols-5 gap-3">
-                    <!-- Morning slots -->
-                  </div>
-                </div>
-                <div id="teacher-today-timetable-afternoon-container">
-                  <div class="text-[10px] md:text-xs font-black text-slate-400 mb-2 uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="sunset" class="w-3.5 h-3.5 text-indigo-500"></i> Buổi Chiều</div>
-                  <div id="teacher-today-timetable-list-afternoon" class="grid grid-cols-2 sm:grid-cols-5 gap-3">
-                    <!-- Afternoon slots -->
-                  </div>
-                </div>
+              <!-- 5 Morning slots in clean grid -->
+              <div id="teacher-today-timetable-list-morning" class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                <!-- Morning slots -->
               </div>
             </div>
             
@@ -551,6 +579,58 @@
                 <!-- Dynamically filled rows -->
               </div>
             </div>
+          </div>
+
+          <!-- 4.1. EXTRA INFORMATIONAL CARDS ROW: DUTY ROSTER, BIRTHDAYS, MONITORS -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Duty Roster Card -->
+            <div class="bg-white p-5 md:p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4 flex flex-col justify-between">
+              <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="font-black text-slate-800 text-xs md:text-sm flex items-center gap-2"><i data-lucide="sparkles" class="w-4 h-4 text-emerald-500"></i> Phân Công Trực Nhật</h3>
+                <span id="overview-today-duty-badge" class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-100">Hôm nay: ...</span>
+              </div>
+              <div id="overview-duty-roster" class="space-y-2"></div>
+              <div class="pt-2 border-t border-slate-100 flex justify-between items-center text-[10px] font-bold text-slate-400">
+                <span>Vệ sinh lớp học sạch sẽ</span>
+                <button onclick="openDutyModal()" class="text-theme hover:underline flex items-center gap-1 font-bold"><i data-lucide="edit-3" class="w-3 h-3"></i> Tùy chỉnh</button>
+              </div>
+            </div>
+
+            <!-- Birthdays this Month Card -->
+            <div class="bg-white p-5 md:p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4 flex flex-col justify-between">
+              <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="font-black text-slate-800 text-xs md:text-sm flex items-center gap-2"><i data-lucide="cake" class="w-4 h-4 text-rose-500"></i> Sinh Nhật Tháng <span id="overview-birthday-month">...</span></h3>
+                <span id="overview-birthday-count-badge" class="text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-lg border border-rose-100">0 bạn</span>
+              </div>
+              <div id="overview-birthday-list" class="space-y-2 max-h-56 overflow-y-auto custom-scrollbar pr-1"></div>
+              <div class="pt-2 border-t border-slate-100 text-[10px] font-bold text-slate-400 text-center">
+                🎉 Chúc mừng tuổi mới các thành viên trong lớp!
+              </div>
+            </div>
+
+            <!-- Class Committee / Monitors Card -->
+            <div class="bg-white p-5 md:p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4 flex flex-col justify-between">
+              <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="font-black text-slate-800 text-xs md:text-sm flex items-center gap-2"><i data-lucide="shield-check" class="w-4 h-4 text-indigo-500"></i> Ban Cán Sự Lớp</h3>
+                <button onclick="switchTab('tab-students')" class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-lg border border-indigo-100 hover:bg-indigo-100 transition flex items-center gap-1">Chi tiết <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></button>
+              </div>
+              <div id="overview-monitors-list" class="space-y-2 max-h-56 overflow-y-auto custom-scrollbar pr-1"></div>
+              <div class="pt-2 border-t border-slate-100 text-[10px] font-bold text-slate-400 text-center">
+                Đội ngũ cán sự tự quản của tập thể lớp
+              </div>
+            </div>
+          </div>
+
+          <!-- 4.2. INTERACTIVE WEEKLY TASKS OF HOMEROOM TEACHER -->
+          <div class="bg-white p-5 md:p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-3 gap-2">
+              <div class="flex items-center gap-2.5">
+                <h3 class="font-black text-slate-800 text-sm md:text-base flex items-center gap-2"><i data-lucide="check-square" class="w-5 h-5 text-purple-600"></i> Nhiệm Vụ Trọng Tâm Tuần Của GVCN</h3>
+                <span id="overview-tasks-progress" class="bg-purple-50 text-purple-700 border border-purple-200 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full">0/0 hoàn thành</span>
+              </div>
+              <button onclick="addNewWeeklyTask()" class="bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 text-xs font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1 shadow-sm"><i data-lucide="plus" class="w-3.5 h-3.5"></i> Thêm việc cần làm</button>
+            </div>
+            <div id="overview-weekly-tasks-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3"></div>
           </div>
           
           <!-- 4.5. LATEST ANNOUNCEMENTS -->
@@ -1042,6 +1122,60 @@
           </div>
       </div>
       
+    </div>
+  </div>
+
+    <!-- Modal Tùy Chỉnh Lịch Trực Nhật -->
+  <div id="duty-roster-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[700] p-4 opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-[2rem] p-6 md:p-8 w-full max-w-lg shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col border border-white/20" id="duty-roster-content">
+      <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold"><i data-lucide="sparkles" class="w-5 h-5"></i></div>
+          <div>
+            <h3 class="text-base md:text-lg font-black text-slate-800">Phân Công Trực Nhật Tuần</h3>
+            <p class="text-[10px] md:text-xs text-slate-400 font-bold">Tùy chỉnh tổ phụ trách vệ sinh từng ngày</p>
+          </div>
+        </div>
+        <button onclick="closeModalUi('duty-roster-modal', 'duty-roster-content')" class="text-slate-400 hover:text-slate-600 bg-slate-50 p-2 rounded-full transition"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      
+      <div class="space-y-3 max-h-[60vh] overflow-y-auto custom-scrollbar pr-1">
+        <div class="grid grid-cols-3 gap-2 items-center">
+          <span class="font-bold text-xs text-slate-700">Thứ Hai:</span>
+          <input type="text" id="duty-day-2-squad" class="px-3 py-2 border border-slate-200 rounded-xl text-xs font-bold" placeholder="Tổ 1">
+          <input type="text" id="duty-day-2-task" class="px-3 py-2 border border-slate-200 rounded-xl text-xs text-slate-600" placeholder="Nhiệm vụ...">
+        </div>
+        <div class="grid grid-cols-3 gap-2 items-center">
+          <span class="font-bold text-xs text-slate-700">Thứ Ba:</span>
+          <input type="text" id="duty-day-3-squad" class="px-3 py-2 border border-slate-200 rounded-xl text-xs font-bold" placeholder="Tổ 2">
+          <input type="text" id="duty-day-3-task" class="px-3 py-2 border border-slate-200 rounded-xl text-xs text-slate-600" placeholder="Nhiệm vụ...">
+        </div>
+        <div class="grid grid-cols-3 gap-2 items-center">
+          <span class="font-bold text-xs text-slate-700">Thứ Tư:</span>
+          <input type="text" id="duty-day-4-squad" class="px-3 py-2 border border-slate-200 rounded-xl text-xs font-bold" placeholder="Tổ 3">
+          <input type="text" id="duty-day-4-task" class="px-3 py-2 border border-slate-200 rounded-xl text-xs text-slate-600" placeholder="Nhiệm vụ...">
+        </div>
+        <div class="grid grid-cols-3 gap-2 items-center">
+          <span class="font-bold text-xs text-slate-700">Thứ Năm:</span>
+          <input type="text" id="duty-day-5-squad" class="px-3 py-2 border border-slate-200 rounded-xl text-xs font-bold" placeholder="Tổ 4">
+          <input type="text" id="duty-day-5-task" class="px-3 py-2 border border-slate-200 rounded-xl text-xs text-slate-600" placeholder="Nhiệm vụ...">
+        </div>
+        <div class="grid grid-cols-3 gap-2 items-center">
+          <span class="font-bold text-xs text-slate-700">Thứ Sáu:</span>
+          <input type="text" id="duty-day-6-squad" class="px-3 py-2 border border-slate-200 rounded-xl text-xs font-bold" placeholder="Tổ 1">
+          <input type="text" id="duty-day-6-task" class="px-3 py-2 border border-slate-200 rounded-xl text-xs text-slate-600" placeholder="Nhiệm vụ...">
+        </div>
+        <div class="grid grid-cols-3 gap-2 items-center">
+          <span class="font-bold text-xs text-slate-700">Thứ Bảy:</span>
+          <input type="text" id="duty-day-7-squad" class="px-3 py-2 border border-slate-200 rounded-xl text-xs font-bold" placeholder="Toàn lớp">
+          <input type="text" id="duty-day-7-task" class="px-3 py-2 border border-slate-200 rounded-xl text-xs text-slate-600" placeholder="Nhiệm vụ...">
+        </div>
+      </div>
+      
+      <div class="flex gap-2 pt-4 border-t border-slate-100 mt-3">
+        <button onclick="closeModalUi('duty-roster-modal', 'duty-roster-content')" class="flex-[0.4] bg-slate-100 hover:bg-slate-200 text-slate-600 font-black py-3 rounded-xl transition text-xs uppercase tracking-wider">Hủy</button>
+        <button onclick="saveDutyRosterModal()" class="flex-1 bg-theme-grad text-white font-black py-3 rounded-xl hover:scale-[1.01] transition shadow-lg flex items-center justify-center gap-2 text-xs uppercase tracking-wider"><i data-lucide="save" class="w-4 h-4"></i> Lưu phân công</button>
+      </div>
     </div>
   </div>
 
@@ -4710,6 +4844,329 @@
       }).join(''); lucide.createIcons();
     }
     
+    
+    // --- OVERVIEW EXTRA WIDGETS FUNCTIONS ---
+    function getDutyRoster() {
+        const saved = localStorage.getItem('dutyRoster_' + currentUser.id);
+        if (saved) {
+            try { return JSON.parse(saved); } catch(e) {}
+        }
+        return {
+            2: { squad: "Tổ 1", task: "Quét lớp, lau bảng, mở cửa" },
+            3: { squad: "Tổ 2", task: "Quét lớp, lau bảng, đổ rác" },
+            4: { squad: "Tổ 3", task: "Quét lớp, lau bảng, sắp bàn ghế" },
+            5: { squad: "Tổ 4", task: "Quét lớp, lau bảng, kiểm tra quạt/đèn" },
+            6: { squad: "Tổ 1", task: "Quét lớp, lau bảng, tưới cây" },
+            7: { squad: "Toàn lớp", task: "Tổng vệ sinh phòng học cuối tuần" }
+        };
+    }
+
+    function renderOverviewDutyRoster() {
+        const listEl = document.getElementById('overview-duty-roster');
+        const badgeEl = document.getElementById('overview-today-duty-badge');
+        if (!listEl) return;
+        
+        const roster = getDutyRoster();
+        const dayNames = { 2: "Thứ 2", 3: "Thứ 3", 4: "Thứ 4", 5: "Thứ 5", 6: "Thứ 6", 7: "Thứ 7" };
+        const now = new Date();
+        const curDay = now.getDay() + 1; // 1 = Sun, 2 = Mon...
+        
+        if (badgeEl) {
+            if (roster[curDay]) {
+                badgeEl.innerText = `Hôm nay: ${roster[curDay].squad}`;
+            } else {
+                badgeEl.innerText = `Hôm nay: Nghỉ`;
+            }
+        }
+        
+        const studentListEl = document.getElementById('student-duty-roster');
+        const studentBadgeEl = document.getElementById('student-today-duty-badge');
+        if (studentBadgeEl && badgeEl) studentBadgeEl.innerText = badgeEl.innerText;
+        
+        const dutyHtml = [2, 3, 4, 5, 6, 7].map(d => {
+            const item = roster[d] || { squad: "Chưa phân công", task: "Trực nhật" };
+            const isToday = (d === curDay);
+            
+            return `
+            <div class="flex items-center justify-between p-2 rounded-xl border transition ${isToday ? 'bg-emerald-50 border-emerald-300 ring-1 ring-emerald-400 shadow-xs' : 'bg-slate-50/70 border-slate-100'}">
+              <div class="flex items-center gap-2">
+                <span class="font-extrabold text-[11px] ${isToday ? 'text-emerald-800' : 'text-slate-600'} w-12">${dayNames[d]}:</span>
+                <span class="font-black text-xs ${isToday ? 'text-emerald-700' : 'text-slate-800'}">${item.squad}</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] text-slate-400 truncate max-w-[120px] sm:max-w-[160px]" title="${item.task}">${item.task}</span>
+                ${isToday ? `<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>` : ''}
+              </div>
+            </div>
+            `;
+        }).join('');
+        listEl.innerHTML = dutyHtml;
+        if (studentListEl) studentListEl.innerHTML = dutyHtml;
+        return;
+        listEl.innerHTML = [2, 3, 4, 5, 6, 7].map(d => {
+            const item = roster[d] || { squad: "Chưa phân công", task: "Trực nhật" };
+            const isToday = (d === curDay);
+            
+            return `
+            <div class="flex items-center justify-between p-2 rounded-xl border transition ${isToday ? 'bg-emerald-50 border-emerald-300 ring-1 ring-emerald-400 shadow-xs' : 'bg-slate-50/70 border-slate-100'}">
+              <div class="flex items-center gap-2">
+                <span class="font-extrabold text-[11px] ${isToday ? 'text-emerald-800' : 'text-slate-600'} w-12">${dayNames[d]}:</span>
+                <span class="font-black text-xs ${isToday ? 'text-emerald-700' : 'text-slate-800'}">${item.squad}</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] text-slate-400 truncate max-w-[120px] sm:max-w-[160px]" title="${item.task}">${item.task}</span>
+                ${isToday ? `<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>` : ''}
+              </div>
+            </div>
+            `;
+        }).join('');
+    }
+
+    function openDutyModal() {
+        const roster = getDutyRoster();
+        for (let d = 2; d <= 7; d++) {
+            const item = roster[d] || { squad: `Tổ ${d - 1}`, task: "Vệ sinh lớp" };
+            const sqEl = document.getElementById(`duty-day-${d}-squad`);
+            const taskEl = document.getElementById(`duty-day-${d}-task`);
+            if (sqEl) sqEl.value = item.squad || '';
+            if (taskEl) taskEl.value = item.task || '';
+        }
+        openModalUi('duty-roster-modal', 'duty-roster-content');
+        lucide.createIcons();
+    }
+
+    function saveDutyRosterModal() {
+        const roster = {};
+        for (let d = 2; d <= 7; d++) {
+            const sqEl = document.getElementById(`duty-day-${d}-squad`);
+            const taskEl = document.getElementById(`duty-day-${d}-task`);
+            roster[d] = {
+                squad: sqEl ? sqEl.value.trim() || `Tổ ${d - 1}` : `Tổ ${d - 1}`,
+                task: taskEl ? taskEl.value.trim() || "Vệ sinh lớp" : "Vệ sinh lớp"
+            };
+        }
+        localStorage.setItem('dutyRoster_' + currentUser.id, JSON.stringify(roster));
+        closeModalUi('duty-roster-modal', 'duty-roster-content');
+        renderOverviewDutyRoster();
+        showModal('success', 'Thành công', 'Đã lưu lịch phân công trực nhật!');
+    }
+
+    function renderOverviewBirthdays() {
+        const listEl = document.getElementById('overview-birthday-list');
+        const badgeEl = document.getElementById('overview-birthday-count-badge');
+        const monthEl = document.getElementById('overview-birthday-month');
+        if (!listEl) return;
+        
+        const now = new Date();
+        const curMonth = now.getMonth() + 1; // 1-12
+        const curDay = now.getDate();
+        if (monthEl) monthEl.innerText = curMonth;
+        
+        const birthdayStudents = students.filter(s => {
+            if (!s.dob) return false;
+            const parts = s.dob.split(/[/.-]/);
+            if (parts.length >= 2) {
+                const m = parseInt(parts[1], 10);
+                return m === curMonth;
+            }
+            return false;
+        });
+        
+        if (badgeEl) badgeEl.innerText = `${birthdayStudents.length} bạn`;
+        
+        if (birthdayStudents.length === 0) {
+            listEl.innerHTML = `
+                <div class="text-center py-6 text-slate-400 italic text-xs flex flex-col items-center gap-1">
+                    <i data-lucide="smile" class="w-5 h-5 text-slate-300"></i>
+                    Tháng ${curMonth} lớp mình không có sinh nhật nào.
+                </div>
+            `;
+            return;
+        }
+        
+        birthdayStudents.sort((a, b) => {
+            const da = parseInt(a.dob.split(/[/.-]/)[0], 10) || 0;
+            const db = parseInt(b.dob.split(/[/.-]/)[0], 10) || 0;
+            return da - db;
+        });
+        
+        const studentBdayList = document.getElementById('student-birthday-list');
+        const studentBdayBadge = document.getElementById('student-birthday-count-badge');
+        const studentMonthEl = document.getElementById('student-birthday-month');
+        if (studentMonthEl) studentMonthEl.innerText = curMonth;
+        if (studentBdayBadge) studentBdayBadge.innerText = `${birthdayStudents.length} bạn`;
+        if (studentBdayList && birthdayStudents.length === 0) {
+            studentBdayList.innerHTML = `<div class="text-center py-6 text-slate-400 italic text-xs flex flex-col items-center gap-1"><i data-lucide="smile" class="w-5 h-5 text-slate-300"></i> Tháng ${curMonth} lớp mình không có sinh nhật nào.</div>`;
+        }
+        
+        const bdayHtml = birthdayStudents.map(s => {
+            const parts = s.dob.split(/[/.-]/);
+            const day = parseInt(parts[0], 10);
+            const isToday = (day === curDay);
+            
+            return `
+            <div onclick="openProfileModal(${s.id})" class="flex items-center justify-between p-2.5 rounded-xl border transition cursor-pointer ${isToday ? 'bg-amber-50/80 border-amber-200 shadow-sm ring-1 ring-amber-300' : 'bg-slate-50 border-slate-100 hover:bg-slate-100/70'}">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <div class="w-8 h-8 rounded-full overflow-hidden bg-white border border-slate-200 shrink-0 flex items-center justify-center text-sm shadow-xs">${getAvatarHtml(s.avatar)}</div>
+                <div class="min-w-0">
+                  <div class="font-bold text-slate-800 text-xs truncate" title="${s.name}">${s.name}</div>
+                  <div class="text-[10px] text-slate-400 font-semibold flex items-center gap-1"><i data-lucide="cake" class="w-3 h-3 text-rose-400"></i> ${s.dob}</div>
+                </div>
+              </div>
+              ${isToday ? `<span class="text-[9px] font-black uppercase tracking-wider bg-amber-500 text-white px-2 py-0.5 rounded-md shadow-xs animate-bounce">🎉 Hôm nay!</span>` : `<span class="text-[10px] font-bold text-slate-400">${day}/${curMonth}</span>`}
+            </div>
+            `;
+        }).join('');
+        listEl.innerHTML = bdayHtml;
+        if (studentBdayList) studentBdayList.innerHTML = bdayHtml;
+        return;
+        listEl.innerHTML = birthdayStudents.map(s => {
+            const parts = s.dob.split(/[/.-]/);
+            const day = parseInt(parts[0], 10);
+            const isToday = (day === curDay);
+            
+            return `
+            <div onclick="openProfileModal(${s.id})" class="flex items-center justify-between p-2.5 rounded-xl border transition cursor-pointer ${isToday ? 'bg-amber-50/80 border-amber-200 shadow-sm ring-1 ring-amber-300' : 'bg-slate-50 border-slate-100 hover:bg-slate-100/70'}">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <div class="w-8 h-8 rounded-full overflow-hidden bg-white border border-slate-200 shrink-0 flex items-center justify-center text-sm shadow-xs">${getAvatarHtml(s.avatar)}</div>
+                <div class="min-w-0">
+                  <div class="font-bold text-slate-800 text-xs truncate" title="${s.name}">${s.name}</div>
+                  <div class="text-[10px] text-slate-400 font-semibold flex items-center gap-1"><i data-lucide="cake" class="w-3 h-3 text-rose-400"></i> ${s.dob}</div>
+                </div>
+              </div>
+              ${isToday ? `<span class="text-[9px] font-black uppercase tracking-wider bg-amber-500 text-white px-2 py-0.5 rounded-md shadow-xs animate-bounce">🎉 Hôm nay!</span>` : `<span class="text-[10px] font-bold text-slate-400">${day}/${curMonth}</span>`}
+            </div>
+            `;
+        }).join('');
+    }
+
+    function renderOverviewMonitors() {
+        const listEl = document.getElementById('overview-monitors-list');
+        if (!listEl) return;
+        
+        const monitorStudents = students.filter(s => s.role && s.role.trim() !== '' && s.role.trim() !== 'Học sinh');
+        
+        if (monitorStudents.length === 0) {
+            listEl.innerHTML = `
+                <div class="text-center py-6 text-slate-400 italic text-xs flex flex-col items-center gap-1">
+                    <i data-lucide="user-x" class="w-5 h-5 text-slate-300"></i>
+                    Chưa phân công Ban cán sự lớp.
+                </div>
+            `;
+            return;
+        }
+        
+        const roleColors = {
+            'lớp trưởng': 'bg-amber-100 text-amber-800 border-amber-200',
+            'lớp phó học tập': 'bg-blue-100 text-blue-800 border-blue-200',
+            'lớp phó kỷ luật': 'bg-rose-100 text-rose-800 border-rose-200',
+            'lớp phó lđ-vs': 'bg-emerald-100 text-emerald-800 border-emerald-200',
+            'bí thư chi đoàn': 'bg-red-100 text-red-800 border-red-200',
+            'thủ quỹ': 'bg-purple-100 text-purple-800 border-purple-200',
+            'tổ trưởng': 'bg-indigo-100 text-indigo-800 border-indigo-200'
+        };
+        
+        listEl.innerHTML = monitorStudents.map(s => {
+            const normRole = (s.role || '').toLowerCase().trim();
+            const colorClass = roleColors[normRole] || 'bg-slate-100 text-slate-700 border-slate-200';
+            
+            return `
+            <div onclick="openProfileModal(${s.id})" class="flex items-center justify-between p-2 rounded-xl bg-slate-50 hover:bg-slate-100/70 border border-slate-100 transition cursor-pointer">
+              <div class="flex items-center gap-2 min-w-0">
+                <div class="w-7 h-7 rounded-full overflow-hidden bg-white border border-slate-200 shrink-0 flex items-center justify-center text-xs">${getAvatarHtml(s.avatar)}</div>
+                <span class="font-bold text-slate-800 text-xs truncate" title="${s.name}">${s.name}</span>
+              </div>
+              <span class="text-[9px] font-black px-2 py-0.5 rounded-md border shrink-0 ${colorClass}">${s.role}</span>
+            </div>
+            `;
+        }).join('');
+    }
+
+    function getWeeklyTasks() {
+        const saved = localStorage.getItem('weekly_tasks_' + currentUser.id);
+        if (saved) {
+            try { return JSON.parse(saved); } catch(e) {}
+        }
+        return [
+            { id: 1, text: "Ổn định nề nếp đầu tuần & kiểm tra sĩ số các buổi học", done: true },
+            { id: 2, text: "Nhắc nhở nộp hồ sơ, căn cước và thông tin BHYT học sinh", done: false },
+            { id: 3, text: "Kiểm tra sổ đầu bài & tổng hợp điểm thi đua các tổ", done: false },
+            { id: 4, text: "Chuẩn bị chuyên đề sinh hoạt lớp và tuyên dương học sinh tiêu biểu", done: false }
+        ];
+    }
+
+    function saveWeeklyTasks(tasks) {
+        localStorage.setItem('weekly_tasks_' + currentUser.id, JSON.stringify(tasks));
+    }
+
+    function toggleWeeklyTask(id) {
+        const tasks = getWeeklyTasks();
+        const task = tasks.find(t => t.id === id);
+        if (task) {
+            task.done = !task.done;
+            saveWeeklyTasks(tasks);
+            renderOverviewWeeklyTasks();
+        }
+    }
+
+    function deleteWeeklyTask(id) {
+        let tasks = getWeeklyTasks();
+        tasks = tasks.filter(t => t.id !== id);
+        saveWeeklyTasks(tasks);
+        renderOverviewWeeklyTasks();
+    }
+
+    function addNewWeeklyTask() {
+        showPrompt('Thêm nhiệm vụ tuần', 'Nhập nội dung công việc/ghi chú cần làm trong tuần:', '', (text) => {
+            if (!text || !text.trim()) return;
+            const tasks = getWeeklyTasks();
+            tasks.push({ id: Date.now(), text: text.trim(), done: false });
+            saveWeeklyTasks(tasks);
+            renderOverviewWeeklyTasks();
+        });
+    }
+
+    function renderOverviewWeeklyTasks() {
+        const listEl = document.getElementById('overview-weekly-tasks-list');
+        const progressEl = document.getElementById('overview-tasks-progress');
+        if (!listEl) return;
+        
+        const tasks = getWeeklyTasks();
+        const completedCount = tasks.filter(t => t.done).length;
+        
+        if (progressEl) {
+            progressEl.innerText = `${completedCount}/${tasks.length} hoàn thành`;
+            if (completedCount === tasks.length && tasks.length > 0) {
+                progressEl.className = "bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full";
+            } else {
+                progressEl.className = "bg-purple-50 text-purple-700 border border-purple-200 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full";
+            }
+        }
+        
+        if (tasks.length === 0) {
+            listEl.innerHTML = `
+                <div class="col-span-full text-center py-6 text-slate-400 italic text-xs">
+                    Chưa có nhiệm vụ nào cho tuần này. Bấm "+ Thêm việc cần làm" để ghi chú!
+                </div>
+            `;
+            return;
+        }
+        
+        listEl.innerHTML = tasks.map(t => {
+            return `
+            <div class="flex items-start justify-between p-3 rounded-2xl border transition group ${t.done ? 'bg-emerald-50/40 border-emerald-100 text-slate-400' : 'bg-slate-50/70 border-slate-100 hover:bg-slate-50 text-slate-700'}">
+              <label class="flex items-start gap-2.5 cursor-pointer flex-1 min-w-0">
+                <input type="checkbox" onchange="toggleWeeklyTask(${t.id})" ${t.done ? 'checked' : ''} class="mt-0.5 w-4 h-4 rounded text-purple-600 focus:ring-purple-500 cursor-pointer accent-purple-600 shrink-0">
+                <span class="text-xs font-bold leading-relaxed select-none ${t.done ? 'line-through text-slate-400' : 'text-slate-700'}">${t.text}</span>
+              </label>
+              <button onclick="deleteWeeklyTask(${t.id})" class="opacity-0 group-hover:opacity-100 p-1 text-slate-300 hover:text-rose-500 rounded transition ml-1 shrink-0" title="Xóa nhiệm vụ">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+            `;
+        }).join('');
+    }
+
     function renderOverview() {
       const isStudent = (currentUserRole === 'student');
       const sorted = [...students].sort((a,b) => b.points - a.points); const topContainer = document.getElementById('top-students-list');
@@ -4791,86 +5248,81 @@
       const newAvgPointsEl = document.getElementById('new-overview-stat-avg-points');
       if (newAvgPointsEl) newAvgPointsEl.innerText = `${avgPoints} sao / em`;
 
-      // Render Today's Timetable for Teacher / Student
+      // Render Today's Timetable (Only Morning - 5 periods)
       const morningList = document.getElementById('teacher-today-timetable-list-morning');
-      const afternoonList = document.getElementById('teacher-today-timetable-list-afternoon');
-      const afternoonContainer = document.getElementById('teacher-today-timetable-afternoon-container');
+      const todayBadge = document.getElementById('overview-today-badge');
       
-      // Hide afternoon on overview for student role
-      if (afternoonContainer) {
-          if (currentUserRole === 'student') {
-              afternoonContainer.classList.add('hidden');
-          } else {
-              afternoonContainer.classList.remove('hidden');
-          }
-      }
-
-      if (morningList && afternoonList) {
+      if (morningList) {
           const activeTkb = timetables.find(x => x.id === currentTimetableId) || timetables[0];
           let dayNum = new Date().getDay() + 1; // 1 = Sunday, 2 = Monday, ...
-          let isWeekend = false;
           if (dayNum === 1 || dayNum === 7) {
-              isWeekend = true;
-              dayNum = 2; // Default to Monday
+              dayNum = 2; // Default to Monday if Sunday
           }
           
-          const periods = [
+          const dayNames = { 2: "Thứ Hai", 3: "Thứ Ba", 4: "Thứ Tư", 5: "Thứ Năm", 6: "Thứ Sáu", 7: "Thứ Bảy" };
+          if (todayBadge) {
+              todayBadge.innerHTML = `<i data-lucide="sun" class="w-3 h-3 text-amber-500"></i> ${dayNames[dayNum] || 'Thứ Hai'} - Buổi Sáng (5 Tiết)`;
+          }
+          
+          const morningPeriods = [
               { num: 1, time: "07:00 - 07:45" },
               { num: 2, time: "07:45 - 08:30" },
               { num: 3, time: "08:55 - 09:40" },
               { num: 4, time: "09:40 - 10:25" },
-              { num: 5, time: "10:25 - 11:10" },
-              { num: 6, time: "13:00 - 13:45" },
-              { num: 7, time: "13:45 - 14:30" },
-              { num: 8, time: "14:45 - 15:30" },
-              { num: 9, time: "15:30 - 16:15" }
+              { num: 5, time: "10:25 - 11:10" }
           ];
           
           let morningHtml = '';
-          let afternoonHtml = '';
-          periods.forEach(p => {
+          morningPeriods.forEach(p => {
               const key = `d${dayNum}_p${p.num}`;
               const val = activeTkb && activeTkb.data ? (activeTkb.data[key] || '') : '';
               
-              let subject = 'Trống';
+              let subject = 'Nghỉ';
               let teacher = '';
               if (val) {
                   if (val.includes('|')) {
                       const parts = val.split('|');
-                      subject = parts[0] || 'Trống';
-                      teacher = parts[1] ? `GV: ${parts[1]}` : 'GV: Chưa phân công';
+                      subject = parts[0] || 'Nghỉ';
+                      teacher = parts[1] ? `GV: ${parts[1]}` : '';
                   } else {
                       subject = val;
                       const teachers = currentUser.subjectTeachers || {};
                       const teacherName = teachers[val] || '';
-                      teacher = teacherName ? `GV: ${teacherName}` : 'GV: Chưa phân công';
+                      teacher = teacherName ? `GV: ${teacherName}` : '';
                   }
               }
               
-              const periodLabel = p.num <= 5 ? `Tiết ${p.num}` : `Tiết ${p.num - 5} (Chiều)`;
+              const colorClass = subject && subject !== 'Nghỉ' ? getPastelColorClass(subject) : 'bg-slate-50 text-slate-600 border-slate-100';
               
-              const cardHtml = `
-              <div class="bg-slate-50 border border-slate-100 p-4 rounded-2xl flex flex-col justify-between hover:bg-slate-100/50 transition shadow-sm">
+              morningHtml += `
+              <div class="${colorClass} border p-3 md:p-3.5 rounded-2xl flex flex-col justify-between hover:scale-[1.02] transition shadow-xs">
                 <div>
-                  <div class="text-[9px] uppercase font-bold tracking-wider text-slate-400 mb-0.5">${periodLabel}</div>
-                  <div class="text-[10px] font-bold text-slate-500 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> ${p.time}</div>
+                  <div class="flex items-center justify-between">
+                    <span class="text-[9px] uppercase font-black tracking-wider text-slate-400">Tiết ${p.num}</span>
+                    <span class="text-[9px] font-bold text-slate-400">${p.time.split(' - ')[0]}</span>
+                  </div>
+                  <div class="text-[9px] font-bold text-slate-400 mt-0.5 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> ${p.time}</div>
                 </div>
                 <div class="mt-3">
-                  <div class="font-black text-slate-800 text-sm truncate" title="${subject}">${subject}</div>
-                  <div class="text-[10px] font-bold text-theme mt-0.5 truncate" title="${teacher}">${teacher}</div>
+                  <div class="font-black text-sm truncate" title="${subject}">${subject}</div>
+                  <div class="text-[10px] font-bold text-slate-500/90 mt-0.5 truncate" title="${teacher}">${teacher || (subject !== 'Nghỉ' ? 'Chưa phân công' : '')}</div>
                 </div>
               </div>`;
-              
-              if (p.num <= 5) {
-                  morningHtml += cardHtml;
-              } else {
-                  afternoonHtml += cardHtml;
-              }
           });
           morningList.innerHTML = morningHtml;
-          afternoonList.innerHTML = afternoonHtml;
-          lucide.createIcons();
+          const studentMorningList = document.getElementById('student-today-timetable-list');
+          if (studentMorningList) studentMorningList.innerHTML = morningHtml;
+          const studentTodayBadge = document.getElementById('student-overview-today-badge');
+          if (studentTodayBadge) {
+              studentTodayBadge.innerHTML = `<i data-lucide="sun" class="w-3 h-3 text-amber-500"></i> ${dayNames[dayNum] || 'Thứ Hai'} - Buổi Sáng (5 Tiết)`;
+          }
       }
+      
+      // Render Extra Overview Widgets
+      renderOverviewDutyRoster();
+      renderOverviewBirthdays();
+      renderOverviewMonitors();
+      renderOverviewWeeklyTasks();
 
       // Render Today's Top Students for Teacher
       const teacherTopList = document.getElementById('teacher-top-students-list');
