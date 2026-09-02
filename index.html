@@ -459,7 +459,7 @@
               <!-- Overlapping Avatar container -->
               <div class="absolute -top-20 left-6 md:left-8 w-24 h-24 md:w-28 md:h-28 rounded-2xl overflow-hidden border-4 border-white shadow-lg shrink-0 group z-10">
                 <div id="teacher-banner-avatar" class="w-full h-full bg-slate-100 flex items-center justify-center text-4xl shadow-inner">👨‍🏫</div>
-                <div onclick="document.getElementById('avatar-upload').click()" class="absolute inset-0 bg-black/45 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300 cursor-pointer text-xs font-bold gap-1"><i data-lucide="camera" class="w-3.5 h-3.5"></i> Đổi ảnh</div>
+                <div id="teacher-banner-avatar-upload-overlay" onclick="document.getElementById('avatar-upload').click()" class="absolute inset-0 bg-black/45 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300 cursor-pointer text-xs font-bold gap-1"><i data-lucide="camera" class="w-3.5 h-3.5"></i> Đổi ảnh</div>
               </div>
               
               <div class="space-y-4 flex-1">
@@ -2542,8 +2542,20 @@
             }; img.src = event.target.result; 
         }; reader.readAsDataURL(file); 
     }
-    function generateCode(className, year, index) { className = className || "12A1"; year = year || "2026"; let yMatch = year.match(/\d{4}/g); let yStr = yMatch ? yMatch[yMatch.length - 1].slice(-2) : "00"; let gMatch = className.match(/^(\d{1,2})/); let gStr = gMatch ? gMatch[1].padStart(2, '0') : "00"; let sMatch = className.match(/[A-Za-z]+(\d+)/); let sStr = sMatch ? sMatch[1].padStart(2, '0') : "00"; return `${yStr}${gStr}${sStr}${index.toString().padStart(2, '0')}`; }
-    function ensureStudentCodes() { let changed = false; students.forEach((s, idx) => { if (!s.code) { s.code = generateCode(currentUser.className, currentUser.year, idx + 1); changed = true; } }); if (changed) saveAppData(); }
+    function generateCode(className, year, index, studentId) { 
+        return studentId ? String(studentId) : String(index); 
+    }
+    function ensureStudentCodes() { 
+        let changed = false; 
+        students.forEach((s) => { 
+            const expectedCode = String(s.id);
+            if (s.code !== expectedCode) { 
+                s.code = expectedCode; 
+                changed = true; 
+            } 
+        }); 
+        if (changed) saveAppData(); 
+    }
     function parseExcelDate(excelValue) { if (!excelValue) return ''; if (typeof excelValue === 'number') { const date = new Date(Math.round((excelValue - 25569) * 86400 * 1000)); return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`; } return String(excelValue).trim(); }
 
     function openModalUi(modalId, contentId) { const modal = document.getElementById(modalId); if(!modal) return; if(modalTimeouts[modalId]) clearTimeout(modalTimeouts[modalId]); modal.classList.remove('hidden'); modal.classList.add('flex'); setTimeout(() => { modal.classList.remove('opacity-0'); if(contentId) { const content = document.getElementById(contentId); if(content) { content.classList.remove('scale-95'); content.classList.add('scale-100'); } } }, 10); }
@@ -3462,28 +3474,68 @@
             const teacherBannerGreeting = document.getElementById('teacher-banner-greeting');
             if (teacherBannerGreeting) teacherBannerGreeting.innerText = greeting;
             const teacherBannerName = document.getElementById('teacher-banner-name');
-            if (teacherBannerName) {
-                const title = currentUser.gender === 'Nữ' ? 'Cô' : 'Thầy';
-                teacherBannerName.innerText = `${title} ${currentUser.teacherName || 'Thầy/Cô'}`;
-            }
             const teacherBannerClass = document.getElementById('teacher-banner-class');
             if (teacherBannerClass) teacherBannerClass.innerText = currentUser.className || '';
             
+            const avatarOverlay = document.getElementById('teacher-banner-avatar-upload-overlay');
             const teacherHeaderAvatar = document.getElementById('teacher-header-avatar');
-            if (teacherHeaderAvatar) {
-                if (currentUser.avatar) {
-                    teacherHeaderAvatar.innerHTML = `<img src="${currentUser.avatar}" class="w-full h-full object-cover rounded-full">`;
-                } else {
-                    teacherHeaderAvatar.innerHTML = `<i data-lucide="user" class="w-4 h-4 text-white"></i>`;
-                }
-            }
-            
             const teacherBannerAvatar = document.getElementById('teacher-banner-avatar');
-            if (teacherBannerAvatar) {
-                if (currentUser.avatar) {
-                    teacherBannerAvatar.innerHTML = `<img src="${currentUser.avatar}" class="w-full h-full object-cover">`;
-                } else {
-                    teacherBannerAvatar.innerText = "👨‍🏫";
+            const headerName = document.getElementById('teacher-header-name');
+            const headerRole = document.getElementById('teacher-header-role');
+            
+            if (currentUserRole === 'gvbm') {
+                if (teacherBannerName) teacherBannerName.innerText = "GVBM";
+                const greeting = document.getElementById('teacher-banner-greeting');
+                if (greeting) greeting.innerText = "Chào Quý Thầy/Cô Bộ Môn";
+                const sub = document.getElementById('teacher-banner-sub');
+                if (sub) sub.innerText = `Giáo viên bộ môn • Lớp ${currentUser.className || ''}`;
+                const badgeRole = document.getElementById('banner-badge-role');
+                if (badgeRole) badgeRole.innerHTML = `<i data-lucide="book-open" class="w-3 h-3 text-amber-500"></i> GVBM`;
+                
+                if (headerName) headerName.innerText = "GVBM";
+                if (headerRole) headerRole.innerText = "BỘ MÔN";
+                
+                if (avatarOverlay) avatarOverlay.classList.add('hidden');
+                
+                if (teacherHeaderAvatar) {
+                    teacherHeaderAvatar.innerHTML = `<div class="w-full h-full bg-gradient-to-tr from-amber-500 to-orange-500 rounded-full flex items-center justify-center text-[10px] font-black text-white">GVBM</div>`;
+                }
+                
+                if (teacherBannerAvatar) {
+                    teacherBannerAvatar.innerHTML = `
+                        <div class="w-full h-full bg-gradient-to-br from-amber-500 to-orange-500 flex flex-col items-center justify-center text-white select-none shadow-inner p-1 font-black">
+                            <span class="text-xl md:text-2xl tracking-wider leading-none">GVBM</span>
+                            <span class="text-[8px] font-bold opacity-90 uppercase tracking-widest mt-1">BỘ MÔN</span>
+                        </div>
+                    `;
+                }
+            } else {
+                if (teacherBannerName) {
+                    const title = currentUser.gender === 'Nữ' ? 'Cô' : 'Thầy';
+                    teacherBannerName.innerText = `${title} ${currentUser.teacherName || 'Thầy/Cô'}`;
+                }
+                if (headerName) {
+                    const title = currentUser.gender === 'Nữ' ? 'Cô' : 'Thầy';
+                    headerName.innerText = `${title} ${currentUser.teacherName || '...'}`;
+                }
+                if (headerRole) headerRole.innerText = "GVCN";
+                
+                if (avatarOverlay) avatarOverlay.classList.remove('hidden');
+                
+                if (teacherHeaderAvatar) {
+                    if (currentUser.avatar) {
+                        teacherHeaderAvatar.innerHTML = `<img src="${currentUser.avatar}" class="w-full h-full object-cover rounded-full">`;
+                    } else {
+                        teacherHeaderAvatar.innerHTML = `<i data-lucide="user" class="w-4 h-4 text-white"></i>`;
+                    }
+                }
+                
+                if (teacherBannerAvatar) {
+                    if (currentUser.avatar) {
+                        teacherBannerAvatar.innerHTML = `<img src="${currentUser.avatar}" class="w-full h-full object-cover">`;
+                    } else {
+                        teacherBannerAvatar.innerText = "👨‍🏫";
+                    }
                 }
             }
             
@@ -4538,8 +4590,10 @@
                 let isFemale = gender.toLowerCase() === 'nữ' || gender.toLowerCase() === 'nu' || gender.toLowerCase() === 'x';
                 let avatars = isFemale ? AVATARS.female : AVATARS.male;
                 
+                const importedId = getCol(row, 'id', 0);
+                const studentId = (importedId && !isNaN(importedId)) ? parseInt(importedId) : (Date.now() + i);
                 newStudents.push({ 
-                  id: Date.now() + i, 
+                  id: studentId, 
                   name: name, 
                   points: 0, 
                   loginCount: 0,
@@ -4548,7 +4602,7 @@
                   dob: dobStr, 
                   role: '', 
                   history: [], 
-                  code: generateCode(currentUser.className, currentUser.year, indexCounter),
+                  code: String(studentId),
                   cccd: cccd,
                   birthplace: birthplace,
                   birthRegPlace: birthRegPlace,
@@ -4624,7 +4678,7 @@
                               updatedCount++;
                             } else {
                               // Add as new student
-                              ns.code = generateCode(currentUser.className, currentUser.year, mergeIndexCounter);
+                              ns.code = String(ns.id);
                               students.push(ns);
                               mergeIndexCounter++;
                               addedCount++;
