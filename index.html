@@ -308,7 +308,7 @@
               </div>
           </div>
 
-          <div class="relative w-full h-64 md:h-[400px] bg-slate-200 rounded-3xl overflow-hidden shadow-sm group border border-slate-200">
+          <div class="relative w-full h-64 sm:h-80 md:h-[420px] lg:h-[480px] bg-slate-200 rounded-3xl overflow-hidden shadow-sm group border border-slate-200">
               <div id="cover-photo" class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style="background-image: url('https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80');"></div>
               <label id="cover-photo-label" class="absolute bottom-6 right-6 bg-white/80 backdrop-blur-sm hover:bg-white text-slate-700 px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg cursor-pointer flex items-center gap-2 border border-slate-100 opacity-0 group-hover:opacity-100 transition-all duration-300 z-20">
                   <i data-lucide="image" class="w-4 h-4"></i> Đổi ảnh bìa
@@ -407,7 +407,7 @@
           <!-- 2. HERO BANNER (RE-DESIGNED TO MATCH THE SCREENSHOT EXACTLY) -->
           <div class="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden flex flex-col relative">
             <!-- Top Half: Cover Photo (High opacity, clear, 100% width) -->
-            <div class="relative w-full h-48 md:h-64 bg-slate-200 overflow-hidden">
+            <div class="relative w-full h-64 sm:h-80 md:h-[380px] lg:h-[440px] xl:h-[480px] bg-slate-200 overflow-hidden">
               <div id="teacher-banner-cover" class="absolute inset-0 bg-cover bg-center transition-transform duration-500 hover:scale-105" style="background-image: url('https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80');"></div>
               
               <!-- Overlapping change cover button -->
@@ -2985,7 +2985,7 @@
         configureSidebarForRole();
         lucide.createIcons(); 
     }
-    function handleCoverUpload(e) { const file = e.target.files[0]; if(!file) return; compressImage(file, 1200, 800, function(dataUrl) { currentUser.cover = dataUrl; if(saveUserToStorage()) { document.getElementById('cover-photo').style.backgroundImage = `url('${currentUser.cover}')`; const tCover = document.getElementById('teacher-banner-cover'); if (tCover) tCover.style.backgroundImage = `url('${currentUser.cover}')`; } }, 0.85); e.target.value = ''; }
+    function handleCoverUpload(e) { const file = e.target.files[0]; if(!file) return; compressImage(file, 2560, 1440, function(dataUrl) { currentUser.cover = dataUrl; if(saveUserToStorage()) { document.getElementById('cover-photo').style.backgroundImage = `url('${currentUser.cover}')`; const tCover = document.getElementById('teacher-banner-cover'); if (tCover) tCover.style.backgroundImage = `url('${currentUser.cover}')`; } }, 0.92); e.target.value = ''; }
     function handleAvatarUpload(e) {
         const file = e.target.files[0];
         if(!file) return;
