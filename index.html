@@ -597,22 +597,31 @@
 
           <!-- 4.1. ROW: BẢNG TIN THÔNG BÁO LỚP HỌC (COL-SPAN-2) & TOP HS VI PHẠM (COL-SPAN-1) -->
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- BẢNG TIN & THÔNG BÁO LỚP HỌC -->
-            <div id="teacher-latest-announcements-card" class="lg:col-span-2 bg-white p-5 md:p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4">
-              <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-3 gap-2">
-                <div class="flex items-center gap-2.5">
-                  <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold shadow-xs"><i data-lucide="bell" class="w-4 h-4 animate-swing"></i></div>
+            <!-- BẢNG TIN & THÔNG BÁO LỚP HỌC (THIẾT KẾ ĐẸP & CHUYÊN NGHIỆP) -->
+            <div id="teacher-latest-announcements-card" class="lg:col-span-2 bg-white p-5 md:p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4 flex flex-col justify-between relative overflow-hidden">
+              <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-3.5 gap-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-400 text-white flex items-center justify-center font-bold shadow-md shadow-amber-500/20">
+                    <i data-lucide="megaphone" class="w-5 h-5"></i>
+                  </div>
                   <div>
-                    <h3 class="font-black text-slate-800 text-sm md:text-base flex items-center gap-2">Bảng Tin & Thông Báo Lớp</h3>
-                    <p class="text-[10px] text-slate-400 font-semibold">Dặn dò và thông báo nhanh từ GVCN đến lớp & PHHS</p>
+                    <div class="flex items-center gap-2">
+                      <h3 class="font-black text-slate-800 text-base md:text-lg tracking-tight">Bảng Tin & Thông Báo Lớp</h3>
+                      <span id="overview-announcements-count" class="bg-amber-50 text-amber-800 border border-amber-200 text-[10px] font-black px-2 py-0.5 rounded-full shadow-xs">0 tin</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 font-medium mt-0.5">Dặn dò, lịch kiểm tra và thông tin trực tiếp từ GVCN đến học sinh & PHHS</p>
                   </div>
                 </div>
                 <div class="flex items-center gap-2 w-full sm:w-auto">
-                  <button onclick="openNewAnnouncementModal()" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1 shadow-sm whitespace-nowrap"><i data-lucide="plus" class="w-3.5 h-3.5"></i> Đăng thông báo</button>
-                  <button onclick="switchTab('tab-announcements')" class="text-xs font-bold text-theme bg-theme-light border border-theme/20 px-3 py-1.5 rounded-lg transition flex items-center gap-1 whitespace-nowrap">Tất cả <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></button>
+                  <button onclick="openAddAnnouncementModal()" class="flex-1 sm:flex-none bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white text-xs font-black px-4 py-2 rounded-xl transition-all shadow-md shadow-amber-500/15 hover:shadow-lg flex items-center justify-center gap-1.5 hover:scale-[1.02] whitespace-nowrap">
+                    <i data-lucide="plus" class="w-4 h-4"></i> Đăng thông báo
+                  </button>
+                  <button onclick="switchTab('tab-announcements')" class="text-xs font-bold text-slate-600 hover:text-theme bg-slate-50 hover:bg-slate-100 border border-slate-200 px-3 py-2 rounded-xl transition flex items-center gap-1 whitespace-nowrap">
+                    Xem tất cả <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                  </button>
                 </div>
               </div>
-              <div id="teacher-latest-announcements-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+              <div id="teacher-latest-announcements-list" class="grid grid-cols-1 md:grid-cols-2 gap-3.5 flex-1"></div>
             </div>
 
             <!-- TOP HỌC SINH VI PHẠM & CẦN NHẮC NHỞ (THAY THẾ CHỖ TRỰC NHẬT) -->
@@ -634,37 +643,15 @@
             </div>
           </div>
 
-          <!-- 4.2. BỘ CÔNG CỤ NGHIỆP VỤ GVCN (QUỸ LỚP, GỌI PHỤ HUYNH, SINH NHẬT) -->
+          <!-- 4.2. BỘ CÔNG CỤ NGHIỆP VỤ GVCN (3 CỘT CÂN ĐỐI: GỌI PHỤ HUYNH, SINH NHẬT, GHI CHÚ SHL) -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- 1. Quỹ Lớp & Khoản Thu -->
+            <!-- 1. Danh Sách Cần Gọi Phụ Huynh Hôm Nay (Hotline) -->
             <div class="bg-white p-5 md:p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4 flex flex-col justify-between">
               <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                <h3 class="font-black text-slate-800 text-xs md:text-sm flex items-center gap-2"><i data-lucide="wallet" class="w-4 h-4 text-emerald-500"></i> Quỹ Lớp & Khoản Thu</h3>
-                <button onclick="openClassFundModal()" class="text-[10px] font-bold text-theme hover:underline flex items-center gap-0.5"><i data-lucide="edit-3" class="w-3 h-3"></i> Cập nhật</button>
-              </div>
-              <div class="space-y-2.5 text-xs">
-                <div class="bg-emerald-50/60 p-3 rounded-2xl border border-emerald-100 flex justify-between items-center">
-                  <span class="text-slate-500 font-bold">Số dư quỹ lớp:</span>
-                  <span id="overview-fund-balance" class="font-black text-emerald-700 text-sm">0 đ</span>
+                <div class="flex items-center gap-2">
+                  <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold"><i data-lucide="phone-call" class="w-4 h-4"></i></div>
+                  <h3 class="font-black text-slate-800 text-xs md:text-sm">Cần Gọi Phụ Huynh</h3>
                 </div>
-                <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100 flex justify-between items-center text-[11px]">
-                  <span class="text-slate-500 font-semibold">Bảo Hiểm Y Tế (BHYT):</span>
-                  <span id="overview-fund-bhyt" class="font-bold text-slate-800">Chưa cập nhật</span>
-                </div>
-                <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100 flex justify-between items-center text-[11px]">
-                  <span class="text-slate-500 font-semibold">Khoản thu khác:</span>
-                  <span id="overview-fund-other" class="font-bold text-slate-800">Chưa cập nhật</span>
-                </div>
-              </div>
-              <div class="pt-2 border-t border-slate-100 text-[10px] font-bold text-slate-400 text-center">
-                Thu chi công khai, minh bạch theo kỳ học
-              </div>
-            </div>
-
-            <!-- 2. Danh Sách Cần Gọi Phụ Huynh Hôm Nay (Hotline) -->
-            <div class="bg-white p-5 md:p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4 flex flex-col justify-between">
-              <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                <h3 class="font-black text-slate-800 text-xs md:text-sm flex items-center gap-2"><i data-lucide="phone-call" class="w-4 h-4 text-blue-500"></i> Cần Gọi Phụ Huynh</h3>
                 <span id="overview-parent-hotline-badge" class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-100">0 em</span>
               </div>
               <div id="overview-parent-hotline-list" class="space-y-2 max-h-56 overflow-y-auto custom-scrollbar pr-1">
@@ -676,10 +663,13 @@
               </div>
             </div>
 
-            <!-- 3. Sinh Nhật Trong Tháng -->
+            <!-- 2. Sinh Nhật Trong Tháng -->
             <div class="bg-white p-5 md:p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4 flex flex-col justify-between">
               <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                <h3 class="font-black text-slate-800 text-xs md:text-sm flex items-center gap-2"><i data-lucide="cake" class="w-4 h-4 text-rose-500"></i> Sinh Nhật Tháng <span id="overview-birthday-month">...</span></h3>
+                <div class="flex items-center gap-2">
+                  <div class="w-8 h-8 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold"><i data-lucide="cake" class="w-4 h-4"></i></div>
+                  <h3 class="font-black text-slate-800 text-xs md:text-sm">Sinh Nhật Tháng <span id="overview-birthday-month">...</span></h3>
+                </div>
                 <span id="overview-birthday-count-badge" class="text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-lg border border-rose-100">0 bạn</span>
               </div>
               <div id="overview-birthday-list" class="space-y-2 max-h-56 overflow-y-auto custom-scrollbar pr-1"></div>
@@ -687,26 +677,14 @@
                 🎉 Chúc mừng tuổi mới các thành viên trong lớp!
               </div>
             </div>
-          </div>
 
-          <!-- 4.3. NHIỆM VỤ TUẦN CỦA GVCN & GHI CHÚ DẶN DÒ TIẾT SINH HOẠT LỚP (SHL) -->
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Nhiệm vụ trọng tâm tuần (Col-span-2) -->
-            <div class="lg:col-span-2 bg-white p-5 md:p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4">
-              <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-3 gap-2">
-                <div class="flex items-center gap-2.5">
-                  <h3 class="font-black text-slate-800 text-sm md:text-base flex items-center gap-2"><i data-lucide="check-square" class="w-5 h-5 text-purple-600"></i> Kế Hoạch & Việc Cần Làm Trong Tuần</h3>
-                  <span id="overview-tasks-progress" class="bg-purple-50 text-purple-700 border border-purple-200 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full">0/0 hoàn thành</span>
-                </div>
-                <button onclick="addNewWeeklyTask()" class="bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 text-xs font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1 shadow-sm whitespace-nowrap"><i data-lucide="plus" class="w-3.5 h-3.5"></i> Thêm việc</button>
-              </div>
-              <div id="overview-weekly-tasks-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
-            </div>
-
-            <!-- Ghi chú & Dặn dò tiết SHL (Col-span-1 Sticky Note) -->
+            <!-- 3. Ghi chú & Dặn dò tiết SHL (Sticky Note) -->
             <div class="bg-amber-50/70 p-5 md:p-6 rounded-[2rem] border border-amber-200/80 shadow-sm space-y-3 flex flex-col justify-between relative overflow-hidden">
               <div class="flex justify-between items-center border-b border-amber-200/60 pb-2.5">
-                <h3 class="font-black text-amber-900 text-xs md:text-sm flex items-center gap-1.5"><i data-lucide="file-text" class="w-4 h-4 text-amber-600"></i> Ghi Chú Dặn Dò Tiết SHL</h3>
+                <div class="flex items-center gap-2">
+                  <div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold"><i data-lucide="file-text" class="w-4 h-4"></i></div>
+                  <h3 class="font-black text-amber-900 text-xs md:text-sm">Dặn Dò Tiết SHL</h3>
+                </div>
                 <button onclick="clearHomeroomNote()" class="text-[10px] font-bold text-amber-700/80 hover:text-amber-900" title="Xóa nội dung ghi chú">Xóa trắng</button>
               </div>
               <textarea id="overview-homeroom-note" oninput="saveHomeroomNote(this.value)" rows="5" class="w-full bg-transparent border-0 resize-none font-medium text-xs text-amber-900 leading-relaxed outline-none placeholder-amber-800/40 custom-scrollbar" placeholder="Gõ ghi chú dặn dò học sinh cuối tuần hoặc trước giờ sinh hoạt lớp (tự động lưu)..."></textarea>
@@ -715,6 +693,24 @@
                 <span>Dành cho tiết Sinh hoạt lớp</span>
               </div>
             </div>
+          </div>
+
+          <!-- 4.3. KẾ HOẠCH & VIỆC CẦN LÀM TRONG TUẦN (FULL WIDTH 4 CỘT) -->
+          <div class="bg-white p-5 md:p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-3 gap-2">
+              <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold shadow-xs"><i data-lucide="check-square" class="w-5 h-5"></i></div>
+                <div>
+                  <h3 class="font-black text-slate-800 text-sm md:text-base">Kế Hoạch & Việc Cần Làm Trong Tuần</h3>
+                  <p class="text-[10px] text-slate-400 font-semibold">Theo dõi tiến độ các nhiệm vụ trọng tâm của GVCN</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 w-full sm:w-auto">
+                <span id="overview-tasks-progress" class="bg-purple-50 text-purple-700 border border-purple-200 text-[10px] font-extrabold px-2.5 py-1 rounded-full">0/0 hoàn thành</span>
+                <button onclick="addNewWeeklyTask()" class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-3.5 py-1.5 rounded-xl transition flex items-center gap-1 shadow-sm whitespace-nowrap"><i data-lucide="plus" class="w-3.5 h-3.5"></i> Thêm việc</button>
+              </div>
+            </div>
+            <div id="overview-weekly-tasks-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"></div>
           </div>
 
           <!-- 5. RECENT ACTIVITIES -->
@@ -6713,6 +6709,7 @@
         return replacedText;
     }
 
+        const openNewAnnouncementModal = openAddAnnouncementModal;
     function openAddAnnouncementModal() {
         document.getElementById('announcement-id').value = '';
         document.getElementById('announcement-title').value = '';
@@ -6881,17 +6878,47 @@
         lucide.createIcons();
     }
 
+    function openViewAnnouncementModal(id) {
+        const ann = announcements.find(x => x.id === id);
+        if (!ann) return;
+        const pinText = ann.pin ? '<span class="text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 text-[10px] font-bold inline-flex items-center gap-1"><i data-lucide="pin" class="w-3 h-3"></i> Đã ghim</span>' : '';
+        const bodyHtml = `
+            <div class="text-left space-y-3">
+                <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-400 font-bold border-b border-slate-100 pb-2.5">
+                    <span class="flex items-center gap-1.5 text-slate-700"><i data-lucide="user" class="w-3.5 h-3.5 text-amber-500"></i> ${ann.author || 'GVCN'}</span>
+                    <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5 text-slate-400"></i> ${ann.date}</span>
+                    ${pinText}
+                </div>
+                <div class="text-slate-700 text-xs md:text-sm leading-relaxed whitespace-pre-line bg-slate-50 p-4 rounded-2xl border border-slate-100">${linkify(ann.content)}</div>
+            </div>
+        `;
+        showModal('info', ann.title, bodyHtml);
+    }
+
     function renderLatestAnnouncements() {
         const studentListEl = document.getElementById('student-latest-announcements-list');
         const teacherListEl = document.getElementById('teacher-latest-announcements-list');
+        const countEl = document.getElementById('overview-announcements-count');
+        
+        if (countEl) {
+            const count = (announcements && announcements.length) || 0;
+            countEl.innerText = `${count} tin`;
+        }
         
         const renderListHtml = () => {
             if (!announcements || announcements.length === 0) {
                 return `
-                    <div class="text-center text-slate-400 italic py-8 text-xs font-semibold col-span-2 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center gap-2">
-                        <div class="w-9 h-9 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center"><i data-lucide="bell-off" class="w-4 h-4"></i></div>
-                        <span>Chưa có thông báo nào được đăng.</span>
-                        <button onclick="openNewAnnouncementModal()" class="text-xs font-bold text-amber-600 bg-amber-50 hover:bg-amber-100 px-3 py-1.5 rounded-xl border border-amber-200 transition mt-1 flex items-center gap-1"><i data-lucide="plus" class="w-3.5 h-3.5"></i> Đăng thông báo mới</button>
+                    <div class="col-span-full text-center py-10 px-4 border-2 border-dashed border-amber-200/80 bg-amber-50/20 rounded-2xl flex flex-col items-center justify-center gap-2.5">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center shadow-xs">
+                            <i data-lucide="megaphone" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h5 class="text-sm font-bold text-slate-700">Chưa có thông báo nào</h5>
+                            <p class="text-xs text-slate-400 font-medium mt-0.5">Đăng thông báo để nhắc nhở học sinh về bài tập, lịch kiểm tra, hoặc dặn dò phụ huynh</p>
+                        </div>
+                        <button onclick="openAddAnnouncementModal()" class="mt-1 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow-sm flex items-center gap-1.5">
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Đăng thông báo đầu tiên
+                        </button>
                     </div>
                 `;
             }
@@ -6903,33 +6930,51 @@
                 return b.dateCompare - a.dateCompare || b.id - a.id;
             });
             
-            const top3 = sorted.slice(0, 3);
+            const topItems = sorted.slice(0, 4);
             
-            return top3.map(ann => {
-                const pinBadge = ann.pin ? `
-                    <span class="inline-flex items-center gap-0.5 bg-amber-100 text-amber-800 text-[9px] px-1.5 py-0.5 rounded font-black uppercase tracking-wider">
-                        <i data-lucide="pin" class="w-2.5 h-2.5 fill-amber-800"></i> Ghim
+            return topItems.map(ann => {
+                const isPinned = !!ann.pin;
+                const isLatest = (latestAnn && ann.id === latestAnn.id);
+                
+                const borderClass = isPinned ? 'border-amber-200 bg-amber-50/40 hover:bg-amber-50/80' : 'border-slate-100 bg-slate-50/70 hover:bg-slate-100/80';
+                const pinBadge = isPinned ? `
+                    <span class="inline-flex items-center gap-1 bg-amber-100 text-amber-800 text-[9px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider border border-amber-200 shadow-xs">
+                        <i data-lucide="pin" class="w-2.5 h-2.5 fill-amber-800"></i> Đã ghim
                     </span>
                 ` : '';
                 
-                const isLatest = (latestAnn && ann.id === latestAnn.id);
                 const hotBadge = isLatest ? `
-                    <span class="inline-flex items-center gap-0.5 bg-rose-500 text-white text-[8px] px-1.5 py-0.5 rounded font-black uppercase tracking-wider animate-pulse">
-                        HOT
+                    <span class="inline-flex items-center gap-0.5 bg-rose-500 text-white text-[8px] px-1.5 py-0.5 rounded-md font-black uppercase tracking-wider animate-pulse shadow-xs">
+                        MỚI 🔥
                     </span>
                 ` : '';
                 
                 return `
-                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100 flex flex-col gap-1.5 hover:bg-slate-100 hover:shadow-sm transition cursor-pointer" onclick="switchTab('tab-announcements')">
-                        <div class="flex justify-between items-start gap-3">
-                            <h5 class="font-bold text-slate-800 text-xs md:text-sm line-clamp-1 flex items-center gap-1.5">${ann.title} ${hotBadge}</h5>
-                            <div class="flex items-center gap-1.5 shrink-0">
+                <div onclick="openViewAnnouncementModal(${ann.id})" class="p-4 rounded-2xl border ${borderClass} transition-all duration-200 cursor-pointer shadow-xs hover:shadow-md flex flex-col justify-between group relative overflow-hidden">
+                    ${isPinned ? '<div class="absolute top-0 left-0 bottom-0 w-1 bg-amber-400"></div>' : ''}
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <div class="flex items-center gap-1.5">
                                 ${pinBadge}
-                                <span class="text-[9px] text-slate-400 font-bold whitespace-nowrap">${ann.date.split(' ')[0]}</span>
+                                ${hotBadge}
                             </div>
+                            <span class="text-[10px] text-slate-400 font-bold flex items-center gap-1">
+                                <i data-lucide="clock" class="w-3 h-3"></i> ${ann.date ? ann.date.split(' ')[0] : ''}
+                            </span>
                         </div>
-                        <p class="text-slate-500 font-medium text-xs line-clamp-2 leading-relaxed break-words">${linkify(ann.content)}</p>
+                        <h4 class="font-extrabold text-slate-800 text-sm leading-snug group-hover:text-amber-700 transition-colors line-clamp-2">${ann.title}</h4>
+                        <p class="text-slate-500 text-xs font-medium leading-relaxed mt-2 line-clamp-2 break-words">${linkify(ann.content)}</p>
                     </div>
+                    <div class="mt-3.5 pt-2.5 border-t border-slate-200/60 flex items-center justify-between text-[10px] font-bold text-slate-400">
+                        <span class="flex items-center gap-1.5 text-slate-600">
+                            <div class="w-4 h-4 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center text-[9px] font-black">GV</div>
+                            ${ann.author || 'GVCN'}
+                        </span>
+                        <span class="text-amber-600 group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5 font-black">
+                            Chi tiết <i data-lucide="chevron-right" class="w-3 h-3"></i>
+                        </span>
+                    </div>
+                </div>
                 `;
             }).join('');
         };
