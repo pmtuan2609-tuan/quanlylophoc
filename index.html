@@ -570,10 +570,12 @@
       <section id="tab-students" class="tab-section hidden space-y-4">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-slate-100 gap-4">
           <h3 class="font-bold text-slate-700 text-base md:text-lg whitespace-nowrap">Danh Sách Lớp (<span id="student-count" class="text-theme">0</span>)</h3>
-          <div class="flex gap-2 w-full sm:w-auto">
-            <button onclick="document.getElementById('excel-upload').click()" class="flex-[1] sm:flex-auto flex items-center justify-center gap-2 bg-emerald-50 text-emerald-600 border border-emerald-200 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-emerald-100 transition shadow-sm whitespace-nowrap"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Nhập Excel</button>
+          <div class="flex flex-wrap gap-2 w-full sm:w-auto">
+            <button onclick="downloadExcelTemplate()" class="flex-1 sm:flex-none flex items-center justify-center gap-1.5 bg-blue-50 text-blue-600 border border-blue-200 px-3.5 py-2.5 rounded-xl text-xs md:text-sm font-bold hover:bg-blue-100 transition shadow-sm whitespace-nowrap" title="Tải file mẫu Excel chuẩn để nhập dữ liệu"><i data-lucide="download" class="w-4 h-4"></i> Tải file mẫu</button>
+            <button onclick="openExcelGuideModal()" class="flex-1 sm:flex-none flex items-center justify-center gap-1.5 bg-amber-50 text-amber-600 border border-amber-200 px-3.5 py-2.5 rounded-xl text-xs md:text-sm font-bold hover:bg-amber-100 transition shadow-sm whitespace-nowrap" title="Xem hướng dẫn cấu trúc file Excel"><i data-lucide="help-circle" class="w-4 h-4"></i> Hướng dẫn</button>
+            <button onclick="document.getElementById('excel-upload').click()" class="flex-1 sm:flex-none flex items-center justify-center gap-1.5 bg-emerald-50 text-emerald-600 border border-emerald-200 px-3.5 py-2.5 rounded-xl text-xs md:text-sm font-bold hover:bg-emerald-100 transition shadow-sm whitespace-nowrap"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Nhập Excel</button>
             <input type="file" id="excel-upload" accept=".xlsx, .xls" class="hidden" onchange="handleExcelUpload(event)">
-            <button onclick="deleteAllStudents()" class="flex-[1] sm:flex-auto flex items-center justify-center gap-2 bg-rose-50 text-rose-600 border border-rose-200 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-rose-100 transition shadow-sm whitespace-nowrap" title="Xóa toàn bộ học sinh"><i data-lucide="trash-2" class="w-4 h-4"></i> Xóa tất cả</button>
+            <button onclick="deleteAllStudents()" class="flex-1 sm:flex-none flex items-center justify-center gap-1.5 bg-rose-50 text-rose-600 border border-rose-200 px-3.5 py-2.5 rounded-xl text-xs md:text-sm font-bold hover:bg-rose-100 transition shadow-sm whitespace-nowrap" title="Xóa toàn bộ học sinh"><i data-lucide="trash-2" class="w-4 h-4"></i> Xóa tất cả</button>
           </div>
         </div>
         <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
@@ -1167,6 +1169,71 @@
     </div>
   </div>
 
+    <!-- Modal Hướng Dẫn Nhập Excel Chuẩn -->
+  <div id="excel-guide-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[750] p-4 opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-[2rem] p-6 md:p-8 w-full max-w-2xl shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col border border-white/20 max-h-[90vh] overflow-hidden" id="excel-guide-content">
+      <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-200 shadow-sm"><i data-lucide="file-spreadsheet" class="w-5 h-5"></i></div>
+          <div>
+            <h3 class="text-base md:text-lg font-black text-slate-800">Hướng dẫn File Excel Mẫu</h3>
+            <p class="text-[10px] md:text-xs text-slate-400 font-bold">Cấu trúc các cột thông tin học sinh & phụ huynh</p>
+          </div>
+        </div>
+        <button onclick="closeModalUi('excel-guide-modal', 'excel-guide-content')" class="text-slate-400 hover:text-slate-600 bg-slate-50 p-2 rounded-full transition"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      
+      <div class="overflow-y-auto custom-scrollbar space-y-4 pr-1 text-xs text-slate-600 leading-relaxed">
+        <div class="bg-blue-50/70 border border-blue-100 rounded-2xl p-4 text-blue-800 space-y-1.5">
+          <div class="font-black text-xs md:text-sm flex items-center gap-1.5 text-blue-900"><i data-lucide="sparkles" class="w-4 h-4 text-blue-600"></i> Cơ chế cập nhật thông minh (Merge):</div>
+          <p class="text-[11px]">Khi tải lên danh sách mới, hệ thống sẽ tự động <b>đối chiếu Họ tên và Ngày sinh</b>. Nếu học sinh đã có sẵn, hệ thống sẽ <b>ghi đè/bổ sung các thông tin còn thiếu</b> mà <b>không làm mất</b> điểm thi đua, lịch sử vi phạm hay vị trí trên sơ đồ lớp học!</p>
+        </div>
+
+        <div>
+          <h4 class="font-black text-slate-800 uppercase tracking-wider text-[11px] mb-2 flex items-center gap-1.5"><i data-lucide="columns" class="w-4 h-4 text-theme"></i> Danh sách 20 cột trong file mẫu:</h4>
+          <div class="border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+            <table class="w-full text-left text-[11px]">
+              <thead class="bg-slate-50 border-b border-slate-200 text-slate-700 font-bold uppercase text-[9px]">
+                <tr>
+                  <th class="p-2.5 text-center w-12">Cột</th>
+                  <th class="p-2.5">Tên Cột</th>
+                  <th class="p-2.5">Ghi chú / Định dạng mẫu</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 font-medium">
+                <tr class="bg-emerald-50/30"><td class="p-2 text-center font-bold text-slate-500">A (1)</td><td class="p-2 font-bold text-slate-800">STT</td><td class="p-2 text-slate-500">Số thứ tự (1, 2, 3...)</td></tr>
+                <tr class="bg-emerald-50/50"><td class="p-2 text-center font-bold text-slate-500">B (2)</td><td class="p-2 font-black text-emerald-700">Họ và Tên *</td><td class="p-2 text-emerald-700 font-bold">Bắt buộc có (VD: Nguyễn Văn An)</td></tr>
+                <tr><td class="p-2 text-center font-bold text-slate-500">C (3)</td><td class="p-2 font-bold text-slate-800">Giới tính</td><td class="p-2 text-slate-500">Nam hoặc Nữ</td></tr>
+                <tr><td class="p-2 text-center font-bold text-slate-500">D (4)</td><td class="p-2 font-bold text-slate-800">Ngày sinh</td><td class="p-2 text-slate-500">Định dạng chuẩn: DD/MM/YYYY (VD: 15/08/2008)</td></tr>
+                <tr><td class="p-2 text-center font-bold text-slate-500">E (5)</td><td class="p-2 font-bold text-slate-800">Số CCCD / Mã ĐD</td><td class="p-2 text-slate-500">12 số CCCD học sinh hoặc Mã định danh</td></tr>
+                <tr class="bg-blue-50/30"><td class="p-2 text-center font-bold text-slate-500">F (6)</td><td class="p-2 font-bold text-blue-800">Nơi đăng ký khai sinh</td><td class="p-2 text-blue-700">Tỉnh/TP nơi khai sinh (VD: TP. Hồ Chí Minh)</td></tr>
+                <tr class="bg-blue-50/30"><td class="p-2 text-center font-bold text-slate-500">G (7)</td><td class="p-2 font-bold text-blue-800">Dân tộc</td><td class="p-2 text-blue-700">Kinh, Tày, Nùng, Hoa, Khmer...</td></tr>
+                <tr class="bg-blue-50/30"><td class="p-2 text-center font-bold text-slate-500">H (8)</td><td class="p-2 font-bold text-blue-800">Tôn giáo</td><td class="p-2 text-blue-700">Không, Phật giáo, Công giáo...</td></tr>
+                <tr><td class="p-2 text-center font-bold text-slate-500">I (9)</td><td class="p-2 font-bold text-slate-800">Số điện thoại HS</td><td class="p-2 text-slate-500">SĐT cá nhân của học sinh</td></tr>
+                <tr><td class="p-2 text-center font-bold text-slate-500">J (10)</td><td class="p-2 font-bold text-slate-800">Địa chỉ thường trú</td><td class="p-2 text-slate-500">Địa chỉ nơi ở hiện tại của HS</td></tr>
+                <tr class="bg-indigo-50/30"><td class="p-2 text-center font-bold text-slate-500">K (11)</td><td class="p-2 font-bold text-indigo-800">Họ tên cha</td><td class="p-2 text-slate-600">Họ và tên của Cha</td></tr>
+                <tr class="bg-indigo-50/30"><td class="p-2 text-center font-bold text-slate-500">L (12)</td><td class="p-2 font-bold text-indigo-800">Năm sinh cha</td><td class="p-2 text-slate-600">Năm sinh của Cha (VD: 1978)</td></tr>
+                <tr class="bg-indigo-50/30"><td class="p-2 text-center font-bold text-slate-500">M (13)</td><td class="p-2 font-bold text-indigo-800">Nghề nghiệp cha</td><td class="p-2 text-slate-600">Nghề nghiệp của Cha (VD: Kỹ sư, Kinh doanh...)</td></tr>
+                <tr class="bg-indigo-50/30"><td class="p-2 text-center font-bold text-slate-500">N (14)</td><td class="p-2 font-bold text-indigo-800">Số CCCD cha</td><td class="p-2 text-slate-600">CCCD của Cha</td></tr>
+                <tr class="bg-indigo-50/30"><td class="p-2 text-center font-bold text-slate-500">O (15)</td><td class="p-2 font-bold text-indigo-800">Số điện thoại cha</td><td class="p-2 text-slate-600">SĐT liên hệ của Cha</td></tr>
+                <tr class="bg-rose-50/30"><td class="p-2 text-center font-bold text-slate-500">P (16)</td><td class="p-2 font-bold text-rose-800">Họ tên mẹ</td><td class="p-2 text-slate-600">Họ và tên của Mẹ</td></tr>
+                <tr class="bg-rose-50/30"><td class="p-2 text-center font-bold text-slate-500">Q (17)</td><td class="p-2 font-bold text-rose-800">Năm sinh mẹ</td><td class="p-2 text-slate-600">Năm sinh của Mẹ (VD: 1980)</td></tr>
+                <tr class="bg-rose-50/30"><td class="p-2 text-center font-bold text-slate-500">R (18)</td><td class="p-2 font-bold text-rose-800">Nghề nghiệp mẹ</td><td class="p-2 text-slate-600">Nghề nghiệp của Mẹ (VD: Giáo viên, Nội trợ...)</td></tr>
+                <tr class="bg-rose-50/30"><td class="p-2 text-center font-bold text-slate-500">S (19)</td><td class="p-2 font-bold text-rose-800">Số CCCD mẹ</td><td class="p-2 text-slate-600">CCCD của Mẹ</td></tr>
+                <tr class="bg-rose-50/30"><td class="p-2 text-center font-bold text-slate-500">T (20)</td><td class="p-2 font-bold text-rose-800">Số điện thoại mẹ</td><td class="p-2 text-slate-600">SĐT liên hệ của Mẹ</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      
+      <div class="flex gap-3 pt-4 border-t border-slate-100 mt-2">
+        <button onclick="closeModalUi('excel-guide-modal', 'excel-guide-content')" class="flex-[0.4] bg-slate-100 hover:bg-slate-200 text-slate-600 font-black py-3 rounded-xl transition text-xs uppercase tracking-wider">Đóng</button>
+        <button onclick="downloadExcelTemplate()" class="flex-1 bg-theme-grad text-white font-black py-3 rounded-xl hover:scale-[1.01] transition shadow-lg flex items-center justify-center gap-2 text-xs uppercase tracking-wider"><i data-lucide="download" class="w-4 h-4"></i> Tải file mẫu Excel (.xlsx)</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal Chọn Avatar HS -->
   <div id="avatar-picker-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[600] p-4 opacity-0 transition-opacity duration-300">
     <div class="bg-white rounded-3xl p-5 md:p-6 w-full max-w-md shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col overflow-hidden" id="avatar-picker-content">
@@ -1230,7 +1297,7 @@
 
           <div class="grid grid-cols-2 gap-3">
             <div>
-               <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 flex items-center gap-1"><i data-lucide="map-pin" class="w-3 h-3 text-cyan-500"></i> Nơi sinh</label>
+               <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 flex items-center gap-1"><i data-lucide="map-pin" class="w-3 h-3 text-cyan-500"></i> Nơi đăng ký khai sinh</label>
                <input type="text" id="edit-hs-birthplace" placeholder="Tỉnh/Thành phố" class="w-full px-3 py-2 border-2 border-slate-100 rounded-xl outline-none focus:border-theme font-bold text-slate-800 bg-white text-xs">
             </div>
             <div>
@@ -1274,6 +1341,16 @@
             </div>
             <div class="grid grid-cols-2 gap-2">
               <div>
+                <label class="text-[9px] font-bold text-slate-400 uppercase">Năm sinh cha</label>
+                <input type="text" id="edit-hs-fatherDob" placeholder="VD: 1978" class="w-full px-3 py-1.5 border border-slate-200 rounded-lg outline-none font-bold text-slate-700 text-xs mt-0.5">
+              </div>
+              <div>
+                <label class="text-[9px] font-bold text-slate-400 uppercase">Nghề nghiệp cha</label>
+                <input type="text" id="edit-hs-fatherJob" placeholder="Nghề nghiệp..." class="w-full px-3 py-1.5 border border-slate-200 rounded-lg outline-none font-bold text-slate-700 text-xs mt-0.5">
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
                 <label class="text-[9px] font-bold text-slate-400 uppercase">CCCD cha</label>
                 <input type="text" id="edit-hs-fatherCccd" class="w-full px-3 py-1.5 border border-slate-200 rounded-lg outline-none font-bold text-slate-700 text-xs mt-0.5">
               </div>
@@ -1290,6 +1367,16 @@
             <div>
               <label class="text-[9px] font-bold text-slate-400 uppercase">Họ tên mẹ</label>
               <input type="text" id="edit-hs-motherName" class="w-full px-3 py-1.5 border border-slate-200 rounded-lg outline-none font-bold text-slate-700 text-xs mt-0.5">
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="text-[9px] font-bold text-slate-400 uppercase">Năm sinh mẹ</label>
+                <input type="text" id="edit-hs-motherDob" placeholder="VD: 1980" class="w-full px-3 py-1.5 border border-slate-200 rounded-lg outline-none font-bold text-slate-700 text-xs mt-0.5">
+              </div>
+              <div>
+                <label class="text-[9px] font-bold text-slate-400 uppercase">Nghề nghiệp mẹ</label>
+                <input type="text" id="edit-hs-motherJob" placeholder="Nghề nghiệp..." class="w-full px-3 py-1.5 border border-slate-200 rounded-lg outline-none font-bold text-slate-700 text-xs mt-0.5">
+              </div>
             </div>
             <div class="grid grid-cols-2 gap-2">
               <div>
@@ -1454,7 +1541,7 @@
                                   <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400"></i>
                               </div>
                               <div class="min-w-0">
-                                  <div class="text-[8px] text-slate-400 font-bold uppercase tracking-wider">Nơi sinh</div>
+                                  <div class="text-[8px] text-slate-400 font-bold uppercase tracking-wider">Nơi đăng ký khai sinh</div>
                                   <div class="font-black text-slate-700 text-xs truncate mt-0.5" id="lbl-profile-birthplace">...</div>
                               </div>
                           </div>
@@ -1528,12 +1615,28 @@
                               <div class="font-black text-[10px] text-blue-700 uppercase tracking-wide flex items-center gap-1.5 border-b border-blue-200/30 pb-1.5">
                                   <span class="w-2 h-2 rounded-full bg-blue-500 shadow-sm"></span> Thông tin cha
                               </div>
-                              <div class="space-y-2.5">
+                              <div class="space-y-2">
                                   <div class="flex items-center gap-2">
                                       <i data-lucide="user" class="w-3.5 h-3.5 text-blue-400 shrink-0"></i>
                                       <div class="min-w-0">
                                           <div class="text-[8px] text-blue-500/70 font-bold uppercase tracking-wide">Họ và Tên</div>
                                           <div class="font-bold text-slate-700 text-xs truncate" id="lbl-profile-fatherName">...</div>
+                                      </div>
+                                  </div>
+                                  <div class="grid grid-cols-2 gap-2">
+                                      <div class="flex items-center gap-1.5">
+                                          <i data-lucide="calendar" class="w-3 h-3 text-blue-400 shrink-0"></i>
+                                          <div class="min-w-0">
+                                              <div class="text-[8px] text-blue-500/70 font-bold uppercase tracking-wide">Năm sinh</div>
+                                              <div class="font-bold text-slate-700 text-[10px] truncate" id="lbl-profile-fatherDob">...</div>
+                                          </div>
+                                      </div>
+                                      <div class="flex items-center gap-1.5">
+                                          <i data-lucide="briefcase" class="w-3 h-3 text-blue-400 shrink-0"></i>
+                                          <div class="min-w-0">
+                                              <div class="text-[8px] text-blue-500/70 font-bold uppercase tracking-wide">Nghề nghiệp</div>
+                                              <div class="font-bold text-slate-700 text-[10px] truncate" id="lbl-profile-fatherJob">...</div>
+                                          </div>
                                       </div>
                                   </div>
                                   <div class="flex items-center gap-2">
@@ -1558,12 +1661,28 @@
                               <div class="font-black text-[10px] text-rose-700 uppercase tracking-wide flex items-center gap-1.5 border-b border-rose-200/30 pb-1.5">
                                   <span class="w-2 h-2 rounded-full bg-rose-500 shadow-sm"></span> Thông tin mẹ
                               </div>
-                              <div class="space-y-2.5">
+                              <div class="space-y-2">
                                   <div class="flex items-center gap-2">
                                       <i data-lucide="user" class="w-3.5 h-3.5 text-rose-400 shrink-0"></i>
                                       <div class="min-w-0">
                                           <div class="text-[8px] text-rose-500/70 font-bold uppercase tracking-wide">Họ và Tên</div>
                                           <div class="font-bold text-slate-700 text-xs truncate" id="lbl-profile-motherName">...</div>
+                                      </div>
+                                  </div>
+                                  <div class="grid grid-cols-2 gap-2">
+                                      <div class="flex items-center gap-1.5">
+                                          <i data-lucide="calendar" class="w-3 h-3 text-rose-400 shrink-0"></i>
+                                          <div class="min-w-0">
+                                              <div class="text-[8px] text-rose-500/70 font-bold uppercase tracking-wide">Năm sinh</div>
+                                              <div class="font-bold text-slate-700 text-[10px] truncate" id="lbl-profile-motherDob">...</div>
+                                          </div>
+                                      </div>
+                                      <div class="flex items-center gap-1.5">
+                                          <i data-lucide="briefcase" class="w-3 h-3 text-rose-400 shrink-0"></i>
+                                          <div class="min-w-0">
+                                              <div class="text-[8px] text-rose-500/70 font-bold uppercase tracking-wide">Nghề nghiệp</div>
+                                              <div class="font-bold text-slate-700 text-[10px] truncate" id="lbl-profile-motherJob">...</div>
+                                          </div>
                                       </div>
                                   </div>
                                   <div class="flex items-center gap-2">
@@ -3342,6 +3461,114 @@
     function generateMonthlyReport() { const monthStr = document.getElementById('report-month').value; if(!monthStr) return; const [yyyy, mm] = monthStr.split('-'); const daysInMonth = new Date(yyyy, mm, 0).getDate(); let html = '<table class="w-full text-center text-sm border-collapse table-sticky"><thead class="bg-slate-50 border-b border-slate-200 shadow-sm"><tr><th class="p-3 text-left whitespace-nowrap font-black text-slate-600 min-w-[180px]">Học sinh</th>'; for(let d=1; d<=daysInMonth; d++) { html += `<th class="border-r border-slate-100 p-2 w-8 text-[10px] text-slate-500">${d}</th>`; } html += '</tr></thead><tbody class="divide-y divide-slate-100">'; students.forEach(s => { html += `<tr><td class="p-3 text-left font-bold text-xs text-slate-800 whitespace-nowrap min-w-[180px]" title="${s.name}">${s.name}</td>`; for(let d=1; d<=daysInMonth; d++) { const dateKey = `${yyyy}-${mm}-${String(d).padStart(2, '0')}`; const dailyRecord = attendanceData[dateKey] || {}; const status = dailyRecord[s.id]; let cellClass = "border-r border-slate-100 p-1 text-[10px] font-black "; let text = ""; if(status === 'present') { cellClass += "bg-emerald-100/50 text-emerald-600"; text = ""; } else if(status === 'excused') { cellClass += "bg-blue-50 text-blue-600"; text = "P"; } else if(status === 'unexcused') { cellClass += "bg-rose-50 text-rose-600"; text = "K"; } else if(status === 'late') { cellClass += "bg-amber-50 text-amber-600"; text = "T"; } html += `<td class="${cellClass}">${text}</td>`; } html += '</tr>'; }); html += '</tbody></table>'; document.getElementById('monthly-report-container').innerHTML = html; }
 
     // --- XỬ LÝ HỌC SINH (EXCEL, CRUD) ---
+    function openExcelGuideModal() {
+        openModalUi('excel-guide-modal', 'excel-guide-content');
+        lucide.createIcons();
+    }
+
+    function downloadExcelTemplate() {
+        const headers = [
+            "STT",
+            "Họ và Tên",
+            "Giới tính",
+            "Ngày sinh",
+            "Số CCCD / Mã ĐD",
+            "Nơi đăng ký khai sinh",
+            "Dân tộc",
+            "Tôn giáo",
+            "Số điện thoại HS",
+            "Địa chỉ thường trú",
+            "Họ tên cha",
+            "Năm sinh cha",
+            "Nghề nghiệp cha",
+            "Số CCCD cha",
+            "Số điện thoại cha",
+            "Họ tên mẹ",
+            "Năm sinh mẹ",
+            "Nghề nghiệp mẹ",
+            "Số CCCD mẹ",
+            "Số điện thoại mẹ"
+        ];
+        
+        const sampleRows = [
+            [
+                1,
+                "Nguyễn Văn An",
+                "Nam",
+                "15/08/2008",
+                "079208001234",
+                "TP. Hồ Chí Minh",
+                "Kinh",
+                "Không",
+                "0901234567",
+                "123 Nguyễn Huệ, P. Bến Nghé, Q.1, TP.HCM",
+                "Nguyễn Văn Bình",
+                "1978",
+                "Kỹ sư",
+                "079078000123",
+                "0912345678",
+                "Trần Thị Cúc",
+                "1980",
+                "Giáo viên",
+                "079080000456",
+                "0987654321"
+            ],
+            [
+                2,
+                "Trần Thị Mai",
+                "Nữ",
+                "20/11/2008",
+                "079308005678",
+                "Đồng Nai",
+                "Kinh",
+                "Phật giáo",
+                "0909888777",
+                "456 Lê Lợi, P. Bến Thành, Q.1, TP.HCM",
+                "Trần Văn Dũng",
+                "1975",
+                "Bác sĩ",
+                "079075000789",
+                "0933222111",
+                "Lê Thị Hoa",
+                "1979",
+                "Kế toán",
+                "079079000321",
+                "0944555666"
+            ]
+        ];
+        
+        const wb = XLSX.utils.book_new();
+        const wsData = [headers, ...sampleRows];
+        const ws = XLSX.utils.aoa_to_sheet(wsData);
+        
+        ws['!cols'] = [
+            { wch: 6 },  // STT
+            { wch: 22 }, // Họ và Tên
+            { wch: 10 }, // Giới tính
+            { wch: 14 }, // Ngày sinh
+            { wch: 18 }, // CCCD HS
+            { wch: 24 }, // Nơi đăng ký khai sinh
+            { wch: 12 }, // Dân tộc
+            { wch: 12 }, // Tôn giáo
+            { wch: 16 }, // SĐT HS
+            { wch: 35 }, // Địa chỉ
+            { wch: 20 }, // Họ tên cha
+            { wch: 14 }, // Năm sinh cha
+            { wch: 18 }, // Nghề nghiệp cha
+            { wch: 16 }, // CCCD cha
+            { wch: 16 }, // SĐT cha
+            { wch: 20 }, // Họ tên mẹ
+            { wch: 14 }, // Năm sinh mẹ
+            { wch: 18 }, // Nghề nghiệp mẹ
+            { wch: 16 }, // CCCD mẹ
+            { wch: 16 }  // SĐT mẹ
+        ];
+        
+        XLSX.utils.book_append_sheet(wb, ws, "DanhSachHocSinh");
+        XLSX.writeFile(wb, "Mau_Danh_Sach_Hoc_Sinh.xlsx");
+        showModal('success', 'Tải file mẫu', 'Đã tải xuống file mẫu "Mau_Danh_Sach_Hoc_Sinh.xlsx" thành công!');
+    }
+
     function handleExcelUpload(e) {
       const file = e.target.files[0]; if(!file) return; e.target.value = ''; 
       showModal('info', 'Đang xử lý...', 'Vui lòng chờ hệ thống nạp dữ liệu.');
@@ -3354,22 +3581,98 @@
             
             const getVal = (val) => (val === undefined || val === null) ? '' : String(val).trim();
             
-            for(let i = 1; i < json.length; i++) {
+            // 1. Tự động nhận diện dòng tiêu đề (Header row)
+            let headerRowIdx = -1;
+            let colMap = {};
+            for(let r = 0; r < Math.min(6, json.length); r++) {
+              const row = json[r] || [];
+              const rowStr = row.map(c => removeAccents(String(c).toLowerCase().trim())).join(' ');
+              if(rowStr.includes('ho va ten') || rowStr.includes('ho ten') || (rowStr.includes('ten') && (rowStr.includes('ngay sinh') || rowStr.includes('gioi tinh')))) {
+                headerRowIdx = r;
+                break;
+              }
+            }
+            
+            if (headerRowIdx !== -1) {
+              const hRow = json[headerRowIdx] || [];
+              hRow.forEach((cell, idx) => {
+                const txt = removeAccents(String(cell).toLowerCase().trim());
+                if(!txt) return;
+                
+                if(txt.includes('ho va ten') || txt.includes('ho ten') || txt.includes('ten hoc sinh') || (txt.includes('ten') && !txt.includes('cha') && !txt.includes('me') && !txt.includes('bo'))) {
+                  if(!colMap.hasOwnProperty('name')) colMap['name'] = idx;
+                } else if(txt.includes('gioi tinh') || txt.includes('phai')) {
+                  if(!colMap.hasOwnProperty('gender')) colMap['gender'] = idx;
+                } else if(txt.includes('ngay sinh') || txt.includes('sinh nhat') || (txt.includes('nam sinh') && !txt.includes('cha') && !txt.includes('me') && !txt.includes('bo'))) {
+                  if(!colMap.hasOwnProperty('dob')) colMap['dob'] = idx;
+                } else if((txt.includes('cccd') || txt.includes('can cuoc') || txt.includes('dinh danh') || txt.includes('cmnd')) && !txt.includes('cha') && !txt.includes('me') && !txt.includes('bo')) {
+                  if(!colMap.hasOwnProperty('cccd')) colMap['cccd'] = idx;
+                } else if(txt.includes('khai sinh') || txt.includes('noi sinh') || txt.includes('que quan')) {
+                  if(!colMap.hasOwnProperty('birthplace')) colMap['birthplace'] = idx;
+                } else if(txt.includes('dan toc')) {
+                  if(!colMap.hasOwnProperty('nation')) colMap['nation'] = idx;
+                } else if(txt.includes('ton giao')) {
+                  if(!colMap.hasOwnProperty('religion')) colMap['religion'] = idx;
+                } else if((txt.includes('sdt') || txt.includes('dien thoai') || txt.includes('so dt')) && !txt.includes('cha') && !txt.includes('me') && !txt.includes('bo')) {
+                  if(!colMap.hasOwnProperty('phone')) colMap['phone'] = idx;
+                } else if(txt.includes('dia chi') || txt.includes('thuong tru') || txt.includes('noi o') || txt.includes('tam tru')) {
+                  if(!colMap.hasOwnProperty('address')) colMap['address'] = idx;
+                } else if((txt.includes('cha') || txt.includes('bo')) && (txt.includes('ten') || txt.includes('ho'))) {
+                  if(!colMap.hasOwnProperty('fatherName')) colMap['fatherName'] = idx;
+                } else if((txt.includes('cha') || txt.includes('bo')) && (txt.includes('nam sinh') || txt.includes('ngay sinh') || txt.includes('ns') || txt.includes('sinh'))) {
+                  if(!colMap.hasOwnProperty('fatherDob')) colMap['fatherDob'] = idx;
+                } else if((txt.includes('cha') || txt.includes('bo')) && (txt.includes('nghe') || txt.includes('viec') || txt.includes('chuc vu'))) {
+                  if(!colMap.hasOwnProperty('fatherJob')) colMap['fatherJob'] = idx;
+                } else if((txt.includes('cha') || txt.includes('bo')) && (txt.includes('cccd') || txt.includes('can cuoc') || txt.includes('cmnd'))) {
+                  if(!colMap.hasOwnProperty('fatherCccd')) colMap['fatherCccd'] = idx;
+                } else if((txt.includes('cha') || txt.includes('bo')) && (txt.includes('sdt') || txt.includes('dien thoai') || txt.includes('dt'))) {
+                  if(!colMap.hasOwnProperty('fatherPhone')) colMap['fatherPhone'] = idx;
+                } else if(txt.includes('me') && (txt.includes('ten') || txt.includes('ho'))) {
+                  if(!colMap.hasOwnProperty('motherName')) colMap['motherName'] = idx;
+                } else if(txt.includes('me') && (txt.includes('nam sinh') || txt.includes('ngay sinh') || txt.includes('ns') || txt.includes('sinh'))) {
+                  if(!colMap.hasOwnProperty('motherDob')) colMap['motherDob'] = idx;
+                } else if(txt.includes('me') && (txt.includes('nghe') || txt.includes('viec') || txt.includes('chuc vu'))) {
+                  if(!colMap.hasOwnProperty('motherJob')) colMap['motherJob'] = idx;
+                } else if(txt.includes('me') && (txt.includes('cccd') || txt.includes('can cuoc') || txt.includes('cmnd'))) {
+                  if(!colMap.hasOwnProperty('motherCccd')) colMap['motherCccd'] = idx;
+                } else if(txt.includes('me') && (txt.includes('sdt') || txt.includes('dien thoai') || txt.includes('dt'))) {
+                  if(!colMap.hasOwnProperty('motherPhone')) colMap['motherPhone'] = idx;
+                }
+              });
+            }
+            
+            const startRow = (headerRowIdx !== -1) ? (headerRowIdx + 1) : 1;
+            const getCol = (row, key, fallbackIdx) => {
+              if (headerRowIdx !== -1 && colMap.hasOwnProperty(key)) {
+                return getVal(row[colMap[key]]);
+              }
+              return (fallbackIdx !== undefined && fallbackIdx < row.length) ? getVal(row[fallbackIdx]) : '';
+            };
+            
+            for(let i = startRow; i < json.length; i++) {
               let row = json[i];
-              if(row && row[1] && String(row[1]).trim() !== '') {
-                const name = getVal(row[1]);
-                const gender = getVal(row[2]) || 'Nam';
-                const dobStr = parseExcelDate(row[3]);
-                const cccd = getVal(row[4]);
-                const birthplace = getVal(row[5]);
-                const phone = getVal(row[6]);
-                const address = getVal(row[7]);
-                const fatherName = getVal(row[8]);
-                const fatherCccd = getVal(row[9]);
-                const fatherPhone = getVal(row[10]);
-                const motherName = getVal(row[11]);
-                const motherCccd = getVal(row[12]);
-                const motherPhone = getVal(row[13]);
+              if(!row) continue;
+              const name = getCol(row, 'name', 1);
+              if(name !== '') {
+                const gender = getCol(row, 'gender', 2) || 'Nam';
+                const dobRaw = (headerRowIdx !== -1 && colMap.hasOwnProperty('dob')) ? row[colMap['dob']] : row[3];
+                const dobStr = parseExcelDate(dobRaw);
+                const cccd = getCol(row, 'cccd', 4);
+                const birthplace = getCol(row, 'birthplace', 5);
+                const nation = getCol(row, 'nation', 6);
+                const religion = getCol(row, 'religion', 7);
+                const phone = getCol(row, 'phone', 8);
+                const address = getCol(row, 'address', 9);
+                const fatherName = getCol(row, 'fatherName', 10);
+                const fatherDob = getCol(row, 'fatherDob', 11);
+                const fatherJob = getCol(row, 'fatherJob', 12);
+                const fatherCccd = getCol(row, 'fatherCccd', 13);
+                const fatherPhone = getCol(row, 'fatherPhone', 14);
+                const motherName = getCol(row, 'motherName', 15);
+                const motherDob = getCol(row, 'motherDob', 16);
+                const motherJob = getCol(row, 'motherJob', 17);
+                const motherCccd = getCol(row, 'motherCccd', 18);
+                const motherPhone = getCol(row, 'motherPhone', 19);
                 
                 let isFemale = gender.toLowerCase() === 'nữ' || gender.toLowerCase() === 'nu' || gender.toLowerCase() === 'x';
                 let avatars = isFemale ? AVATARS.female : AVATARS.male;
@@ -3389,12 +3692,16 @@
                   birthplace: birthplace,
                   phone: phone,
                   address: address,
-                  nation: '',
-                  religion: '',
+                  nation: nation,
+                  religion: religion,
                   fatherName: fatherName,
+                  fatherDob: fatherDob,
+                  fatherJob: fatherJob,
                   fatherCccd: fatherCccd,
                   fatherPhone: fatherPhone,
                   motherName: motherName,
+                  motherDob: motherDob,
+                  motherJob: motherJob,
                   motherCccd: motherCccd,
                   motherPhone: motherPhone
                 }); 
@@ -3433,12 +3740,20 @@
                               }
                               if (ns.cccd !== '') existingStudent.cccd = ns.cccd;
                               if (ns.birthplace !== '') existingStudent.birthplace = ns.birthplace;
+                              if (ns.nation !== '') existingStudent.nation = ns.nation;
+                              if (ns.religion !== '') existingStudent.religion = ns.religion;
                               if (ns.phone !== '') existingStudent.phone = ns.phone;
                               if (ns.address !== '') existingStudent.address = ns.address;
+                              
                               if (ns.fatherName !== '') existingStudent.fatherName = ns.fatherName;
+                              if (ns.fatherDob !== '') existingStudent.fatherDob = ns.fatherDob;
+                              if (ns.fatherJob !== '') existingStudent.fatherJob = ns.fatherJob;
                               if (ns.fatherCccd !== '') existingStudent.fatherCccd = ns.fatherCccd;
                               if (ns.fatherPhone !== '') existingStudent.fatherPhone = ns.fatherPhone;
+                              
                               if (ns.motherName !== '') existingStudent.motherName = ns.motherName;
+                              if (ns.motherDob !== '') existingStudent.motherDob = ns.motherDob;
+                              if (ns.motherJob !== '') existingStudent.motherJob = ns.motherJob;
                               if (ns.motherCccd !== '') existingStudent.motherCccd = ns.motherCccd;
                               if (ns.motherPhone !== '') existingStudent.motherPhone = ns.motherPhone;
                               updatedCount++;
@@ -3455,7 +3770,7 @@
                       });
                   }, 400);
               } else { students = newStudents; saveAppData(); renderAll(); updateUI(); closeModalUi('custom-modal'); setTimeout(() => showModal('success', 'Thành công', `Đã nhập ${students.length} học sinh!`), 400); }
-            } else { closeModalUi('custom-modal'); setTimeout(() => showModal('error', 'Lỗi dữ liệu', 'Không tìm thấy dữ liệu học sinh! Đảm bảo Cột B là Họ và Tên.'), 400); }
+            } else { closeModalUi('custom-modal'); setTimeout(() => showModal('error', 'Lỗi dữ liệu', 'Không tìm thấy dữ liệu học sinh! Đảm bảo cột có chứa Họ và Tên.'), 400); }
         } catch(err) { closeModalUi('custom-modal'); setTimeout(() => showModal('error', 'Lỗi file', 'Không thể đọc định dạng file Excel này.'), 400); }
       }; reader.readAsArrayBuffer(file);
     }
@@ -3477,10 +3792,14 @@
       document.getElementById('edit-hs-religion').value = s.religion || '';
       
       document.getElementById('edit-hs-fatherName').value = s.fatherName || '';
+      document.getElementById('edit-hs-fatherDob').value = s.fatherDob || '';
+      document.getElementById('edit-hs-fatherJob').value = s.fatherJob || '';
       document.getElementById('edit-hs-fatherCccd').value = s.fatherCccd || '';
       document.getElementById('edit-hs-fatherPhone').value = s.fatherPhone || '';
       
       document.getElementById('edit-hs-motherName').value = s.motherName || '';
+      document.getElementById('edit-hs-motherDob').value = s.motherDob || '';
+      document.getElementById('edit-hs-motherJob').value = s.motherJob || '';
       document.getElementById('edit-hs-motherCccd').value = s.motherCccd || '';
       document.getElementById('edit-hs-motherPhone').value = s.motherPhone || '';
 
@@ -3505,10 +3824,14 @@
         s.religion = document.getElementById('edit-hs-religion').value.trim();
         
         s.fatherName = document.getElementById('edit-hs-fatherName').value.trim();
+        s.fatherDob = document.getElementById('edit-hs-fatherDob').value.trim();
+        s.fatherJob = document.getElementById('edit-hs-fatherJob').value.trim();
         s.fatherCccd = document.getElementById('edit-hs-fatherCccd').value.trim();
         s.fatherPhone = document.getElementById('edit-hs-fatherPhone').value.trim();
         
         s.motherName = document.getElementById('edit-hs-motherName').value.trim();
+        s.motherDob = document.getElementById('edit-hs-motherDob').value.trim();
+        s.motherJob = document.getElementById('edit-hs-motherJob').value.trim();
         s.motherCccd = document.getElementById('edit-hs-motherCccd').value.trim();
         s.motherPhone = document.getElementById('edit-hs-motherPhone').value.trim();
 
@@ -3594,10 +3917,14 @@
         document.getElementById('lbl-profile-religion').innerText = s.religion || 'Chưa cập nhật';
         
         document.getElementById('lbl-profile-fatherName').innerText = s.fatherName || 'Chưa cập nhật';
+        document.getElementById('lbl-profile-fatherDob').innerText = s.fatherDob || 'Chưa cập nhật';
+        document.getElementById('lbl-profile-fatherJob').innerText = s.fatherJob || 'Chưa cập nhật';
         document.getElementById('lbl-profile-fatherCccd').innerText = s.fatherCccd || 'Chưa cập nhật';
         document.getElementById('lbl-profile-fatherPhone').innerText = s.fatherPhone || 'Chưa cập nhật';
         
         document.getElementById('lbl-profile-motherName').innerText = s.motherName || 'Chưa cập nhật';
+        document.getElementById('lbl-profile-motherDob').innerText = s.motherDob || 'Chưa cập nhật';
+        document.getElementById('lbl-profile-motherJob').innerText = s.motherJob || 'Chưa cập nhật';
         document.getElementById('lbl-profile-motherCccd').innerText = s.motherCccd || 'Chưa cập nhật';
         document.getElementById('lbl-profile-motherPhone').innerText = s.motherPhone || 'Chưa cập nhật';
 
