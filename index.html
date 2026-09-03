@@ -2568,13 +2568,23 @@
             }; img.src = event.target.result; 
         }; reader.readAsDataURL(file); 
     }
-    function generateCode(className, year, index, studentId) { 
-        return studentId ? String(studentId) : String(index); 
+    function generateCode(className, year, index) { 
+        className = className || (currentUser ? currentUser.className : "12A17") || "12A17"; 
+        year = year || (currentUser ? currentUser.year : "2026-2027") || "2026-2027"; 
+        let yMatch = year.match(/\d{4}/g); 
+        let yStr = yMatch ? yMatch[yMatch.length - 1].slice(-2) : "27"; 
+        let gMatch = className.match(/^(\d{1,2})/); 
+        let gStr = gMatch ? gMatch[1].padStart(2, '0') : "12"; 
+        let sMatch = className.match(/[A-Za-z]+(\d+)/); 
+        let sStr = sMatch ? sMatch[1].padStart(2, '0') : "17"; 
+        return `${yStr}${gStr}${sStr}${index.toString().padStart(2, '0')}`; 
     }
     function ensureStudentCodes() { 
         let changed = false; 
-        students.forEach((s) => { 
-            const expectedCode = String(s.id);
+        const cName = (currentUser && currentUser.className) ? currentUser.className : '12A17';
+        const cYear = (currentUser && currentUser.year) ? currentUser.year : '2026-2027';
+        students.forEach((s, idx) => { 
+            const expectedCode = generateCode(cName, cYear, idx + 1);
             if (s.code !== expectedCode) { 
                 s.code = expectedCode; 
                 changed = true; 
@@ -4686,7 +4696,7 @@
                   dob: dobStr, 
                   role: '', 
                   history: [], 
-                  code: String(studentId),
+                  code: generateCode(currentUser.className, currentUser.year, indexCounter),
                   cccd: cccd,
                   birthplace: birthplace,
                   birthRegPlace: birthRegPlace,
@@ -4762,7 +4772,7 @@
                               updatedCount++;
                             } else {
                               // Add as new student
-                              ns.code = String(ns.id);
+                              ns.code = generateCode(currentUser.className, currentUser.year, mergeIndexCounter);
                               students.push(ns);
                               mergeIndexCounter++;
                               addedCount++;
