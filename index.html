@@ -283,10 +283,16 @@
       <div class="flex items-center gap-3 md:gap-4 shrink-0">
         <button id="header-search-btn" onclick="openGlobalSearch()" class="hidden md:flex items-center gap-1.5 text-xs bg-white px-3 py-2 rounded-full font-bold shadow-sm border border-slate-200 text-slate-500 hover:text-theme transition"><i data-lucide="search" class="w-3.5 h-3.5"></i> Tra cứu</button>
         <span id="header-year" class="hidden md:inline-flex text-xs bg-theme-light px-3 py-1.5 rounded-full font-bold shadow-sm items-center gap-1.5 border border-slate-100 whitespace-nowrap"><i data-lucide="calendar" class="w-3 h-3"></i> Năm học ...</span>
-        <div class="relative group cursor-pointer shrink-0" onclick="document.getElementById('avatar-upload').click()" title="Đổi ảnh đại diện GV">
+        <!-- GVCN Avatar & Upload (Ẩn khi là GVBM) -->
+        <div id="header-teacher-avatar-container" class="relative group cursor-pointer shrink-0" onclick="document.getElementById('avatar-upload').click()" title="Đổi ảnh đại diện GV">
           <div id="header-avatar" class="w-10 h-10 rounded-full bg-theme-grad text-white flex items-center justify-center font-bold text-sm shadow-md border-2 border-white overflow-hidden transition transform group-hover:scale-105">GV</div>
           <div class="absolute -bottom-1 -right-1 bg-white rounded-full p-1 shadow-sm border border-slate-200 group-hover:bg-slate-50"><i data-lucide="camera" class="w-3 h-3 text-slate-500"></i></div>
           <input type="file" id="avatar-upload" accept="image/*" class="hidden" onchange="handleAvatarUpload(event)">
+        </div>
+        <!-- Huy hiệu Lớp dành cho GVBM (thay thế hoàn toàn ảnh GVCN phía trên) -->
+        <div id="header-gvbm-class-badge" class="hidden items-center gap-1.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-black px-4 py-2 rounded-full text-xs md:text-sm shadow-sm">
+          <i data-lucide="school" class="w-4 h-4"></i>
+          <span id="header-gvbm-class-name">12A17</span>
         </div>
       </div>
     </header>
@@ -488,6 +494,8 @@
             </div>
           </div>
 
+          <!-- CONTAINER CÁC THẺ CHI TIẾT BÊN DƯỚI (CHỈ HIỂN THỊ CHO GVCN, ẨN KHI LÀ GVBM) -->
+          <div id="teacher-overview-details" class="space-y-4 md:space-y-6">
           <!-- 3. KPI CARDS GRID -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- Card 1: Student count -->
@@ -721,6 +729,7 @@
             </div>
             <div id="teacher-recent-activities-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
           </div>
+          </div> <!-- End #teacher-overview-details -->
         </div>
       </section>
 
@@ -2274,9 +2283,8 @@
   <script>
     // Bộ bắt lỗi lập trình để tự động chẩn đoán lỗi hiển thị
     window.onerror = function(message, source, lineno, colno, error) {
-        alert("Lỗi hiển thị: " + message + " tại dòng " + lineno);
-        console.error(error);
-        return false;
+        console.error("Lỗi:", message, "tại dòng", lineno, error);
+        return true;
     };
 
     // Cấu hình cố định Supabase để sử dụng trên nhiều thiết bị mà không cần nhập lại:
@@ -2637,7 +2645,7 @@
                 }
             } catch (e) {
                 console.warn("Supabase fetch failed, trying local server:", e);
-                alert("Lỗi tải đám mây trong checkAuth: " + (e.message || e));
+                console.warn("Lỗi tải đám mây trong checkAuth:", e);
             }
         }
 
@@ -3220,7 +3228,7 @@
                 }
             } catch(e) {
                 console.warn("Failed to load student data from Supabase, trying local storage:", e);
-                alert("Lỗi tải đám mây trong loadUserData: " + (e.message || e));
+                console.warn("Lỗi tải đám mây trong loadUserData:", e);
             }
         }
 
@@ -3495,12 +3503,18 @@
             const headerName = document.getElementById('teacher-header-name');
             const headerRole = document.getElementById('teacher-header-role');
             
+            const overviewDetails = document.getElementById('teacher-overview-details');
+            const headerAvatarContainer = document.getElementById('header-teacher-avatar-container');
+            const headerGvbmBadge = document.getElementById('header-gvbm-class-badge');
+            const headerGvbmName = document.getElementById('header-gvbm-class-name');
+            const coverLabel = document.getElementById('teacher-cover-label');
+
             if (currentUserRole === 'gvbm') {
                 if (teacherBannerName) teacherBannerName.innerText = "GVBM";
                 const greeting = document.getElementById('teacher-banner-greeting');
-                if (greeting) greeting.innerText = "Chào Quý Thầy/Cô Bộ Môn";
+                if (greeting) greeting.innerText = "Chào Thầy/Cô Bộ Môn";
                 const sub = document.getElementById('teacher-banner-sub');
-                if (sub) sub.innerText = `Giáo viên bộ môn • Lớp ${currentUser.className || ''}`;
+                if (sub) sub.innerText = `Giáo viên bộ môn • Lớp ${currentUser.className || '12A17'}`;
                 const badgeRole = document.getElementById('banner-badge-role');
                 if (badgeRole) badgeRole.innerHTML = `<i data-lucide="book-open" class="w-3 h-3 text-amber-500"></i> GVBM`;
                 
@@ -3508,6 +3522,18 @@
                 if (headerRole) headerRole.innerText = "BỘ MÔN";
                 
                 if (avatarOverlay) avatarOverlay.classList.add('hidden');
+                if (coverLabel) coverLabel.classList.add('hidden');
+                
+                // Ẩn avatar GVCN ở header phía trên và hiển thị huy hiệu lớp (12A17)
+                if (headerAvatarContainer) headerAvatarContainer.classList.add('hidden');
+                if (headerGvbmBadge) {
+                    headerGvbmBadge.classList.remove('hidden');
+                    headerGvbmBadge.classList.add('flex');
+                    if (headerGvbmName) headerGvbmName.innerText = currentUser.className || '12A17';
+                }
+                
+                // Ẩn toàn bộ các phần bên dưới Hero Banner trên tab Tổng quan của GVBM
+                if (overviewDetails) overviewDetails.classList.add('hidden');
                 
                 if (teacherHeaderAvatar) {
                     teacherHeaderAvatar.innerHTML = `<div class="w-full h-full bg-gradient-to-tr from-amber-500 to-orange-500 rounded-full flex items-center justify-center text-[10px] font-black text-white">GVBM</div>`;
@@ -3531,6 +3557,15 @@
                     `;
                 }
             } else {
+                // Hiển thị đầy đủ chi tiết bên dưới cho GVCN
+                if (overviewDetails) overviewDetails.classList.remove('hidden');
+                if (headerAvatarContainer) headerAvatarContainer.classList.remove('hidden');
+                if (headerGvbmBadge) {
+                    headerGvbmBadge.classList.add('hidden');
+                    headerGvbmBadge.classList.remove('flex');
+                }
+                if (coverLabel) coverLabel.classList.remove('hidden');
+
                 if (teacherBannerName) {
                     const title = currentUser.gender === 'Nữ' ? 'Cô' : 'Thầy';
                     teacherBannerName.innerText = `${title} ${currentUser.teacherName || 'Thầy/Cô'}`;
@@ -5628,7 +5663,7 @@
             let lastViolationReason = '';
             if (s.history && Array.isArray(s.history)) {
                 s.history.forEach(h => {
-                    if (h.type === 'minus' || h.type === 'violation' || (h.points && h.points < 0)) {
+                    if (h.type === 'sub' || h.type === 'minus' || h.type === 'violation' || (h.points && h.points < 0)) {
                         minusPoints += Math.abs(h.points || 0);
                         violationCount++;
                         if (!lastViolationReason && h.reason) lastViolationReason = h.reason;
@@ -6683,11 +6718,39 @@
         }
         
         // Cấu hình banner và giao diện cho GVBM
+        const overviewDetails = document.getElementById('teacher-overview-details');
+        if (overviewDetails) {
+            if (isGVBM) overviewDetails.classList.add('hidden');
+            else if (!isStudent) overviewDetails.classList.remove('hidden');
+        }
+
+        const headerAvatarContainer = document.getElementById('header-teacher-avatar-container');
+        const headerGvbmBadge = document.getElementById('header-gvbm-class-badge');
+        const headerGvbmName = document.getElementById('header-gvbm-class-name');
+        if (headerAvatarContainer && headerGvbmBadge) {
+            if (isGVBM) {
+                headerAvatarContainer.classList.add('hidden');
+                headerGvbmBadge.classList.remove('hidden');
+                headerGvbmBadge.classList.add('flex');
+                if (headerGvbmName) headerGvbmName.innerText = (currentUser && currentUser.className) ? currentUser.className : '12A17';
+            } else {
+                headerAvatarContainer.classList.remove('hidden');
+                headerGvbmBadge.classList.add('hidden');
+                headerGvbmBadge.classList.remove('flex');
+            }
+        }
+
+        const teacherCoverLabel = document.getElementById('teacher-cover-label');
+        if (teacherCoverLabel) {
+            if (isGVBM) teacherCoverLabel.classList.add('hidden');
+            else teacherCoverLabel.classList.remove('hidden');
+        }
+
         if (isGVBM) {
             const greeting = document.getElementById('teacher-banner-greeting');
             if (greeting) greeting.innerText = "Chào Thầy/Cô Bộ Môn";
             const sub = document.getElementById('teacher-banner-sub');
-            if (sub) sub.innerText = `Giáo viên bộ môn • Lớp ${currentUser.className || ''}`;
+            if (sub) sub.innerText = `Giáo viên bộ môn • Lớp ${currentUser.className || '12A17'}`;
             const badgeRole = document.getElementById('banner-badge-role');
             if (badgeRole) badgeRole.innerHTML = `<i data-lucide="book-open" class="w-3 h-3 text-amber-500"></i> GVBM`;
             
