@@ -247,7 +247,7 @@
         <button onclick="switchTab('tab-tn-thpt')" id="btn-tab-tn-thpt" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70">
           <i data-lucide="graduation-cap" class="w-5 h-5 text-indigo-400"></i>
           <span class="flex-1 text-left">Thông tin TN THPT</span>
-          <span class="text-[9px] font-black uppercase bg-gradient-to-r from-indigo-500 to-violet-500 text-white px-1.5 py-0.5 rounded shadow-xs">2025</span>
+          <span class="text-[9px] font-black uppercase bg-gradient-to-r from-indigo-500 to-violet-500 text-white px-1.5 py-0.5 rounded shadow-xs">2027</span>
         </button>
         <button onclick="switchTab('tab-notebook')" id="btn-tab-notebook" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70"><i data-lucide="contact" class="w-5 h-5"></i> Sổ theo dõi (Cards)</button>
         <button onclick="switchTab('tab-wheel')" id="btn-tab-wheel" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70"><i data-lucide="dices" class="w-5 h-5"></i> Vòng quay gọi tên</button>
@@ -611,7 +611,7 @@
                       <i data-lucide="graduation-cap" class="w-4 h-4"></i>
                     </div>
                     <h3 class="font-black text-slate-800 text-xs md:text-sm tracking-tight">Thông Tin TN THPT</h3>
-                    <span class="bg-indigo-100 text-indigo-700 text-[9px] font-black px-2 py-0.5 rounded-full uppercase">2025</span>
+                    <span class="bg-indigo-100 text-indigo-700 text-[9px] font-black px-2 py-0.5 rounded-full uppercase">2027</span>
                   </div>
                   <button onclick="switchTab('tab-tn-thpt')" class="text-xs font-bold text-indigo-600 hover:underline flex items-center gap-0.5">
                     Mở tab <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
@@ -997,7 +997,7 @@
             <div>
               <div class="flex items-center gap-2">
                 <h3 class="font-black text-slate-800 text-base md:text-xl tracking-tight">Thông Tin & Dự Đoán Tốt Nghiệp THPT</h3>
-                <span class="bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase">Quy chế GDPT 2018 (Từ 2025)</span>
+                <span class="bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase">Kỳ Thi Tốt Nghiệp THPT 2027</span>
               </div>
               <p class="text-xs text-slate-400 font-medium mt-0.5">Quản lý điểm học bạ 3 năm Lớp 10, 11, 12 và Công cụ tự điền dự đoán điểm thi tốt nghiệp</p>
             </div>
@@ -1082,63 +1082,54 @@
               </button>
             </div>
 
-            <!-- 4 ô nhập điểm thi -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- 4 ô nhập điểm thi: Toán, Ngữ Văn, Môn 1, Môn 2 -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
               <!-- Toán -->
-              <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-200 transition">
+              <div class="bg-slate-50 p-3.5 md:p-4 rounded-2xl border border-slate-200 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-200 transition">
                 <label class="block text-xs font-black text-slate-700 mb-1 flex items-center justify-between">
-                  <span>Môn 1: TOÁN (Bắt buộc)</span>
+                  <span>Toán</span>
                   <span class="text-[10px] font-bold text-rose-500">Liệt ≤ 1.0</span>
                 </label>
-                <input type="number" id="input-target-toan" min="0" max="10" step="0.01" placeholder="Nhập điểm (0 - 10)" oninput="calculateGraduationPrediction()" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-base font-black text-slate-800 outline-none">
+                <input type="number" id="input-target-toan" min="0" max="10" step="0.01" placeholder="Điểm Toán (0 - 10)" oninput="calculateGraduationPrediction(false)" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-base font-black text-slate-800 outline-none">
               </div>
 
               <!-- Văn -->
-              <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-200 transition">
+              <div class="bg-slate-50 p-3.5 md:p-4 rounded-2xl border border-slate-200 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-200 transition">
                 <label class="block text-xs font-black text-slate-700 mb-1 flex items-center justify-between">
-                  <span>Môn 2: NGỮ VĂN (Bắt buộc)</span>
+                  <span>Ngữ Văn</span>
                   <span class="text-[10px] font-bold text-rose-500">Liệt ≤ 1.0</span>
                 </label>
-                <input type="number" id="input-target-van" min="0" max="10" step="0.01" placeholder="Nhập điểm (0 - 10)" oninput="calculateGraduationPrediction()" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-base font-black text-slate-800 outline-none">
+                <input type="number" id="input-target-van" min="0" max="10" step="0.01" placeholder="Điểm Văn (0 - 10)" oninput="calculateGraduationPrediction(false)" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-base font-black text-slate-800 outline-none">
               </div>
 
-              <!-- Môn 1 -->
-              <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-200 transition">
+              <!-- Môn 1 (Chỉ ghi Môn 1) -->
+              <div class="bg-slate-50 p-3.5 md:p-4 rounded-2xl border border-slate-200 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-200 transition">
                 <label class="block text-xs font-black text-slate-700 mb-1 flex items-center justify-between">
-                  <select id="select-target-mon1-name" onchange="calculateGraduationPrediction()" class="bg-transparent border-none text-xs font-black text-slate-700 outline-none cursor-pointer">
-                    <option value="Vật lý">Môn 3: Vật lý</option>
-                    <option value="Hóa học">Môn 3: Hóa học</option>
-                    <option value="Sinh học">Môn 3: Sinh học</option>
-                    <option value="Lịch sử">Môn 3: Lịch sử</option>
-                    <option value="Địa lý">Môn 3: Địa lý</option>
-                    <option value="Tiếng Anh" selected>Môn 3: Tiếng Anh</option>
-                    <option value="GDKT & PL">Môn 3: GDKT & PL</option>
-                    <option value="Tin học">Môn 3: Tin học</option>
-                    <option value="Công nghệ">Môn 3: Công nghệ</option>
-                  </select>
+                  <span>Môn 1</span>
                   <span class="text-[10px] font-bold text-rose-500">Liệt ≤ 1.0</span>
                 </label>
-                <input type="number" id="input-target-mon1" min="0" max="10" step="0.01" placeholder="Nhập điểm (0 - 10)" oninput="calculateGraduationPrediction()" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-base font-black text-slate-800 outline-none">
+                <input type="number" id="input-target-mon1" min="0" max="10" step="0.01" placeholder="Điểm Môn 1 (0 - 10)" oninput="calculateGraduationPrediction(false)" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-base font-black text-slate-800 outline-none">
               </div>
 
-              <!-- Môn 2 -->
-              <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-200 transition">
+              <!-- Môn 2 (Chỉ ghi Môn 2) -->
+              <div class="bg-slate-50 p-3.5 md:p-4 rounded-2xl border border-slate-200 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-200 transition">
                 <label class="block text-xs font-black text-slate-700 mb-1 flex items-center justify-between">
-                  <select id="select-target-mon2-name" onchange="calculateGraduationPrediction()" class="bg-transparent border-none text-xs font-black text-slate-700 outline-none cursor-pointer">
-                    <option value="Vật lý" selected>Môn 4: Vật lý</option>
-                    <option value="Hóa học">Môn 4: Hóa học</option>
-                    <option value="Sinh học">Môn 4: Sinh học</option>
-                    <option value="Lịch sử">Môn 4: Lịch sử</option>
-                    <option value="Địa lý">Môn 4: Địa lý</option>
-                    <option value="Tiếng Anh">Môn 4: Tiếng Anh</option>
-                    <option value="GDKT & PL">Môn 4: GDKT & PL</option>
-                    <option value="Tin học">Môn 4: Tin học</option>
-                    <option value="Công nghệ">Môn 4: Công nghệ</option>
-                  </select>
+                  <span>Môn 2</span>
                   <span class="text-[10px] font-bold text-rose-500">Liệt ≤ 1.0</span>
                 </label>
-                <input type="number" id="input-target-mon2" min="0" max="10" step="0.01" placeholder="Nhập điểm (0 - 10)" oninput="calculateGraduationPrediction()" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-base font-black text-slate-800 outline-none">
+                <input type="number" id="input-target-mon2" min="0" max="10" step="0.01" placeholder="Điểm Môn 2 (0 - 10)" oninput="calculateGraduationPrediction(false)" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-base font-black text-slate-800 outline-none">
               </div>
+            </div>
+
+            <!-- Nút TÍNH ĐIỂM XÉT TỐT NGHIỆP NỔI BẬT & Nút Lưu Điểm -->
+            <div class="flex flex-wrap items-center gap-3 pt-1">
+              <button onclick="calculateGraduationPrediction(true)" id="btn-calc-graduation" class="bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-black text-xs md:text-sm px-6 py-3 rounded-2xl shadow-lg shadow-indigo-500/25 transition-all flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95">
+                <i data-lucide="calculator" class="w-4 h-4 md:w-5 md:h-5"></i> <span>TÍNH ĐIỂM XÉT TỐT NGHIỆP</span>
+              </button>
+
+              <button onclick="saveStudentTargetScores()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-3 rounded-2xl text-xs md:text-sm font-black transition flex items-center gap-2 shadow-sm hover:scale-[1.01]">
+                <i data-lucide="save" class="w-4 h-4"></i> Lưu kết quả dự đoán
+              </button>
             </div>
 
             <!-- Khung Kết Quả Xét Tốt Nghiệp Real-time -->
@@ -3688,7 +3679,7 @@
             'tab-attendance': 'Điểm Danh Hàng Ngày',
             'tab-timetable': 'Thời Khoá Biểu',
             'tab-seating': 'Sơ Đồ Chỗ Ngồi',
-            'tab-tn-thpt': 'Thông Tin Tốt Nghiệp THPT (2025)',
+            'tab-tn-thpt': 'Thông Tin Tốt Nghiệp THPT (2027)',
             'tab-notebook': 'Sổ Theo Dõi',
             'tab-wheel': 'Vòng Quay May Mắn',
             'tab-praise': 'Tuyên Dương',
@@ -8176,22 +8167,18 @@
         // Tải các giá trị điểm dự đoán 4 môn thi đã lưu
         const toanInp = document.getElementById('input-target-toan');
         const vanInp = document.getElementById('input-target-van');
-        const mon1Sel = document.getElementById('select-target-mon1-name');
         const mon1Inp = document.getElementById('input-target-mon1');
-        const mon2Sel = document.getElementById('select-target-mon2-name');
         const mon2Inp = document.getElementById('input-target-mon2');
 
         if (toanInp && s.targetScoreToan !== undefined) toanInp.value = s.targetScoreToan;
         if (vanInp && s.targetScoreVan !== undefined) vanInp.value = s.targetScoreVan;
-        if (mon1Sel && s.targetMon1Name) mon1Sel.value = s.targetMon1Name;
         if (mon1Inp && s.targetScoreMon1 !== undefined) mon1Inp.value = s.targetScoreMon1;
-        if (mon2Sel && s.targetMon2Name) mon2Sel.value = s.targetMon2Name;
         if (mon2Inp && s.targetScoreMon2 !== undefined) mon2Inp.value = s.targetScoreMon2;
 
         calculateGraduationPrediction();
     }
 
-    function calculateGraduationPrediction() {
+    function calculateGraduationPrediction(isExplicitClick = false) {
         let s = null;
         if (currentStudent) {
             s = students.find(x => String(x.id) === String(currentStudent.id)) || currentStudent;
@@ -8212,9 +8199,15 @@
         } else if (!isNaN(g10) && !isNaN(g11)) {
             if (dtbEl) dtbEl.innerText = '--';
             if (statusEl) statusEl.innerHTML = `<span class="text-amber-500 font-bold">👉 Bạn hãy nhập thử điểm Lớp 12 để hệ thống tính ĐTB nhé!</span>`;
+            if (isExplicitClick) {
+                return showModal('warning', 'Chưa nhập điểm Lớp 12', 'Bạn vui lòng nhập điểm dự kiến Lớp 12 vào ô trên để hệ thống tính ĐTB học bạ 3 năm!');
+            }
         } else {
             if (dtbEl) dtbEl.innerText = '--';
             if (statusEl) statusEl.innerHTML = `<span class="text-amber-500 font-bold">Chờ GVCN upload điểm Lớp 10 & 11</span>`;
+            if (isExplicitClick) {
+                return showModal('warning', 'Chưa có điểm Lớp 10, 11', 'Hệ thống chưa có điểm Lớp 10 và 11 của bạn do GVCN chưa upload.');
+            }
         }
 
         const toanVal = parseFloat(document.getElementById('input-target-toan')?.value);
@@ -8254,7 +8247,7 @@
                 statusBadge.innerText = "Chưa nhập đủ 4 môn";
             }
             if (formulaDetail) {
-                formulaDetail.innerText = "Vui lòng nhập điểm dự đoán cho cả 4 môn thi (Toán, Văn, Môn 3, Môn 4) để xem kết quả.";
+                formulaDetail.innerText = "Vui lòng nhập điểm cho cả 4 môn thi (Toán, Ngữ Văn, Môn 1, Môn 2) sau đó bấm nút 'TÍNH ĐIỂM XÉT TỐT NGHIỆP'.";
             }
             if (targetHint && dtb !== null) {
                 const reqExamAvg = Math.max(0, 10 - dtb);
@@ -8263,6 +8256,9 @@
                 } else {
                     targetHint.innerHTML = `💡 Để ĐẬU TỐT NGHIỆP (≥ 5.0), điểm trung bình 4 môn thi của bạn cần tối thiểu: <b class="text-indigo-700 text-sm">${reqExamAvg.toFixed(2)} điểm/môn</b>.`;
                 }
+            }
+            if (isExplicitClick) {
+                return showModal('warning', 'Chưa nhập đủ 4 môn thi', 'Bạn hãy điền đầy đủ điểm cho cả 4 môn (Toán, Ngữ Văn, Môn 1, Môn 2) để thực hiện tính toán nhé!');
             }
             return;
         }
@@ -8287,10 +8283,13 @@
                 statusBadge.innerHTML = `<i data-lucide="alert-octagon" class="w-3.5 h-3.5 inline mr-1"></i> RỚT TỐT NGHIỆP (ĐIỂM LIỆT ≤ 1.0)`;
             }
             if (formulaDetail) {
-                formulaDetail.innerHTML = `<span class="text-rose-600 font-bold">CẢNH BÁO:</span> Có môn thi bị điểm liệt (≤ 1.0 điểm). Theo quy chế, bất kỳ môn nào ≤ 1.0 điểm sẽ không được xét tốt nghiệp THPT.`;
+                formulaDetail.innerHTML = `<span class="text-rose-600 font-bold">CẢNH BÁO:</span> Có môn thi bị điểm liệt (≤ 1.0 điểm). Bất kỳ môn nào ≤ 1.0 điểm sẽ không được xét tốt nghiệp THPT 2027.`;
             }
             if (resultBox) {
                 resultBox.className = "bg-gradient-to-r from-rose-50 to-orange-50/60 p-5 rounded-2xl border-2 border-rose-300 flex flex-col md:flex-row justify-between items-center gap-4";
+            }
+            if (isExplicitClick) {
+                showModal('error', 'Rớt Tốt Nghiệp Vì Điểm Liệt', `Có môn thi bị điểm liệt (≤ 1.0 điểm).\n\nTheo Quy chế thi tốt nghiệp THPT 2027, thí sinh có bất kỳ môn thi nào từ 1.0 điểm trở xuống sẽ **không được công nhận tốt nghiệp**.`);
             }
         } else if (finalScoreRound >= 5.00) {
             if (statusBadge) {
@@ -8302,6 +8301,9 @@
             }
             if (resultBox) {
                 resultBox.className = "bg-gradient-to-r from-emerald-50 to-teal-50/60 p-5 rounded-2xl border-2 border-emerald-300 flex flex-col md:flex-row justify-between items-center gap-4";
+            }
+            if (isExplicitClick) {
+                showModal('success', '🎉 Chúc Mừng ĐẬU TỐT NGHIỆP!', `Điểm xét tốt nghiệp dự kiến: **${finalScoreRound.toFixed(2)} điểm** (≥ 5.00 điểm chuẩn).\n\n• ĐTB học bạ 3 năm: **${dtb.toFixed(2)}**\n• Điểm thi trung bình 4 môn: **${examAvgRound.toFixed(2)}**\n\nBạn hoàn toàn đủ điều kiện công nhận tốt nghiệp THPT 2027! Hãy duy trì phong độ nhé!`);
             }
         } else {
             const needMore = ((5.00 - finalScoreRound) * 2 * 4).toFixed(2);
@@ -8315,6 +8317,9 @@
             if (resultBox) {
                 resultBox.className = "bg-gradient-to-r from-amber-50 to-orange-50/60 p-5 rounded-2xl border-2 border-amber-300 flex flex-col md:flex-row justify-between items-center gap-4";
             }
+            if (isExplicitClick) {
+                showModal('warning', 'Chưa Đạt Điểm Tốt Nghiệp', `Điểm xét tốt nghiệp dự kiến: **${finalScoreRound.toFixed(2)} điểm** (chưa đạt chuẩn 5.00 điểm).\n\nBạn cần tăng thêm tổng cộng khoảng **${needMore} điểm** ở 4 môn thi để đạt điều kiện tốt nghiệp. Hãy cố gắng ôn tập thêm nhé!`);
+            }
         }
         lucide.createIcons();
     }
@@ -8327,13 +8332,11 @@
         s.grade12 = document.getElementById('input-student-l12')?.value || '';
         s.targetScoreToan = document.getElementById('input-target-toan')?.value || '';
         s.targetScoreVan = document.getElementById('input-target-van')?.value || '';
-        s.targetMon1Name = document.getElementById('select-target-mon1-name')?.value || 'Tiếng Anh';
         s.targetScoreMon1 = document.getElementById('input-target-mon1')?.value || '';
-        s.targetMon2Name = document.getElementById('select-target-mon2-name')?.value || 'Vật lý';
         s.targetScoreMon2 = document.getElementById('input-target-mon2')?.value || '';
 
         saveAppData();
-        showModal('success', 'Lưu Thành Công', 'Đã lưu lại điểm dự kiến Lớp 12 và 4 môn thi tốt nghiệp của bạn! Lần đăng nhập sau hệ thống sẽ tự động hiển thị lại.');
+        showModal('success', 'Lưu Thành Công', 'Đã lưu lại điểm dự kiến Lớp 12 và 4 môn thi tốt nghiệp (Toán, Văn, Môn 1, Môn 2) của bạn! Lần đăng nhập sau hệ thống sẽ tự động nạp lại.');
     }
 
     // --- LOGIC DÀNH CHO GIÁO VIÊN ---
@@ -8602,16 +8605,14 @@
 
         document.getElementById('modal-input-toan').value = s.targetScoreToan || '';
         document.getElementById('modal-input-van').value = s.targetScoreVan || '';
-        if (s.targetMon1Name) document.getElementById('modal-select-m1').value = s.targetMon1Name;
         document.getElementById('modal-input-m1').value = s.targetScoreMon1 || '';
-        if (s.targetMon2Name) document.getElementById('modal-select-m2').value = s.targetMon2Name;
         document.getElementById('modal-input-m2').value = s.targetScoreMon2 || '';
 
         calcTeacherModalPrediction();
         openModalUi('teacher-predict-modal', 'teacher-predict-modal-content');
     }
 
-    function calcTeacherModalPrediction() {
+    function calcTeacherModalPrediction(isExplicitClick = false) {
         if (!teacherPredictCurrentStudent) return;
         const s = teacherPredictCurrentStudent;
 
@@ -8703,9 +8704,7 @@
         s.grade12 = document.getElementById('modal-input-l12')?.value || '';
         s.targetScoreToan = document.getElementById('modal-input-toan')?.value || '';
         s.targetScoreVan = document.getElementById('modal-input-van')?.value || '';
-        s.targetMon1Name = document.getElementById('modal-select-m1')?.value || 'Tiếng Anh';
         s.targetScoreMon1 = document.getElementById('modal-input-m1')?.value || '';
-        s.targetMon2Name = document.getElementById('modal-select-m2')?.value || 'Vật lý';
         s.targetScoreMon2 = document.getElementById('modal-input-m2')?.value || '';
 
         saveAppData();
@@ -8755,49 +8754,32 @@
         </div>
       </div>
 
-      <!-- Khối nhập điểm 4 môn thi trong modal -->
+      <!-- Khối nhập điểm 4 môn thi trong modal: Toán, Ngữ Văn, Môn 1, Môn 2 -->
       <div class="space-y-3">
         <div class="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-          <i data-lucide="edit-3" class="w-4 h-4 text-indigo-500"></i> Điểm Dự Đoán 4 Môn Thi (Toán, Văn, Môn 3, Môn 4)
+          <i data-lucide="edit-3" class="w-4 h-4 text-indigo-500"></i> Điểm Dự Đoán 4 Môn Thi (Toán, Văn, Môn 1, Môn 2)
         </div>
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
-            <label class="block text-[10.5px] font-black text-slate-600 mb-1">Toán</label>
-            <input type="number" id="modal-input-toan" min="0" max="10" step="0.01" placeholder="--" oninput="calcTeacherModalPrediction()" class="w-full text-center bg-white border border-slate-200 rounded-lg py-1.5 text-sm font-black text-slate-800 outline-none">
+            <label class="block text-[11px] font-black text-slate-700 mb-1">Toán</label>
+            <input type="number" id="modal-input-toan" min="0" max="10" step="0.01" placeholder="--" oninput="calcTeacherModalPrediction(false)" class="w-full text-center bg-white border border-slate-200 rounded-lg py-1.5 text-sm font-black text-slate-800 outline-none">
           </div>
           <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
-            <label class="block text-[10.5px] font-black text-slate-600 mb-1">Ngữ Văn</label>
-            <input type="number" id="modal-input-van" min="0" max="10" step="0.01" placeholder="--" oninput="calcTeacherModalPrediction()" class="w-full text-center bg-white border border-slate-200 rounded-lg py-1.5 text-sm font-black text-slate-800 outline-none">
+            <label class="block text-[11px] font-black text-slate-700 mb-1">Ngữ Văn</label>
+            <input type="number" id="modal-input-van" min="0" max="10" step="0.01" placeholder="--" oninput="calcTeacherModalPrediction(false)" class="w-full text-center bg-white border border-slate-200 rounded-lg py-1.5 text-sm font-black text-slate-800 outline-none">
           </div>
           <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
-            <select id="modal-select-m1" onchange="calcTeacherModalPrediction()" class="block text-[10.5px] font-black text-slate-600 mb-1 bg-transparent outline-none w-full cursor-pointer">
-              <option value="Vật lý">Môn 3: Lý</option>
-              <option value="Hóa học">Môn 3: Hóa</option>
-              <option value="Sinh học">Môn 3: Sinh</option>
-              <option value="Lịch sử">Môn 3: Sử</option>
-              <option value="Địa lý">Môn 3: Địa</option>
-              <option value="Tiếng Anh" selected>Môn 3: Anh</option>
-              <option value="GDKT & PL">Môn 3: GDKT</option>
-              <option value="Tin học">Môn 3: Tin</option>
-              <option value="Công nghệ">Môn 3: CN</option>
-            </select>
-            <input type="number" id="modal-input-m1" min="0" max="10" step="0.01" placeholder="--" oninput="calcTeacherModalPrediction()" class="w-full text-center bg-white border border-slate-200 rounded-lg py-1.5 text-sm font-black text-slate-800 outline-none">
+            <label class="block text-[11px] font-black text-slate-700 mb-1">Môn 1</label>
+            <input type="number" id="modal-input-m1" min="0" max="10" step="0.01" placeholder="--" oninput="calcTeacherModalPrediction(false)" class="w-full text-center bg-white border border-slate-200 rounded-lg py-1.5 text-sm font-black text-slate-800 outline-none">
           </div>
           <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
-            <select id="modal-select-m2" onchange="calcTeacherModalPrediction()" class="block text-[10.5px] font-black text-slate-600 mb-1 bg-transparent outline-none w-full cursor-pointer">
-              <option value="Vật lý" selected>Môn 4: Lý</option>
-              <option value="Hóa học">Môn 4: Hóa</option>
-              <option value="Sinh học">Môn 4: Sinh</option>
-              <option value="Lịch sử">Môn 4: Sử</option>
-              <option value="Địa lý">Môn 4: Địa</option>
-              <option value="Tiếng Anh">Môn 4: Anh</option>
-              <option value="GDKT & PL">Môn 4: GDKT</option>
-              <option value="Tin học">Môn 4: Tin</option>
-              <option value="Công nghệ">Môn 4: CN</option>
-            </select>
-            <input type="number" id="modal-input-m2" min="0" max="10" step="0.01" placeholder="--" oninput="calcTeacherModalPrediction()" class="w-full text-center bg-white border border-slate-200 rounded-lg py-1.5 text-sm font-black text-slate-800 outline-none">
+            <label class="block text-[11px] font-black text-slate-700 mb-1">Môn 2</label>
+            <input type="number" id="modal-input-m2" min="0" max="10" step="0.01" placeholder="--" oninput="calcTeacherModalPrediction(false)" class="w-full text-center bg-white border border-slate-200 rounded-lg py-1.5 text-sm font-black text-slate-800 outline-none">
           </div>
         </div>
+        <button onclick="calcTeacherModalPrediction(true)" class="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-black text-xs py-2.5 rounded-xl shadow-md transition flex items-center justify-center gap-1.5">
+          <i data-lucide="calculator" class="w-4 h-4"></i> Tính điểm xét tốt nghiệp
+        </button>
       </div>
 
       <!-- Kết quả dự báo trong modal -->
