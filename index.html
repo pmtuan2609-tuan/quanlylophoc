@@ -1026,22 +1026,44 @@
               <span id="student-academic-record-status" class="text-xs font-bold text-slate-400">Học bạ THPT</span>
             </div>
 
+            <!-- Bảng Điểm 3 Năm: L10, L11 Cố Định (GV Cấp) - L12 HS Tự Nhập Thử -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
-              <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
-                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Lớp 10 (Hệ số 1)</div>
-                <div id="student-view-l10" class="text-2xl md:text-3xl font-black text-slate-700 mt-1">--</div>
+              <!-- Lớp 10 (Cố định, không sửa được) -->
+              <div class="bg-slate-50 p-3.5 md:p-4 rounded-2xl border border-slate-200 text-center relative overflow-hidden flex flex-col justify-between">
+                <div class="flex items-center justify-center gap-1 text-[10.5px] font-black text-slate-500 uppercase tracking-wider">
+                  <i data-lucide="lock" class="w-3.5 h-3.5 text-slate-400"></i> Lớp 10 (HS 1)
+                </div>
+                <div id="student-view-l10" class="text-2xl md:text-3xl font-black text-slate-700 my-1">--</div>
+                <span class="text-[9px] font-bold text-slate-500 bg-slate-200/70 px-2 py-0.5 rounded-full inline-block">🔒 GVCN cấp (Cố định)</span>
               </div>
-              <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
-                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Lớp 11 (Hệ số 2)</div>
-                <div id="student-view-l11" class="text-2xl md:text-3xl font-black text-slate-700 mt-1">--</div>
+
+              <!-- Lớp 11 (Cố định, không sửa được) -->
+              <div class="bg-slate-50 p-3.5 md:p-4 rounded-2xl border border-slate-200 text-center relative overflow-hidden flex flex-col justify-between">
+                <div class="flex items-center justify-center gap-1 text-[10.5px] font-black text-slate-500 uppercase tracking-wider">
+                  <i data-lucide="lock" class="w-3.5 h-3.5 text-slate-400"></i> Lớp 11 (HS 2)
+                </div>
+                <div id="student-view-l11" class="text-2xl md:text-3xl font-black text-slate-700 my-1">--</div>
+                <span class="text-[9px] font-bold text-slate-500 bg-slate-200/70 px-2 py-0.5 rounded-full inline-block">🔒 GVCN cấp (Cố định)</span>
               </div>
-              <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
-                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Lớp 12 (Hệ số 3)</div>
-                <div id="student-view-l12" class="text-2xl md:text-3xl font-black text-slate-700 mt-1">--</div>
+
+              <!-- Lớp 12 (HS ĐƯỢC PHÉP TỰ NHẬP THỬ) -->
+              <div class="bg-gradient-to-b from-indigo-50/70 to-white p-3.5 md:p-4 rounded-2xl border-2 border-indigo-400 ring-2 ring-indigo-100 text-center relative overflow-hidden shadow-sm flex flex-col justify-between">
+                <div class="flex items-center justify-center gap-1 text-[10.5px] font-black text-indigo-700 uppercase tracking-wider">
+                  <i data-lucide="edit-3" class="w-3.5 h-3.5 text-indigo-600"></i> Lớp 12 (HS 3)
+                </div>
+                <div class="my-1">
+                  <input type="number" id="input-student-l12" min="0" max="10" step="0.01" placeholder="Nhập thử (0 - 10)" 
+                    oninput="calculateGraduationPrediction()" 
+                    class="w-full text-center bg-white border-2 border-indigo-300 focus:border-indigo-600 rounded-xl py-1 px-1 text-xl md:text-2xl font-black text-indigo-700 outline-none transition shadow-inner">
+                </div>
+                <span class="text-[9.5px] font-black text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-full inline-block">✏️ Bạn tự nhập điểm thử</span>
               </div>
-              <div class="bg-gradient-to-br from-indigo-500 to-purple-600 text-white p-4 rounded-2xl shadow-md text-center">
-                <div class="text-[11px] font-black uppercase tracking-wider text-indigo-100">ĐTB Học Bạ (3 Năm)</div>
-                <div id="student-view-dtb" class="text-2xl md:text-3xl font-black mt-1">--</div>
+
+              <!-- ĐTB Học Bạ (Tự động tính khi HS gõ điểm L12) -->
+              <div class="bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-700 text-white p-3.5 md:p-4 rounded-2xl shadow-md text-center flex flex-col justify-between">
+                <div class="text-[10.5px] font-black uppercase tracking-wider text-indigo-100">ĐTB Học Bạ (3 Năm)</div>
+                <div id="student-view-dtb" class="text-2xl md:text-3xl font-black my-1">--</div>
+                <span class="text-[8.5px] font-mono font-bold text-indigo-200">(L10 + 2×L11 + 3×L12)/6</span>
               </div>
             </div>
           </div>
@@ -8140,26 +8162,18 @@
         
         const l10El = document.getElementById('student-view-l10');
         const l11El = document.getElementById('student-view-l11');
-        const l12El = document.getElementById('student-view-l12');
-        const dtbEl = document.getElementById('student-view-dtb');
-        const statusEl = document.getElementById('student-academic-record-status');
+        const l12Inp = document.getElementById('input-student-l12');
 
         const g10 = (s.grade10 !== undefined && s.grade10 !== null && s.grade10 !== '') ? parseFloat(s.grade10).toFixed(2) : '--';
         const g11 = (s.grade11 !== undefined && s.grade11 !== null && s.grade11 !== '') ? parseFloat(s.grade11).toFixed(2) : '--';
-        const g12 = (s.grade12 !== undefined && s.grade12 !== null && s.grade12 !== '') ? parseFloat(s.grade12).toFixed(2) : '--';
-        const dtb = computeAcademicGPA(s);
 
         if (l10El) l10El.innerText = g10;
         if (l11El) l11El.innerText = g11;
-        if (l12El) l12El.innerText = g12;
-        if (dtbEl) dtbEl.innerText = (dtb !== null) ? dtb.toFixed(2) : '--';
-
-        if (statusEl) {
-            if (dtb !== null) statusEl.innerHTML = `<span class="text-emerald-600 font-black">✓ Đã cập nhật học bạ</span>`;
-            else statusEl.innerHTML = `<span class="text-amber-500 font-bold">Chờ GV cập nhật đủ 3 năm</span>`;
+        if (l12Inp) {
+            l12Inp.value = (s.grade12 !== undefined && s.grade12 !== null && s.grade12 !== '') ? s.grade12 : '';
         }
 
-        // Tải các giá trị điểm dự đoán đã lưu
+        // Tải các giá trị điểm dự đoán 4 môn thi đã lưu
         const toanInp = document.getElementById('input-target-toan');
         const vanInp = document.getElementById('input-target-van');
         const mon1Sel = document.getElementById('select-target-mon1-name');
@@ -8178,6 +8192,31 @@
     }
 
     function calculateGraduationPrediction() {
+        let s = null;
+        if (currentStudent) {
+            s = students.find(x => String(x.id) === String(currentStudent.id)) || currentStudent;
+        }
+
+        const g10 = (s && s.grade10 !== undefined && s.grade10 !== null && s.grade10 !== '') ? parseFloat(s.grade10) : NaN;
+        const g11 = (s && s.grade11 !== undefined && s.grade11 !== null && s.grade11 !== '') ? parseFloat(s.grade11) : NaN;
+        const l12Val = parseFloat(document.getElementById('input-student-l12')?.value);
+
+        const dtbEl = document.getElementById('student-view-dtb');
+        const statusEl = document.getElementById('student-academic-record-status');
+
+        let dtb = null;
+        if (!isNaN(g10) && !isNaN(g11) && !isNaN(l12Val) && l12Val >= 0 && l12Val <= 10) {
+            dtb = Math.round(((g10 + g11 * 2 + l12Val * 3) / 6) * 100) / 100;
+            if (dtbEl) dtbEl.innerText = dtb.toFixed(2);
+            if (statusEl) statusEl.innerHTML = `<span class="text-emerald-600 font-black">✓ Đã tính ĐTB theo điểm L12 thử: ${dtb.toFixed(2)}</span>`;
+        } else if (!isNaN(g10) && !isNaN(g11)) {
+            if (dtbEl) dtbEl.innerText = '--';
+            if (statusEl) statusEl.innerHTML = `<span class="text-amber-500 font-bold">👉 Bạn hãy nhập thử điểm Lớp 12 để hệ thống tính ĐTB nhé!</span>`;
+        } else {
+            if (dtbEl) dtbEl.innerText = '--';
+            if (statusEl) statusEl.innerHTML = `<span class="text-amber-500 font-bold">Chờ GVCN upload điểm Lớp 10 & 11</span>`;
+        }
+
         const toanVal = parseFloat(document.getElementById('input-target-toan')?.value);
         const vanVal = parseFloat(document.getElementById('input-target-van')?.value);
         const mon1Val = parseFloat(document.getElementById('input-target-mon1')?.value);
@@ -8190,19 +8229,22 @@
         const finalScoreEl = document.getElementById('grad-final-score');
         const resultBox = document.getElementById('graduation-result-box');
 
-        // Lấy ĐTB học bạ
-        let dtb = null;
-        if (currentStudent) {
-            const s = students.find(x => String(x.id) === String(currentStudent.id)) || currentStudent;
-            dtb = computeAcademicGPA(s);
-        }
-
-        if (dtb === null) {
-            dtb = 6.5; // Giả định nếu chưa có điểm học bạ
-        }
-
         const scores = [toanVal, vanVal, mon1Val, mon2Val];
         const hasAllScores = scores.every(v => !isNaN(v) && v >= 0 && v <= 10);
+
+        if (dtb === null) {
+            if (examAvgEl) examAvgEl.innerText = '--';
+            if (finalScoreEl) finalScoreEl.innerText = '--';
+            if (statusBadge) {
+                statusBadge.className = "px-3 py-1 rounded-full text-xs font-black bg-slate-200 text-slate-700";
+                statusBadge.innerText = "Cần nhập thử Lớp 12";
+            }
+            if (formulaDetail) {
+                formulaDetail.innerText = "👉 Vui lòng nhập điểm dự kiến Lớp 12 ở trên để hệ thống tính ĐTB học bạ 3 năm.";
+            }
+            if (targetHint) targetHint.innerHTML = "";
+            return;
+        }
 
         if (!hasAllScores) {
             if (examAvgEl) examAvgEl.innerText = '--';
@@ -8215,8 +8257,6 @@
                 formulaDetail.innerText = "Vui lòng nhập điểm dự đoán cho cả 4 môn thi (Toán, Văn, Môn 3, Môn 4) để xem kết quả.";
             }
             if (targetHint && dtb !== null) {
-                // Tính điểm thi cần thiết để đỗ tốt nghiệp (ĐXTN >= 5.0)
-                // (examAvg + dtb) / 2 = 5.0 => examAvg = 10 - dtb
                 const reqExamAvg = Math.max(0, 10 - dtb);
                 if (reqExamAvg <= 1.0) {
                     targetHint.innerHTML = `💡 Với ĐTB học bạ <b>${dtb.toFixed(2)}</b>, bạn chỉ cần thi mỗi môn trên điểm liệt (> 1.0) là <b>chắc chắn ĐỖ TỐT NGHIỆP!</b>`;
@@ -8247,7 +8287,7 @@
                 statusBadge.innerHTML = `<i data-lucide="alert-octagon" class="w-3.5 h-3.5 inline mr-1"></i> RỚT TỐT NGHIỆP (ĐIỂM LIỆT ≤ 1.0)`;
             }
             if (formulaDetail) {
-                formulaDetail.innerHTML = `<span class="text-rose-600 font-bold">CẢNH BÁO:</span> Có môn thi bị điểm liệt (≤ 1.0 điểm). Theo quy chế, thí sinh có bất kỳ môn nào ≤ 1.0 điểm sẽ không đủ điều kiện xét tốt nghiệp THPT.`;
+                formulaDetail.innerHTML = `<span class="text-rose-600 font-bold">CẢNH BÁO:</span> Có môn thi bị điểm liệt (≤ 1.0 điểm). Theo quy chế, bất kỳ môn nào ≤ 1.0 điểm sẽ không được xét tốt nghiệp THPT.`;
             }
             if (resultBox) {
                 resultBox.className = "bg-gradient-to-r from-rose-50 to-orange-50/60 p-5 rounded-2xl border-2 border-rose-300 flex flex-col md:flex-row justify-between items-center gap-4";
@@ -8270,7 +8310,7 @@
                 statusBadge.innerHTML = `<i data-lucide="alert-triangle" class="w-3.5 h-3.5 inline mr-1"></i> ⚠️ RỚT TỐT NGHIỆP (< 5.00 Điểm)`;
             }
             if (formulaDetail) {
-                formulaDetail.innerHTML = `Điểm xét TN đạt <b class="text-rose-600">${finalScoreRound.toFixed(2)}</b> (chưa đủ 5.00 điểm). Bạn cần cố gắng tăng thêm tổng cộng khoảng <b class="text-indigo-700">${needMore} điểm</b> ở 4 môn thi để đạt điều kiện tốt nghiệp.`;
+                formulaDetail.innerHTML = `Điểm xét TN đạt <b class="text-rose-600">${finalScoreRound.toFixed(2)}</b> (chưa đủ 5.00 điểm). Bạn cần tăng thêm tổng cộng khoảng <b class="text-indigo-700">${needMore} điểm</b> ở 4 môn thi để đạt điều kiện tốt nghiệp.`;
             }
             if (resultBox) {
                 resultBox.className = "bg-gradient-to-r from-amber-50 to-orange-50/60 p-5 rounded-2xl border-2 border-amber-300 flex flex-col md:flex-row justify-between items-center gap-4";
@@ -8284,6 +8324,7 @@
         const s = students.find(x => String(x.id) === String(currentStudent.id));
         if (!s) return;
 
+        s.grade12 = document.getElementById('input-student-l12')?.value || '';
         s.targetScoreToan = document.getElementById('input-target-toan')?.value || '';
         s.targetScoreVan = document.getElementById('input-target-van')?.value || '';
         s.targetMon1Name = document.getElementById('select-target-mon1-name')?.value || 'Tiếng Anh';
@@ -8292,7 +8333,7 @@
         s.targetScoreMon2 = document.getElementById('input-target-mon2')?.value || '';
 
         saveAppData();
-        showModal('success', 'Lưu Thành Công', 'Đã lưu lại điểm dự đoán thi tốt nghiệp của bạn! Lần đăng nhập sau hệ thống sẽ tự động hiển thị lại.');
+        showModal('success', 'Lưu Thành Công', 'Đã lưu lại điểm dự kiến Lớp 12 và 4 môn thi tốt nghiệp của bạn! Lần đăng nhập sau hệ thống sẽ tự động hiển thị lại.');
     }
 
     // --- LOGIC DÀNH CHO GIÁO VIÊN ---
@@ -8542,27 +8583,252 @@
     }
 
     // Modal tính điểm dự đoán cho GV thao tác trên từng HS
+    let teacherPredictCurrentStudent = null;
+
     function openStudentGradPredictModal(studentId) {
         const s = students.find(x => x.id === studentId);
         if (!s) return;
+        teacherPredictCurrentStudent = s;
 
-        const dtb = computeAcademicGPA(s) || 6.5;
-        const toan = s.targetScoreToan || 6;
-        const van = s.targetScoreVan || 6;
-        const m1 = s.targetScoreMon1 || 6;
-        const m2 = s.targetScoreMon2 || 6;
+        document.getElementById('teacher-modal-student-name').innerText = `Dự Đoán TN: ${s.name}`;
+        document.getElementById('teacher-modal-student-sub').innerText = `Mã HS: ${s.code || s.id} • Lớp ${currentUser ? currentUser.className : '12A17'}`;
 
-        const examAvg = (parseFloat(toan) + parseFloat(van) + parseFloat(m1) + parseFloat(m2)) / 4;
-        const finalScore = ((examAvg + dtb) / 2).toFixed(2);
-        const isPass = (finalScore >= 5.0 && [toan, van, m1, m2].every(v => parseFloat(v) > 1.0));
+        const g10 = (s.grade10 !== undefined && s.grade10 !== null && s.grade10 !== '') ? parseFloat(s.grade10).toFixed(2) : '--';
+        const g11 = (s.grade11 !== undefined && s.grade11 !== null && s.grade11 !== '') ? parseFloat(s.grade11).toFixed(2) : '--';
+        
+        document.getElementById('modal-view-l10').innerText = g10;
+        document.getElementById('modal-view-l11').innerText = g11;
+        document.getElementById('modal-input-l12').value = (s.grade12 !== undefined && s.grade12 !== null) ? s.grade12 : '';
 
-        showModal('info', `Dự Đoán TN: ${s.name}`, 
-            `• **ĐTB Học Bạ 3 năm:** ${computeAcademicGPA(s) ? computeAcademicGPA(s).toFixed(2) : 'Chưa có đủ điểm'}\n` +
-            `• **Công thức:** ((Toán + Văn + Môn 1 + Môn 2)/4 + ĐTB) / 2\n\n` +
-            `👉 Hãy hướng dẫn học sinh đăng nhập vào tài khoản để tự điền điểm dự đoán nhé!`
-        );
+        document.getElementById('modal-input-toan').value = s.targetScoreToan || '';
+        document.getElementById('modal-input-van').value = s.targetScoreVan || '';
+        if (s.targetMon1Name) document.getElementById('modal-select-m1').value = s.targetMon1Name;
+        document.getElementById('modal-input-m1').value = s.targetScoreMon1 || '';
+        if (s.targetMon2Name) document.getElementById('modal-select-m2').value = s.targetMon2Name;
+        document.getElementById('modal-input-m2').value = s.targetScoreMon2 || '';
+
+        calcTeacherModalPrediction();
+        openModalUi('teacher-predict-modal', 'teacher-predict-modal-content');
+    }
+
+    function calcTeacherModalPrediction() {
+        if (!teacherPredictCurrentStudent) return;
+        const s = teacherPredictCurrentStudent;
+
+        const g10 = parseFloat(s.grade10);
+        const g11 = parseFloat(s.grade11);
+        const l12Val = parseFloat(document.getElementById('modal-input-l12')?.value);
+
+        let dtb = null;
+        if (!isNaN(g10) && !isNaN(g11) && !isNaN(l12Val) && l12Val >= 0 && l12Val <= 10) {
+            dtb = Math.round(((g10 + g11 * 2 + l12Val * 3) / 6) * 100) / 100;
+            document.getElementById('modal-view-dtb').innerText = dtb.toFixed(2);
+        } else {
+            document.getElementById('modal-view-dtb').innerText = '--';
+        }
+
+        const toan = parseFloat(document.getElementById('modal-input-toan')?.value);
+        const van = parseFloat(document.getElementById('modal-input-van')?.value);
+        const m1 = parseFloat(document.getElementById('modal-input-m1')?.value);
+        const m2 = parseFloat(document.getElementById('modal-input-m2')?.value);
+
+        const examAvgEl = document.getElementById('modal-exam-avg');
+        const finalScoreEl = document.getElementById('modal-final-score');
+        const statusBadge = document.getElementById('modal-grad-status-badge');
+        const detailEl = document.getElementById('modal-grad-detail');
+        const boxEl = document.getElementById('modal-grad-result-box');
+
+        const scores = [toan, van, m1, m2];
+        const hasAll = scores.every(v => !isNaN(v) && v >= 0 && v <= 10);
+
+        if (dtb === null) {
+            if (examAvgEl) examAvgEl.innerText = '--';
+            if (finalScoreEl) finalScoreEl.innerText = '--';
+            if (statusBadge) {
+                statusBadge.className = "px-2.5 py-0.5 rounded-full text-xs font-black bg-slate-200 text-slate-700";
+                statusBadge.innerText = "Cần điểm Lớp 12";
+            }
+            if (detailEl) detailEl.innerText = "Hãy nhập thử điểm Lớp 12 để tính ĐTB học bạ 3 năm.";
+            return;
+        }
+
+        if (!hasAll) {
+            if (examAvgEl) examAvgEl.innerText = '--';
+            if (finalScoreEl) finalScoreEl.innerText = '--';
+            if (statusBadge) {
+                statusBadge.className = "px-2.5 py-0.5 rounded-full text-xs font-black bg-slate-200 text-slate-700";
+                statusBadge.innerText = "Chưa nhập đủ 4 môn";
+            }
+            if (detailEl) detailEl.innerText = `ĐTB học bạ: ${dtb.toFixed(2)}. Cần nhập đủ 4 môn thi để tính điểm xét TN.`;
+            return;
+        }
+
+        const examAvg = Math.round(((toan + van + m1 + m2) / 4) * 100) / 100;
+        const finalScore = Math.round(((examAvg + dtb) / 2) * 100) / 100;
+
+        if (examAvgEl) examAvgEl.innerText = examAvg.toFixed(2);
+        if (finalScoreEl) finalScoreEl.innerText = finalScore.toFixed(2);
+
+        const hasLiệt = scores.some(v => v <= 1.0);
+
+        if (hasLiệt) {
+            if (statusBadge) {
+                statusBadge.className = "px-2.5 py-0.5 rounded-full text-xs font-black bg-rose-600 text-white";
+                statusBadge.innerText = "RỚT TN (ĐIỂM LIỆT ≤ 1.0)";
+            }
+            if (detailEl) detailEl.innerHTML = `<span class="text-rose-600 font-bold">Cảnh báo:</span> Có môn thi ≤ 1.0 điểm.`;
+            if (boxEl) boxEl.className = "p-4 rounded-2xl border-2 border-rose-300 bg-rose-50 flex flex-col sm:flex-row justify-between items-center gap-3";
+        } else if (finalScore >= 5.0) {
+            if (statusBadge) {
+                statusBadge.className = "px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-600 text-white";
+                statusBadge.innerText = "🎉 ĐẬU TỐT NGHIỆP";
+            }
+            if (detailEl) detailEl.innerHTML = `Đạt <b class="text-emerald-700">${finalScore.toFixed(2)}</b> (≥ 5.00 điểm). Đủ điều kiện đỗ tốt nghiệp!`;
+            if (boxEl) boxEl.className = "p-4 rounded-2xl border-2 border-emerald-300 bg-emerald-50 flex flex-col sm:flex-row justify-between items-center gap-3";
+        } else {
+            if (statusBadge) {
+                statusBadge.className = "px-2.5 py-0.5 rounded-full text-xs font-black bg-amber-500 text-white";
+                statusBadge.innerText = "⚠️ RỚT TỐT NGHIỆP (< 5.0)";
+            }
+            if (detailEl) detailEl.innerHTML = `Đạt <b class="text-rose-600">${finalScore.toFixed(2)}</b> (chưa đủ 5.00 điểm). Cần tăng điểm 4 môn thi.`;
+            if (boxEl) boxEl.className = "p-4 rounded-2xl border-2 border-amber-300 bg-amber-50 flex flex-col sm:flex-row justify-between items-center gap-3";
+        }
+        lucide.createIcons();
+    }
+
+    function saveTeacherModalStudentPrediction() {
+        if (!teacherPredictCurrentStudent) return;
+        const s = teacherPredictCurrentStudent;
+
+        s.grade12 = document.getElementById('modal-input-l12')?.value || '';
+        s.targetScoreToan = document.getElementById('modal-input-toan')?.value || '';
+        s.targetScoreVan = document.getElementById('modal-input-van')?.value || '';
+        s.targetMon1Name = document.getElementById('modal-select-m1')?.value || 'Tiếng Anh';
+        s.targetScoreMon1 = document.getElementById('modal-input-m1')?.value || '';
+        s.targetMon2Name = document.getElementById('modal-select-m2')?.value || 'Vật lý';
+        s.targetScoreMon2 = document.getElementById('modal-input-m2')?.value || '';
+
+        saveAppData();
+        renderGraduationTable();
+        closeModalUi('teacher-predict-modal', 'teacher-predict-modal-content');
+        showModal('success', 'Đã Lưu Điểm Dự Đoán', `Đã lưu kết quả tính thử điểm thi tốt nghiệp cho học sinh **${s.name}**!`);
     }
 
 </script>
+
+  <!-- MODAL GIÁO VIÊN THỬ TÍNH ĐIỂM XÉT TỐT NGHIỆP CHO HỌC SINH -->
+  <div id="teacher-predict-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+    <div id="teacher-predict-modal-content" class="bg-white w-full max-w-2xl rounded-3xl p-6 shadow-2xl space-y-5 transform scale-95 transition-transform duration-300 max-h-[90vh] overflow-y-auto custom-scrollbar">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-black"><i data-lucide="calculator" class="w-5 h-5"></i></div>
+          <div>
+            <h3 class="text-base font-black text-slate-800" id="teacher-modal-student-name">Thử Tính Điểm Xét Tốt Nghiệp</h3>
+            <p class="text-xs text-slate-400 font-medium mt-0.5" id="teacher-modal-student-sub">Mã HS: --</p>
+          </div>
+        </div>
+        <button onclick="closeModalUi('teacher-predict-modal', 'teacher-predict-modal-content')" class="text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-100 transition"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <!-- Khối điểm học bạ 3 năm trong modal -->
+      <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+        <div class="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+          <i data-lucide="book-open" class="w-4 h-4 text-indigo-500"></i> Điểm Học Bạ 3 Năm & ĐTB
+        </div>
+        <div class="grid grid-cols-4 gap-2.5 text-center">
+          <div class="bg-white p-2.5 rounded-xl border border-slate-200">
+            <div class="text-[9.5px] font-bold text-slate-400">Lớp 10 (HS 1)</div>
+            <div id="modal-view-l10" class="text-lg font-black text-slate-700 mt-0.5">--</div>
+          </div>
+          <div class="bg-white p-2.5 rounded-xl border border-slate-200">
+            <div class="text-[9.5px] font-bold text-slate-400">Lớp 11 (HS 2)</div>
+            <div id="modal-view-l11" class="text-lg font-black text-slate-700 mt-0.5">--</div>
+          </div>
+          <div class="bg-indigo-50/50 p-2.5 rounded-xl border border-indigo-200">
+            <div class="text-[9.5px] font-black text-indigo-600">Lớp 12 (Nhập thử)</div>
+            <input type="number" id="modal-input-l12" min="0" max="10" step="0.01" placeholder="--" oninput="calcTeacherModalPrediction()" class="w-full text-center bg-white border border-indigo-200 rounded-lg text-base font-black text-indigo-700 py-0.5 outline-none mt-0.5">
+          </div>
+          <div class="bg-indigo-600 text-white p-2.5 rounded-xl shadow-xs flex flex-col justify-center">
+            <div class="text-[9.5px] font-black uppercase text-indigo-100">ĐTB Học Bạ</div>
+            <div id="modal-view-dtb" class="text-lg font-black">--</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Khối nhập điểm 4 môn thi trong modal -->
+      <div class="space-y-3">
+        <div class="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+          <i data-lucide="edit-3" class="w-4 h-4 text-indigo-500"></i> Điểm Dự Đoán 4 Môn Thi (Toán, Văn, Môn 3, Môn 4)
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <label class="block text-[10.5px] font-black text-slate-600 mb-1">Toán</label>
+            <input type="number" id="modal-input-toan" min="0" max="10" step="0.01" placeholder="--" oninput="calcTeacherModalPrediction()" class="w-full text-center bg-white border border-slate-200 rounded-lg py-1.5 text-sm font-black text-slate-800 outline-none">
+          </div>
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <label class="block text-[10.5px] font-black text-slate-600 mb-1">Ngữ Văn</label>
+            <input type="number" id="modal-input-van" min="0" max="10" step="0.01" placeholder="--" oninput="calcTeacherModalPrediction()" class="w-full text-center bg-white border border-slate-200 rounded-lg py-1.5 text-sm font-black text-slate-800 outline-none">
+          </div>
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <select id="modal-select-m1" onchange="calcTeacherModalPrediction()" class="block text-[10.5px] font-black text-slate-600 mb-1 bg-transparent outline-none w-full cursor-pointer">
+              <option value="Vật lý">Môn 3: Lý</option>
+              <option value="Hóa học">Môn 3: Hóa</option>
+              <option value="Sinh học">Môn 3: Sinh</option>
+              <option value="Lịch sử">Môn 3: Sử</option>
+              <option value="Địa lý">Môn 3: Địa</option>
+              <option value="Tiếng Anh" selected>Môn 3: Anh</option>
+              <option value="GDKT & PL">Môn 3: GDKT</option>
+              <option value="Tin học">Môn 3: Tin</option>
+              <option value="Công nghệ">Môn 3: CN</option>
+            </select>
+            <input type="number" id="modal-input-m1" min="0" max="10" step="0.01" placeholder="--" oninput="calcTeacherModalPrediction()" class="w-full text-center bg-white border border-slate-200 rounded-lg py-1.5 text-sm font-black text-slate-800 outline-none">
+          </div>
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <select id="modal-select-m2" onchange="calcTeacherModalPrediction()" class="block text-[10.5px] font-black text-slate-600 mb-1 bg-transparent outline-none w-full cursor-pointer">
+              <option value="Vật lý" selected>Môn 4: Lý</option>
+              <option value="Hóa học">Môn 4: Hóa</option>
+              <option value="Sinh học">Môn 4: Sinh</option>
+              <option value="Lịch sử">Môn 4: Sử</option>
+              <option value="Địa lý">Môn 4: Địa</option>
+              <option value="Tiếng Anh">Môn 4: Anh</option>
+              <option value="GDKT & PL">Môn 4: GDKT</option>
+              <option value="Tin học">Môn 4: Tin</option>
+              <option value="Công nghệ">Môn 4: CN</option>
+            </select>
+            <input type="number" id="modal-input-m2" min="0" max="10" step="0.01" placeholder="--" oninput="calcTeacherModalPrediction()" class="w-full text-center bg-white border border-slate-200 rounded-lg py-1.5 text-sm font-black text-slate-800 outline-none">
+          </div>
+        </div>
+      </div>
+
+      <!-- Kết quả dự báo trong modal -->
+      <div id="modal-grad-result-box" class="p-4 rounded-2xl border-2 border-indigo-200 bg-indigo-50/50 flex flex-col sm:flex-row justify-between items-center gap-3">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-slate-500">Kết quả:</span>
+            <span id="modal-grad-status-badge" class="px-2.5 py-0.5 rounded-full text-xs font-black bg-slate-200 text-slate-700">Chưa đủ dữ liệu</span>
+          </div>
+          <div id="modal-grad-detail" class="text-xs text-slate-600 mt-1 font-medium">Nhập điểm để xem kết quả xét tốt nghiệp</div>
+        </div>
+        <div class="flex items-center gap-3 shrink-0">
+          <div class="text-center px-3 py-1.5 bg-white rounded-xl border border-slate-200">
+            <div class="text-[9px] font-bold text-slate-400">Điểm thi TB</div>
+            <div id="modal-exam-avg" class="text-base font-black text-indigo-600">--</div>
+          </div>
+          <div class="text-center px-3.5 py-1.5 bg-white rounded-xl border border-indigo-200 ring-2 ring-indigo-200">
+            <div class="text-[9px] font-black text-indigo-600">Điểm xét TN</div>
+            <div id="modal-final-score" class="text-xl font-black text-slate-800">--</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex gap-2.5 pt-1">
+        <button onclick="closeModalUi('teacher-predict-modal', 'teacher-predict-modal-content')" class="flex-[0.4] bg-slate-100 text-slate-600 font-bold py-2.5 rounded-xl hover:bg-slate-200 transition text-xs">Đóng</button>
+        <button onclick="saveTeacherModalStudentPrediction()" class="flex-1 bg-indigo-600 text-white font-black py-2.5 rounded-xl hover:bg-indigo-700 transition shadow-md text-xs flex items-center justify-center gap-1.5">
+          <i data-lucide="save" class="w-4 h-4"></i> Lưu điểm dự đoán cho học sinh này
+        </button>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
