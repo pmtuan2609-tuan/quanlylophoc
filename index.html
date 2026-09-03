@@ -244,6 +244,11 @@
         <button onclick="switchTab('tab-attendance')" id="btn-tab-attendance" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70"><i data-lucide="user-check" class="w-5 h-5"></i> Điểm danh hàng ngày</button>
         <button onclick="switchTab('tab-timetable')" id="btn-tab-timetable" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70"><i data-lucide="table" class="w-5 h-5"></i> Thời khóa biểu</button>
         <button onclick="switchTab('tab-seating')" id="btn-tab-seating" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70"><i data-lucide="layout-grid" class="w-5 h-5"></i> Sơ đồ chỗ ngồi</button>
+        <button onclick="switchTab('tab-tn-thpt')" id="btn-tab-tn-thpt" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70">
+          <i data-lucide="graduation-cap" class="w-5 h-5 text-indigo-400"></i>
+          <span class="flex-1 text-left">Thông tin TN THPT</span>
+          <span class="text-[9px] font-black uppercase bg-gradient-to-r from-indigo-500 to-violet-500 text-white px-1.5 py-0.5 rounded shadow-xs">2025</span>
+        </button>
         <button onclick="switchTab('tab-notebook')" id="btn-tab-notebook" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70"><i data-lucide="contact" class="w-5 h-5"></i> Sổ theo dõi (Cards)</button>
         <button onclick="switchTab('tab-wheel')" id="btn-tab-wheel" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70"><i data-lucide="dices" class="w-5 h-5"></i> Vòng quay gọi tên</button>
         
@@ -573,32 +578,78 @@
             </div>
           </div>
 
-          <!-- 4. BOTTOM GRID: TIMETABLE & LEADERBOARD -->
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Today's Timetable (Left column span 2) - THIẾT KẾ GỌN GÀNG, HIỆN ĐẠI -->
-            <div class="lg:col-span-2 bg-white p-4 md:p-5 rounded-[1.5rem] border border-slate-100 shadow-sm flex flex-col justify-between">
-              <div class="flex justify-between items-center border-b border-slate-100 pb-2.5 mb-3">
+          <!-- 4. BOTTOM GRID: TIMETABLE (GỌN) + TN THPT (MỚI) + TOP THI ĐUA -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <!-- Cột 1: Today's Timetable (Giảm chiều rộng lại thành 1 cột, 5 tiết xếp dọc mini) -->
+            <div class="bg-white p-4 md:p-5 rounded-[1.8rem] border border-slate-100 shadow-sm flex flex-col justify-between">
+              <div class="flex justify-between items-center border-b border-slate-100 pb-2.5 mb-2.5">
                 <div class="flex items-center gap-2">
-                  <div class="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                  <div class="w-7 h-7 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
                     <i data-lucide="calendar" class="w-4 h-4"></i>
                   </div>
-                  <h3 class="font-black text-slate-800 text-xs md:text-sm tracking-tight">Thời Khóa Biểu Hôm Nay</h3>
-                  <span id="overview-today-badge" class="bg-blue-50 text-blue-700 border border-blue-100 text-[10px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-1">
-                    <i data-lucide="sun" class="w-3 h-3 text-amber-500"></i> Buổi Sáng
+                  <h3 class="font-black text-slate-800 text-xs md:text-sm tracking-tight">TKB Hôm Nay</h3>
+                  <span id="overview-today-badge" class="bg-blue-50 text-blue-700 border border-blue-100 text-[9.5px] font-black px-2 py-0.5 rounded-full flex items-center gap-1">
+                    <i data-lucide="sun" class="w-3 h-3 text-amber-500"></i> Sáng
                   </span>
                 </div>
-                <button onclick="switchTab('tab-timetable')" class="text-xs font-bold text-slate-500 hover:text-theme transition flex items-center gap-1">
-                  TKB tuần <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                <button onclick="switchTab('tab-timetable')" class="text-xs font-bold text-slate-400 hover:text-theme transition flex items-center gap-0.5">
+                  Chi tiết <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
                 </button>
               </div>
-              <!-- 5 Morning slots in compact, streamlined cards -->
-              <div id="teacher-today-timetable-list-morning" class="grid grid-cols-2 sm:grid-cols-5 gap-2 md:gap-2.5">
+              <!-- 5 Morning slots in vertical compact strip -->
+              <div id="teacher-today-timetable-list-morning" class="space-y-1.5 flex-1 flex flex-col justify-between">
                 <!-- Morning slots dynamically filled -->
               </div>
             </div>
+
+            <!-- Cột 2: THÔNG TIN VÀ DỰ BÁO XÉT TỐT NGHIỆP THPT (MỚI) -->
+            <div class="bg-gradient-to-b from-white to-indigo-50/30 p-4 md:p-5 rounded-[1.8rem] border border-indigo-100/80 shadow-sm flex flex-col justify-between relative overflow-hidden">
+              <div>
+                <div class="flex justify-between items-center border-b border-indigo-100/60 pb-2.5 mb-3">
+                  <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-xl bg-indigo-500 text-white flex items-center justify-center font-bold shadow-xs">
+                      <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                    </div>
+                    <h3 class="font-black text-slate-800 text-xs md:text-sm tracking-tight">Thông Tin TN THPT</h3>
+                    <span class="bg-indigo-100 text-indigo-700 text-[9px] font-black px-2 py-0.5 rounded-full uppercase">2025</span>
+                  </div>
+                  <button onclick="switchTab('tab-tn-thpt')" class="text-xs font-bold text-indigo-600 hover:underline flex items-center gap-0.5">
+                    Mở tab <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
+
+                <!-- Công thức nổi bật -->
+                <div class="bg-white/80 border border-indigo-100 rounded-xl p-2.5 mb-3 shadow-xs">
+                  <div class="text-[10px] font-black text-indigo-600 uppercase tracking-wider flex items-center gap-1">
+                    <i data-lucide="calculator" class="w-3 h-3"></i> Công thức ĐTB học bạ:
+                  </div>
+                  <div class="text-xs font-black text-slate-800 mt-1 font-mono bg-indigo-50/50 p-1.5 rounded-lg text-center border border-indigo-100/50">
+                    (L10 + L11×2 + L12×3) / 6 = ĐTB
+                  </div>
+                  <div class="text-[10px] text-slate-500 font-medium mt-1 text-center">
+                    Điểm xét TN: <span class="font-bold text-indigo-700">((Tổng 4 môn)/4 + ĐTB) / 2</span>
+                  </div>
+                </div>
+
+                <!-- Thống kê nhanh / Card cá nhân -->
+                <div id="overview-graduation-quick-info" class="space-y-2">
+                  <div class="flex items-center justify-between text-xs bg-slate-50 p-2 rounded-xl border border-slate-100">
+                    <span class="text-slate-500 font-medium">Tiêu chuẩn công nhận:</span>
+                    <span class="font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">≥ 5.0 Đậu TN</span>
+                  </div>
+                  <div id="overview-graduation-status-badge" class="text-xs font-bold text-slate-600 text-center py-1">
+                    <!-- Dynamic info -->
+                  </div>
+                </div>
+              </div>
+
+              <button onclick="switchTab('tab-tn-thpt')" class="mt-3 w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-black text-xs py-2.5 rounded-xl shadow-md transition flex items-center justify-center gap-1.5 hover:scale-[1.01]">
+                <i data-lucide="calculator" class="w-4 h-4"></i> Điền điểm dự đoán tốt nghiệp
+              </button>
+            </div>
             
-            <!-- Top Leaderboard list (Right column) -->
-            <div class="bg-white p-5 md:p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4">
+            <!-- Cột 3: Top Leaderboard list (Right column) -->
+            <div class="bg-white p-4 md:p-5 rounded-[1.8rem] border border-slate-100 shadow-sm flex flex-col justify-between">
               <div class="flex justify-between items-center border-b border-slate-100 pb-3">
                 <h3 class="font-black text-slate-800 text-sm md:text-base flex items-center gap-2"><i data-lucide="crown" class="w-5 h-5 text-amber-500"></i> Top Thi Đua Nhận Sao</h3>
                 <button onclick="switchTab('tab-points')" class="text-xs font-bold text-amber-600 bg-amber-50 border border-amber-100 hover:bg-amber-100 px-3 py-1.5 rounded-lg transition flex items-center gap-1">Xem tất cả <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></button>
@@ -932,6 +983,217 @@
         </div>
         <div class="flex-1 overflow-y-auto custom-scrollbar p-1">
            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5" id="notebook-grid"></div>
+        </div>
+      </section>
+
+      <!-- TAB THÔNG TIN TỐT NGHIỆP THPT (LỚP 10, 11, 12, ĐTB & DỰ ĐOÁN ĐIỂM THI) -->
+      <section id="tab-tn-thpt" class="tab-section hidden space-y-4 md:space-y-6">
+        <!-- Banner Header Card -->
+        <div class="bg-white p-5 md:p-6 rounded-[2rem] border border-slate-100 shadow-sm flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+          <div class="flex items-center gap-3.5">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 text-white flex items-center justify-center font-bold shadow-md shadow-indigo-500/20">
+              <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="font-black text-slate-800 text-base md:text-xl tracking-tight">Thông Tin & Dự Đoán Tốt Nghiệp THPT</h3>
+                <span class="bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase">Quy chế GDPT 2018 (Từ 2025)</span>
+              </div>
+              <p class="text-xs text-slate-400 font-medium mt-0.5">Quản lý điểm học bạ 3 năm Lớp 10, 11, 12 và Công cụ tự điền dự đoán điểm thi tốt nghiệp</p>
+            </div>
+          </div>
+
+          <!-- Quick formulas banner -->
+          <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+            <div class="bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700">
+              📐 ĐTB = <span class="text-indigo-600 font-black">(L10 + L11×2 + L12×3) / 6</span>
+            </div>
+            <div class="bg-emerald-50 border border-emerald-200 px-3.5 py-2 rounded-xl text-xs font-bold text-emerald-700">
+              🎯 ĐXTN ≥ <span class="font-black">5.00 Đậu TN</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- KHU VỰC DÀNH CHO HỌC SINH (Hiển thị điểm cá nhân & Bảng tự điền dự đoán) -->
+        <div id="student-tn-thpt-view" class="space-y-6">
+          <!-- 1. Thẻ Bảng Điểm Học Bạ Cá Nhân -->
+          <div class="bg-white p-5 md:p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold"><i data-lucide="book-open" class="w-4 h-4"></i></div>
+                <h4 class="font-black text-slate-800 text-sm md:text-base">Bảng Điểm Học Bạ 3 Năm (GV Cung Cấp)</h4>
+              </div>
+              <span id="student-academic-record-status" class="text-xs font-bold text-slate-400">Học bạ THPT</span>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
+              <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
+                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Lớp 10 (Hệ số 1)</div>
+                <div id="student-view-l10" class="text-2xl md:text-3xl font-black text-slate-700 mt-1">--</div>
+              </div>
+              <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
+                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Lớp 11 (Hệ số 2)</div>
+                <div id="student-view-l11" class="text-2xl md:text-3xl font-black text-slate-700 mt-1">--</div>
+              </div>
+              <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
+                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Lớp 12 (Hệ số 3)</div>
+                <div id="student-view-l12" class="text-2xl md:text-3xl font-black text-slate-700 mt-1">--</div>
+              </div>
+              <div class="bg-gradient-to-br from-indigo-500 to-purple-600 text-white p-4 rounded-2xl shadow-md text-center">
+                <div class="text-[11px] font-black uppercase tracking-wider text-indigo-100">ĐTB Học Bạ (3 Năm)</div>
+                <div id="student-view-dtb" class="text-2xl md:text-3xl font-black mt-1">--</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. BẢNG TỰ ĐIỀN DỰ ĐOÁN ĐIỂM THI TỐT NGHIỆP 4 MÔN -->
+          <div class="bg-white p-5 md:p-6 rounded-[2rem] border border-indigo-100 shadow-sm space-y-5">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-3 gap-2">
+              <div>
+                <h4 class="font-black text-slate-800 text-sm md:text-base flex items-center gap-2">
+                  <i data-lucide="edit-3" class="w-5 h-5 text-indigo-600"></i> Công Cụ Tự Điền Dự Đoán Điểm Thi TN THPT (4 Môn)
+                </h4>
+                <p class="text-xs text-slate-400 font-medium mt-0.5">Nhập điểm dự kiến các môn thi để hệ thống tự động tính điểm xét tốt nghiệp và đánh giá Đậu/Rớt</p>
+              </div>
+              <button onclick="saveStudentTargetScores()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 shadow-sm">
+                <i data-lucide="save" class="w-4 h-4"></i> Lưu kết quả dự đoán
+              </button>
+            </div>
+
+            <!-- 4 ô nhập điểm thi -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <!-- Toán -->
+              <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-200 transition">
+                <label class="block text-xs font-black text-slate-700 mb-1 flex items-center justify-between">
+                  <span>Môn 1: TOÁN (Bắt buộc)</span>
+                  <span class="text-[10px] font-bold text-rose-500">Liệt ≤ 1.0</span>
+                </label>
+                <input type="number" id="input-target-toan" min="0" max="10" step="0.01" placeholder="Nhập điểm (0 - 10)" oninput="calculateGraduationPrediction()" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-base font-black text-slate-800 outline-none">
+              </div>
+
+              <!-- Văn -->
+              <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-200 transition">
+                <label class="block text-xs font-black text-slate-700 mb-1 flex items-center justify-between">
+                  <span>Môn 2: NGỮ VĂN (Bắt buộc)</span>
+                  <span class="text-[10px] font-bold text-rose-500">Liệt ≤ 1.0</span>
+                </label>
+                <input type="number" id="input-target-van" min="0" max="10" step="0.01" placeholder="Nhập điểm (0 - 10)" oninput="calculateGraduationPrediction()" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-base font-black text-slate-800 outline-none">
+              </div>
+
+              <!-- Môn 1 -->
+              <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-200 transition">
+                <label class="block text-xs font-black text-slate-700 mb-1 flex items-center justify-between">
+                  <select id="select-target-mon1-name" onchange="calculateGraduationPrediction()" class="bg-transparent border-none text-xs font-black text-slate-700 outline-none cursor-pointer">
+                    <option value="Vật lý">Môn 3: Vật lý</option>
+                    <option value="Hóa học">Môn 3: Hóa học</option>
+                    <option value="Sinh học">Môn 3: Sinh học</option>
+                    <option value="Lịch sử">Môn 3: Lịch sử</option>
+                    <option value="Địa lý">Môn 3: Địa lý</option>
+                    <option value="Tiếng Anh" selected>Môn 3: Tiếng Anh</option>
+                    <option value="GDKT & PL">Môn 3: GDKT & PL</option>
+                    <option value="Tin học">Môn 3: Tin học</option>
+                    <option value="Công nghệ">Môn 3: Công nghệ</option>
+                  </select>
+                  <span class="text-[10px] font-bold text-rose-500">Liệt ≤ 1.0</span>
+                </label>
+                <input type="number" id="input-target-mon1" min="0" max="10" step="0.01" placeholder="Nhập điểm (0 - 10)" oninput="calculateGraduationPrediction()" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-base font-black text-slate-800 outline-none">
+              </div>
+
+              <!-- Môn 2 -->
+              <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-200 transition">
+                <label class="block text-xs font-black text-slate-700 mb-1 flex items-center justify-between">
+                  <select id="select-target-mon2-name" onchange="calculateGraduationPrediction()" class="bg-transparent border-none text-xs font-black text-slate-700 outline-none cursor-pointer">
+                    <option value="Vật lý" selected>Môn 4: Vật lý</option>
+                    <option value="Hóa học">Môn 4: Hóa học</option>
+                    <option value="Sinh học">Môn 4: Sinh học</option>
+                    <option value="Lịch sử">Môn 4: Lịch sử</option>
+                    <option value="Địa lý">Môn 4: Địa lý</option>
+                    <option value="Tiếng Anh">Môn 4: Tiếng Anh</option>
+                    <option value="GDKT & PL">Môn 4: GDKT & PL</option>
+                    <option value="Tin học">Môn 4: Tin học</option>
+                    <option value="Công nghệ">Môn 4: Công nghệ</option>
+                  </select>
+                  <span class="text-[10px] font-bold text-rose-500">Liệt ≤ 1.0</span>
+                </label>
+                <input type="number" id="input-target-mon2" min="0" max="10" step="0.01" placeholder="Nhập điểm (0 - 10)" oninput="calculateGraduationPrediction()" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-base font-black text-slate-800 outline-none">
+              </div>
+            </div>
+
+            <!-- Khung Kết Quả Xét Tốt Nghiệp Real-time -->
+            <div id="graduation-result-box" class="bg-gradient-to-r from-slate-50 to-indigo-50/50 p-5 rounded-2xl border-2 border-indigo-200 flex flex-col md:flex-row justify-between items-center gap-4">
+              <div class="space-y-1 text-center md:text-left">
+                <div class="flex items-center justify-center md:justify-start gap-2">
+                  <span class="text-xs uppercase font-black text-slate-400 tracking-wider">KẾT QUẢ DỰ BÁO:</span>
+                  <span id="grad-status-badge" class="px-3 py-1 rounded-full text-xs font-black bg-slate-200 text-slate-700">Chưa đủ dữ liệu</span>
+                </div>
+                <div class="text-sm font-semibold text-slate-600" id="grad-formula-detail">
+                  Vui lòng nhập đủ 4 môn thi để hệ thống tính toán kết quả tốt nghiệp.
+                </div>
+                <div id="grad-target-hint" class="text-xs font-bold text-indigo-600 mt-1"></div>
+              </div>
+
+              <div class="flex items-center gap-4 shrink-0">
+                <div class="text-center px-3 py-2 bg-white rounded-xl border border-slate-200 shadow-xs">
+                  <div class="text-[10px] font-bold text-slate-400 uppercase">Điểm thi TB</div>
+                  <div id="grad-exam-avg" class="text-xl font-black text-indigo-600">--</div>
+                </div>
+                <div class="text-center px-4 py-2 bg-white rounded-xl border border-indigo-200 shadow-xs ring-2 ring-indigo-300">
+                  <div class="text-[10px] font-black text-indigo-600 uppercase">Điểm xét TN (ĐXTN)</div>
+                  <div id="grad-final-score" class="text-2xl font-black text-slate-800">--</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- KHU VỰC DÀNH CHO GIÁO VIÊN (Upload Excel & Quản lý điểm toàn lớp) -->
+        <div id="teacher-tn-thpt-view" class="space-y-4">
+          <!-- Toolbar quản lý điểm của GV -->
+          <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-wrap justify-between items-center gap-3">
+            <div class="flex flex-wrap items-center gap-2">
+              <input type="file" id="excel-grad-upload" accept=".xlsx, .xls" class="hidden" onchange="handleGraduationExcelUpload(event)">
+              <button onclick="document.getElementById('excel-grad-upload').click()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-black text-xs px-4 py-2.5 rounded-xl shadow-md transition flex items-center gap-1.5 hover:scale-[1.02]">
+                <i data-lucide="file-up" class="w-4 h-4"></i> Nhập điểm từ Excel
+              </button>
+
+              <button onclick="downloadGraduationExcelTemplate()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-3.5 py-2.5 rounded-xl transition flex items-center gap-1.5">
+                <i data-lucide="file-down" class="w-4 h-4"></i> Tải file mẫu Excel
+              </button>
+
+              <button onclick="saveAllGraduationGrades()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs px-4 py-2.5 rounded-xl shadow-md transition flex items-center gap-1.5">
+                <i data-lucide="save" class="w-4 h-4"></i> Lưu tất cả điểm
+              </button>
+            </div>
+
+            <!-- Ô tìm kiếm học sinh -->
+            <div class="relative w-full sm:w-64">
+              <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+              <input type="text" id="search-grad-student" placeholder="Tìm kiếm học sinh..." oninput="renderGraduationTable()" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2 text-xs font-bold text-slate-700 outline-none ring-theme">
+            </div>
+          </div>
+
+          <!-- Bảng Danh Sách Điểm Toàn Lớp -->
+          <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-x-auto custom-scrollbar">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-50 border-b border-slate-100 text-[11px] font-black text-slate-500 uppercase tracking-wider">
+                  <th class="p-3 md:p-3.5 text-center w-12">STT</th>
+                  <th class="p-3 md:p-3.5 w-24">Mã HS</th>
+                  <th class="p-3 md:p-3.5 min-w-[180px]">Họ và tên</th>
+                  <th class="p-3 md:p-3.5 text-center w-28">Lớp 10 (HS 1)</th>
+                  <th class="p-3 md:p-3.5 text-center w-28">Lớp 11 (HS 2)</th>
+                  <th class="p-3 md:p-3.5 text-center w-28">Lớp 12 (HS 3)</th>
+                  <th class="p-3 md:p-3.5 text-center w-36 bg-indigo-50/50 text-indigo-700 font-extrabold">ĐTB Học Bạ</th>
+                  <th class="p-3 md:p-3.5 text-center w-28">Dự Đoán ĐXTN</th>
+                  <th class="p-3 md:p-3.5 text-center w-28">Dự Báo</th>
+                  <th class="p-3 md:p-3.5 text-right w-24">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="graduation-grades-tbody" class="divide-y divide-slate-100 text-xs">
+                <!-- Dynamically filled rows -->
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 
@@ -3404,6 +3666,7 @@
             'tab-attendance': 'Điểm Danh Hàng Ngày',
             'tab-timetable': 'Thời Khoá Biểu',
             'tab-seating': 'Sơ Đồ Chỗ Ngồi',
+            'tab-tn-thpt': 'Thông Tin Tốt Nghiệp THPT (2025)',
             'tab-notebook': 'Sổ Theo Dõi',
             'tab-wheel': 'Vòng Quay May Mắn',
             'tab-praise': 'Tuyên Dương',
@@ -3413,6 +3676,9 @@
         };
         
         document.getElementById('header-title').innerText = titles[tabId] || 'Hệ Thống';
+        if(tabId === 'tab-tn-thpt') {
+            initGraduationTab();
+        }
         if(tabId === 'tab-seating') {
             const tId = currentTeacherId || (currentUser ? currentUser.id : null);
             if (tId) {
@@ -6347,19 +6613,19 @@
                 : `${colorClass} border-slate-200/80 hover:border-theme shadow-xs hover:shadow-sm`;
               
               morningHtml += `
-              <div class="${borderAccent} border rounded-xl p-2.5 flex flex-col justify-between transition-all hover:scale-[1.01] group relative overflow-hidden">
-                <div class="flex items-center justify-between gap-1 pb-1 border-b border-slate-100/80">
-                  <span class="text-[9.5px] font-black px-1.5 py-0.2 rounded ${isFree ? 'bg-slate-200/60 text-slate-500' : 'bg-white text-slate-700 shadow-xs'}">T${p.num}</span>
-                  <span class="text-[8.5px] font-bold text-slate-400 font-mono">${p.time}</span>
-                </div>
-                <div class="my-1.5">
-                  <div class="font-black text-xs md:text-[13px] text-slate-800 truncate" title="${subject}">
-                    ${isFree ? '<span class="text-slate-400 font-semibold italic">Nghỉ</span>' : subject}
+              <div class="${borderAccent} border rounded-xl px-3 py-2 flex items-center justify-between transition-all hover:scale-[1.01] group relative overflow-hidden shadow-xs">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <span class="text-[10px] font-black px-1.5 py-0.5 rounded-md ${isFree ? 'bg-slate-200/60 text-slate-500' : 'bg-blue-50 text-blue-700'} shrink-0">T${p.num}</span>
+                  <div class="min-w-0">
+                    <div class="font-black text-xs md:text-sm text-slate-800 truncate" title="${subject}">
+                      ${isFree ? '<span class="text-slate-400 font-medium italic">Nghỉ tiết</span>' : subject}
+                    </div>
+                    <div class="text-[10px] font-medium text-slate-400 truncate" title="${teacher}">
+                      ${isFree ? '—' : (teacher || 'Chưa phân công')}
+                    </div>
                   </div>
-                  <div class="text-[9.5px] font-medium text-slate-500 truncate mt-0.5" title="${teacher}">
-                    ${isFree ? '—' : (teacher || '<span class="text-slate-400 italic">Chưa phân công</span>')}
-                  </div>
                 </div>
+                <span class="text-[9.5px] font-bold text-slate-400 font-mono shrink-0 pl-1">${p.time.split(' - ')[0]}</span>
               </div>`;
           });
           morningList.innerHTML = morningHtml;
@@ -6376,6 +6642,7 @@
       renderOverviewViolations();
       renderOverviewParentHotline();
       renderOverviewClassFund();
+      renderOverviewGraduationWidget();
       renderOverviewBirthdays();
       renderOverviewWeeklyTasks();
       renderHomeroomNote();
@@ -6801,6 +7068,7 @@
             'btn-tab-attendance': !isGVBM,
             'btn-tab-timetable': true,
             'btn-tab-seating': true,
+            'btn-tab-tn-thpt': true,
             'btn-tab-gifts': !isGVBM && !isStudent,
             'btn-tab-students': !isStudent,
             'btn-tab-wheel': !isStudent && !isGVBM,
@@ -7819,6 +8087,482 @@
     }
 
     function renderAll() { renderStudentTable(); renderStage(); renderOverview(); renderNotebook(); renderPraiseGrid(); applyChartLayout(); renderGiftsStore(); renderGiftsLog(); renderAnnouncements(); renderLatestAnnouncements(); }
+
+    // ==========================================================================
+    // QUẢN LÝ THÔNG TIN TỐT NGHIỆP THPT (LỚP 10, 11, 12, ĐTB & DỰ ĐOÁN ĐIỂM THI)
+    // ==========================================================================
+
+    function computeAcademicGPA(s) {
+        if (!s) return null;
+        const g10 = parseFloat(s.grade10);
+        const g11 = parseFloat(s.grade11);
+        const g12 = parseFloat(s.grade12);
+
+        if (!isNaN(g10) && !isNaN(g11) && !isNaN(g12)) {
+            // Chuẩn GDPT 2018: (L10 + L11*2 + L12*3) / 6
+            const dtb = (g10 + g11 * 2 + g12 * 3) / 6;
+            return Math.round(dtb * 100) / 100;
+        }
+        // Trường hợp mới có một phần điểm
+        let total = 0, weight = 0;
+        if (!isNaN(g10)) { total += g10 * 1; weight += 1; }
+        if (!isNaN(g11)) { total += g11 * 2; weight += 2; }
+        if (!isNaN(g12)) { total += g12 * 3; weight += 3; }
+        if (weight > 0) {
+            return Math.round((total / weight) * 100) / 100;
+        }
+        return null;
+    }
+
+    function initGraduationTab() {
+        const isStudent = (currentUserRole === 'student');
+        const studentView = document.getElementById('student-tn-thpt-view');
+        const teacherView = document.getElementById('teacher-tn-thpt-view');
+
+        if (studentView && teacherView) {
+            if (isStudent) {
+                studentView.classList.remove('hidden');
+                teacherView.classList.add('hidden');
+                loadStudentGraduationData();
+            } else {
+                studentView.classList.add('hidden');
+                teacherView.classList.remove('hidden');
+                renderGraduationTable();
+            }
+        }
+        lucide.createIcons();
+    }
+
+    // --- LOGIC DÀNH CHO HỌC SINH ---
+    function loadStudentGraduationData() {
+        if (!currentStudent) return;
+        const s = students.find(x => String(x.id) === String(currentStudent.id)) || currentStudent;
+        
+        const l10El = document.getElementById('student-view-l10');
+        const l11El = document.getElementById('student-view-l11');
+        const l12El = document.getElementById('student-view-l12');
+        const dtbEl = document.getElementById('student-view-dtb');
+        const statusEl = document.getElementById('student-academic-record-status');
+
+        const g10 = (s.grade10 !== undefined && s.grade10 !== null && s.grade10 !== '') ? parseFloat(s.grade10).toFixed(2) : '--';
+        const g11 = (s.grade11 !== undefined && s.grade11 !== null && s.grade11 !== '') ? parseFloat(s.grade11).toFixed(2) : '--';
+        const g12 = (s.grade12 !== undefined && s.grade12 !== null && s.grade12 !== '') ? parseFloat(s.grade12).toFixed(2) : '--';
+        const dtb = computeAcademicGPA(s);
+
+        if (l10El) l10El.innerText = g10;
+        if (l11El) l11El.innerText = g11;
+        if (l12El) l12El.innerText = g12;
+        if (dtbEl) dtbEl.innerText = (dtb !== null) ? dtb.toFixed(2) : '--';
+
+        if (statusEl) {
+            if (dtb !== null) statusEl.innerHTML = `<span class="text-emerald-600 font-black">✓ Đã cập nhật học bạ</span>`;
+            else statusEl.innerHTML = `<span class="text-amber-500 font-bold">Chờ GV cập nhật đủ 3 năm</span>`;
+        }
+
+        // Tải các giá trị điểm dự đoán đã lưu
+        const toanInp = document.getElementById('input-target-toan');
+        const vanInp = document.getElementById('input-target-van');
+        const mon1Sel = document.getElementById('select-target-mon1-name');
+        const mon1Inp = document.getElementById('input-target-mon1');
+        const mon2Sel = document.getElementById('select-target-mon2-name');
+        const mon2Inp = document.getElementById('input-target-mon2');
+
+        if (toanInp && s.targetScoreToan !== undefined) toanInp.value = s.targetScoreToan;
+        if (vanInp && s.targetScoreVan !== undefined) vanInp.value = s.targetScoreVan;
+        if (mon1Sel && s.targetMon1Name) mon1Sel.value = s.targetMon1Name;
+        if (mon1Inp && s.targetScoreMon1 !== undefined) mon1Inp.value = s.targetScoreMon1;
+        if (mon2Sel && s.targetMon2Name) mon2Sel.value = s.targetMon2Name;
+        if (mon2Inp && s.targetScoreMon2 !== undefined) mon2Inp.value = s.targetScoreMon2;
+
+        calculateGraduationPrediction();
+    }
+
+    function calculateGraduationPrediction() {
+        const toanVal = parseFloat(document.getElementById('input-target-toan')?.value);
+        const vanVal = parseFloat(document.getElementById('input-target-van')?.value);
+        const mon1Val = parseFloat(document.getElementById('input-target-mon1')?.value);
+        const mon2Val = parseFloat(document.getElementById('input-target-mon2')?.value);
+
+        const statusBadge = document.getElementById('grad-status-badge');
+        const formulaDetail = document.getElementById('grad-formula-detail');
+        const targetHint = document.getElementById('grad-target-hint');
+        const examAvgEl = document.getElementById('grad-exam-avg');
+        const finalScoreEl = document.getElementById('grad-final-score');
+        const resultBox = document.getElementById('graduation-result-box');
+
+        // Lấy ĐTB học bạ
+        let dtb = null;
+        if (currentStudent) {
+            const s = students.find(x => String(x.id) === String(currentStudent.id)) || currentStudent;
+            dtb = computeAcademicGPA(s);
+        }
+
+        if (dtb === null) {
+            dtb = 6.5; // Giả định nếu chưa có điểm học bạ
+        }
+
+        const scores = [toanVal, vanVal, mon1Val, mon2Val];
+        const hasAllScores = scores.every(v => !isNaN(v) && v >= 0 && v <= 10);
+
+        if (!hasAllScores) {
+            if (examAvgEl) examAvgEl.innerText = '--';
+            if (finalScoreEl) finalScoreEl.innerText = '--';
+            if (statusBadge) {
+                statusBadge.className = "px-3 py-1 rounded-full text-xs font-black bg-slate-200 text-slate-700";
+                statusBadge.innerText = "Chưa nhập đủ 4 môn";
+            }
+            if (formulaDetail) {
+                formulaDetail.innerText = "Vui lòng nhập điểm dự đoán cho cả 4 môn thi (Toán, Văn, Môn 3, Môn 4) để xem kết quả.";
+            }
+            if (targetHint && dtb !== null) {
+                // Tính điểm thi cần thiết để đỗ tốt nghiệp (ĐXTN >= 5.0)
+                // (examAvg + dtb) / 2 = 5.0 => examAvg = 10 - dtb
+                const reqExamAvg = Math.max(0, 10 - dtb);
+                if (reqExamAvg <= 1.0) {
+                    targetHint.innerHTML = `💡 Với ĐTB học bạ <b>${dtb.toFixed(2)}</b>, bạn chỉ cần thi mỗi môn trên điểm liệt (> 1.0) là <b>chắc chắn ĐỖ TỐT NGHIỆP!</b>`;
+                } else {
+                    targetHint.innerHTML = `💡 Để ĐẬU TỐT NGHIỆP (≥ 5.0), điểm trung bình 4 môn thi của bạn cần tối thiểu: <b class="text-indigo-700 text-sm">${reqExamAvg.toFixed(2)} điểm/môn</b>.`;
+                }
+            }
+            return;
+        }
+
+        // Tính điểm trung bình 4 môn thi
+        const examAvg = (toanVal + vanVal + mon1Val + mon2Val) / 4;
+        const examAvgRound = Math.round(examAvg * 100) / 100;
+
+        // Công thức tính Điểm xét tốt nghiệp (ĐXTN): ((Tổng 4 môn / 4) + ĐTB) / 2
+        const finalScore = (examAvgRound + dtb) / 2;
+        const finalScoreRound = Math.round(finalScore * 100) / 100;
+
+        if (examAvgEl) examAvgEl.innerText = examAvgRound.toFixed(2);
+        if (finalScoreEl) finalScoreEl.innerText = finalScoreRound.toFixed(2);
+
+        // Kiểm tra điểm liệt (<= 1.0)
+        const hasLiệt = scores.some(v => v <= 1.0);
+
+        if (hasLiệt) {
+            if (statusBadge) {
+                statusBadge.className = "px-3 py-1.5 rounded-full text-xs font-black bg-rose-600 text-white shadow-sm ring-2 ring-rose-200 animate-pulse";
+                statusBadge.innerHTML = `<i data-lucide="alert-octagon" class="w-3.5 h-3.5 inline mr-1"></i> RỚT TỐT NGHIỆP (ĐIỂM LIỆT ≤ 1.0)`;
+            }
+            if (formulaDetail) {
+                formulaDetail.innerHTML = `<span class="text-rose-600 font-bold">CẢNH BÁO:</span> Có môn thi bị điểm liệt (≤ 1.0 điểm). Theo quy chế, thí sinh có bất kỳ môn nào ≤ 1.0 điểm sẽ không đủ điều kiện xét tốt nghiệp THPT.`;
+            }
+            if (resultBox) {
+                resultBox.className = "bg-gradient-to-r from-rose-50 to-orange-50/60 p-5 rounded-2xl border-2 border-rose-300 flex flex-col md:flex-row justify-between items-center gap-4";
+            }
+        } else if (finalScoreRound >= 5.00) {
+            if (statusBadge) {
+                statusBadge.className = "px-3.5 py-1.5 rounded-full text-xs font-black bg-emerald-600 text-white shadow-md ring-2 ring-emerald-200";
+                statusBadge.innerHTML = `<i data-lucide="check-circle" class="w-3.5 h-3.5 inline mr-1"></i> 🎉 CHÚC MỪNG: ĐẬU TỐT NGHIỆP THPT`;
+            }
+            if (formulaDetail) {
+                formulaDetail.innerHTML = `Điểm xét TN của bạn đạt <b class="text-emerald-700 text-base">${finalScoreRound.toFixed(2)}</b> (≥ 5.00 điểm chuẩn và không có môn liệt). Xin chúc mừng!`;
+            }
+            if (resultBox) {
+                resultBox.className = "bg-gradient-to-r from-emerald-50 to-teal-50/60 p-5 rounded-2xl border-2 border-emerald-300 flex flex-col md:flex-row justify-between items-center gap-4";
+            }
+        } else {
+            const needMore = ((5.00 - finalScoreRound) * 2 * 4).toFixed(2);
+            if (statusBadge) {
+                statusBadge.className = "px-3 py-1.5 rounded-full text-xs font-black bg-amber-500 text-white shadow-sm ring-2 ring-amber-200";
+                statusBadge.innerHTML = `<i data-lucide="alert-triangle" class="w-3.5 h-3.5 inline mr-1"></i> ⚠️ RỚT TỐT NGHIỆP (< 5.00 Điểm)`;
+            }
+            if (formulaDetail) {
+                formulaDetail.innerHTML = `Điểm xét TN đạt <b class="text-rose-600">${finalScoreRound.toFixed(2)}</b> (chưa đủ 5.00 điểm). Bạn cần cố gắng tăng thêm tổng cộng khoảng <b class="text-indigo-700">${needMore} điểm</b> ở 4 môn thi để đạt điều kiện tốt nghiệp.`;
+            }
+            if (resultBox) {
+                resultBox.className = "bg-gradient-to-r from-amber-50 to-orange-50/60 p-5 rounded-2xl border-2 border-amber-300 flex flex-col md:flex-row justify-between items-center gap-4";
+            }
+        }
+        lucide.createIcons();
+    }
+
+    function saveStudentTargetScores() {
+        if (!currentStudent) return;
+        const s = students.find(x => String(x.id) === String(currentStudent.id));
+        if (!s) return;
+
+        s.targetScoreToan = document.getElementById('input-target-toan')?.value || '';
+        s.targetScoreVan = document.getElementById('input-target-van')?.value || '';
+        s.targetMon1Name = document.getElementById('select-target-mon1-name')?.value || 'Tiếng Anh';
+        s.targetScoreMon1 = document.getElementById('input-target-mon1')?.value || '';
+        s.targetMon2Name = document.getElementById('select-target-mon2-name')?.value || 'Vật lý';
+        s.targetScoreMon2 = document.getElementById('input-target-mon2')?.value || '';
+
+        saveAppData();
+        showModal('success', 'Lưu Thành Công', 'Đã lưu lại điểm dự đoán thi tốt nghiệp của bạn! Lần đăng nhập sau hệ thống sẽ tự động hiển thị lại.');
+    }
+
+    // --- LOGIC DÀNH CHO GIÁO VIÊN ---
+    function renderGraduationTable() {
+        const tbody = document.getElementById('graduation-grades-tbody');
+        if (!tbody) return;
+
+        const query = removeAccents((document.getElementById('search-grad-student')?.value || '').toLowerCase().trim());
+        let filtered = students;
+        if (query) {
+            filtered = students.filter(s => {
+                const nameMatch = removeAccents(s.name.toLowerCase()).includes(query);
+                const codeMatch = s.code && s.code.toLowerCase().includes(query);
+                return nameMatch || codeMatch;
+            });
+        }
+
+        if (filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-slate-400 font-medium">Không tìm thấy học sinh nào.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = filtered.map((s, index) => {
+            const dtb = computeAcademicGPA(s);
+            const dtbStr = (dtb !== null) ? `<span class="font-black text-indigo-700 bg-indigo-50 border border-indigo-200 px-2.5 py-1 rounded-xl text-xs">${dtb.toFixed(2)}</span>` : `<span class="text-slate-300 font-bold">--</span>`;
+            
+            // Tính thử nếu HS đã có điểm dự đoán
+            let predStr = '<span class="text-slate-300 font-medium">Chưa dự đoán</span>';
+            let statusBadge = '<span class="text-slate-400 font-bold text-[10px] bg-slate-100 px-2 py-0.5 rounded-md">--</span>';
+            
+            if (s.targetScoreToan && s.targetScoreVan && s.targetScoreMon1 && s.targetScoreMon2 && dtb !== null) {
+                const examAvg = (parseFloat(s.targetScoreToan) + parseFloat(s.targetScoreVan) + parseFloat(s.targetScoreMon1) + parseFloat(s.targetScoreMon2)) / 4;
+                const finalScore = Math.round(((examAvg + dtb) / 2) * 100) / 100;
+                predStr = `<span class="font-black text-slate-800">${finalScore.toFixed(2)}</span>`;
+                
+                const hasLiệt = [s.targetScoreToan, s.targetScoreVan, s.targetScoreMon1, s.targetScoreMon2].some(v => parseFloat(v) <= 1.0);
+                if (hasLiệt) {
+                    statusBadge = `<span class="text-rose-600 bg-rose-50 border border-rose-200 font-black text-[10px] px-2 py-0.5 rounded-md">Điểm liệt</span>`;
+                } else if (finalScore >= 5.0) {
+                    statusBadge = `<span class="text-emerald-600 bg-emerald-50 border border-emerald-200 font-black text-[10px] px-2 py-0.5 rounded-md">✓ Đậu TN</span>`;
+                } else {
+                    statusBadge = `<span class="text-rose-600 bg-rose-50 border border-rose-200 font-black text-[10px] px-2 py-0.5 rounded-md">Rớt TN</span>`;
+                }
+            }
+
+            return `
+            <tr class="hover:bg-slate-50/80 transition border-b border-slate-100 group">
+              <td class="p-3 text-center font-bold text-slate-400">${index + 1}</td>
+              <td class="p-3 font-mono font-bold text-slate-500 text-xs">${s.code || s.id}</td>
+              <td class="p-3 font-black text-slate-800 whitespace-nowrap">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-xs overflow-hidden border border-slate-200 shrink-0">
+                    ${getAvatarHtml(s.avatar)}
+                  </div>
+                  <span>${s.name}</span>
+                </div>
+              </td>
+              <td class="p-2.5 text-center">
+                <input type="number" step="0.01" min="0" max="10" value="${s.grade10 !== undefined && s.grade10 !== null ? s.grade10 : ''}" placeholder="--" 
+                  onchange="updateSingleStudentGrade(${s.id}, 'grade10', this.value)"
+                  class="w-16 text-center bg-slate-50 focus:bg-white border border-slate-200 focus:border-indigo-500 rounded-lg py-1 px-1 text-xs font-black text-slate-700 outline-none transition">
+              </td>
+              <td class="p-2.5 text-center">
+                <input type="number" step="0.01" min="0" max="10" value="${s.grade11 !== undefined && s.grade11 !== null ? s.grade11 : ''}" placeholder="--" 
+                  onchange="updateSingleStudentGrade(${s.id}, 'grade11', this.value)"
+                  class="w-16 text-center bg-slate-50 focus:bg-white border border-slate-200 focus:border-indigo-500 rounded-lg py-1 px-1 text-xs font-black text-slate-700 outline-none transition">
+              </td>
+              <td class="p-2.5 text-center">
+                <input type="number" step="0.01" min="0" max="10" value="${s.grade12 !== undefined && s.grade12 !== null ? s.grade12 : ''}" placeholder="--" 
+                  onchange="updateSingleStudentGrade(${s.id}, 'grade12', this.value)"
+                  class="w-16 text-center bg-slate-50 focus:bg-white border border-slate-200 focus:border-indigo-500 rounded-lg py-1 px-1 text-xs font-black text-slate-700 outline-none transition">
+              </td>
+              <td class="p-3 text-center bg-indigo-50/20">${dtbStr}</td>
+              <td class="p-3 text-center">${predStr}</td>
+              <td class="p-3 text-center">${statusBadge}</td>
+              <td class="p-3 text-right">
+                <button onclick="openStudentGradPredictModal(${s.id})" class="text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1.5 rounded-xl text-[11px] font-black transition flex items-center gap-1 ml-auto shadow-xs" title="Thử tính điểm thi cho học sinh này">
+                  <i data-lucide="calculator" class="w-3.5 h-3.5"></i> Dự đoán
+                </button>
+              </td>
+            </tr>`;
+        }).join('');
+        lucide.createIcons();
+    }
+
+    function updateSingleStudentGrade(studentId, field, val) {
+        const s = students.find(x => x.id === studentId);
+        if (!s) return;
+        const num = parseFloat(val);
+        if (!isNaN(num) && num >= 0 && num <= 10) {
+            s[field] = Math.round(num * 100) / 100;
+        } else {
+            s[field] = '';
+        }
+        saveAppData();
+        renderGraduationTable();
+        renderOverviewGraduationWidget();
+    }
+
+    function saveAllGraduationGrades() {
+        saveAppData();
+        showModal('success', 'Đã Lưu Điểm', 'Toàn bộ bảng điểm học bạ và dự đoán tốt nghiệp đã được lưu an toàn trên hệ thống!');
+    }
+
+    // Tải file mẫu Excel nhập điểm Lớp 10, 11, 12
+    function downloadGraduationExcelTemplate() {
+        if (!XLSX) return showModal('error', 'Lỗi', 'Thư viện Excel chưa sẵn sàng. Vui lòng thử lại sau.');
+        
+        const headers = ["STT", "Mã học sinh", "Họ và tên", "Điểm TB Lớp 10", "Điểm TB Lớp 11", "Điểm TB Lớp 12"];
+        const rows = students.map((s, idx) => [
+            idx + 1,
+            s.code || s.id,
+            s.name,
+            s.grade10 !== undefined && s.grade10 !== null ? s.grade10 : '',
+            s.grade11 !== undefined && s.grade11 !== null ? s.grade11 : '',
+            s.grade12 !== undefined && s.grade12 !== null ? s.grade12 : ''
+        ]);
+
+        const wsData = [headers, ...rows];
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+        // Đặt độ rộng cột
+        ws['!cols'] = [{ wch: 6 }, { wch: 14 }, { wch: 26 }, { wch: 16 }, { wch: 16 }, { wch: 16 }];
+
+        XLSX.utils.book_append_sheet(wb, ws, "DiemHocBaTHPT");
+        const className = currentUser ? currentUser.className : '12A17';
+        XLSX.writeFile(wb, `Mau_Nhap_Diem_Hoc_Ba_Lop_${className}.xlsx`);
+        showModal('success', 'Tải File Mẫu Thành Công', `Đã tải xuống file mẫu "Mau_Nhap_Diem_Hoc_Ba_Lop_${className}.xlsx". Thầy/Cô hãy nhập điểm vào các cột Lớp 10, 11, 12 và tải lên lại nhé!`);
+    }
+
+    // Đọc file Excel GV tải lên
+    function handleGraduationExcelUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                const rows = XLSX.utils.sheet_to_json(firstSheet, { header: 1, defval: '' });
+
+                if (rows.length < 2) {
+                    return showModal('error', 'File không hợp lệ', 'File Excel không có dữ liệu học sinh!');
+                }
+
+                // Tìm hàng tiêu đề
+                let headerRowIdx = 0;
+                let colMap = { id: -1, code: -1, name: -1, g10: -1, g11: -1, g12: -1 };
+
+                for (let r = 0; r < Math.min(rows.length, 5); r++) {
+                    const row = rows[r];
+                    row.forEach((cell, idx) => {
+                        const txt = removeAccents(String(cell).toLowerCase().trim());
+                        if (txt.includes('ma hoc sinh') || txt === 'ma hs' || txt === 'id') colMap.code = idx;
+                        else if (txt.includes('ho va ten') || txt.includes('ho ten') || txt === 'ten') colMap.name = idx;
+                        else if (txt.includes('lop 10') || txt.includes('l10') || txt.includes('khoi 10')) colMap.g10 = idx;
+                        else if (txt.includes('lop 11') || txt.includes('l11') || txt.includes('khoi 11')) colMap.g11 = idx;
+                        else if (txt.includes('lop 12') || txt.includes('l12') || txt.includes('khoi 12')) colMap.g12 = idx;
+                    });
+                    if (colMap.name !== -1 || colMap.code !== -1) {
+                        headerRowIdx = r;
+                        break;
+                    }
+                }
+
+                // Nếu không tìm thấy cột thì fallback theo thứ tự chuẩn
+                if (colMap.code === -1) colMap.code = 1;
+                if (colMap.name === -1) colMap.name = 2;
+                if (colMap.g10 === -1) colMap.g10 = 3;
+                if (colMap.g11 === -1) colMap.g11 = 4;
+                if (colMap.g12 === -1) colMap.g12 = 5;
+
+                let updatedCount = 0;
+                for (let r = headerRowIdx + 1; r < rows.length; r++) {
+                    const row = rows[r];
+                    if (!row || row.length === 0) continue;
+
+                    const codeVal = String(row[colMap.code] || '').trim();
+                    const nameVal = String(row[colMap.name] || '').trim();
+                    if (!codeVal && !nameVal) continue;
+
+                    // Tìm học sinh theo code hoặc tên
+                    let student = null;
+                    if (codeVal) {
+                        student = students.find(s => String(s.code) === codeVal || String(s.id) === codeVal);
+                    }
+                    if (!student && nameVal) {
+                        student = students.find(s => removeAccents(s.name.toLowerCase()) === removeAccents(nameVal.toLowerCase()));
+                    }
+
+                    if (student) {
+                        const raw10 = parseFloat(row[colMap.g10]);
+                        const raw11 = parseFloat(row[colMap.g11]);
+                        const raw12 = parseFloat(row[colMap.g12]);
+
+                        if (!isNaN(raw10) && raw10 >= 0 && raw10 <= 10) student.grade10 = Math.round(raw10 * 100) / 100;
+                        if (!isNaN(raw11) && raw11 >= 0 && raw11 <= 10) student.grade11 = Math.round(raw11 * 100) / 100;
+                        if (!isNaN(raw12) && raw12 >= 0 && raw12 <= 10) student.grade12 = Math.round(raw12 * 100) / 100;
+                        updatedCount++;
+                    }
+                }
+
+                saveAppData();
+                renderGraduationTable();
+                renderOverviewGraduationWidget();
+
+                showModal('success', 'Nhập Điểm Thành Công', `Đã cập nhật điểm học bạ Lớp 10, 11, 12 cho **${updatedCount} học sinh** trong lớp!`);
+            } catch(err) {
+                console.error("Lỗi đọc Excel:", err);
+                showModal('error', 'Lỗi Đọc File', 'Không thể đọc dữ liệu file Excel. Thầy/Cô vui lòng kiểm tra lại định dạng file!');
+            }
+        };
+        reader.readAsArrayBuffer(file);
+        event.target.value = '';
+    }
+
+    // Render Widget tóm tắt ở trang Tổng Quan
+    function renderOverviewGraduationWidget() {
+        const badgeEl = document.getElementById('overview-graduation-status-badge');
+        if (!badgeEl) return;
+
+        if (currentUserRole === 'student' && currentStudent) {
+            const s = students.find(x => String(x.id) === String(currentStudent.id)) || currentStudent;
+            const dtb = computeAcademicGPA(s);
+            if (dtb !== null) {
+                badgeEl.innerHTML = `ĐTB học bạ của bạn: <b class="text-indigo-600 text-sm">${dtb.toFixed(2)}</b> (L10: ${s.grade10 || '-'}, L11: ${s.grade11 || '-'}, L12: ${s.grade12 || '-'})`;
+            } else {
+                badgeEl.innerHTML = `<span class="text-amber-600 font-bold">Chưa có điểm học bạ đủ 3 năm</span>`;
+            }
+        } else {
+            // Đối với GV
+            let hasScoreCount = 0;
+            let sumDtb = 0;
+            students.forEach(s => {
+                const dtb = computeAcademicGPA(s);
+                if (dtb !== null) {
+                    hasScoreCount++;
+                    sumDtb += dtb;
+                }
+            });
+            const avgClassDtb = hasScoreCount > 0 ? (sumDtb / hasScoreCount).toFixed(2) : '--';
+            badgeEl.innerHTML = `Đã nhập: <b class="text-indigo-700">${hasScoreCount}/${students.length} HS</b> • ĐTB lớp: <b class="text-indigo-700">${avgClassDtb}</b>`;
+        }
+    }
+
+    // Modal tính điểm dự đoán cho GV thao tác trên từng HS
+    function openStudentGradPredictModal(studentId) {
+        const s = students.find(x => x.id === studentId);
+        if (!s) return;
+
+        const dtb = computeAcademicGPA(s) || 6.5;
+        const toan = s.targetScoreToan || 6;
+        const van = s.targetScoreVan || 6;
+        const m1 = s.targetScoreMon1 || 6;
+        const m2 = s.targetScoreMon2 || 6;
+
+        const examAvg = (parseFloat(toan) + parseFloat(van) + parseFloat(m1) + parseFloat(m2)) / 4;
+        const finalScore = ((examAvg + dtb) / 2).toFixed(2);
+        const isPass = (finalScore >= 5.0 && [toan, van, m1, m2].every(v => parseFloat(v) > 1.0));
+
+        showModal('info', `Dự Đoán TN: ${s.name}`, 
+            `• **ĐTB Học Bạ 3 năm:** ${computeAcademicGPA(s) ? computeAcademicGPA(s).toFixed(2) : 'Chưa có đủ điểm'}\n` +
+            `• **Công thức:** ((Toán + Văn + Môn 1 + Môn 2)/4 + ĐTB) / 2\n\n` +
+            `👉 Hãy hướng dẫn học sinh đăng nhập vào tài khoản để tự điền điểm dự đoán nhé!`
+        );
+    }
+
 </script>
 </body>
 </html>
