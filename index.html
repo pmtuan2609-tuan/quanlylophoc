@@ -499,6 +499,29 @@
             </div>
           </div>
 
+          <!-- KHỐI THÔNG TIN BẢN QUYỀN WEB HIỂN THỊ CHO GVBM KHI VÀO TAB NÀY -->
+          <div id="gvbm-copyright-section" class="hidden bg-white/95 backdrop-blur-sm p-5 md:p-6 rounded-[2rem] border border-slate-200/80 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4 transition-all">
+            <div class="flex items-center gap-4 text-center md:text-left">
+              <div class="w-13 h-13 md:w-14 md:h-14 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-500 text-white flex items-center justify-center font-black shadow-lg shadow-amber-500/20 shrink-0">
+                <i data-lucide="shield-check" class="w-7 h-7"></i>
+              </div>
+              <div>
+                <div class="flex items-center justify-center md:justify-start gap-2">
+                  <span class="text-[10px] font-black uppercase tracking-widest text-amber-700 bg-amber-100 px-2.5 py-0.5 rounded-full border border-amber-200">Bản Quyền Phần Mềm</span>
+                  <span class="text-[10px] font-bold text-slate-400">Niên khóa 2026 - 2027</span>
+                </div>
+                <h4 class="text-sm md:text-base font-black text-slate-800 mt-1">Hệ Thống Quản Lý Lớp Học & Nề Nếp Trực Tuyến</h4>
+                <p class="text-xs md:text-sm font-bold text-slate-600 mt-0.5">
+                  Copyright © Bản quyền thuộc <span class="text-indigo-600 font-black">Thầy Tuấn</span> • GV Toán TT GDNN - GDTX Quận 12
+                </p>
+              </div>
+            </div>
+            <div class="text-center md:text-right shrink-0">
+              <div class="text-xs font-bold text-slate-500">Chào mừng quý Thầy/Cô Bộ Môn tham gia giảng dạy!</div>
+              <div class="text-[10.5px] font-mono font-bold text-slate-400 mt-0.5">Tập thể lớp 12A17 • Chúc Thầy/Cô tiết dạy thành công!</div>
+            </div>
+          </div>
+
           <!-- CONTAINER CÁC THẺ CHI TIẾT BÊN DƯỚI (CHỈ HIỂN THỊ CHO GVCN, ẨN KHI LÀ GVBM) -->
           <div id="teacher-overview-details" class="space-y-4 md:space-y-6">
           <!-- 3. KPI CARDS GRID -->
@@ -1431,6 +1454,11 @@
       </section>
 
     </div>
+    <!-- FOOTER BẢN QUYỀN CHUNG HIỂN THỊ KHI GVBM ĐĂNG NHẬP -->
+    <footer id="gvbm-persistent-footer" class="hidden shrink-0 py-3 px-4 bg-white/85 backdrop-blur-md border-t border-slate-200/70 text-center text-xs font-bold text-slate-500 z-30 items-center justify-center gap-2">
+      <i data-lucide="shield-check" class="w-4 h-4 text-amber-500"></i>
+      <span>Copyright © Bản quyền thuộc <b class="text-slate-700">Thầy Tuấn GV Toán TT GDNN - GDTX Quận 12</b></span>
+    </footer>
   </main>
 
   <!-- ========================================== -->
@@ -3853,6 +3881,15 @@
                 // Ẩn toàn bộ các phần bên dưới Hero Banner trên tab Tổng quan của GVBM
                 if (overviewDetails) overviewDetails.classList.add('hidden');
                 
+                // Hiển thị thông tin bản quyền web cho GVBM
+                const gvbmCopyright = document.getElementById('gvbm-copyright-section');
+                if (gvbmCopyright) gvbmCopyright.classList.remove('hidden');
+                const gvbmFooter = document.getElementById('gvbm-persistent-footer');
+                if (gvbmFooter) {
+                    gvbmFooter.classList.remove('hidden');
+                    gvbmFooter.classList.add('flex');
+                }
+                
                 if (teacherHeaderAvatar) {
                     teacherHeaderAvatar.innerHTML = `<div class="w-full h-full bg-gradient-to-tr from-amber-500 to-orange-500 rounded-full flex items-center justify-center text-[10px] font-black text-white">GVBM</div>`;
                 }
@@ -3877,6 +3914,13 @@
             } else {
                 // Hiển thị đầy đủ chi tiết bên dưới cho GVCN
                 if (overviewDetails) overviewDetails.classList.remove('hidden');
+                const gvbmCopyright = document.getElementById('gvbm-copyright-section');
+                if (gvbmCopyright) gvbmCopyright.classList.add('hidden');
+                const gvbmFooter = document.getElementById('gvbm-persistent-footer');
+                if (gvbmFooter) {
+                    gvbmFooter.classList.add('hidden');
+                    gvbmFooter.classList.remove('flex');
+                }
                 if (headerAvatarContainer) headerAvatarContainer.classList.remove('hidden');
                 if (headerGvbmBadge) {
                     headerGvbmBadge.classList.add('hidden');
