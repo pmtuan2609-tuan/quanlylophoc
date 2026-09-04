@@ -1070,8 +1070,21 @@
 
         <!-- KHU VỰC DÀNH CHO HỌC SINH (Hiển thị điểm cá nhân & Bảng tự điền dự đoán) -->
         <div id="student-tn-thpt-view" class="space-y-6">
-          <!-- 1. Thẻ Bảng Điểm Học Bạ Cá Nhân -->
-          <div class="bg-white p-5 md:p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4">
+          <!-- Thông báo khi GV chưa công khai điểm -->
+          <div id="student-grad-locked-banner" class="hidden bg-white p-6 md:p-8 rounded-[2rem] border border-amber-200 shadow-sm text-center space-y-3">
+            <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto shadow-inner">
+              <i data-lucide="lock" class="w-7 h-7"></i>
+            </div>
+            <h4 class="text-base md:text-lg font-black text-slate-800">Bảng Điểm Học Bạ Chưa Được Công Khai</h4>
+            <p class="text-xs md:text-sm text-slate-500 font-medium max-w-lg mx-auto leading-relaxed">
+              Thầy/Cô giáo chủ nhiệm đang cập nhật điểm số học bạ và chưa mở công khai bảng điểm. Điểm Lớp 10, 11, 12 của bạn sẽ hiển thị đầy đủ tại đây ngay khi Thầy/Cô bấm công khai!
+            </p>
+          </div>
+
+          <!-- Nội dung bảng điểm và công cụ dự đoán khi đã công khai -->
+          <div id="student-grad-published-content" class="space-y-6">
+            <!-- 1. Thẻ Bảng Điểm Học Bạ Cá Nhân -->
+            <div class="bg-white p-5 md:p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
               <div class="flex items-center gap-2">
                 <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold"><i data-lucide="book-open" class="w-4 h-4"></i></div>
@@ -1212,6 +1225,7 @@
             </div>
           </div>
         </div>
+      </div>
 
         <!-- KHU VỰC DÀNH CHO GIÁO VIÊN (Upload Excel & Quản lý điểm toàn lớp) -->
         <div id="teacher-tn-thpt-view" class="space-y-4">
@@ -1229,6 +1243,10 @@
 
               <button onclick="saveAllGraduationGrades()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs px-4 py-2.5 rounded-xl shadow-md transition flex items-center gap-1.5">
                 <i data-lucide="save" class="w-4 h-4"></i> Lưu tất cả điểm
+              </button>
+
+              <button id="btn-toggle-publish-grad" onclick="togglePublishGraduationGrades()" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-black text-xs px-4 py-2.5 rounded-xl shadow-md transition flex items-center gap-1.5 hover:scale-[1.02]" title="Nhấn để lưu và mở quyền cho toàn bộ học sinh xem điểm học bạ">
+                <i data-lucide="send" class="w-4 h-4"></i> <span>Công khai điểm cho HS xem</span>
               </button>
             </div>
 
@@ -3037,6 +3055,17 @@
         if (!currentUser) return;
         try {
             localStorage.setItem('students_' + currentUser.id, JSON.stringify(students));
+            localStorage.setItem('students', JSON.stringify(students));
+            if (typeof currentTeacherId !== 'undefined' && currentTeacherId && currentTeacherId !== currentUser.id) {
+                localStorage.setItem('students_' + currentTeacherId, JSON.stringify(students));
+            }
+            if (typeof currentStudent !== 'undefined' && currentStudent) {
+                const updatedSt = students.find(x => String(x.id) === String(currentStudent.id));
+                if (updatedSt) {
+                    currentStudent = updatedSt;
+                    localStorage.setItem('currentStudent', JSON.stringify(currentStudent));
+                }
+            }
             localStorage.setItem('seating_' + currentUser.id, JSON.stringify(seatingCharts));
             localStorage.setItem('timetables_' + currentUser.id, JSON.stringify(timetables));
             localStorage.setItem('teacherTimetable_' + currentUser.id, JSON.stringify(teacherTimetable));
@@ -3238,6 +3267,17 @@
         }
 
         if (loaded) {
+            if (currentUser) {
+                const localSavedStudents = localStorage.getItem('students_' + currentUser.id) || localStorage.getItem('students');
+                if (localSavedStudents) {
+                    try {
+                        const parsedLocal = JSON.parse(localSavedStudents);
+                        if (Array.isArray(parsedLocal) && parsedLocal.length > 0) {
+                            students = parsedLocal;
+                        }
+                    } catch(e) {}
+                }
+            }
             restoreRoleState();
             authScreen.classList.add('hidden');
             authScreen.classList.remove('flex');
@@ -3649,6 +3689,35 @@
                 }
             }
 
+            // 4b. Fallback check for Student using in-memory students loaded from server
+            if (Array.isArray(students) && students.length > 0) {
+                const student = students.find(s => (s.code && String(s.code).toLowerCase().trim() === id) || String(s.id).toLowerCase().trim() === id);
+                if (student) {
+                    const expectedPass = student.pass || generateStudentPassword(student.name);
+                    if (expectedPass === pass) {
+                        student.loginCount = (student.loginCount || 0) + 1;
+                        const tId = currentTeacherId || (currentUser ? currentUser.id : 'thaytuan');
+                        
+                        currentUserRole = 'student';
+                        currentStudent = student;
+                        currentTeacherId = tId;
+                        
+                        localStorage.setItem('currentUserRole', 'student');
+                        localStorage.setItem('currentStudent', JSON.stringify(student));
+                        localStorage.setItem('currentTeacherId', tId);
+                        localStorage.setItem('currentUser', JSON.stringify(currentUser || { id: tId }));
+                        localStorage.setItem('students_' + tId, JSON.stringify(students));
+                        
+                        loginSuccess(currentUser || { id: tId });
+                        return;
+                    } else {
+                        errorMsg.innerText = 'Sai mật khẩu tài khoản học sinh!';
+                        errorMsg.classList.remove('hidden');
+                        return;
+                    }
+                }
+            }
+
             errorMsg.innerText = 'Tài khoản không tồn tại trên hệ thống!';
             errorMsg.classList.remove('hidden');
         } else {
@@ -3938,6 +4007,29 @@
             if (currentUser && currentUser.role === 'gvbm') {
                 switchTab('tab-overview');
                 return;
+            }
+            if (currentUserRole === 'student') {
+                const tId = currentTeacherId || (currentUser ? currentUser.id : null);
+                if (tId) {
+                    const savedSts = localStorage.getItem('students_' + tId) || localStorage.getItem('students');
+                    if (savedSts) {
+                        try {
+                            const parsed = JSON.parse(savedSts);
+                            if (Array.isArray(parsed) && parsed.length > 0) {
+                                students = parsed;
+                            }
+                        } catch(e) {}
+                    }
+                }
+                if (currentStudent) {
+                    const updated = students.find(x => String(x.id) === String(currentStudent.id));
+                    if (updated) {
+                        currentStudent = updated;
+                        try {
+                            localStorage.setItem('currentStudent', JSON.stringify(currentStudent));
+                        } catch(e) {}
+                    }
+                }
             }
             initGraduationTab();
         }
@@ -8545,6 +8637,7 @@
             } else {
                 studentView.classList.add('hidden');
                 teacherView.classList.remove('hidden');
+                updatePublishGraduationBtn();
                 renderGraduationTable();
             }
         }
@@ -8553,9 +8646,44 @@
 
     // --- LOGIC DÀNH CHO HỌC SINH ---
     function loadStudentGraduationData() {
+        // 1. Đồng bộ students mới nhất từ localStorage nếu có
+        const tId = currentTeacherId || (currentUser ? currentUser.id : null);
+        if (tId) {
+            const saved = localStorage.getItem('students_' + tId) || localStorage.getItem('students');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        students = parsed;
+                    }
+                } catch(e) {}
+            }
+        }
+
         if (!currentStudent) return;
         const s = students.find(x => String(x.id) === String(currentStudent.id)) || currentStudent;
-        
+        currentStudent = s;
+        try {
+            localStorage.setItem('currentStudent', JSON.stringify(currentStudent));
+        } catch(e) {}
+
+        // Kiểm tra xem GV đã bấm công khai điểm hay chưa
+        const isPublished = (currentUser && currentUser.isGraduationScoresPublished);
+        const lockedBanner = document.getElementById('student-grad-locked-banner');
+        const publishedContent = document.getElementById('student-grad-published-content');
+
+        if (lockedBanner && publishedContent) {
+            if (isPublished) {
+                lockedBanner.classList.add('hidden');
+                publishedContent.classList.remove('hidden');
+            } else {
+                lockedBanner.classList.remove('hidden');
+                publishedContent.classList.add('hidden');
+                lucide.createIcons();
+                return;
+            }
+        }
+
         const l10El = document.getElementById('student-view-l10');
         const l11El = document.getElementById('student-view-l11');
         const l12Inp = document.getElementById('input-student-l12');
@@ -8575,10 +8703,10 @@
         const mon1Inp = document.getElementById('input-target-mon1');
         const mon2Inp = document.getElementById('input-target-mon2');
 
-        if (toanInp && s.targetScoreToan !== undefined) toanInp.value = s.targetScoreToan;
-        if (vanInp && s.targetScoreVan !== undefined) vanInp.value = s.targetScoreVan;
-        if (mon1Inp && s.targetScoreMon1 !== undefined) mon1Inp.value = s.targetScoreMon1;
-        if (mon2Inp && s.targetScoreMon2 !== undefined) mon2Inp.value = s.targetScoreMon2;
+        if (toanInp) toanInp.value = (s.targetScoreToan !== undefined && s.targetScoreToan !== null) ? s.targetScoreToan : '';
+        if (vanInp) vanInp.value = (s.targetScoreVan !== undefined && s.targetScoreVan !== null) ? s.targetScoreVan : '';
+        if (mon1Inp) mon1Inp.value = (s.targetScoreMon1 !== undefined && s.targetScoreMon1 !== null) ? s.targetScoreMon1 : '';
+        if (mon2Inp) mon2Inp.value = (s.targetScoreMon2 !== undefined && s.targetScoreMon2 !== null) ? s.targetScoreMon2 : '';
 
         calculateGraduationPrediction();
     }
@@ -8788,7 +8916,7 @@
             }
 
             return `
-            <tr class="hover:bg-slate-50/80 transition border-b border-slate-100 group">
+            <tr data-student-id="${s.id}" class="hover:bg-slate-50/80 transition border-b border-slate-100 group">
               <td class="p-3 text-center font-bold text-slate-400">${index + 1}</td>
               <td class="p-3 font-mono font-bold text-slate-500 text-xs">${s.code || s.id}</td>
               <td class="p-3 font-black text-slate-800 whitespace-nowrap">
@@ -8800,25 +8928,25 @@
                 </div>
               </td>
               <td class="p-2.5 text-center">
-                <input type="number" step="0.01" min="0" max="10" value="${s.grade10 !== undefined && s.grade10 !== null ? s.grade10 : ''}" placeholder="--" 
-                  onchange="updateSingleStudentGrade(${s.id}, 'grade10', this.value)"
+                <input type="number" step="0.01" min="0" max="10" data-field="grade10" value="${s.grade10 !== undefined && s.grade10 !== null ? s.grade10 : ''}" placeholder="--" 
+                  oninput="updateSingleStudentGrade('${s.id}', 'grade10', this.value)"
                   class="w-16 text-center bg-slate-50 focus:bg-white border border-slate-200 focus:border-indigo-500 rounded-lg py-1 px-1 text-xs font-black text-slate-700 outline-none transition">
               </td>
               <td class="p-2.5 text-center">
-                <input type="number" step="0.01" min="0" max="10" value="${s.grade11 !== undefined && s.grade11 !== null ? s.grade11 : ''}" placeholder="--" 
-                  onchange="updateSingleStudentGrade(${s.id}, 'grade11', this.value)"
+                <input type="number" step="0.01" min="0" max="10" data-field="grade11" value="${s.grade11 !== undefined && s.grade11 !== null ? s.grade11 : ''}" placeholder="--" 
+                  oninput="updateSingleStudentGrade('${s.id}', 'grade11', this.value)"
                   class="w-16 text-center bg-slate-50 focus:bg-white border border-slate-200 focus:border-indigo-500 rounded-lg py-1 px-1 text-xs font-black text-slate-700 outline-none transition">
               </td>
               <td class="p-2.5 text-center">
-                <input type="number" step="0.01" min="0" max="10" value="${s.grade12 !== undefined && s.grade12 !== null ? s.grade12 : ''}" placeholder="--" 
-                  onchange="updateSingleStudentGrade(${s.id}, 'grade12', this.value)"
+                <input type="number" step="0.01" min="0" max="10" data-field="grade12" value="${s.grade12 !== undefined && s.grade12 !== null ? s.grade12 : ''}" placeholder="--" 
+                  oninput="updateSingleStudentGrade('${s.id}', 'grade12', this.value)"
                   class="w-16 text-center bg-slate-50 focus:bg-white border border-slate-200 focus:border-indigo-500 rounded-lg py-1 px-1 text-xs font-black text-slate-700 outline-none transition">
               </td>
-              <td class="p-3 text-center bg-indigo-50/20">${dtbStr}</td>
-              <td class="p-3 text-center">${predStr}</td>
-              <td class="p-3 text-center">${statusBadge}</td>
+              <td class="p-3 text-center bg-indigo-50/20 cell-dtb">${dtbStr}</td>
+              <td class="p-3 text-center cell-pred">${predStr}</td>
+              <td class="p-3 text-center cell-status">${statusBadge}</td>
               <td class="p-3 text-right">
-                <button onclick="openStudentGradPredictModal(${s.id})" class="text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1.5 rounded-xl text-[11px] font-black transition flex items-center gap-1 ml-auto shadow-xs" title="Thử tính điểm thi cho học sinh này">
+                <button onclick="openStudentGradPredictModal('${s.id}')" class="text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1.5 rounded-xl text-[11px] font-black transition flex items-center gap-1 ml-auto shadow-xs" title="Thử tính điểm thi cho học sinh này">
                   <i data-lucide="calculator" class="w-3.5 h-3.5"></i> Dự đoán
                 </button>
               </td>
@@ -8828,22 +8956,91 @@
     }
 
     function updateSingleStudentGrade(studentId, field, val) {
-        const s = students.find(x => x.id === studentId);
+        const s = students.find(x => String(x.id) === String(studentId));
         if (!s) return;
         const num = parseFloat(val);
         if (!isNaN(num) && num >= 0 && num <= 10) {
             s[field] = Math.round(num * 100) / 100;
         } else {
-            s[field] = '';
+            s[field] = (val.trim() === '' ? '' : s[field]);
         }
-        saveAppData();
-        renderGraduationTable();
+
+        // Cập nhật real-time giao diện dòng này mà KHÔNG vẽ lại toàn bộ bảng (tránh mất focus khi gõ)
+        const row = document.querySelector(`#graduation-grades-tbody tr[data-student-id="${s.id}"]`);
+        if (row) {
+            const dtb = computeAcademicGPA(s);
+            const dtbCell = row.querySelector('.cell-dtb');
+            if (dtbCell) {
+                dtbCell.innerHTML = (dtb !== null) ? `<span class="font-black text-indigo-700 bg-indigo-50 border border-indigo-200 px-2.5 py-1 rounded-xl text-xs">${dtb.toFixed(2)}</span>` : `<span class="text-slate-300 font-bold">--</span>`;
+            }
+
+            let predStr = '<span class="text-slate-300 font-medium">Chưa dự đoán</span>';
+            let statusBadge = '<span class="text-slate-400 font-bold text-[10px] bg-slate-100 px-2 py-0.5 rounded-md">--</span>';
+            if (s.targetScoreToan && s.targetScoreVan && s.targetScoreMon1 && s.targetScoreMon2 && dtb !== null) {
+                const examAvg = (parseFloat(s.targetScoreToan) + parseFloat(s.targetScoreVan) + parseFloat(s.targetScoreMon1) + parseFloat(s.targetScoreMon2)) / 4;
+                const finalScore = Math.round(((examAvg + dtb) / 2) * 100) / 100;
+                predStr = `<span class="font-black text-slate-800">${finalScore.toFixed(2)}</span>`;
+                const hasLiệt = [s.targetScoreToan, s.targetScoreVan, s.targetScoreMon1, s.targetScoreMon2].some(v => parseFloat(v) <= 1.0);
+                if (hasLiệt) {
+                    statusBadge = `<span class="text-rose-600 bg-rose-50 border border-rose-200 font-black text-[10px] px-2 py-0.5 rounded-md">Điểm liệt</span>`;
+                } else if (finalScore >= 5.0) {
+                    statusBadge = `<span class="text-emerald-600 bg-emerald-50 border border-emerald-200 font-black text-[10px] px-2 py-0.5 rounded-md">✓ Đậu TN</span>`;
+                } else {
+                    statusBadge = `<span class="text-rose-600 bg-rose-50 border border-rose-200 font-black text-[10px] px-2 py-0.5 rounded-md">Rớt TN</span>`;
+                }
+            }
+            const predCell = row.querySelector('.cell-pred');
+            if (predCell) predCell.innerHTML = predStr;
+            const statusCell = row.querySelector('.cell-status');
+            if (statusCell) statusCell.innerHTML = statusBadge;
+        }
+
         renderOverviewGraduationWidget();
     }
 
-    function saveAllGraduationGrades() {
+    function saveAllGraduationGrades(showNotification = true) {
+        // Quét toàn bộ input từ bảng điểm để đảm bảo mọi giá trị đều được lưu
+        const rows = document.querySelectorAll('#graduation-grades-tbody tr[data-student-id]');
+        let count = 0;
+        rows.forEach(tr => {
+            const sId = tr.getAttribute('data-student-id');
+            const s = students.find(x => String(x.id) === String(sId));
+            if (s) {
+                const inp10 = tr.querySelector('input[data-field="grade10"]');
+                const inp11 = tr.querySelector('input[data-field="grade11"]');
+                const inp12 = tr.querySelector('input[data-field="grade12"]');
+
+                if (inp10) {
+                    const v10 = parseFloat(inp10.value);
+                    s.grade10 = (!isNaN(v10) && v10 >= 0 && v10 <= 10) ? Math.round(v10 * 100) / 100 : (inp10.value.trim() === '' ? '' : s.grade10);
+                }
+                if (inp11) {
+                    const v11 = parseFloat(inp11.value);
+                    s.grade11 = (!isNaN(v11) && v11 >= 0 && v11 <= 10) ? Math.round(v11 * 100) / 100 : (inp11.value.trim() === '' ? '' : s.grade11);
+                }
+                if (inp12) {
+                    const v12 = parseFloat(inp12.value);
+                    s.grade12 = (!isNaN(v12) && v12 >= 0 && v12 <= 10) ? Math.round(v12 * 100) / 100 : (inp12.value.trim() === '' ? '' : s.grade12);
+                }
+                count++;
+            }
+        });
+
+        if (typeof currentStudent !== 'undefined' && currentStudent) {
+            const updatedSt = students.find(x => String(x.id) === String(currentStudent.id));
+            if (updatedSt) {
+                currentStudent = updatedSt;
+                try {
+                    localStorage.setItem('currentStudent', JSON.stringify(currentStudent));
+                } catch(e) {}
+            }
+        }
+
         saveAppData();
-        showModal('success', 'Đã Lưu Điểm', 'Toàn bộ bảng điểm học bạ và dự đoán tốt nghiệp đã được lưu an toàn trên hệ thống!');
+        renderOverviewGraduationWidget();
+        if (showNotification) {
+            showModal('success', 'Đã Lưu Điểm Thành Công', `Toàn bộ bảng điểm học bạ và kết quả tốt nghiệp cho ${count || students.length} học sinh đã được lưu an toàn trên hệ thống và đồng bộ sang tài khoản học sinh!`);
+        }
     }
 
     // Tải file mẫu Excel nhập điểm Lớp 10, 11, 12
@@ -8994,19 +9191,24 @@
     let teacherPredictCurrentStudent = null;
 
     function openStudentGradPredictModal(studentId) {
-        const s = students.find(x => x.id === studentId);
+        const s = students.find(x => String(x.id) === String(studentId));
         if (!s) return;
         teacherPredictCurrentStudent = s;
 
         document.getElementById('teacher-modal-student-name').innerText = `Dự Đoán TN: ${s.name}`;
         document.getElementById('teacher-modal-student-sub').innerText = `Mã HS: ${s.code || s.id} • Lớp ${currentUser ? currentUser.className : '12A17'}`;
 
-        const g10 = (s.grade10 !== undefined && s.grade10 !== null && s.grade10 !== '') ? parseFloat(s.grade10).toFixed(2) : '--';
-        const g11 = (s.grade11 !== undefined && s.grade11 !== null && s.grade11 !== '') ? parseFloat(s.grade11).toFixed(2) : '--';
-        
-        document.getElementById('modal-view-l10').innerText = g10;
-        document.getElementById('modal-view-l11').innerText = g11;
-        document.getElementById('modal-input-l12').value = (s.grade12 !== undefined && s.grade12 !== null) ? s.grade12 : '';
+        const g10 = (s.grade10 !== undefined && s.grade10 !== null && s.grade10 !== '') ? s.grade10 : '';
+        const g11 = (s.grade11 !== undefined && s.grade11 !== null && s.grade11 !== '') ? s.grade11 : '';
+        const g12 = (s.grade12 !== undefined && s.grade12 !== null && s.grade12 !== '') ? s.grade12 : '';
+
+        const inp10 = document.getElementById('modal-input-l10');
+        const inp11 = document.getElementById('modal-input-l11');
+        const inp12 = document.getElementById('modal-input-l12');
+
+        if (inp10) inp10.value = g10;
+        if (inp11) inp11.value = g11;
+        if (inp12) inp12.value = g12;
 
         document.getElementById('modal-input-toan').value = s.targetScoreToan || '';
         document.getElementById('modal-input-van').value = s.targetScoreVan || '';
@@ -9021,8 +9223,8 @@
         if (!teacherPredictCurrentStudent) return;
         const s = teacherPredictCurrentStudent;
 
-        const g10 = parseFloat(s.grade10);
-        const g11 = parseFloat(s.grade11);
+        const g10 = parseFloat(document.getElementById('modal-input-l10')?.value);
+        const g11 = parseFloat(document.getElementById('modal-input-l11')?.value);
         const l12Val = parseFloat(document.getElementById('modal-input-l12')?.value);
 
         let dtb = null;
@@ -9052,9 +9254,9 @@
             if (finalScoreEl) finalScoreEl.innerText = '--';
             if (statusBadge) {
                 statusBadge.className = "px-2.5 py-0.5 rounded-full text-xs font-black bg-slate-200 text-slate-700";
-                statusBadge.innerText = "Cần điểm Lớp 12";
+                statusBadge.innerText = "Cần đủ điểm L10, 11, 12";
             }
-            if (detailEl) detailEl.innerText = "Hãy nhập thử điểm Lớp 12 để tính ĐTB học bạ 3 năm.";
+            if (detailEl) detailEl.innerText = "Hãy nhập đủ điểm Lớp 10, 11, 12 để tính ĐTB học bạ 3 năm.";
             return;
         }
 
@@ -9106,16 +9308,63 @@
         if (!teacherPredictCurrentStudent) return;
         const s = teacherPredictCurrentStudent;
 
-        s.grade12 = document.getElementById('modal-input-l12')?.value || '';
+        const g10Val = document.getElementById('modal-input-l10')?.value;
+        const g11Val = document.getElementById('modal-input-l11')?.value;
+        const g12Val = document.getElementById('modal-input-l12')?.value;
+
+        s.grade10 = (g10Val !== '' && !isNaN(parseFloat(g10Val))) ? Math.round(parseFloat(g10Val) * 100) / 100 : (g10Val === '' ? '' : s.grade10);
+        s.grade11 = (g11Val !== '' && !isNaN(parseFloat(g11Val))) ? Math.round(parseFloat(g11Val) * 100) / 100 : (g11Val === '' ? '' : s.grade11);
+        s.grade12 = (g12Val !== '' && !isNaN(parseFloat(g12Val))) ? Math.round(parseFloat(g12Val) * 100) / 100 : (g12Val === '' ? '' : s.grade12);
+
         s.targetScoreToan = document.getElementById('modal-input-toan')?.value || '';
         s.targetScoreVan = document.getElementById('modal-input-van')?.value || '';
         s.targetScoreMon1 = document.getElementById('modal-input-m1')?.value || '';
         s.targetScoreMon2 = document.getElementById('modal-input-m2')?.value || '';
 
+        if (typeof currentStudent !== 'undefined' && currentStudent && String(currentStudent.id) === String(s.id)) {
+            currentStudent = s;
+            try {
+                localStorage.setItem('currentStudent', JSON.stringify(currentStudent));
+            } catch(e) {}
+        }
+
         saveAppData();
         renderGraduationTable();
         closeModalUi('teacher-predict-modal', 'teacher-predict-modal-content');
-        showModal('success', 'Đã Lưu Điểm Dự Đoán', `Đã lưu kết quả tính thử điểm thi tốt nghiệp cho học sinh **${s.name}**!`);
+        showModal('success', 'Đã Lưu Điểm Dự Đoán', `Đã lưu thành công điểm học bạ và kết quả dự đoán thi tốt nghiệp cho học sinh **${s.name}**! Dữ liệu đã đồng bộ sang tài khoản học sinh.`);
+    }
+
+    function togglePublishGraduationGrades() {
+        if (!currentUser) return;
+        const willPublish = !currentUser.isGraduationScoresPublished;
+        currentUser.isGraduationScoresPublished = willPublish;
+
+        // Tự động quét và lưu toàn bộ điểm hiện có trên bảng
+        saveAllGraduationGrades(false);
+
+        updatePublishGraduationBtn();
+
+        if (willPublish) {
+            showModal('success', 'Đã Công Khai Điểm Thành Công', 'Toàn bộ bảng điểm học bạ đã được lưu và mở quyền công khai cho học sinh! Các em học sinh khi đăng nhập vào hệ thống sẽ thấy điểm học bạ và thử tính điểm tốt nghiệp.');
+        } else {
+            showModal('info', 'Đã Tạm Ẩn Điểm', 'Đã tạm ẩn bảng điểm học bạ đối với học sinh. Học sinh sẽ không xem được điểm cho đến khi Thầy/Cô bấm công khai lại.');
+        }
+    }
+
+    function updatePublishGraduationBtn() {
+        const btn = document.getElementById('btn-toggle-publish-grad');
+        if (!btn) return;
+        const isPub = (currentUser && currentUser.isGraduationScoresPublished);
+        if (isPub) {
+            btn.className = "bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs px-4 py-2.5 rounded-xl shadow-md transition flex items-center gap-1.5 hover:scale-[1.02]";
+            btn.innerHTML = `<i data-lucide="eye" class="w-4 h-4"></i> <span>✓ Đang công khai (HS xem được)</span>`;
+            btn.title = "Nhấn để tạm ẩn điểm đối với học sinh nếu cần chỉnh sửa thêm";
+        } else {
+            btn.className = "bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-black text-xs px-4 py-2.5 rounded-xl shadow-md transition flex items-center gap-1.5 hover:scale-[1.02]";
+            btn.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i> <span>Công khai điểm cho HS xem</span>`;
+            btn.title = "Nhấn để lưu và mở quyền cho toàn bộ học sinh xem điểm học bạ";
+        }
+        lucide.createIcons();
     }
 
 
@@ -10584,12 +10833,12 @@
         </div>
         <div class="grid grid-cols-4 gap-2.5 text-center">
           <div class="bg-white p-2.5 rounded-xl border border-slate-200">
-            <div class="text-[9.5px] font-bold text-slate-400">Lớp 10 (HS 1)</div>
-            <div id="modal-view-l10" class="text-lg font-black text-slate-700 mt-0.5">--</div>
+            <div class="text-[9.5px] font-bold text-slate-500">Lớp 10 (HS 1)</div>
+            <input type="number" id="modal-input-l10" min="0" max="10" step="0.01" placeholder="--" oninput="calcTeacherModalPrediction()" class="w-full text-center bg-white border border-slate-200 focus:border-indigo-500 rounded-lg text-base font-black text-slate-800 py-0.5 outline-none mt-0.5">
           </div>
           <div class="bg-white p-2.5 rounded-xl border border-slate-200">
-            <div class="text-[9.5px] font-bold text-slate-400">Lớp 11 (HS 2)</div>
-            <div id="modal-view-l11" class="text-lg font-black text-slate-700 mt-0.5">--</div>
+            <div class="text-[9.5px] font-bold text-slate-500">Lớp 11 (HS 2)</div>
+            <input type="number" id="modal-input-l11" min="0" max="10" step="0.01" placeholder="--" oninput="calcTeacherModalPrediction()" class="w-full text-center bg-white border border-slate-200 focus:border-indigo-500 rounded-lg text-base font-black text-slate-800 py-0.5 outline-none mt-0.5">
           </div>
           <div class="bg-indigo-50/50 p-2.5 rounded-xl border border-indigo-200">
             <div class="text-[9.5px] font-black text-indigo-600">Lớp 12 (Nhập thử)</div>
