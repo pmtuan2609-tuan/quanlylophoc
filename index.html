@@ -249,6 +249,11 @@
           <span class="flex-1 text-left">Thông tin TN THPT</span>
           <span class="text-[9px] font-black uppercase bg-gradient-to-r from-indigo-500 to-violet-500 text-white px-1.5 py-0.5 rounded shadow-xs">2027</span>
         </button>
+        <button onclick="switchTab('tab-monthly-plan')" id="btn-tab-monthly-plan" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70">
+          <i data-lucide="clipboard-check" class="w-5 h-5 text-emerald-400"></i>
+          <span class="flex-1 text-left">Kế hoạch & Thi đua</span>
+          <span class="text-[9px] font-black uppercase bg-emerald-500/80 text-white px-1.5 py-0.5 rounded shadow-xs">Mới</span>
+        </button>
         <button onclick="switchTab('tab-notebook')" id="btn-tab-notebook" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70"><i data-lucide="contact" class="w-5 h-5"></i> Sổ theo dõi (Cards)</button>
         <button onclick="switchTab('tab-wheel')" id="btn-tab-wheel" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition hover:bg-white/10 text-white/70"><i data-lucide="dices" class="w-5 h-5"></i> Vòng quay gọi tên</button>
         
@@ -1230,6 +1235,165 @@
               </tbody>
             </table>
           </div>
+        </div>
+      </section>
+
+      <!-- TAB KẾ HOẠCH THÁNG & THEO DÕI THI ĐUA HÀNG TUẦN DÀNH CHO GVCN -->
+      <section id="tab-monthly-plan" class="tab-section hidden space-y-5">
+        <!-- 1. Thanh Công Cụ Điều Khiển Tháng -->
+        <div class="bg-white p-4 md:p-5 rounded-[2rem] border border-slate-100 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-500 text-white flex items-center justify-center font-bold shadow-md shadow-emerald-500/20 shrink-0">
+              <i data-lucide="clipboard-check" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="text-base md:text-lg font-black text-slate-800">Kế Hoạch Tháng & Thi Đua Hàng Tuần</h3>
+                <span class="text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">GVCN</span>
+              </div>
+              <p class="text-xs text-slate-400 font-medium mt-0.5">Tự động tổng hợp số liệu vi phạm từ GVCN & GVBM theo tuần và lên kế hoạch tháng</p>
+            </div>
+          </div>
+
+          <!-- Bộ chọn Tháng & Năm -->
+          <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+            <div class="flex items-center bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 shadow-inner">
+              <i data-lucide="calendar" class="w-4 h-4 text-slate-400 mr-2 shrink-0"></i>
+              <label class="text-xs font-bold text-slate-500 mr-1.5 whitespace-nowrap">Tháng:</label>
+              <select id="monthly-plan-select-month" onchange="changeMonthlyPlanMonth()" class="bg-transparent text-xs font-black text-slate-800 outline-none cursor-pointer">
+                <option value="1">Tháng 01</option>
+                <option value="2">Tháng 02</option>
+                <option value="3">Tháng 03</option>
+                <option value="4">Tháng 04</option>
+                <option value="5">Tháng 05</option>
+                <option value="6">Tháng 06</option>
+                <option value="7">Tháng 07</option>
+                <option value="8">Tháng 08</option>
+                <option value="9">Tháng 09</option>
+                <option value="10">Tháng 10</option>
+                <option value="11">Tháng 11</option>
+                <option value="12">Tháng 12</option>
+              </select>
+            </div>
+
+            <div class="flex items-center bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 shadow-inner">
+              <label class="text-xs font-bold text-slate-500 mr-1.5 whitespace-nowrap">Năm:</label>
+              <select id="monthly-plan-select-year" onchange="changeMonthlyPlanMonth()" class="bg-transparent text-xs font-black text-slate-800 outline-none cursor-pointer">
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+              </select>
+            </div>
+
+            <button onclick="addMonthlyPlanRow()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-3 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 shadow-xs" title="Thêm công việc mới vào bảng kế hoạch">
+              <i data-lucide="plus" class="w-4 h-4"></i> Thêm Kế Hoạch
+            </button>
+
+            <button onclick="loadSampleMonthlyPlan()" class="bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 px-3 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 shadow-xs" title="Nạp mẫu kế hoạch chuẩn sư phạm cho tháng này">
+              <i data-lucide="sparkles" class="w-4 h-4"></i> Nạp Mẫu
+            </button>
+
+            <button onclick="saveMonthlyPlanData(true)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 shadow-md shadow-emerald-600/20" title="Lưu toàn bộ bảng kế hoạch và số liệu thi đua">
+              <i data-lucide="save" class="w-4 h-4"></i> Lưu Dữ Liệu
+            </button>
+
+            <button onclick="printMonthlyPlanReport()" class="bg-slate-800 hover:bg-slate-900 text-white px-3.5 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 shadow-sm" title="In hoặc xuất báo cáo A4 chuẩn biểu mẫu">
+              <i data-lucide="printer" class="w-4 h-4"></i> In Báo Cáo
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. VÙNG HIỂN THỊ & IN ẤN BÁO CÁO (CHUẨN MẪU BIỂU GIỐNG ẢNH CHỤP) -->
+        <div id="monthly-plan-print-container" class="bg-white p-6 md:p-10 rounded-[2rem] border border-slate-200/80 shadow-sm space-y-10 print:p-0 print:border-none print:shadow-none print:rounded-none">
+          
+          <!-- Header Báo Cáo (Chỉ in ra khi in) -->
+          <div class="hidden print:flex justify-between items-start border-b pb-4 mb-4 text-xs font-bold text-slate-700">
+            <div>
+              <div class="uppercase tracking-wide font-black">TRUNG TÂM GDNN - GDTX QUẬN 12</div>
+              <div>LỚP: <span id="print-class-name">12A17</span> • NĂM HỌC: <span id="print-year-name">2026 - 2027</span></div>
+            </div>
+            <div class="text-right">
+              <div>GVCN: <span id="print-teacher-name">Thầy Tuấn</span></div>
+              <div class="italic text-[10px] text-slate-500">Hệ thống QLLH-CN</div>
+            </div>
+          </div>
+
+          <!-- ========================================== -->
+          <!-- BẢNG 1: KẾ HOẠCH THÁNG MM/YYYY             -->
+          <!-- ========================================== -->
+          <div class="space-y-3">
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-2">
+              <h4 id="monthly-plan-title-1" class="text-base md:text-lg font-black text-slate-800 uppercase tracking-wide text-center sm:text-left flex items-center gap-2">
+                <i data-lucide="calendar-check" class="w-5 h-5 text-indigo-600 print:hidden"></i>
+                <span>KẾ HOẠCH THÁNG 01/2027</span>
+              </h4>
+              <span class="text-xs text-slate-400 font-medium print:hidden italic">Thầy/Cô có thể chỉnh sửa trực tiếp nội dung trên từng ô</span>
+            </div>
+
+            <div class="overflow-x-auto border-2 border-slate-700 rounded-xl">
+              <table class="w-full border-collapse text-left text-xs md:text-sm font-medium text-slate-800">
+                <thead>
+                  <tr class="bg-slate-100 border-b-2 border-slate-700 text-slate-900 font-black">
+                    <th class="border-r-2 border-slate-700 p-2.5 md:p-3 text-center w-12 shrink-0">TT</th>
+                    <th class="border-r-2 border-slate-700 p-2.5 md:p-3 text-center">KẾ HOẠCH</th>
+                    <th class="border-r-2 border-slate-700 p-2.5 md:p-3 text-center md:w-[42%]">BIỆN PHÁP THỰC HIỆN</th>
+                    <th class="p-2 text-center w-12 print:hidden">Xóa</th>
+                  </tr>
+                </thead>
+                <tbody id="monthly-tasks-tbody" class="divide-y divide-slate-700">
+                  <!-- Dynamic rows generated via javascript -->
+                </tbody>
+              </table>
+            </div>
+
+            <div class="flex justify-between items-center pt-1 print:hidden">
+              <button onclick="addMonthlyPlanRow()" class="text-indigo-600 hover:text-indigo-800 font-bold text-xs flex items-center gap-1 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition">
+                <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> Thêm dòng kế hoạch
+              </button>
+              <span class="text-[11px] text-slate-400 font-medium">Bấm "Lưu Dữ Liệu" ở thanh công cụ sau khi chỉnh sửa</span>
+            </div>
+          </div>
+
+          <!-- ========================================================== -->
+          <!-- BẢNG 2: SƠ KẾT HÀNG TUẦN THÁNG (THEO DÕI THI ĐUA NỀ NẾP) -->
+          <!-- ========================================================== -->
+          <div class="space-y-3 pt-2">
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-2">
+              <h4 id="monthly-competition-title-2" class="text-base md:text-lg font-black text-slate-800 uppercase tracking-wide text-center sm:text-left flex items-center gap-2">
+                <i data-lucide="bar-chart-2" class="w-5 h-5 text-emerald-600 print:hidden"></i>
+                <span>SƠ KẾT HÀNG TUẦN THÁNG 1</span>
+              </h4>
+              <div class="flex items-center gap-2 print:hidden">
+                <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Tự động đồng bộ lỗi vi phạm
+                </span>
+                <span class="text-[11px] text-slate-400 font-medium italic">Click vào số để xem danh sách HS</span>
+              </div>
+            </div>
+
+            <div class="overflow-x-auto border-2 border-slate-700 rounded-xl">
+              <table id="monthly-competition-table" class="w-full border-collapse text-center text-xs md:text-sm font-medium text-slate-800">
+                <thead id="monthly-competition-thead">
+                  <!-- Dynamic week headers (Tuần 1, Tuần 2, Tuần 3, Tuần 4, Tuần 5 kèm khoảng ngày) -->
+                </thead>
+                <tbody id="monthly-competition-tbody" class="divide-y divide-slate-700">
+                  <!-- Dynamic metric rows -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Ghi chú chân bảng -->
+            <div class="flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500 pt-2 gap-2">
+              <div class="flex items-center gap-2">
+                <span class="font-bold">Ghi chú:</span>
+                <span>Thầy/Cô có thể chỉnh sửa số tiết tốt, xếp hạng hoặc ghi chú nghỉ lễ trực tiếp trên bảng.</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <label class="font-black text-slate-700">Kết quả thi đua tháng:</label>
+                <input type="text" id="monthly-final-rank-input" onchange="handleMonthlyRankChange(this.value)" placeholder="VD: Hạng 2..." class="border border-slate-300 rounded-lg px-2.5 py-1 text-xs font-black text-indigo-700 bg-slate-50 focus:bg-white outline-none w-32 text-center">
+              </div>
+            </div>
+          </div>
+
         </div>
       </section>
 
@@ -3734,6 +3898,7 @@
             'tab-timetable': 'Thời Khoá Biểu',
             'tab-seating': 'Sơ Đồ Chỗ Ngồi',
             'tab-tn-thpt': 'Thông Tin Tốt Nghiệp THPT (2027)',
+            'tab-monthly-plan': 'Kế Hoạch Tháng & Thi Đua Hàng Tuần',
             'tab-notebook': 'Sổ Theo Dõi',
             'tab-wheel': 'Vòng Quay May Mắn',
             'tab-praise': 'Tuyên Dương',
@@ -3745,6 +3910,9 @@
         document.getElementById('header-title').innerText = titles[tabId] || 'Hệ Thống';
         if(tabId === 'tab-tn-thpt') {
             initGraduationTab();
+        }
+        if(tabId === 'tab-monthly-plan') {
+            initMonthlyPlanTab();
         }
         if(tabId === 'tab-seating') {
             const tId = currentTeacherId || (currentUser ? currentUser.id : null);
@@ -7269,6 +7437,7 @@
             'btn-tab-timetable': true,
             'btn-tab-seating': true,
             'btn-tab-tn-thpt': true,
+            'btn-tab-monthly-plan': !isGVBM && !isStudent,
             'btn-tab-gifts': !isGVBM && !isStudent,
             'btn-tab-students': !isStudent,
             'btn-tab-wheel': !isStudent && !isGVBM,
@@ -8900,6 +9069,610 @@
         showModal('success', 'Đã Lưu Điểm Dự Đoán', `Đã lưu kết quả tính thử điểm thi tốt nghiệp cho học sinh **${s.name}**!`);
     }
 
+
+    // ==========================================================================
+    // QUẢN LÝ KẾ HOẠCH THÁNG & SƠ KẾT THI ĐUA HÀNG TUẦN (GVCN)
+    // ==========================================================================
+
+    let currentPlanMonth = null;
+    let currentPlanYear = null;
+    let currentWeeklyAggregations = {}; // Cache calculated week stats
+
+    function initMonthlyPlanTab() {
+        const now = new Date();
+        if (!currentPlanMonth) currentPlanMonth = now.getMonth() + 1;
+        if (!currentPlanYear) currentPlanYear = now.getFullYear();
+
+        const monthSel = document.getElementById('monthly-plan-select-month');
+        const yearSel = document.getElementById('monthly-plan-select-year');
+        if (monthSel) monthSel.value = String(currentPlanMonth);
+        if (yearSel) yearSel.value = String(currentPlanYear);
+
+        renderMonthlyPlanTab();
+    }
+
+    function changeMonthlyPlanMonth() {
+        const monthSel = document.getElementById('monthly-plan-select-month');
+        const yearSel = document.getElementById('monthly-plan-select-year');
+        if (monthSel) currentPlanMonth = parseInt(monthSel.value);
+        if (yearSel) currentPlanYear = parseInt(yearSel.value);
+
+        renderMonthlyPlanTab();
+    }
+
+    function getMonthlyPlanKey(year, month) {
+        return `${year}-${String(month).padStart(2, '0')}`;
+    }
+
+    function getDefaultMonthlyTasks(month, year) {
+        // Mẫu kế hoạch tháng chuẩn sư phạm dành cho GVCN
+        if (month === 1) {
+            return [
+                { tt: 1, plan: 'Sinh hoạt chủ đề "Kỷ niệm 75 năm ngày truyền thống học sinh sinh viên (9/1/1950 - 9/1/2025)"', measure: 'Sinh hoạt tại lớp vào tiết SHCN' },
+                { tt: 2, plan: 'Chấn chỉnh nề nếp, tác phong, nội quy học viên sau kiểm tra học kỳ 1 và sau khi nghỉ Tết dương lịch.', measure: 'Theo dõi nề nếp, tác phong của lớp' },
+                { tt: 3, plan: 'Tổ chức sơ kết học kỳ 1. Tuyên dương, khen thưởng học viên có thành tích tốt trong HK 1', measure: 'Theo kế hoạch của trung tâm' },
+                { tt: 4, plan: 'Hoàn thành đánh giá xếp loại học lực, hạnh kiểm học sinh HK1', measure: 'Theo kế hoạch của trung tâm' },
+                { tt: 5, plan: 'Lập danh sách học viên có hoàn cảnh khó khăn, học viên vượt khó học giỏi nhận quà Tết', measure: 'Điền link tên HS nhận quà tết' },
+                { tt: 6, plan: 'Họp CMHV báo cáo kết quả học tập, rèn luyện của học viên và các hoạt động trong học kỳ 1', measure: 'Theo kế hoạch của trung tâm' },
+                { tt: 7, plan: 'Triển khai kế hoạch nghỉ Tết Âm lịch', measure: 'Theo kế hoạch của trung tâm' },
+                { tt: 8, plan: 'Thông báo thu học phí tháng 01 qua SSC', measure: 'Thông báo cho PH qua nhóm Zalo Phụ huynh của lớp' }
+            ];
+        } else if (month === 9) {
+            return [
+                { tt: 1, plan: 'Ổn định tổ chức lớp, bầu ban cán sự lớp, phân chia tổ và sơ đồ chỗ ngồi', measure: 'Tiết sinh hoạt chủ nhiệm đầu năm' },
+                { tt: 2, plan: 'Quán triệt nội quy trung tâm, đồng phục, tác phong và giờ giấc', measure: 'Ký cam kết nội quy học sinh' },
+                { tt: 3, plan: 'Tổ chức Đại hội Chi đoàn lớp nhiệm kỳ mới', measure: 'Phối hợp với Đoàn trường' },
+                { tt: 4, plan: 'Khảo sát học lực đầu năm, lập danh sách học sinh cần phụ đạo', measure: 'Phối hợp với giáo viên bộ môn' }
+            ];
+        } else if (month === 10) {
+            return [
+                { tt: 1, plan: 'Phát động phong trào thi đua "Hoa điểm tốt" chào mừng ngày 20/10', measure: 'Giao ban cán sự lớp theo dõi' },
+                { tt: 2, plan: 'Kiểm tra nề nếp chuyên cần, hạn chế tình trạng học sinh đi trễ', measure: 'Điểm danh hằng ngày và thông báo PH' },
+                { tt: 3, plan: 'Rà soát hồ sơ học sinh, hoàn thiện sổ theo dõi nề nếp', measure: 'Cập nhật trên phần mềm QLLH' }
+            ];
+        } else if (month === 11) {
+            return [
+                { tt: 1, plan: 'Thi đua chào mừng Ngày Nhà giáo Việt Nam 20/11', measure: 'Đăng ký tiết học tốt, bông hoa điểm 10' },
+                { tt: 2, plan: 'Tổ chức sinh hoạt chuyên đề tri ân thầy cô giáo', measure: 'Sinh hoạt chủ nhiệm tuần 3' },
+                { tt: 3, plan: 'Đôn đốc học sinh chuẩn bị kiến thức cho kỳ kiểm tra giữa học kỳ 1', measure: 'GVCN nhắc nhở ôn tập' }
+            ];
+        } else if (month === 12) {
+            return [
+                { tt: 1, plan: 'Đôn đốc học sinh ôn tập chuẩn bị thi kiểm tra cuối học kỳ 1', measure: 'Theo dõi lịch thi của trung tâm' },
+                { tt: 2, plan: 'Tăng cường nề nếp kỷ luật phòng thi, chống gian lận kiểm tra', measure: 'Quán triệt quy chế thi' },
+                { tt: 3, plan: 'Sơ kết điểm thi đua tháng 12 và chuẩn bị sơ kết HK1', measure: 'Tổng kết nề nếp trên phần mềm' }
+            ];
+        } else if (month === 5) {
+            return [
+                { tt: 1, plan: 'Hoàn thành chương trình học kỳ 2 và kiểm tra học kỳ 2', measure: 'Theo lịch trung tâm' },
+                { tt: 2, plan: 'Đánh giá xếp loại học lực, hạnh kiểm cả năm của học sinh', measure: 'Họp hội đồng sư phạm' },
+                { tt: 3, plan: 'Tổ chức Lễ tri ân và trưởng thành cho học sinh khối 12', measure: 'Kế hoạch Đoàn trường' },
+                { tt: 4, plan: 'Đẩy mạnh ôn thi tốt nghiệp THPT 2027 cho học sinh', measure: 'Phối hợp với GVBM các môn thi' }
+            ];
+        }
+        return [
+            { tt: 1, plan: `Duy trì và chấn chỉnh nề nếp, tác phong học sinh trong Tháng ${month}`, measure: 'Theo dõi điểm danh và sổ nề nếp' },
+            { tt: 2, plan: `Đẩy mạnh phong trào học tập, nâng cao chất lượng tiết học Tháng ${month}`, measure: 'Phối hợp cùng các GV bộ môn' },
+            { tt: 3, plan: 'Liên hệ phụ huynh các trường hợp học sinh hay vắng, đi trễ hoặc sa sút', measure: 'Gọi điện / Nhắn Zalo phụ huynh' },
+            { tt: 4, plan: `Tổng kết thi đua và đánh giá nề nếp tháng ${month}`, measure: 'Sinh hoạt tại lớp vào tiết SHCN' }
+        ];
+    }
+
+    function getWeeksOfMonth(year, month) {
+        const weeks = [];
+        const firstDay = new Date(year, month - 1, 1);
+        const lastDay = new Date(year, month, 0);
+
+        // Tìm ngày thứ Hai đầu tiên của tuần chứa ngày 1
+        const dayOfWeek = (firstDay.getDay() + 6) % 7; // 0 = Thứ 2, 6 = CN
+        let curMonday = new Date(firstDay);
+        curMonday.setDate(firstDay.getDate() - dayOfWeek);
+
+        let weekNum = 1;
+        while (weekNum <= 5) {
+            const saturday = new Date(curMonday);
+            saturday.setDate(curMonday.getDate() + 5);
+
+            if (curMonday > lastDay && weekNum > 4) break;
+
+            const startD = String(curMonday.getDate()).padStart(2, '0');
+            const startM = String(curMonday.getMonth() + 1).padStart(2, '0');
+            const startY = curMonday.getFullYear();
+
+            const endD = String(saturday.getDate()).padStart(2, '0');
+            const endM = String(saturday.getMonth() + 1).padStart(2, '0');
+            const endY = saturday.getFullYear();
+
+            weeks.push({
+                index: weekNum,
+                name: `Tuần ${weekNum}`,
+                label: `${startD}/${startM} → ${endD}/${endM}`,
+                startIso: `${startY}-${startM}-${startD}`,
+                endIso: `${endY}-${endM}-${endD}`,
+                startDate: new Date(curMonday.getFullYear(), curMonday.getMonth(), curMonday.getDate(), 0, 0, 0),
+                endDate: new Date(saturday.getFullYear(), saturday.getMonth(), saturday.getDate(), 23, 59, 59)
+            });
+
+            weekNum++;
+            curMonday.setDate(curMonday.getDate() + 7);
+            if (curMonday > lastDay && weekNum > 4) break;
+        }
+        return weeks;
+    }
+
+    function parseRecordDate(dateStr) {
+        if (!dateStr) return null;
+        if (dateStr.includes('/')) {
+            const parts = dateStr.split(' ');
+            const datePart = parts[0];
+            const [d, m, y] = datePart.split('/');
+            return new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
+        } else if (dateStr.includes('-')) {
+            const [y, m, d] = dateStr.split('-');
+            return new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
+        }
+        const parsed = new Date(dateStr);
+        return isNaN(parsed.getTime()) ? null : parsed;
+    }
+
+    function aggregateWeeklyStats(week) {
+        const stats = {
+            late: { count: 0, list: [] },
+            absent: { count: 0, list: [] },
+            underFive: { count: 0, list: [] },
+            badAttitude: { count: 0, list: [] },
+            goodScores: { count: 0, list: [] },
+            criticized: { count: 0, list: [] },
+            praised: { count: 0, list: [], studentSet: new Set() }
+        };
+
+        // 1. Quét lịch sử s.history của tất cả học sinh
+        students.forEach(s => {
+            const history = s.history || [];
+            history.forEach(h => {
+                const recDate = parseRecordDate(h.date);
+                if (!recDate) return;
+                
+                // Kiểm tra xem ngày vi phạm có nằm trong tuần này không
+                if (recDate >= week.startDate && recDate <= week.endDate) {
+                    const item = {
+                        studentId: s.id,
+                        studentName: s.name,
+                        studentCode: s.code || s.id,
+                        avatar: s.avatar,
+                        date: h.date,
+                        subject: h.subject || 'Nề nếp',
+                        period: h.period || '-',
+                        reason: h.reason || '',
+                        points: h.points || 0,
+                        author: h.author || 'GV'
+                    };
+
+                    const reasonNorm = removeAccents((h.reason || '').toLowerCase());
+
+                    if (h.type === 'sub' || h.type === 'minus' || (h.points && h.points < 0)) {
+                        // Số học viên bị phê bình
+                        stats.criticized.count++;
+                        stats.criticized.list.push(item);
+
+                        // Đi trễ
+                        if (reasonNorm.includes('tre') || reasonNorm.includes('muon')) {
+                            stats.late.count++;
+                            stats.late.list.push(item);
+                        }
+                        // Vắng
+                        if (reasonNorm.includes('vang') || reasonNorm.includes('nghi') || reasonNorm.includes('cup')) {
+                            stats.absent.count++;
+                            stats.absent.list.push(item);
+                        }
+                        // Bị dưới 5,0
+                        if (reasonNorm.includes('duoi 5') || reasonNorm.includes('< 5') || reasonNorm.includes('<5') || reasonNorm.includes('chua thuoc bai') || reasonNorm.includes('khong thuoc bai') || reasonNorm.includes('chua lam bai')) {
+                            stats.underFive.count++;
+                            stats.underFive.list.push(item);
+                        }
+                        // Thái độ sai
+                        if (reasonNorm.includes('thai do') || reasonNorm.includes('vo le') || reasonNorm.includes('dien thoai') || reasonNorm.includes('mat trat tu') || reasonNorm.includes('noi chuyen') || reasonNorm.includes('ngu') || reasonNorm.includes('gay go') || reasonNorm.includes('doi cho') || reasonNorm.includes('an trong gio')) {
+                            stats.badAttitude.count++;
+                            stats.badAttitude.list.push(item);
+                        }
+                    } else if (h.type === 'add' || (h.points && h.points > 0)) {
+                        // Số học viên có điểm tốt
+                        stats.goodScores.count++;
+                        stats.goodScores.list.push(item);
+
+                        // HS được khen
+                        stats.praised.studentSet.add(s.id);
+                        stats.praised.list.push(item);
+                    }
+                }
+            });
+        });
+
+        // 2. Quét dữ liệu điểm danh (attendanceData)
+        if (typeof attendanceData === 'object' && attendanceData !== null) {
+            Object.keys(attendanceData).forEach(dateStr => {
+                const attDate = parseRecordDate(dateStr);
+                if (attDate && attDate >= week.startDate && attDate <= week.endDate) {
+                    const daily = attendanceData[dateStr] || {};
+                    students.forEach(s => {
+                        const status = daily[s.id];
+                        if (status === 'late') {
+                            stats.late.count++;
+                            stats.late.list.push({
+                                studentId: s.id,
+                                studentName: s.name,
+                                studentCode: s.code || s.id,
+                                avatar: s.avatar,
+                                date: dateStr.split('-').reverse().join('/'),
+                                subject: 'Điểm danh đầu giờ',
+                                period: 'Đầu giờ',
+                                reason: 'Điểm danh: Đi học muộn / Đi trễ',
+                                points: 2,
+                                author: 'GVCN'
+                            });
+                        } else if (status === 'excused' || status === 'unexcused') {
+                            stats.absent.count++;
+                            stats.absent.list.push({
+                                studentId: s.id,
+                                studentName: s.name,
+                                studentCode: s.code || s.id,
+                                avatar: s.avatar,
+                                date: dateStr.split('-').reverse().join('/'),
+                                subject: 'Điểm danh đầu giờ',
+                                period: 'Đầu giờ',
+                                reason: status === 'excused' ? 'Nghỉ học (Có phép)' : 'Nghỉ học (Không phép)',
+                                points: status === 'excused' ? 2 : 5,
+                                author: 'GVCN'
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        stats.praised.count = stats.praised.studentSet.size;
+        return stats;
+    }
+
+    function renderMonthlyPlanTab() {
+        if (!currentUser) return;
+        if (!currentUser.monthlyPlans) currentUser.monthlyPlans = {};
+
+        const key = getMonthlyPlanKey(currentPlanYear, currentPlanMonth);
+        if (!currentUser.monthlyPlans[key]) {
+            currentUser.monthlyPlans[key] = {
+                tasks: getDefaultMonthlyTasks(currentPlanMonth, currentPlanYear),
+                weekOverrides: {},
+                finalRank: ''
+            };
+        }
+
+        const planData = currentUser.monthlyPlans[key];
+
+        // Cập nhật tiêu đề hiển thị
+        const t1 = document.getElementById('monthly-plan-title-1');
+        const t2 = document.getElementById('monthly-competition-title-2');
+        const mStr = String(currentPlanMonth).padStart(2, '0');
+        if (t1) t1.innerHTML = `<i data-lucide="calendar-check" class="w-5 h-5 text-indigo-600 print:hidden"></i> <span>KẾ HOẠCH THÁNG ${mStr}/${currentPlanYear}</span>`;
+        if (t2) t2.innerHTML = `<i data-lucide="bar-chart-2" class="w-5 h-5 text-emerald-600 print:hidden"></i> <span>SƠ KẾT HÀNG TUẦN THÁNG ${currentPlanMonth}</span>`;
+
+        // Render Bảng 1: Kế Hoạch Tháng
+        renderMonthlyTasksTable(planData.tasks);
+
+        // Render Bảng 2: Sơ Kết Hàng Tuần (Thi Đua)
+        const weeks = getWeeksOfMonth(currentPlanYear, currentPlanMonth);
+        currentWeeklyAggregations = {};
+        weeks.forEach(w => {
+            currentWeeklyAggregations[w.index] = aggregateWeeklyStats(w);
+        });
+
+        renderWeeklyCompetitionTable(weeks, planData);
+
+        // Điền xếp hạng cuối tháng
+        const rankInput = document.getElementById('monthly-final-rank-input');
+        if (rankInput) rankInput.value = planData.finalRank || '';
+
+        // Cập nhật thông tin in ấn
+        const printClass = document.getElementById('print-class-name');
+        const printYear = document.getElementById('print-year-name');
+        const printTeacher = document.getElementById('print-teacher-name');
+        if (printClass) printClass.innerText = currentUser.className || '12A17';
+        if (printYear) printYear.innerText = currentUser.year || `${currentPlanYear - 1} - ${currentPlanYear}`;
+        if (printTeacher) printTeacher.innerText = currentUser.teacherName || 'Thầy Tuấn';
+
+        lucide.createIcons();
+    }
+
+    function renderMonthlyTasksTable(tasks) {
+        const tbody = document.getElementById('monthly-tasks-tbody');
+        if (!tbody) return;
+
+        if (!tasks || tasks.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-slate-400 font-medium">Chưa có kế hoạch nào trong tháng. Bấm "+ Thêm dòng kế hoạch" hoặc "Nạp Mẫu" để thêm.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = tasks.map((task, idx) => `
+            <tr class="border-b border-slate-700 hover:bg-slate-50 transition group">
+                <td class="border-r-2 border-slate-700 p-2 text-center font-black text-slate-700 bg-slate-50/50">${task.tt || (idx + 1)}</td>
+                <td class="border-r-2 border-slate-700 p-1.5">
+                    <textarea onchange="updateMonthlyTask(${idx}, 'plan', this.value)" rows="2" class="w-full bg-transparent p-1.5 rounded-lg border border-transparent hover:border-slate-300 focus:border-indigo-500 focus:bg-white text-xs md:text-sm font-medium text-slate-800 outline-none resize-y transition" placeholder="Nội dung kế hoạch...">${task.plan || ''}</textarea>
+                </td>
+                <td class="border-r-2 border-slate-700 p-1.5">
+                    <textarea onchange="updateMonthlyTask(${idx}, 'measure', this.value)" rows="2" class="w-full bg-transparent p-1.5 rounded-lg border border-transparent hover:border-slate-300 focus:border-indigo-500 focus:bg-white text-xs md:text-sm font-medium text-slate-700 outline-none resize-y transition" placeholder="Biện pháp thực hiện...">${task.measure || ''}</textarea>
+                </td>
+                <td class="p-2 text-center print:hidden">
+                    <button onclick="deleteMonthlyTask(${idx})" class="p-1.5 text-slate-300 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition" title="Xóa dòng này">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+        lucide.createIcons();
+    }
+
+    function updateMonthlyTask(idx, field, value) {
+        const key = getMonthlyPlanKey(currentPlanYear, currentPlanMonth);
+        if (currentUser.monthlyPlans && currentUser.monthlyPlans[key] && currentUser.monthlyPlans[key].tasks[idx]) {
+            currentUser.monthlyPlans[key].tasks[idx][field] = value.trim();
+            saveUserToStorage();
+        }
+    }
+
+    function addMonthlyPlanRow() {
+        const key = getMonthlyPlanKey(currentPlanYear, currentPlanMonth);
+        if (!currentUser.monthlyPlans[key]) {
+            currentUser.monthlyPlans[key] = { tasks: [], weekOverrides: {}, finalRank: '' };
+        }
+        const tasks = currentUser.monthlyPlans[key].tasks;
+        tasks.push({
+            tt: tasks.length + 1,
+            plan: '',
+            measure: ''
+        });
+        renderMonthlyTasksTable(tasks);
+        saveUserToStorage();
+    }
+
+    function deleteMonthlyTask(idx) {
+        const key = getMonthlyPlanKey(currentPlanYear, currentPlanMonth);
+        if (currentUser.monthlyPlans && currentUser.monthlyPlans[key]) {
+            currentUser.monthlyPlans[key].tasks.splice(idx, 1);
+            // Cập nhật lại số thứ tự TT
+            currentUser.monthlyPlans[key].tasks.forEach((t, i) => t.tt = i + 1);
+            renderMonthlyTasksTable(currentUser.monthlyPlans[key].tasks);
+            saveUserToStorage();
+        }
+    }
+
+    function loadSampleMonthlyPlan() {
+        showModal('confirm', 'Nạp Kế Hoạch Mẫu', `Bạn có muốn nạp mẫu kế hoạch gợi ý chuẩn cho **Tháng ${currentPlanMonth}/${currentPlanYear}** không? Kế hoạch hiện tại của tháng này sẽ được làm mới.`, () => {
+            const key = getMonthlyPlanKey(currentPlanYear, currentPlanMonth);
+            if (!currentUser.monthlyPlans[key]) currentUser.monthlyPlans[key] = { weekOverrides: {}, finalRank: '' };
+            currentUser.monthlyPlans[key].tasks = getDefaultMonthlyTasks(currentPlanMonth, currentPlanYear);
+            renderMonthlyTasksTable(currentUser.monthlyPlans[key].tasks);
+            saveUserToStorage();
+            showModal('success', 'Đã Nạp Mẫu', `Đã nạp mẫu kế hoạch cho Tháng ${currentPlanMonth} thành công! Thầy/Cô có thể chỉnh sửa lại theo ý muốn.`);
+        });
+    }
+
+    function renderWeeklyCompetitionTable(weeks, planData) {
+        const thead = document.getElementById('monthly-competition-thead');
+        const tbody = document.getElementById('monthly-competition-tbody');
+        if (!thead || !tbody) return;
+
+        // 1. Render Header
+        thead.innerHTML = `
+            <tr class="bg-slate-100 border-b-2 border-slate-700 text-slate-900 font-black">
+                <th class="border-r-2 border-slate-700 p-2.5 md:p-3 text-left w-56 md:w-64">Nội dung</th>
+                ${weeks.map(w => `
+                    <th class="border-r-2 border-slate-700 p-2 md:p-2.5 text-center">
+                        <div class="font-black text-xs md:text-sm">${w.name}</div>
+                        <div class="text-[10px] md:text-xs font-mono font-bold text-slate-600 mt-0.5">${w.label}</div>
+                    </th>
+                `).join('')}
+            </tr>
+        `;
+
+        const overrides = planData.weekOverrides || {};
+
+        // Định nghĩa 10 hàng chỉ số theo đúng biểu mẫu hình ảnh
+        const metricRows = [
+            { key: 'late', title: 'Số học viên đi trễ', auto: true, icon: '⏰', color: 'text-amber-700' },
+            { key: 'absent', title: 'Số học viên vắng', auto: true, icon: '🚫', color: 'text-rose-700' },
+            { key: 'underFive', title: 'Số học viên bị dưới 5,0', auto: true, icon: '📝', color: 'text-orange-700' },
+            { key: 'badAttitude', title: 'Số học viên mắc thái độ sai', auto: true, icon: '⚠️', color: 'text-rose-800' },
+            { key: 'goodScores', title: 'Số học viên có điểm tốt', auto: true, icon: '⭐', color: 'text-blue-700' },
+            { key: 'criticized', title: 'Số học viên bị phê bình', auto: true, icon: '📉', color: 'text-red-700' },
+            { key: 'goodPeriods', title: 'Số tiết học tốt', auto: false, isInput: true, placeholder: '0' },
+            { key: 'praised', title: 'HS được khen', auto: true, icon: '🎉', color: 'text-emerald-700' },
+            { key: 'rank', title: 'Hạng thi đua', auto: false, isInput: true, placeholder: 'Hạng...', bold: true },
+            { key: 'note', title: 'Ghi chú tuần (VD: Nghỉ Tết)', auto: false, isInput: true, placeholder: 'Bình thường...' }
+        ];
+
+        tbody.innerHTML = metricRows.map((row, rIdx) => {
+            const isRank = (row.key === 'rank');
+            const isNote = (row.key === 'note');
+            const isGoodPeriods = (row.key === 'goodPeriods');
+            const bgRow = (rIdx % 2 === 1) ? 'bg-slate-50/40' : 'bg-white';
+
+            return `
+                <tr class="border-b border-slate-700 ${bgRow} hover:bg-indigo-50/20 transition">
+                    <td class="border-r-2 border-slate-700 p-2 md:p-2.5 text-left font-bold text-slate-800 flex items-center justify-between">
+                        <span>${row.title}</span>
+                        ${row.auto ? `<span class="text-[9px] font-mono text-emerald-600 font-bold bg-emerald-50 px-1.5 py-0.2 rounded print:hidden">Tự động</span>` : ''}
+                    </td>
+                    ${weeks.map(w => {
+                        const weekOverride = overrides[w.index] || {};
+
+                        if (row.auto) {
+                            const statObj = (currentWeeklyAggregations[w.index] && currentWeeklyAggregations[w.index][row.key]) || { count: 0, list: [] };
+                            const count = statObj.count;
+                            const hasItems = count > 0;
+                            const badgeStyle = hasItems ? 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-black cursor-pointer shadow-xs scale-105' : 'text-slate-700 font-bold';
+
+                            return `
+                                <td class="border-r-2 border-slate-700 p-2 text-center">
+                                    <button type="button" onclick="openWeeklyDetailsModal(${w.index}, '${row.key}', '${row.title}')" class="px-2.5 py-1 rounded-lg text-xs md:text-sm transition inline-flex items-center gap-1 ${badgeStyle}" title="Bấm để xem danh sách chi tiết học sinh">
+                                        <span>${count}</span>
+                                        ${hasItems ? `<i data-lucide="info" class="w-3 h-3 text-indigo-400 print:hidden"></i>` : ''}
+                                    </button>
+                                </td>
+                            `;
+                        } else if (isGoodPeriods) {
+                            const val = weekOverride.goodPeriods !== undefined ? weekOverride.goodPeriods : '';
+                            return `
+                                <td class="border-r-2 border-slate-700 p-1.5 text-center">
+                                    <input type="number" min="0" max="40" value="${val}" placeholder="0" 
+                                        onchange="updateWeekOverride(${w.index}, 'goodPeriods', this.value)"
+                                        class="w-16 text-center border border-slate-200 focus:border-indigo-500 rounded-lg py-1 px-1 text-xs md:text-sm font-bold text-slate-800 bg-white outline-none">
+                                </td>
+                            `;
+                        } else if (isRank) {
+                            const val = weekOverride.rank !== undefined ? weekOverride.rank : '';
+                            return `
+                                <td class="border-r-2 border-slate-700 p-1.5 text-center bg-amber-50/30">
+                                    <input type="text" value="${val}" placeholder="--" 
+                                        onchange="updateWeekOverride(${w.index}, 'rank', this.value)"
+                                        class="w-16 text-center border border-amber-200 focus:border-amber-500 rounded-lg py-1 px-1 text-xs md:text-sm font-black text-amber-700 bg-white outline-none">
+                                </td>
+                            `;
+                        } else if (isNote) {
+                            const val = weekOverride.note !== undefined ? weekOverride.note : '';
+                            return `
+                                <td class="border-r-2 border-slate-700 p-1.5 text-center">
+                                    <input type="text" value="${val}" placeholder="Ghi chú..." 
+                                        onchange="updateWeekOverride(${w.index}, 'note', this.value)"
+                                        class="w-full text-center border border-slate-200 focus:border-indigo-500 rounded-lg py-1 px-1 text-[11px] font-bold text-slate-600 bg-white outline-none">
+                                </td>
+                            `;
+                        }
+                    }).join('')}
+                </tr>
+            `;
+        }).join('');
+        lucide.createIcons();
+    }
+
+    function updateWeekOverride(weekIdx, field, value) {
+        const key = getMonthlyPlanKey(currentPlanYear, currentPlanMonth);
+        if (!currentUser.monthlyPlans[key]) {
+            currentUser.monthlyPlans[key] = { tasks: [], weekOverrides: {}, finalRank: '' };
+        }
+        if (!currentUser.monthlyPlans[key].weekOverrides) {
+            currentUser.monthlyPlans[key].weekOverrides = {};
+        }
+        if (!currentUser.monthlyPlans[key].weekOverrides[weekIdx]) {
+            currentUser.monthlyPlans[key].weekOverrides[weekIdx] = {};
+        }
+        currentUser.monthlyPlans[key].weekOverrides[weekIdx][field] = value.trim();
+        saveUserToStorage();
+    }
+
+    function handleMonthlyRankChange(val) {
+        const key = getMonthlyPlanKey(currentPlanYear, currentPlanMonth);
+        if (!currentUser.monthlyPlans[key]) {
+            currentUser.monthlyPlans[key] = { tasks: [], weekOverrides: {}, finalRank: '' };
+        }
+        currentUser.monthlyPlans[key].finalRank = val.trim();
+        saveUserToStorage();
+    }
+
+    function saveMonthlyPlanData(showToast = false) {
+        saveUserToStorage();
+        if (showToast) {
+            showModal('success', 'Đã Lưu Thành Công', `Toàn bộ kế hoạch và số liệu thi đua Tháng ${currentPlanMonth}/${currentPlanYear} đã được lưu trữ an toàn!`);
+        }
+    }
+
+    function openWeeklyDetailsModal(weekIndex, metricKey, metricTitle) {
+        const statObj = (currentWeeklyAggregations[weekIndex] && currentWeeklyAggregations[weekIndex][metricKey]) || { count: 0, list: [] };
+        const weeks = getWeeksOfMonth(currentPlanYear, currentPlanMonth);
+        const currentWeek = weeks.find(w => w.index === weekIndex) || { name: `Tuần ${weekIndex}`, label: '' };
+
+        const titleEl = document.getElementById('weekly-modal-title');
+        const subEl = document.getElementById('weekly-modal-subtitle');
+        const badgeEl = document.getElementById('weekly-modal-badge');
+        const container = document.getElementById('weekly-modal-list-container');
+
+        if (titleEl) titleEl.innerText = `${metricTitle} - ${currentWeek.name}`;
+        if (subEl) subEl.innerText = `Khoảng thời gian: ${currentWeek.label} (Tháng ${currentPlanMonth}/${currentPlanYear}) • Tổng số: ${statObj.count} trường hợp`;
+        
+        if (badgeEl) {
+            if (metricKey === 'goodScores' || metricKey === 'praised') {
+                badgeEl.className = "px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-100 text-emerald-700";
+                badgeEl.innerText = "Tuyên Dương / Khen Thưởng";
+            } else {
+                badgeEl.className = "px-2.5 py-0.5 rounded-full text-xs font-black bg-rose-100 text-rose-700";
+                badgeEl.innerText = "Vi Phạm Nề Nếp";
+            }
+        }
+
+        if (!container) return;
+
+        if (!statObj.list || statObj.list.length === 0) {
+            container.innerHTML = `
+                <div class="py-12 text-center text-slate-400 space-y-2">
+                    <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-300 flex items-center justify-center mx-auto text-xl font-bold">✓</div>
+                    <div class="font-bold text-sm text-slate-600">Không có dữ liệu trong tuần này</div>
+                    <p class="text-xs text-slate-400">Không ghi nhận học sinh nào cho chỉ số "${metricTitle}".</p>
+                </div>
+            `;
+            openModalUi('weekly-violation-details-modal', 'weekly-violation-details-content');
+            return;
+        }
+
+        container.innerHTML = `
+            <div class="border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200 text-slate-700 font-black">
+                            <th class="p-3 text-center w-12">STT</th>
+                            <th class="p-3">Học sinh</th>
+                            <th class="p-3">Thời gian</th>
+                            <th class="p-3">Môn / Tiết</th>
+                            <th class="p-3">Nội dung ghi nhận</th>
+                            <th class="p-3 text-center w-16">Điểm</th>
+                            <th class="p-3">Người ghi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        ${statObj.list.map((item, idx) => `
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="p-3 text-center font-bold text-slate-400">${idx + 1}</td>
+                                <td class="p-3 font-black text-slate-800 whitespace-nowrap">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-xs overflow-hidden border border-slate-200 shrink-0">
+                                            ${getAvatarHtml(item.avatar)}
+                                        </div>
+                                        <div>
+                                            <div>${item.studentName}</div>
+                                            <div class="text-[9px] font-mono font-bold text-slate-400">${item.studentCode}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="p-3 font-medium text-slate-600 whitespace-nowrap">${item.date}</td>
+                                <td class="p-3 font-bold text-slate-700 whitespace-nowrap">${item.subject} ${item.period !== '-' ? `(T${item.period})` : ''}</td>
+                                <td class="p-3 font-medium text-slate-800 leading-snug">${item.reason}</td>
+                                <td class="p-3 text-center font-black ${metricKey === 'goodScores' || metricKey === 'praised' ? 'text-emerald-600' : 'text-rose-600'}">
+                                    ${metricKey === 'goodScores' || metricKey === 'praised' ? `+${item.points}` : `-${item.points}`}
+                                </td>
+                                <td class="p-3 text-slate-500 font-bold text-[11px] whitespace-nowrap">${item.author}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+        openModalUi('weekly-violation-details-modal', 'weekly-violation-details-content');
+        lucide.createIcons();
+    }
+
+    function printMonthlyPlanReport() {
+        window.print();
+    }
+
 </script>
 
   <!-- MODAL GIÁO VIÊN THỬ TÍNH ĐIỂM XÉT TỐT NGHIỆP CHO HỌC SINH -->
@@ -8995,6 +9768,32 @@
         <button onclick="saveTeacherModalStudentPrediction()" class="flex-1 bg-indigo-600 text-white font-black py-2.5 rounded-xl hover:bg-indigo-700 transition shadow-md text-xs flex items-center justify-center gap-1.5">
           <i data-lucide="save" class="w-4 h-4"></i> Lưu điểm dự đoán cho học sinh này
         </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- MODAL XEM CHI TIẾT DANH SÁCH VI PHẠM / KHEN THƯỞNG THEO TUẦN -->
+  <div id="weekly-violation-details-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[800] p-4 opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-[2rem] p-6 md:p-8 w-full max-w-3xl shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col border border-white/20 max-h-[85vh]" id="weekly-violation-details-content">
+      <div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100 shrink-0">
+        <div>
+          <div class="flex items-center gap-2">
+            <span id="weekly-modal-badge" class="px-2.5 py-0.5 rounded-full text-xs font-black bg-rose-100 text-rose-700">Vi Phạm</span>
+            <h3 class="text-base md:text-lg font-black text-slate-800" id="weekly-modal-title">Chi Tiết Vi Phạm Tuần 1</h3>
+          </div>
+          <p class="text-xs text-slate-400 font-medium mt-0.5" id="weekly-modal-subtitle">Khoảng thời gian: 30/12/2026 -> 04/01/2027</p>
+        </div>
+        <button onclick="closeModalUi('weekly-violation-details-modal', 'weekly-violation-details-content')" class="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 p-2 rounded-full transition"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+
+      <!-- Danh Sách Học Sinh -->
+      <div class="overflow-y-auto custom-scrollbar flex-1 pr-1" id="weekly-modal-list-container">
+        <!-- Dynamic list / table generated via javascript -->
+      </div>
+
+      <div class="pt-4 mt-2 border-t border-slate-100 flex justify-end shrink-0">
+        <button onclick="closeModalUi('weekly-violation-details-modal', 'weekly-violation-details-content')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-6 py-2.5 rounded-xl transition text-xs">Đóng</button>
       </div>
     </div>
   </div>
