@@ -4022,7 +4022,9 @@
         if (teacherTimetable && teacherTimetable.data) {
             for (const [key, cls] of Object.entries(teacherTimetable.data)) {
                 if (excludeKey && key === excludeKey) continue;
-                if (cls && counts.hasOwnProperty(cls)) {
+                const p = parseInt(key.split('_p')[1]) || 1;
+                // Chỉ đếm các tiết chính khóa buổi sáng (Tiết 1 đến 5)
+                if (p <= 5 && cls && counts.hasOwnProperty(cls)) {
                     counts[cls] = (counts[cls] || 0) + 1;
                 }
             }
@@ -4232,14 +4234,16 @@
         let html = ''; 
         for(let period = 1; period <= maxPeriods; period++) { 
             if (period === 6) {
+                const sessionTitle = (currentTimetableViewMode === 'teacher') ? 'Dạy Thêm' : 'Buổi Chiều';
+                const sessionIcon = (currentTimetableViewMode === 'teacher') ? 'book-open' : 'sun';
                 html += `<tr>
-                    <td colspan="7" class="bg-indigo-50/50 text-indigo-700 font-black text-xs md:text-sm py-2.5 uppercase tracking-widest text-center border border-slate-200">
-                        <div class="flex items-center justify-center gap-1.5"><i data-lucide="sun" class="w-4 h-4 text-indigo-600"></i> Buổi Chiều</div>
+                    <td colspan="7" class="bg-indigo-50/70 text-indigo-800 font-black text-xs md:text-sm py-2.5 uppercase tracking-widest text-center border border-slate-200">
+                        <div class="flex items-center justify-center gap-1.5"><i data-lucide="${sessionIcon}" class="w-4 h-4 text-indigo-600"></i> ${sessionTitle}</div>
                     </td>
                 </tr>`;
             }
             
-            const periodLabel = period <= 5 ? `Tiết ${period}` : `Tiết ${period - 5} (Chiều)`;
+            const periodLabel = period <= 5 ? `Tiết ${period}` : (currentTimetableViewMode === 'teacher' ? `Tiết ${period - 5} (Dạy thêm)` : `Tiết ${period - 5} (Chiều)`);
             
             html += `<tr>
                 <td class="border border-slate-200 p-2 font-black bg-slate-50 w-24 text-center">
@@ -4305,7 +4309,7 @@
             if (capTitle) capTitle.innerText = "THỜI KHÓA BIỂU GIẢNG DẠY";
             if (capSubtitle) capSubtitle.innerText = `Giáo viên: ${currentUser.teacherName || 'Chưa cập nhật'} | Năm học: ${currentUser.year || ''}`;
             if (capTeacher) capTeacher.innerText = "Lớp phụ trách: 12A17, 12A12, 12A32 (4 tiết/lớp)";
-            if (capFooter) capFooter.innerText = "Thời khóa biểu giảng dạy cá nhân (Buổi Sáng & Buổi Chiều)";
+            if (capFooter) capFooter.innerText = "Thời khóa biểu giảng dạy cá nhân (Chính khóa & Dạy thêm)";
         } else {
             const currentTkbObj = timetables.find(x => x.id === currentTimetableId);
             const tkbName = currentTkbObj ? currentTkbObj.name : 'Chính khóa';
@@ -4339,7 +4343,7 @@
             subject = val;
         }
         
-        const periodLabel = period <= 5 ? `Tiết ${period}` : `Tiết ${period - 5} (Chiều)`;
+        const periodLabel = period <= 5 ? `Tiết ${period}` : (isTeacherMode ? `Tiết ${period - 5} (Dạy thêm)` : `Tiết ${period - 5} (Chiều)`);
         document.getElementById('timetable-period-modal-title').innerText = `${periodLabel} - Thứ ${day}`;
         document.getElementById('modal-period-subject').value = subject;
         
@@ -4360,33 +4364,48 @@
         const grid = document.getElementById('modal-subjects-list-grid');
         
         if (isTeacherMode) {
-            if (headerEl) headerEl.innerText = "Chọn lớp giảng dạy";
-            if (gridLabelEl) gridLabelEl.innerText = "Danh sách lớp phụ trách (Mỗi lớp 4 tiết/tuần)";
-            if (inputLabelEl) inputLabelEl.innerText = "Lớp học";
-            if (inputEl) inputEl.placeholder = "Tên lớp học (12A17, 12A12, 12A32)...";
-            
-            const teacherClasses = ["12A17", "12A12", "12A32"];
-            const maxPeriods = 4;
-            const counts = getTeacherClassCounts(key); // exclude current cell
-            
-            // Available classes that have not reached 4 periods
-            const availableClasses = teacherClasses.filter(cls => (counts[cls] || 0) < maxPeriods);
-            
-            if (availableClasses.length > 0) {
-                grid.innerHTML = availableClasses.map(cls => {
-                    const currentCount = counts[cls] || 0;
-                    return `<button onclick="selectModalSubject('${cls}')" class="bg-slate-50 hover:bg-theme-light border border-slate-200 rounded-xl p-3 text-center transition group flex flex-col items-center justify-center gap-1 shadow-sm hover:border-theme" title="Chọn ${cls}">
-                        <span class="text-sm font-black text-slate-800 group-hover:text-theme">${cls}</span>
-                        <span class="text-[10px] font-bold text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded-full">${currentCount}/4 tiết</span>
+            const isDayThem = period > 5;
+            if (isDayThem) {
+                if (headerEl) headerEl.innerText = "Xếp lịch Dạy thêm";
+                if (gridLabelEl) gridLabelEl.innerText = "Lớp / Nội dung dạy thêm buổi chiều";
+                if (inputLabelEl) inputLabelEl.innerText = "Lớp hoặc nội dung dạy thêm";
+                if (inputEl) inputEl.placeholder = "VD: 12A17 (Dạy thêm), Luyện thi TN, Ôn tập...";
+                
+                const dayThemClasses = ["12A17", "12A12", "12A32", "Dạy thêm Toán", "Luyện thi TN", "Bồi dưỡng"];
+                grid.innerHTML = dayThemClasses.map(cls => {
+                    return `<button onclick="selectModalSubject('${cls}')" class="bg-slate-50 hover:bg-indigo-50 border border-slate-200 rounded-xl p-2.5 text-center transition group flex items-center justify-center shadow-sm hover:border-indigo-400" title="Chọn ${cls}">
+                        <span class="text-xs md:text-sm font-black text-slate-800 group-hover:text-indigo-600">${cls}</span>
                     </button>`;
                 }).join('');
             } else {
-                grid.innerHTML = `
-                    <div class="col-span-full py-5 px-4 text-center rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 space-y-1">
-                        <div class="font-black text-xs md:text-sm flex items-center justify-center gap-1.5"><i data-lucide="check-circle" class="w-4 h-4 text-amber-600"></i> Đã xếp đủ số tiết</div>
-                        <p class="text-[11px] font-medium text-amber-700">Tất cả 3 lớp (12A17, 12A12, 12A32) đã được xếp đủ định mức 4 tiết/lớp trong tuần.</p>
-                    </div>
-                `;
+                if (headerEl) headerEl.innerText = "Chọn lớp giảng dạy (Chính khóa)";
+                if (gridLabelEl) gridLabelEl.innerText = "Danh sách lớp phụ trách (Mỗi lớp 4 tiết/tuần)";
+                if (inputLabelEl) inputLabelEl.innerText = "Lớp học";
+                if (inputEl) inputEl.placeholder = "Tên lớp học (12A17, 12A12, 12A32)...";
+                
+                const teacherClasses = ["12A17", "12A12", "12A32"];
+                const maxPeriods = 4;
+                const counts = getTeacherClassCounts(key); // exclude current cell
+                
+                // Available classes that have not reached 4 periods
+                const availableClasses = teacherClasses.filter(cls => (counts[cls] || 0) < maxPeriods);
+                
+                if (availableClasses.length > 0) {
+                    grid.innerHTML = availableClasses.map(cls => {
+                        const currentCount = counts[cls] || 0;
+                        return `<button onclick="selectModalSubject('${cls}')" class="bg-slate-50 hover:bg-theme-light border border-slate-200 rounded-xl p-3 text-center transition group flex flex-col items-center justify-center gap-1 shadow-sm hover:border-theme" title="Chọn ${cls}">
+                            <span class="text-sm font-black text-slate-800 group-hover:text-theme">${cls}</span>
+                            <span class="text-[10px] font-bold text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded-full">${currentCount}/4 tiết</span>
+                        </button>`;
+                    }).join('');
+                } else {
+                    grid.innerHTML = `
+                        <div class="col-span-full py-5 px-4 text-center rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 space-y-1">
+                            <div class="font-black text-xs md:text-sm flex items-center justify-center gap-1.5"><i data-lucide="check-circle" class="w-4 h-4 text-amber-600"></i> Đã xếp đủ số tiết chính khóa</div>
+                            <p class="text-[11px] font-medium text-amber-700">Tất cả 3 lớp (12A17, 12A12, 12A32) đã được xếp đủ định mức 4 tiết/lớp trong tuần.</p>
+                        </div>
+                    `;
+                }
             }
         } else {
             if (headerEl) headerEl.innerText = "Chọn môn học";
@@ -4442,11 +4461,13 @@
     function savePeriodData(subject) {
         if (activeEditCellKey) {
             if (currentTimetableViewMode === 'teacher') {
-                if (subject) {
+                const pNum = parseInt(activeEditCellKey.split('_p')[1]) || 1;
+                // Chỉ kiểm tra giới hạn 4 tiết đối với các tiết chính khóa buổi sáng (Tiết 1-5)
+                if (subject && pNum <= 5) {
                     const counts = getTeacherClassCounts(activeEditCellKey);
                     const teacherClasses = ["12A17", "12A12", "12A32"];
                     if (teacherClasses.includes(subject) && (counts[subject] || 0) >= 4) {
-                        showModal('error', 'Đã đủ tiết', `Lớp ${subject} đã được xếp đủ 4 tiết trong tuần!`);
+                        showModal('error', 'Đã đủ tiết', `Lớp ${subject} đã được xếp đủ 4 tiết chính khóa buổi sáng trong tuần!`);
                         return;
                     }
                 }
