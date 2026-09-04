@@ -9168,6 +9168,13 @@
         let curMonday = new Date(firstDay);
         curMonday.setDate(firstDay.getDate() - dayOfWeek);
 
+        // Riêng Tháng 9 (đầu năm học mới): Bắt đầu thi đua từ tuần ngày 07/09, bỏ tuần đầu tiên trước ngày 07/09
+        if (month === 9) {
+            while (curMonday.getMonth() < 8 || (curMonday.getMonth() === 8 && curMonday.getDate() < 7)) {
+                curMonday.setDate(curMonday.getDate() + 7);
+            }
+        }
+
         let weekNum = 1;
         while (weekNum <= 5) {
             const saturday = new Date(curMonday);
