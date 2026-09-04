@@ -158,6 +158,32 @@
       animation: tabFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       will-change: transform, opacity;
     }
+
+    /* CSS In ấn báo cáo Kế hoạch & Thi đua chuẩn A4 Landscape */
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+      #monthly-plan-print-container, #monthly-plan-print-container * {
+        visibility: visible !important;
+      }
+      #monthly-plan-print-container {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: white !important;
+        display: block !important;
+        box-shadow: none !important;
+        border: none !important;
+      }
+      @page {
+        size: A4 landscape;
+        margin: 10mm;
+      }
+    }
   </style>
 </head>
 <body class="bg-[#f3f4f6] font-sans text-slate-800 h-screen flex relative overflow-hidden">
@@ -1296,7 +1322,11 @@
               <i data-lucide="save" class="w-4 h-4"></i> Lưu Dữ Liệu
             </button>
 
-            <button onclick="printMonthlyPlanReport()" class="bg-slate-800 hover:bg-slate-900 text-white px-3.5 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 shadow-sm" title="In hoặc xuất báo cáo A4 chuẩn biểu mẫu">
+            <button onclick="openMonthlyPlanExportModal('word')" class="bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 shadow-sm shadow-blue-600/20" title="Xuất báo cáo kế hoạch và kết quả thi đua ra file Word (.doc)">
+              <i data-lucide="file-text" class="w-4 h-4"></i> Xuất File Word
+            </button>
+
+            <button onclick="openMonthlyPlanExportModal('print')" class="bg-slate-800 hover:bg-slate-900 text-white px-3.5 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 shadow-sm" title="In hoặc xuất báo cáo A4 theo tháng tùy chọn">
               <i data-lucide="printer" class="w-4 h-4"></i> In Báo Cáo
             </button>
           </div>
@@ -9706,9 +9736,773 @@
         lucide.createIcons();
     }
 
-    function printMonthlyPlanReport() {
-        window.print();
+
+    // =========================================================================
+    // XỬ LÝ XUẤT BÁO CÁO KẾ HOẠCH & THI ĐUA RA WORD (.DOC) VÀ IN ẤN THEO THÁNG
+    // =========================================================================
+
+    function escapeHtmlAttr(str) {
+        if (str === null || str === undefined) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
     }
+
+    function nl2brEscaped(str) {
+        if (!str) return '';
+        return escapeHtmlAttr(str).replace(/\n/g, '<br>');
+    }
+
+    function printMonthlyPlanReport() {
+        openMonthlyPlanExportModal('print');
+    }
+
+    function openMonthlyPlanExportModal(defaultAction = 'word') {
+        const selMonth = document.getElementById('export-select-month');
+        const selYear = document.getElementById('export-select-year');
+        if (selMonth) selMonth.value = String(currentPlanMonth);
+        if (selYear) selYear.value = String(currentPlanYear);
+
+        const singleRadio = document.getElementById('export-mode-single');
+        if (singleRadio) {
+            singleRadio.checked = true;
+            toggleExportMonthMode();
+        }
+
+        // Đánh dấu tháng hiện tại trong danh sách chọn nhiều tháng
+        const currentKey = `${currentPlanMonth}-${currentPlanYear}`;
+        const checkboxes = document.querySelectorAll('.export-month-cb');
+        checkboxes.forEach(cb => {
+            cb.checked = (cb.value === currentKey);
+        });
+
+        openModalUi('monthly-plan-export-modal', 'monthly-plan-export-modal-content');
+        if (window.lucide) lucide.createIcons();
+    }
+
+    function toggleExportMonthMode() {
+        const isSingle = document.getElementById('export-mode-single') ? document.getElementById('export-mode-single').checked : true;
+        const singleControls = document.getElementById('export-single-month-controls');
+        const multiControls = document.getElementById('export-multiple-month-controls');
+
+        if (singleControls) {
+            if (isSingle) {
+                singleControls.classList.remove('hidden');
+            } else {
+                singleControls.classList.add('hidden');
+            }
+        }
+        if (multiControls) {
+            if (isSingle) {
+                multiControls.classList.add('hidden');
+            } else {
+                multiControls.classList.remove('hidden');
+            }
+        }
+    }
+
+    function selectExportMonthsPreset(preset) {
+        const hk1Months = ['9-2026', '10-2026', '11-2026', '12-2026', '1-2027'];
+        const hk2Months = ['2-2027', '3-2027', '4-2027', '5-2027'];
+
+        const checkboxes = document.querySelectorAll('.export-month-cb');
+        checkboxes.forEach(cb => {
+            if (preset === 'hk1') {
+                cb.checked = hk1Months.includes(cb.value);
+            } else if (preset === 'hk2') {
+                cb.checked = hk2Months.includes(cb.value);
+            } else if (preset === 'all') {
+                cb.checked = true;
+            }
+        });
+    }
+
+    function getSelectedExportMonths() {
+        const isSingle = document.getElementById('export-mode-single') ? document.getElementById('export-mode-single').checked : true;
+        const list = [];
+
+        if (isSingle) {
+            const m = parseInt(document.getElementById('export-select-month').value);
+            const y = parseInt(document.getElementById('export-select-year').value);
+            if (!isNaN(m) && !isNaN(y)) {
+                list.push({ month: m, year: y });
+            }
+        } else {
+            const checkboxes = document.querySelectorAll('.export-month-cb:checked');
+            checkboxes.forEach(cb => {
+                const parts = cb.value.split('-');
+                if (parts.length === 2) {
+                    const m = parseInt(parts[0]);
+                    const y = parseInt(parts[1]);
+                    if (!isNaN(m) && !isNaN(y)) {
+                        list.push({ month: m, year: y });
+                    }
+                }
+            });
+
+            // Sắp xếp theo thứ tự thời gian năm học (tháng 9..12 năm 2026 rồi 1..5 năm 2027)
+            list.sort((a, b) => {
+                if (a.year !== b.year) return a.year - b.year;
+                return a.month - b.month;
+            });
+        }
+        return list;
+    }
+
+    function getWeeklyAllDetailedRecords(week) {
+        const records = [];
+        const seen = new Set();
+
+        if (Array.isArray(students)) {
+            students.forEach(s => {
+                const history = s.history || [];
+                history.forEach(h => {
+                    const recDate = parseRecordDate(h.date);
+                    if (recDate && recDate >= week.startDate && recDate <= week.endDate) {
+                        const uniqueKey = `${s.id}_${h.date}_${h.reason}_${h.points}`;
+                        if (!seen.has(uniqueKey)) {
+                            seen.add(uniqueKey);
+                            records.push({
+                                weekName: week.name,
+                                studentName: s.name,
+                                studentCode: s.code || s.id,
+                                date: h.date,
+                                subject: h.subject || 'Nề nếp',
+                                period: h.period && h.period !== '-' ? `T${h.period}` : (h.period || '-'),
+                                reason: h.reason || '',
+                                points: h.points || 0,
+                                type: h.type || (h.points >= 0 ? 'add' : 'sub'),
+                                author: h.author || 'GV'
+                            });
+                        }
+                    }
+                });
+            });
+        }
+
+        if (typeof attendanceData === 'object' && attendanceData !== null) {
+            Object.keys(attendanceData).forEach(dateStr => {
+                const attDate = parseRecordDate(dateStr);
+                if (attDate && attDate >= week.startDate && attDate <= week.endDate) {
+                    const daily = attendanceData[dateStr] || {};
+                    if (Array.isArray(students)) {
+                        students.forEach(s => {
+                            const status = daily[s.id];
+                            if (status === 'late' || status === 'excused' || status === 'unexcused') {
+                                const uniqueKey = `${s.id}_${dateStr}_att_${status}`;
+                                if (!seen.has(uniqueKey)) {
+                                    seen.add(uniqueKey);
+                                    const reason = status === 'late' ? 'Điểm danh: Đi học muộn / Đi trễ' :
+                                                   status === 'excused' ? 'Điểm danh: Nghỉ học có phép' : 'Điểm danh: Nghỉ học không phép';
+                                    const points = status === 'late' ? -2 : (status === 'excused' ? -2 : -5);
+                                    records.push({
+                                        weekName: week.name,
+                                        studentName: s.name,
+                                        studentCode: s.code || s.id,
+                                        date: dateStr.split('-').reverse().join('/'),
+                                        subject: 'Điểm danh',
+                                        period: 'Đầu giờ',
+                                        reason: reason,
+                                        points: points,
+                                        type: 'sub',
+                                        author: 'GVCN'
+                                    });
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        return records;
+    }
+
+    function executeExportMonthlyPlan(format) {
+        const monthsList = getSelectedExportMonths();
+        if (!monthsList || monthsList.length === 0) {
+            if (typeof showModal === 'function') {
+                showModal('warning', 'Chưa Chọn Tháng', 'Vui lòng chọn ít nhất một tháng cần in hoặc xuất báo cáo.');
+            } else {
+                alert('Vui lòng chọn ít nhất một tháng cần in hoặc xuất báo cáo.');
+            }
+            return;
+        }
+
+        const optPlan = document.getElementById('export-opt-plan') ? document.getElementById('export-opt-plan').checked : true;
+        const optComp = document.getElementById('export-opt-competition') ? document.getElementById('export-opt-competition').checked : true;
+        const optDetails = document.getElementById('export-opt-details') ? document.getElementById('export-opt-details').checked : false;
+
+        if (!optPlan && !optComp && !optDetails) {
+            if (typeof showModal === 'function') {
+                showModal('warning', 'Chưa Chọn Nội Dung', 'Vui lòng tích chọn ít nhất một nội dung (Kế hoạch tháng hoặc Sơ kết thi đua tuần).');
+            } else {
+                alert('Vui lòng tích chọn ít nhất một nội dung.');
+            }
+            return;
+        }
+
+        const className = (currentUser && currentUser.className) ? currentUser.className : '12A17';
+        const schoolYear = (currentUser && currentUser.year) ? currentUser.year : '2026 - 2027';
+        const teacherName = (currentUser && currentUser.teacherName) ? currentUser.teacherName : 'Thầy Tuấn';
+
+        if (format === 'word') {
+            closeModalUi('monthly-plan-export-modal', 'monthly-plan-export-modal-content');
+            const docHtml = buildMonthlyPlanWordHtml(monthsList, { optPlan, optComp, optDetails }, className, schoolYear, teacherName);
+            
+            // Tải file .doc với BOM UTF-8 để Microsoft Word không bị lỗi font tiếng Việt
+            const blob = new Blob(['\ufeff' + docHtml], { type: 'application/msword;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const fileSuffix = monthsList.length === 1 
+                ? `Thang_${String(monthsList[0].month).padStart(2, '0')}_${monthsList[0].year}`
+                : `Gop_${monthsList.length}_Thang`;
+            a.download = `Bao_Cao_Ke_Hoach_Thi_Dua_${fileSuffix}_Lop_${className.replace(/\s+/g, '_')}.doc`;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 200);
+
+            if (typeof showModal === 'function') {
+                showModal('success', 'Đã Tải File Word', `File báo cáo Word (.doc) cho ${monthsList.length} tháng đã được tải về thành công! Bạn có thể mở trực tiếp bằng Microsoft Word trên máy tính.`);
+            }
+        } else if (format === 'print') {
+            closeModalUi('monthly-plan-export-modal', 'monthly-plan-export-modal-content');
+            const printHtml = buildMonthlyPlanPrintHtml(monthsList, { optPlan, optComp, optDetails }, className, schoolYear, teacherName);
+
+            const printContainer = document.getElementById('monthly-plan-print-container');
+            if (printContainer) {
+                // Tạm thời thay thế nội dung print container bằng nội dung các tháng đã chọn
+                printContainer.innerHTML = printHtml;
+                if (window.lucide) lucide.createIcons();
+
+                // Lắng nghe sự kiện sau khi in xong để hoàn trả lại giao diện tháng đang làm việc
+                const restoreAfterPrint = () => {
+                    window.removeEventListener('afterprint', restoreAfterPrint);
+                    renderMonthlyPlanTab();
+                };
+                window.addEventListener('afterprint', restoreAfterPrint);
+
+                // Kích hoạt hộp thoại in của trình duyệt
+                setTimeout(() => {
+                    window.print();
+                    // Fallback khôi phục sau 3 giây đề phòng trình duyệt không kích hoạt afterprint
+                    setTimeout(() => {
+                        renderMonthlyPlanTab();
+                    }, 3000);
+                }, 300);
+            } else {
+                window.print();
+            }
+        }
+    }
+
+    function buildMonthlyPlanWordHtml(monthsList, options, className, schoolYear, teacherName) {
+        let contentHtml = '';
+
+        monthsList.forEach((mItem, mIdx) => {
+            const m = mItem.month;
+            const y = mItem.year;
+            const key = getMonthlyPlanKey(y, m);
+            const planData = (currentUser && currentUser.monthlyPlans && currentUser.monthlyPlans[key]) || {
+                tasks: getDefaultMonthlyTasks(m, y),
+                weekOverrides: {},
+                finalRank: ''
+            };
+            const weeks = getWeeksOfMonth(y, m);
+            const weeklyStats = {};
+            weeks.forEach(w => {
+                weeklyStats[w.index] = aggregateWeeklyStats(w);
+            });
+
+            // Nếu không phải tháng đầu tiên, chèn ngắt trang Word
+            if (mIdx > 0) {
+                contentHtml += `<br clear="all" style="mso-special-character:line-break;page-break-before:always" />`;
+            }
+
+            contentHtml += `
+                <!-- HEADER HÀNH CHÍNH -->
+                <table class="header-table" style="width:100%; border:none; margin-bottom:14pt;">
+                    <tr>
+                        <td style="width:45%; vertical-align:top; border:none; text-align:center; font-family:'Times New Roman', serif;">
+                            <div style="font-size:10pt; font-weight:bold; text-transform:uppercase;">TRUNG TÂM GDNN - GDTX QUẬN 12</div>
+                            <div style="font-size:10pt; font-weight:bold; margin-top:3pt;">LỚP: ${escapeHtmlAttr(className)} • NĂM HỌC: ${escapeHtmlAttr(schoolYear)}</div>
+                            <div style="font-size:9.5pt; font-style:italic; margin-top:2pt;">GVCN: ${escapeHtmlAttr(teacherName)}</div>
+                        </td>
+                        <td style="width:10%; border:none;"></td>
+                        <td style="width:45%; vertical-align:top; border:none; text-align:center; font-family:'Times New Roman', serif;">
+                            <div style="font-size:10.5pt; font-weight:bold; text-transform:uppercase;">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
+                            <div style="font-size:10pt; font-weight:bold; margin-top:2pt;">Độc lập - Tự do - Hạnh phúc</div>
+                            <div style="font-size:10pt; font-weight:bold; margin-top:1pt;">-----------------</div>
+                        </td>
+                    </tr>
+                </table>
+
+                <!-- TIÊU ĐỀ BÁO CÁO -->
+                <div style="text-align:center; margin-bottom:16pt; font-family:'Times New Roman', serif;">
+                    <h2 style="font-size:13.5pt; font-weight:bold; text-transform:uppercase; margin:0 0 4pt 0; color:#000;">
+                        KẾ HOẠCH & KẾT QUẢ THI ĐUA THÁNG ${String(m).padStart(2, '0')}/${y}
+                    </h2>
+                    <div style="font-size:10.5pt; font-style:italic; color:#333;">(Ban hành kèm theo kế hoạch hoạt động của lớp ${escapeHtmlAttr(className)})</div>
+                </div>
+            `;
+
+            // BẢNG 1: KẾ HOẠCH THÁNG
+            if (options.optPlan) {
+                const tasks = planData.tasks || [];
+                contentHtml += `
+                    <div style="font-size:11.5pt; font-weight:bold; text-transform:uppercase; margin:12pt 0 6pt 0; font-family:'Times New Roman', serif;">
+                        I. KẾ HOẠCH THÁNG ${String(m).padStart(2, '0')}/${y}
+                    </div>
+                    <table border="1" cellspacing="0" cellpadding="5" style="width:100%; border-collapse:collapse; border:1pt solid #000; margin-bottom:14pt; font-family:'Times New Roman', serif;">
+                        <thead>
+                            <tr style="background-color:#eaeaea; font-weight:bold; font-size:10.5pt;">
+                                <th style="border:1pt solid #000; width:40pt; text-align:center; padding:5pt;">TT</th>
+                                <th style="border:1pt solid #000; text-align:center; padding:5pt;">KẾ HOẠCH</th>
+                                <th style="border:1pt solid #000; width:45%; text-align:center; padding:5pt;">BIỆN PHÁP THỰC HIỆN</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${tasks.length > 0 ? tasks.map((t, idx) => `
+                                <tr style="font-size:10.5pt;">
+                                    <td style="border:1pt solid #000; text-align:center; font-weight:bold; padding:5pt; vertical-align:top;">${t.tt || (idx + 1)}</td>
+                                    <td style="border:1pt solid #000; padding:5pt; vertical-align:top; text-align:left;">${nl2brEscaped(t.plan)}</td>
+                                    <td style="border:1pt solid #000; padding:5pt; vertical-align:top; text-align:left;">${nl2brEscaped(t.measure)}</td>
+                                </tr>
+                            `).join('') : `
+                                <tr>
+                                    <td colspan="3" style="border:1pt solid #000; text-align:center; font-style:italic; padding:10pt; color:#666;">Chưa có nội dung kế hoạch nào cho tháng này.</td>
+                                </tr>
+                            `}
+                        </tbody>
+                    </table>
+                `;
+            }
+
+            // BẢNG 2: SƠ KẾT THI ĐUA HÀNG TUẦN
+            if (options.optComp) {
+                const overrides = planData.weekOverrides || {};
+                const metricRows = [
+                    { key: 'late', title: 'Số học viên đi trễ', auto: true },
+                    { key: 'absent', title: 'Số học viên vắng', auto: true },
+                    { key: 'underFive', title: 'Số học viên bị dưới 5,0', auto: true },
+                    { key: 'badAttitude', title: 'Số học viên mắc thái độ sai', auto: true },
+                    { key: 'goodScores', title: 'Số học viên có điểm tốt', auto: true },
+                    { key: 'criticized', title: 'Số học viên bị phê bình', auto: true },
+                    { key: 'goodPeriods', title: 'Số tiết học tốt', auto: false, isGoodPeriods: true },
+                    { key: 'praised', title: 'HS được khen', auto: true },
+                    { key: 'rank', title: 'Hạng thi đua', auto: false, isRank: true },
+                    { key: 'note', title: 'Ghi chú tuần (VD: Nghỉ Tết)', auto: false, isNote: true }
+                ];
+
+                contentHtml += `
+                    <div style="font-size:11.5pt; font-weight:bold; text-transform:uppercase; margin:14pt 0 6pt 0; font-family:'Times New Roman', serif;">
+                        II. SƠ KẾT THI ĐUA HÀNG TUẦN THÁNG ${m}
+                    </div>
+                    <table border="1" cellspacing="0" cellpadding="5" style="width:100%; border-collapse:collapse; border:1pt solid #000; margin-bottom:10pt; font-family:'Times New Roman', serif;">
+                        <thead>
+                            <tr style="background-color:#eaeaea; font-weight:bold; font-size:10pt;">
+                                <th style="border:1pt solid #000; text-align:left; padding:5pt; width:160pt;">Nội dung</th>
+                                ${weeks.map(w => `
+                                    <th style="border:1pt solid #000; text-align:center; padding:5pt;">
+                                        <div>${escapeHtmlAttr(w.name)}</div>
+                                        <div style="font-size:8.5pt; font-weight:normal; margin-top:2pt;">(${escapeHtmlAttr(w.label)})</div>
+                                    </th>
+                                `).join('')}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${metricRows.map(row => {
+                                return `
+                                    <tr style="font-size:10pt;">
+                                        <td style="border:1pt solid #000; padding:4.5pt 6pt; font-weight:bold; text-align:left; background-color:#fafafa;">
+                                            ${escapeHtmlAttr(row.title)}
+                                        </td>
+                                        ${weeks.map(w => {
+                                            const wOver = overrides[w.index] || {};
+                                            let cellVal = '0';
+                                            let isHighlight = false;
+
+                                            if (row.auto) {
+                                                const statObj = (weeklyStats[w.index] && weeklyStats[w.index][row.key]) || { count: 0 };
+                                                cellVal = statObj.count;
+                                            } else if (row.isGoodPeriods) {
+                                                cellVal = wOver.goodPeriods !== undefined && wOver.goodPeriods !== '' ? wOver.goodPeriods : '-';
+                                            } else if (row.isRank) {
+                                                cellVal = wOver.rank !== undefined && wOver.rank !== '' ? wOver.rank : '-';
+                                                isHighlight = true;
+                                            } else if (row.isNote) {
+                                                cellVal = wOver.note !== undefined && wOver.note !== '' ? wOver.note : '-';
+                                            }
+
+                                            return `
+                                                <td style="border:1pt solid #000; text-align:center; padding:4.5pt; ${isHighlight ? 'font-weight:bold; color:#b45309;' : ''}">
+                                                    ${escapeHtmlAttr(cellVal)}
+                                                </td>
+                                            `;
+                                        }).join('')}
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+
+                    <div style="font-size:10.5pt; font-family:'Times New Roman', serif; margin-bottom:12pt;">
+                        <b>* Kết quả thi đua tháng ${m}/${y}:</b> 
+                        <span style="font-weight:bold; color:#1e40af; text-decoration:underline;">
+                            ${escapeHtmlAttr(planData.finalRank || '................................................')}
+                        </span>
+                    </div>
+                `;
+            }
+
+            // BẢNG CHI TIẾT (NẾU ĐƯỢC CHỌN)
+            if (options.optDetails) {
+                let allDetailed = [];
+                weeks.forEach(w => {
+                    const wRecs = getWeeklyAllDetailedRecords(w);
+                    allDetailed = allDetailed.concat(wRecs);
+                });
+
+                contentHtml += `
+                    <div style="font-size:11.5pt; font-weight:bold; text-transform:uppercase; margin:14pt 0 6pt 0; font-family:'Times New Roman', serif;">
+                        III. CHI TIẾT HỌC SINH VI PHẠM & TUYÊN DƯƠNG TRONG THÁNG
+                    </div>
+                    <table border="1" cellspacing="0" cellpadding="4" style="width:100%; border-collapse:collapse; border:1pt solid #000; margin-bottom:14pt; font-family:'Times New Roman', serif;">
+                        <thead>
+                            <tr style="background-color:#eaeaea; font-weight:bold; font-size:9.5pt;">
+                                <th style="border:1pt solid #000; width:28pt; text-align:center; padding:4pt;">STT</th>
+                                <th style="border:1pt solid #000; width:55pt; text-align:center; padding:4pt;">Tuần</th>
+                                <th style="border:1pt solid #000; width:65pt; text-align:center; padding:4pt;">Ngày</th>
+                                <th style="border:1pt solid #000; text-align:left; padding:4pt;">Họ và Tên</th>
+                                <th style="border:1pt solid #000; width:50pt; text-align:center; padding:4pt;">Mã HS</th>
+                                <th style="border:1pt solid #000; width:65pt; text-align:center; padding:4pt;">Môn/Tiết</th>
+                                <th style="border:1pt solid #000; text-align:left; padding:4pt;">Nội dung ghi nhận</th>
+                                <th style="border:1pt solid #000; width:40pt; text-align:center; padding:4pt;">Điểm</th>
+                                <th style="border:1pt solid #000; width:65pt; text-align:center; padding:4pt;">Người ghi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${allDetailed.length > 0 ? allDetailed.map((item, idx) => `
+                                <tr style="font-size:9.5pt;">
+                                    <td style="border:1pt solid #000; text-align:center; padding:3pt;">${idx + 1}</td>
+                                    <td style="border:1pt solid #000; text-align:center; padding:3pt;">${escapeHtmlAttr(item.weekName)}</td>
+                                    <td style="border:1pt solid #000; text-align:center; padding:3pt;">${escapeHtmlAttr(item.date)}</td>
+                                    <td style="border:1pt solid #000; padding:3pt; font-weight:bold; text-align:left;">${escapeHtmlAttr(item.studentName)}</td>
+                                    <td style="border:1pt solid #000; text-align:center; padding:3pt;">${escapeHtmlAttr(item.studentCode)}</td>
+                                    <td style="border:1pt solid #000; text-align:center; padding:3pt;">${escapeHtmlAttr(item.subject)} ${escapeHtmlAttr(item.period)}</td>
+                                    <td style="border:1pt solid #000; padding:3pt; text-align:left;">${escapeHtmlAttr(item.reason)}</td>
+                                    <td style="border:1pt solid #000; text-align:center; font-weight:bold; padding:3pt; color:${item.points > 0 ? '#059669' : '#dc2626'};">
+                                        ${item.points > 0 ? `+${item.points}` : item.points}
+                                    </td>
+                                    <td style="border:1pt solid #000; text-align:center; padding:3pt;">${escapeHtmlAttr(item.author)}</td>
+                                </tr>
+                            `).join('') : `
+                                <tr>
+                                    <td colspan="9" style="border:1pt solid #000; text-align:center; font-style:italic; padding:8pt; color:#666;">Không có ghi nhận vi phạm hay khen thưởng nào trong tháng này.</td>
+                                </tr>
+                            `}
+                        </tbody>
+                    </table>
+                `;
+            }
+
+            // CHỮ KÝ BGH & GVCN
+            contentHtml += `
+                <table class="sig-table" style="width:100%; border:none; margin-top:20pt; page-break-inside:avoid; font-family:'Times New Roman', serif;">
+                    <tr>
+                        <td style="width:50%; text-align:center; vertical-align:top; border:none;">
+                            <div style="font-size:11pt; font-weight:bold; text-transform:uppercase;">BAN GIÁM HIỆU / TỔ TRƯỞNG</div>
+                            <div style="font-size:10pt; font-style:italic; margin-top:2pt;">(Ký và ghi rõ họ tên)</div>
+                            <div style="height:65pt;"></div>
+                        </td>
+                        <td style="width:50%; text-align:center; vertical-align:top; border:none;">
+                            <div style="font-size:10pt; font-style:italic; margin-bottom:3pt;">TP. Hồ Chí Minh, ngày ...... tháng ...... năm 202...</div>
+                            <div style="font-size:11pt; font-weight:bold; text-transform:uppercase;">GIÁO VIÊN CHỦ NHIỆM</div>
+                            <div style="font-size:10pt; font-style:italic; margin-top:2pt;">(Ký và ghi rõ họ tên)</div>
+                            <div style="height:55pt;"></div>
+                            <div style="font-size:11.5pt; font-weight:bold;">${escapeHtmlAttr(teacherName)}</div>
+                        </td>
+                    </tr>
+                </table>
+            `;
+        });
+
+        // Bọc toàn bộ vào tài liệu HTML hỗ trợ Microsoft Word chuẩn A4 Landscape
+        return `<!DOCTYPE html>
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+    <meta charset='utf-8'>
+    <title>Báo Cáo Kế Hoạch & Thi Đua</title>
+    <!--[if gte mso 9]>
+    <xml>
+        <w:WordDocument>
+            <w:View>Print</w:View>
+            <w:Zoom>100</w:Zoom>
+            <w:DoNotOptimizeForBrowser/>
+        </w:WordDocument>
+    </xml>
+    <![endif]-->
+    <style>
+        @page Section1 {
+            size: 841.9pt 595.3pt; /* A4 Landscape */
+            mso-page-orientation: landscape;
+            margin: 36.0pt 36.0pt 36.0pt 36.0pt;
+        }
+        div.Section1 { page: Section1; }
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 11pt;
+            line-height: 1.25;
+            color: #000;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .page-break {
+            mso-special-character: line-break;
+            page-break-before: always;
+            clear: all;
+        }
+    </style>
+</head>
+<body>
+    <div class="Section1">
+        ${contentHtml}
+    </div>
+</body>
+</html>`;
+    }
+
+    function buildMonthlyPlanPrintHtml(monthsList, options, className, schoolYear, teacherName) {
+        let fullHtml = '';
+
+        monthsList.forEach((mItem, mIdx) => {
+            const m = mItem.month;
+            const y = mItem.year;
+            const key = getMonthlyPlanKey(y, m);
+            const planData = (currentUser && currentUser.monthlyPlans && currentUser.monthlyPlans[key]) || {
+                tasks: getDefaultMonthlyTasks(m, y),
+                weekOverrides: {},
+                finalRank: ''
+            };
+            const weeks = getWeeksOfMonth(y, m);
+            const weeklyStats = {};
+            weeks.forEach(w => {
+                weeklyStats[w.index] = aggregateWeeklyStats(w);
+            });
+
+            const pageBreakClass = mIdx > 0 ? 'break-before-page pt-8' : '';
+
+            fullHtml += `
+                <div class="print-month-section ${pageBreakClass} space-y-6" style="${mIdx > 0 ? 'page-break-before: always; break-before: page;' : ''}">
+                    
+                    <!-- Header Báo Cáo A4 -->
+                    <div class="flex justify-between items-start border-b border-slate-700 pb-3 mb-4 text-xs font-bold text-slate-800">
+                        <div>
+                            <div class="uppercase tracking-wide font-black text-sm">TRUNG TÂM GDNN - GDTX QUẬN 12</div>
+                            <div class="text-xs font-semibold mt-0.5">LỚP: <span class="font-black text-slate-900">${escapeHtmlAttr(className)}</span> • NĂM HỌC: <span>${escapeHtmlAttr(schoolYear)}</span></div>
+                        </div>
+                        <div class="text-right">
+                            <div class="uppercase tracking-wide font-black text-xs">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
+                            <div class="italic text-[11px] text-slate-600">Độc lập - Tự do - Hạnh phúc</div>
+                            <div class="text-[11px] text-slate-500 mt-1">GVCN: <span class="font-bold text-slate-800">${escapeHtmlAttr(teacherName)}</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Tiêu đề chính -->
+                    <div class="text-center space-y-1">
+                        <h3 class="text-lg md:text-xl font-black text-slate-900 uppercase tracking-wide">
+                            KẾ HOẠCH & KẾT QUẢ THI ĐUA THÁNG ${String(m).padStart(2, '0')}/${y}
+                        </h3>
+                    </div>
+
+                    ${options.optPlan ? `
+                        <!-- BẢNG 1: KẾ HOẠCH THÁNG -->
+                        <div class="space-y-2">
+                            <h4 class="text-sm font-black text-slate-900 uppercase tracking-wide flex items-center gap-1.5">
+                                <span>I. KẾ HOẠCH THÁNG ${String(m).padStart(2, '0')}/${y}</span>
+                            </h4>
+                            <div class="border-2 border-slate-800 rounded-xl overflow-hidden">
+                                <table class="w-full border-collapse text-left text-xs font-medium text-slate-800">
+                                    <thead>
+                                        <tr class="bg-slate-100 border-b-2 border-slate-800 text-slate-900 font-black">
+                                            <th class="border-r-2 border-slate-800 p-2.5 text-center w-12">TT</th>
+                                            <th class="border-r-2 border-slate-800 p-2.5 text-center">KẾ HOẠCH</th>
+                                            <th class="border-r-2 border-slate-800 p-2.5 text-center w-[45%]">BIỆN PHÁP THỰC HIỆN</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-800">
+                                        ${(planData.tasks && planData.tasks.length > 0) ? planData.tasks.map((t, idx) => `
+                                            <tr class="hover:bg-slate-50">
+                                                <td class="border-r-2 border-slate-800 p-2 text-center font-black bg-slate-50/50">${t.tt || (idx + 1)}</td>
+                                                <td class="border-r-2 border-slate-800 p-2 whitespace-pre-line leading-relaxed font-semibold">${escapeHtmlAttr(t.plan)}</td>
+                                                <td class="border-r-2 border-slate-800 p-2 whitespace-pre-line leading-relaxed text-slate-700">${escapeHtmlAttr(t.measure)}</td>
+                                            </tr>
+                                        `).join('') : `
+                                            <tr><td colspan="3" class="p-4 text-center text-slate-400 italic">Chưa có nội dung kế hoạch nào cho tháng này.</td></tr>
+                                        `}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    ${options.optComp ? `
+                        <!-- BẢNG 2: SƠ KẾT THI ĐUA HÀNG TUẦN -->
+                        <div class="space-y-2 pt-2">
+                            <h4 class="text-sm font-black text-slate-900 uppercase tracking-wide flex items-center gap-1.5">
+                                <span>II. SƠ KẾT HÀNG TUẦN THÁNG ${m}</span>
+                            </h4>
+                            <div class="border-2 border-slate-800 rounded-xl overflow-hidden">
+                                <table class="w-full border-collapse text-center text-xs font-medium text-slate-800">
+                                    <thead>
+                                        <tr class="bg-slate-100 border-b-2 border-slate-800 text-slate-900 font-black">
+                                            <th class="border-r-2 border-slate-800 p-2.5 text-left w-56">Nội dung</th>
+                                            ${weeks.map(w => `
+                                                <th class="border-r-2 border-slate-800 p-2 text-center">
+                                                    <div class="font-black">${escapeHtmlAttr(w.name)}</div>
+                                                    <div class="text-[10px] font-mono text-slate-600 mt-0.5">${escapeHtmlAttr(w.label)}</div>
+                                                </th>
+                                            `).join('')}
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-800">
+                                        ${[
+                                            { key: 'late', title: 'Số học viên đi trễ', auto: true },
+                                            { key: 'absent', title: 'Số học viên vắng', auto: true },
+                                            { key: 'underFive', title: 'Số học viên bị dưới 5,0', auto: true },
+                                            { key: 'badAttitude', title: 'Số học viên mắc thái độ sai', auto: true },
+                                            { key: 'goodScores', title: 'Số học viên có điểm tốt', auto: true },
+                                            { key: 'criticized', title: 'Số học viên bị phê bình', auto: true },
+                                            { key: 'goodPeriods', title: 'Số tiết học tốt', auto: false, isGoodPeriods: true },
+                                            { key: 'praised', title: 'HS được khen', auto: true },
+                                            { key: 'rank', title: 'Hạng thi đua', auto: false, isRank: true },
+                                            { key: 'note', title: 'Ghi chú tuần (VD: Nghỉ Tết)', auto: false, isNote: true }
+                                        ].map((row, rIdx) => {
+                                            const bgRow = (rIdx % 2 === 1) ? 'bg-slate-50/40' : 'bg-white';
+                                            const overrides = planData.weekOverrides || {};
+                                            return `
+                                                <tr class="border-b border-slate-800 ${bgRow}">
+                                                    <td class="border-r-2 border-slate-800 p-2 text-left font-bold text-slate-900">${escapeHtmlAttr(row.title)}</td>
+                                                    ${weeks.map(w => {
+                                                        const wOver = overrides[w.index] || {};
+                                                        let val = '0';
+                                                        let extraClass = 'text-slate-800 font-bold';
+
+                                                        if (row.auto) {
+                                                            const statObj = (weeklyStats[w.index] && weeklyStats[w.index][row.key]) || { count: 0 };
+                                                            val = statObj.count;
+                                                        } else if (row.isGoodPeriods) {
+                                                            val = (wOver.goodPeriods !== undefined && wOver.goodPeriods !== '') ? wOver.goodPeriods : '-';
+                                                        } else if (row.isRank) {
+                                                            val = (wOver.rank !== undefined && wOver.rank !== '') ? wOver.rank : '-';
+                                                            extraClass = 'text-amber-700 font-black';
+                                                        } else if (row.isNote) {
+                                                            val = (wOver.note !== undefined && wOver.note !== '') ? wOver.note : '-';
+                                                            extraClass = 'text-slate-600 font-medium text-[11px]';
+                                                        }
+                                                        return `<td class="border-r-2 border-slate-800 p-2 text-center ${extraClass}">${escapeHtmlAttr(val)}</td>`;
+                                                    }).join('')}
+                                                </tr>
+                                            `;
+                                        }).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Kết quả thi đua tháng -->
+                            <div class="flex justify-between items-center text-xs text-slate-700 pt-1 font-medium">
+                                <div><b>Ghi chú:</b> Số liệu vi phạm được tự động đồng bộ từ Sổ nề nếp và Điểm danh hàng ngày.</div>
+                                <div class="font-black text-slate-900">
+                                    Kết quả thi đua tháng: <span class="text-indigo-800 underline font-black ml-1">${escapeHtmlAttr(planData.finalRank || 'Chưa xếp hạng')}</span>
+                                </div>
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    ${options.optDetails ? `
+                        <!-- BẢNG CHI TIẾT HỌC SINH -->
+                        <div class="space-y-2 pt-2">
+                            <h4 class="text-sm font-black text-slate-900 uppercase tracking-wide">
+                                <span>III. CHI TIẾT HỌC SINH VI PHẠM & TUYÊN DƯƠNG TRONG THÁNG</span>
+                            </h4>
+                            <div class="border-2 border-slate-800 rounded-xl overflow-hidden">
+                                <table class="w-full border-collapse text-left text-xs font-medium text-slate-800">
+                                    <thead>
+                                        <tr class="bg-slate-100 border-b-2 border-slate-800 text-slate-900 font-black">
+                                            <th class="border-r-2 border-slate-800 p-2 text-center w-10">STT</th>
+                                            <th class="border-r-2 border-slate-800 p-2 text-center w-16">Tuần</th>
+                                            <th class="border-r-2 border-slate-800 p-2 text-center w-20">Ngày</th>
+                                            <th class="border-r-2 border-slate-800 p-2">Họ và Tên</th>
+                                            <th class="border-r-2 border-slate-800 p-2 text-center w-16">Mã HS</th>
+                                            <th class="border-r-2 border-slate-800 p-2 text-center w-20">Môn/Tiết</th>
+                                            <th class="border-r-2 border-slate-800 p-2">Nội dung ghi nhận</th>
+                                            <th class="border-r-2 border-slate-800 p-2 text-center w-14">Điểm</th>
+                                            <th class="p-2 text-center w-20">Người ghi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-800">
+                                        ${(() => {
+                                            let allRecs = [];
+                                            weeks.forEach(w => {
+                                                allRecs = allRecs.concat(getWeeklyAllDetailedRecords(w));
+                                            });
+                                            if (allRecs.length === 0) {
+                                                return `<tr><td colspan="9" class="p-4 text-center text-slate-400 italic">Không có ghi nhận vi phạm hay khen thưởng nào trong tháng này.</td></tr>`;
+                                            }
+                                            return allRecs.map((item, idx) => `
+                                                <tr class="hover:bg-slate-50">
+                                                    <td class="border-r-2 border-slate-800 p-1.5 text-center font-bold text-slate-500">${idx + 1}</td>
+                                                    <td class="border-r-2 border-slate-800 p-1.5 text-center font-bold">${escapeHtmlAttr(item.weekName)}</td>
+                                                    <td class="border-r-2 border-slate-800 p-1.5 text-center text-slate-600">${escapeHtmlAttr(item.date)}</td>
+                                                    <td class="border-r-2 border-slate-800 p-1.5 font-black text-slate-800">${escapeHtmlAttr(item.studentName)}</td>
+                                                    <td class="border-r-2 border-slate-800 p-1.5 text-center font-mono text-slate-500">${escapeHtmlAttr(item.studentCode)}</td>
+                                                    <td class="border-r-2 border-slate-800 p-1.5 text-center font-bold text-slate-700">${escapeHtmlAttr(item.subject)} ${escapeHtmlAttr(item.period)}</td>
+                                                    <td class="border-r-2 border-slate-800 p-1.5">${escapeHtmlAttr(item.reason)}</td>
+                                                    <td class="border-r-2 border-slate-800 p-1.5 text-center font-black ${item.points > 0 ? 'text-emerald-700' : 'text-rose-700'}">
+                                                        ${item.points > 0 ? `+${item.points}` : item.points}
+                                                    </td>
+                                                    <td class="p-1.5 text-center text-slate-600 font-bold">${escapeHtmlAttr(item.author)}</td>
+                                                </tr>
+                                            `).join('');
+                                        })()}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <!-- KHỐI CHỮ KÝ BÁO CÁO -->
+                    <div class="pt-6 grid grid-cols-2 text-center text-xs font-bold text-slate-800 break-inside-avoid">
+                        <div class="space-y-1">
+                            <div class="uppercase font-black text-sm">BAN GIÁM HIỆU / TỔ TRƯỞNG</div>
+                            <div class="italic font-normal text-slate-500 text-[11px]">(Ký và ghi rõ họ tên)</div>
+                            <div class="h-20"></div>
+                        </div>
+                        <div class="space-y-1">
+                            <div class="italic font-normal text-slate-500 text-[11px]">TP. Hồ Chí Minh, ngày ...... tháng ...... năm 202...</div>
+                            <div class="uppercase font-black text-sm">GIÁO VIÊN CHỦ NHIỆM</div>
+                            <div class="italic font-normal text-slate-500 text-[11px]">(Ký và ghi rõ họ tên)</div>
+                            <div class="h-16"></div>
+                            <div class="font-black text-sm text-slate-900">${escapeHtmlAttr(teacherName)}</div>
+                        </div>
+                    </div>
+
+                </div>
+            `;
+        });
+
+        return fullHtml;
+    }
+
 
 </script>
 
@@ -9832,6 +10626,145 @@
       <div class="pt-4 mt-2 border-t border-slate-100 flex justify-end shrink-0">
         <button onclick="closeModalUi('weekly-violation-details-modal', 'weekly-violation-details-content')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-6 py-2.5 rounded-xl transition text-xs">Đóng</button>
       </div>
+    </div>
+  </div>
+
+
+  <!-- MODAL TÙY CHỌN IN VÀ XUẤT BÁO CÁO THI ĐUA (FILE WORD & IN A4) -->
+  <div id="monthly-plan-export-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[800] p-4 opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-[2rem] p-6 md:p-8 w-full max-w-xl shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col border border-white/20 max-h-[90vh] overflow-y-auto custom-scrollbar" id="monthly-plan-export-modal-content">
+      
+      <!-- Header Modal -->
+      <div class="flex justify-between items-start mb-5 pb-3 border-b border-slate-100 shrink-0">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-black">
+            <i data-lucide="printer" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base md:text-lg font-black text-slate-800">In & Xuất Báo Cáo Thi Đua</h3>
+            <p class="text-xs text-slate-400 font-medium mt-0.5">Xuất file Word (.doc) hoặc In báo cáo A4 chuẩn biểu mẫu</p>
+          </div>
+        </div>
+        <button onclick="closeModalUi('monthly-plan-export-modal', 'monthly-plan-export-modal-content')" class="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 p-2 rounded-full transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Body Modal -->
+      <div class="space-y-5">
+        
+        <!-- Khối 1: Chọn Tháng In / Xuất -->
+        <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 space-y-3">
+          <div class="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-2">
+            <i data-lucide="calendar" class="w-4 h-4 text-indigo-600"></i> Chọn Tháng Cần In / Xuất
+          </div>
+
+          <div class="space-y-3 pt-1">
+            <!-- Chế độ 1: In 1 tháng cụ thể -->
+            <label class="flex items-center gap-2.5 cursor-pointer">
+              <input type="radio" name="export-month-mode" id="export-mode-single" value="single" checked onchange="toggleExportMonthMode()" class="text-indigo-600 focus:ring-indigo-500">
+              <span class="text-xs font-bold text-slate-700">In một tháng cụ thể</span>
+            </label>
+            
+            <div id="export-single-month-controls" class="grid grid-cols-2 gap-3 pl-6">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-500 mb-1">Tháng:</label>
+                <select id="export-select-month" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 outline-none focus:border-indigo-500">
+                  <option value="9">Tháng 09</option>
+                  <option value="10">Tháng 10</option>
+                  <option value="11">Tháng 11</option>
+                  <option value="12">Tháng 12</option>
+                  <option value="1">Tháng 01</option>
+                  <option value="2">Tháng 02</option>
+                  <option value="3">Tháng 03</option>
+                  <option value="4">Tháng 04</option>
+                  <option value="5">Tháng 05</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-500 mb-1">Năm:</label>
+                <select id="export-select-year" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 outline-none focus:border-indigo-500">
+                  <option value="2026">2026</option>
+                  <option value="2027">2027</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Chế độ 2: In nhiều tháng / Gộp kỳ -->
+            <div class="border-t border-slate-200/60 pt-3">
+              <label class="flex items-center gap-2.5 cursor-pointer">
+                <input type="radio" name="export-month-mode" id="export-mode-multiple" value="multiple" onchange="toggleExportMonthMode()" class="text-indigo-600 focus:ring-indigo-500">
+                <span class="text-xs font-bold text-slate-700">In nhiều tháng / Gộp học kỳ</span>
+              </label>
+
+              <div id="export-multiple-month-controls" class="hidden pl-6 pt-2.5 space-y-2.5">
+                <div class="flex flex-wrap gap-1.5">
+                  <button type="button" onclick="selectExportMonthsPreset('hk1')" class="px-2.5 py-1 text-[11px] font-black bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg border border-indigo-200 transition">Học kỳ 1 (Tháng 9 → 1)</button>
+                  <button type="button" onclick="selectExportMonthsPreset('hk2')" class="px-2.5 py-1 text-[11px] font-black bg-purple-50 text-purple-700 hover:bg-purple-100 rounded-lg border border-purple-200 transition">Học kỳ 2 (Tháng 2 → 5)</button>
+                  <button type="button" onclick="selectExportMonthsPreset('all')" class="px-2.5 py-1 text-[11px] font-black bg-amber-50 text-amber-700 hover:bg-amber-100 rounded-lg border border-amber-200 transition">Cả năm học (Tháng 9 → 5)</button>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2 pt-1">
+                  <label class="flex items-center gap-1.5 text-xs text-slate-600 font-medium cursor-pointer"><input type="checkbox" class="export-month-cb" value="9-2026"> T.09/2026</label>
+                  <label class="flex items-center gap-1.5 text-xs text-slate-600 font-medium cursor-pointer"><input type="checkbox" class="export-month-cb" value="10-2026"> T.10/2026</label>
+                  <label class="flex items-center gap-1.5 text-xs text-slate-600 font-medium cursor-pointer"><input type="checkbox" class="export-month-cb" value="11-2026"> T.11/2026</label>
+                  <label class="flex items-center gap-1.5 text-xs text-slate-600 font-medium cursor-pointer"><input type="checkbox" class="export-month-cb" value="12-2026"> T.12/2026</label>
+                  <label class="flex items-center gap-1.5 text-xs text-slate-600 font-medium cursor-pointer"><input type="checkbox" class="export-month-cb" value="1-2027"> T.01/2027</label>
+                  <label class="flex items-center gap-1.5 text-xs text-slate-600 font-medium cursor-pointer"><input type="checkbox" class="export-month-cb" value="2-2027"> T.02/2027</label>
+                  <label class="flex items-center gap-1.5 text-xs text-slate-600 font-medium cursor-pointer"><input type="checkbox" class="export-month-cb" value="3-2027"> T.03/2027</label>
+                  <label class="flex items-center gap-1.5 text-xs text-slate-600 font-medium cursor-pointer"><input type="checkbox" class="export-month-cb" value="4-2027"> T.04/2027</label>
+                  <label class="flex items-center gap-1.5 text-xs text-slate-600 font-medium cursor-pointer"><input type="checkbox" class="export-month-cb" value="5-2027"> T.05/2027</label>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Khối 2: Tùy Chọn Nội Dung Báo Cáo -->
+        <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 space-y-2.5">
+          <div class="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-2">
+            <i data-lucide="check-square" class="w-4 h-4 text-emerald-600"></i> Nội Dung Báo Cáo
+          </div>
+          <div class="space-y-2 pl-1 pt-1">
+            <label class="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer">
+              <input type="checkbox" id="export-opt-plan" checked class="rounded text-indigo-600 focus:ring-indigo-500">
+              <span>Bảng 1: Kế Hoạch Tháng (Kế hoạch & Biện pháp thực hiện)</span>
+            </label>
+            <label class="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer">
+              <input type="checkbox" id="export-opt-competition" checked class="rounded text-indigo-600 focus:ring-indigo-500">
+              <span>Bảng 2: Sơ Kết Thi Đua Hàng Tuần & Kết Quả Tháng</span>
+            </label>
+            <label class="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer">
+              <input type="checkbox" id="export-opt-details" class="rounded text-indigo-600 focus:ring-indigo-500">
+              <span>Kèm bảng chi tiết học sinh vi phạm / tuyên dương theo tuần</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Khối 3: Hai nút xuất file Word hoặc In trực tiếp -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+          <!-- Nút Xuất File Word -->
+          <button type="button" onclick="executeExportMonthlyPlan('word')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 hover:scale-[1.01]">
+            <i data-lucide="file-text" class="w-5 h-5"></i>
+            <div class="text-left leading-tight">
+              <div class="text-xs">Tải File Word (.doc)</div>
+              <div class="text-[10px] text-blue-200 font-medium">Mở bằng Microsoft Word</div>
+            </div>
+          </button>
+
+          <!-- Nút In Báo Cáo Trực Tiếp -->
+          <button type="button" onclick="executeExportMonthlyPlan('print')" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-black py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 hover:scale-[1.01]">
+            <i data-lucide="printer" class="w-5 h-5"></i>
+            <div class="text-left leading-tight">
+              <div class="text-xs">In Trực Tiếp (A4 / PDF)</div>
+              <div class="text-[10px] text-slate-300 font-medium">In hoặc xuất PDF trình duyệt</div>
+            </div>
+          </button>
+        </div>
+
+      </div>
+
     </div>
   </div>
 
