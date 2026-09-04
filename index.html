@@ -607,7 +607,7 @@
           </div>
 
           <!-- 4. BOTTOM GRID: TIMETABLE (GỌN) + TN THPT (MỚI) + TOP THI ĐUA -->
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div id="overview-bottom-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             <!-- Cột 1: Today's Timetable (Giảm chiều rộng lại thành 1 cột, 5 tiết xếp dọc mini) -->
             <div class="bg-white p-4 md:p-5 rounded-[1.8rem] border border-slate-100 shadow-sm flex flex-col justify-between">
               <div class="flex justify-between items-center border-b border-slate-100 pb-2.5 mb-2.5">
@@ -631,7 +631,7 @@
             </div>
 
             <!-- Cột 2: THÔNG TIN VÀ DỰ BÁO XÉT TỐT NGHIỆP THPT (MỚI) -->
-            <div class="bg-gradient-to-b from-white to-indigo-50/30 p-4 md:p-5 rounded-[1.8rem] border border-indigo-100/80 shadow-sm flex flex-col justify-between relative overflow-hidden">
+            <div id="overview-graduation-card" class="bg-gradient-to-b from-white to-indigo-50/30 p-4 md:p-5 rounded-[1.8rem] border border-indigo-100/80 shadow-sm flex flex-col justify-between relative overflow-hidden">
               <div>
                 <div class="flex justify-between items-center border-b border-indigo-100/60 pb-2.5 mb-3">
                   <div class="flex items-center gap-2">
@@ -3909,6 +3909,10 @@
         
         document.getElementById('header-title').innerText = titles[tabId] || 'Hệ Thống';
         if(tabId === 'tab-tn-thpt') {
+            if (currentUser && currentUser.role === 'gvbm') {
+                switchTab('tab-overview');
+                return;
+            }
             initGraduationTab();
         }
         if(tabId === 'tab-monthly-plan') {
@@ -7436,7 +7440,7 @@
             'btn-tab-attendance': !isGVBM,
             'btn-tab-timetable': true,
             'btn-tab-seating': true,
-            'btn-tab-tn-thpt': true,
+            'btn-tab-tn-thpt': !isGVBM,
             'btn-tab-monthly-plan': !isGVBM && !isStudent,
             'btn-tab-gifts': !isGVBM && !isStudent,
             'btn-tab-students': !isStudent,
@@ -7454,6 +7458,25 @@
             }
         });
         
+        // Ẩn Card Thông Tin Tốt Nghiệp THPT 2027 ở Trang Tổng Quan đối với GVBM
+        const overviewGradCard = document.getElementById('overview-graduation-card');
+        const overviewBottomGrid = document.getElementById('overview-bottom-grid');
+        if (overviewGradCard) {
+            if (isGVBM) {
+                overviewGradCard.classList.add('hidden');
+                if (overviewBottomGrid) {
+                    overviewBottomGrid.classList.remove('lg:grid-cols-3');
+                    overviewBottomGrid.classList.add('lg:grid-cols-2');
+                }
+            } else {
+                overviewGradCard.classList.remove('hidden');
+                if (overviewBottomGrid) {
+                    overviewBottomGrid.classList.remove('lg:grid-cols-2');
+                    overviewBottomGrid.classList.add('lg:grid-cols-3');
+                }
+            }
+        }
+
         const dividers = document.querySelectorAll('#main-sidebar nav div');
         dividers.forEach(div => {
             if (isStudent || isGVBM) div.classList.add('hidden');
@@ -9161,14 +9184,20 @@
     function getWeeksOfMonth(year, month) {
         const weeks = [];
         const firstDay = new Date(year, month - 1, 1);
-        const lastDay = new Date(year, month, 0);
 
-        // Tìm ngày thứ Hai đầu tiên của tuần chứa ngày 1
+        // Tìm ngày thứ Hai của tuần chứa ngày 1 của tháng
         const dayOfWeek = (firstDay.getDay() + 6) % 7; // 0 = Thứ 2, 6 = CN
         let curMonday = new Date(firstDay);
         curMonday.setDate(firstDay.getDate() - dayOfWeek);
 
-        // Riêng Tháng 9 (đầu năm học mới): Bắt đầu thi đua từ tuần ngày 07/09, bỏ tuần đầu tiên trước ngày 07/09
+        // Kiểm tra xem tuần này có thuộc về tháng hiện tại không (theo ngày Thứ Năm - ngày quyết định đa số ngày học trong tuần)
+        let thu = new Date(curMonday);
+        thu.setDate(curMonday.getDate() + 3);
+        if (thu.getMonth() + 1 !== month && curMonday <= firstDay) {
+            curMonday.setDate(curMonday.getDate() + 7);
+        }
+
+        // Riêng Tháng 9: Bắt đầu năm học mới từ tuần ngày 07/09 (bỏ tuần tựu trường trước ngày 07/09)
         if (month === 9) {
             while (curMonday.getMonth() < 8 || (curMonday.getMonth() === 8 && curMonday.getDate() < 7)) {
                 curMonday.setDate(curMonday.getDate() + 7);
@@ -9176,11 +9205,17 @@
         }
 
         let weekNum = 1;
-        while (weekNum <= 5) {
+        while (weekNum <= 6) {
             const saturday = new Date(curMonday);
             saturday.setDate(curMonday.getDate() + 5);
 
-            if (curMonday > lastDay && weekNum > 4) break;
+            const curThu = new Date(curMonday);
+            curThu.setDate(curMonday.getDate() + 3);
+
+            // Nếu ngày Thứ Năm đã sang tháng kế tiếp thì tuần này thuộc về tháng sau
+            if (curThu.getMonth() + 1 !== month) {
+                break;
+            }
 
             const startD = String(curMonday.getDate()).padStart(2, '0');
             const startM = String(curMonday.getMonth() + 1).padStart(2, '0');
@@ -9202,7 +9237,6 @@
 
             weekNum++;
             curMonday.setDate(curMonday.getDate() + 7);
-            if (curMonday > lastDay && weekNum > 4) break;
         }
         return weeks;
     }
