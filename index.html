@@ -1655,9 +1655,18 @@
       </div>
       
       <!-- Fields -->
-      <div class="mb-6">
-        <label id="timetable-period-modal-input-label" class="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wide">Môn học (Nhập môn khác nếu không có ở trên)</label>
-        <input type="text" id="modal-period-subject" class="w-full mt-1.5 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl ring-theme outline-none font-bold text-slate-800 text-sm" placeholder="Tên môn học...">
+      <div class="mb-5 space-y-3">
+        <div>
+          <label id="timetable-period-modal-input-label" class="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wide">Môn học (Nhập môn khác nếu không có ở trên)</label>
+          <input type="text" id="modal-period-subject" oninput="handleModalPeriodSubjectInput(this.value)" class="w-full mt-1.5 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl ring-theme outline-none font-bold text-slate-800 text-sm" placeholder="Tên môn học...">
+        </div>
+        <div id="timetable-period-teacher-container">
+          <label class="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wide flex items-center justify-between">
+            <span>Giáo viên bộ môn</span>
+            <span class="text-[9.5px] text-indigo-600 font-bold">✏️ Ghi đè nếu thay đổi</span>
+          </label>
+          <input type="text" id="modal-period-teacher" class="w-full mt-1.5 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl ring-theme outline-none font-bold text-slate-800 text-sm" placeholder="Nhập họ tên GV phụ trách môn...">
+        </div>
       </div>
       
       <!-- Actions -->
@@ -1734,11 +1743,21 @@
 
       <!-- Tab 2: Phân công Giáo viên theo từng môn -->
       <div id="st-tab-teachers" class="space-y-3 hidden">
-        <p class="text-xs text-slate-400 font-medium">Nhập họ tên Giáo viên bộ môn tương ứng cho từng môn để hiển thị trên Thời khóa biểu:</p>
+        <div class="flex items-center justify-between">
+          <p class="text-xs text-slate-500 font-medium">Nhập hoặc ghi đè họ tên Giáo viên bộ môn tương ứng cho từng môn (tự động cập nhật Thời khóa biểu):</p>
+          <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded-full shrink-0">✏️ Ghi đè tự do</span>
+        </div>
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[320px] overflow-y-auto custom-scrollbar p-1 mb-2" id="subject-teachers-modal-grid">
           <!-- Inputs dynamically generated -->
         </div>
-        <button onclick="closeModalUi('subject-teachers-modal', 'subject-teachers-content')" class="w-full bg-theme-grad text-white font-black py-3 rounded-xl hover:scale-[1.01] transition shadow-md text-xs uppercase tracking-wider">Hoàn tất</button>
+        <div class="flex gap-2 pt-1 border-t border-slate-100">
+          <button onclick="saveAllSubjectTeachersFromModal()" class="flex-1 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-black py-3 rounded-xl hover:scale-[1.01] transition shadow-md text-xs uppercase tracking-wider flex items-center justify-center gap-1.5">
+            <i data-lucide="save" class="w-4 h-4"></i> Lưu & Ghi đè tất cả GVBM
+          </button>
+          <button onclick="closeModalUi('subject-teachers-modal', 'subject-teachers-content')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-5 py-3 rounded-xl transition text-xs">
+            Đóng
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -1803,8 +1822,15 @@
               </select>
             </div>
             <div class="space-y-1.5">
-              <label class="text-xs font-black uppercase tracking-wider text-slate-600">Tên GVBM</label>
+              <div class="flex items-center justify-between">
+                <label class="text-xs font-black uppercase tracking-wider text-slate-600">Tên GVBM</label>
+                <span class="text-[9.5px] font-bold text-indigo-600" title="Có thể sửa và ghi đè tên giáo viên">✏️ Có thể ghi đè</span>
+              </div>
               <input type="text" id="gvbm-vio-teacher-name" class="w-full px-3 py-3 bg-slate-50 border-2 border-slate-200 rounded-2xl text-xs font-bold text-slate-800 outline-none focus:border-rose-400 focus:bg-white transition" placeholder="VD: Thầy Nam...">
+              <label class="flex items-center gap-1.5 pt-0.5 cursor-pointer" title="Tự động cập nhật tên giáo viên mới này cho môn học">
+                <input type="checkbox" id="gvbm-vio-save-teacher" checked class="w-3.5 h-3.5 rounded text-indigo-600 accent-indigo-600 cursor-pointer">
+                <span class="text-[10px] text-slate-500 font-bold">Lưu & ghi đè làm GV môn này</span>
+              </label>
             </div>
           </div>
         </div>
@@ -4236,8 +4262,7 @@
                         teacher = parts[1] || '';
                     } else {
                         subject = val;
-                        const teachers = currentUser.subjectTeachers || {};
-                        teacher = val ? (teachers[val] || '') : '';
+                        teacher = val ? getSubjectTeacher(val) : '';
                     }
                 }
                 
@@ -4318,6 +4343,15 @@
         document.getElementById('timetable-period-modal-title').innerText = `${periodLabel} - Thứ ${day}`;
         document.getElementById('modal-period-subject').value = subject;
         
+        const teacherInput = document.getElementById('modal-period-teacher');
+        const teacherContainer = document.getElementById('timetable-period-teacher-container');
+        if (teacherContainer) {
+            teacherContainer.classList.toggle('hidden', isTeacherMode);
+        }
+        if (teacherInput && !isTeacherMode) {
+            teacherInput.value = subject ? getSubjectTeacher(subject) : '';
+        }
+        
         const headerEl = document.getElementById('timetable-period-modal-header');
         const gridLabelEl = document.getElementById('timetable-period-modal-grid-label');
         const inputLabelEl = document.getElementById('timetable-period-modal-input-label');
@@ -4378,6 +4412,10 @@
         
         document.getElementById('btn-period-save').onclick = () => {
             const subVal = document.getElementById('modal-period-subject').value.trim();
+            const teacherVal = document.getElementById('modal-period-teacher')?.value?.trim();
+            if (subVal && teacherVal !== undefined && currentTimetableViewMode !== 'teacher') {
+                saveSubjectTeacher(subVal, teacherVal);
+            }
             savePeriodData(subVal);
             closeModalUi('timetable-period-modal', 'timetable-period-content');
         };
@@ -4386,6 +4424,15 @@
         lucide.createIcons();
     }
     
+    
+    function handleModalPeriodSubjectInput(subject) {
+        const teacherInput = document.getElementById('modal-period-teacher');
+        if (teacherInput && currentTimetableViewMode !== 'teacher') {
+            const current = getSubjectTeacher(subject);
+            teacherInput.value = current || '';
+        }
+    }
+
     function selectModalSubject(subject) {
         document.getElementById('modal-period-subject').value = subject;
         savePeriodData(subject);
@@ -4540,17 +4587,41 @@
             "Thể Dục", "GDQP", "HĐTN"
         ];
         
-        const teachers = currentUser.subjectTeachers || {};
-        
         grid.innerHTML = subjects.map(sub => {
-            const val = teachers[sub] || '';
+            const val = getSubjectTeacher(sub);
             return `
-                <div class="space-y-1">
-                    <label class="text-[10px] font-bold text-slate-500 uppercase">${sub}</label>
-                    <input type="text" value="${val}" onchange="saveSubjectTeacher('${sub}', this.value)" class="w-full px-3 py-2 border border-slate-200 rounded-xl bg-white focus:bg-slate-50 ring-theme outline-none text-xs font-bold text-slate-700" placeholder="Tên GV...">
+                <div class="space-y-1 bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 focus-within:border-indigo-500 focus-within:bg-white transition">
+                    <div class="flex items-center justify-between">
+                        <label class="text-[10.5px] font-black text-slate-700 uppercase tracking-wider">${sub}</label>
+                        <span class="text-[9px] text-slate-400 font-medium">Thay đổi</span>
+                    </div>
+                    <input type="text" data-subject="${sub}" value="${val}" 
+                        oninput="handleSubjectTeacherInput('${sub}', this.value)" 
+                        class="subject-teacher-modal-input w-full px-2.5 py-1.5 border border-slate-200 rounded-lg bg-white outline-none text-xs font-bold text-slate-800 focus:border-indigo-500 transition shadow-inner" 
+                        placeholder="Nhập tên GV...">
                 </div>
             `;
         }).join('');
+        lucide.createIcons();
+    }
+
+    function handleSubjectTeacherInput(subject, teacherName) {
+        saveSubjectTeacher(subject, teacherName);
+    }
+
+    function saveAllSubjectTeachersFromModal() {
+        const inputs = document.querySelectorAll('.subject-teacher-modal-input');
+        inputs.forEach(inp => {
+            const sub = inp.getAttribute('data-subject');
+            if (sub) {
+                saveSubjectTeacher(sub, inp.value);
+            }
+        });
+        saveUserToStorage();
+        if (typeof renderOverview === 'function') renderOverview();
+        if (typeof applyTimetable === 'function') applyTimetable();
+        showModal('success', 'Đã Lưu & Ghi Đè Thành Công', 'Danh sách giáo viên bộ môn đã được ghi đè và lưu lại an toàn!');
+        closeModalUi('subject-teachers-modal', 'subject-teachers-content');
     }
 
     // --- GVBM VIOLATION LOGIC ---
@@ -4602,14 +4673,16 @@
             }).join('');
         }
 
-        // Restore saved teacher name or default
-        const savedTeacher = localStorage.getItem('lastGvbmTeacherName');
-        const teacherInput = document.getElementById('gvbm-vio-teacher-name');
-        if (teacherInput && savedTeacher) teacherInput.value = savedTeacher;
-        
-        const savedSub = localStorage.getItem('lastGvbmSubject');
+        // Restore saved subject and load corresponding subject teacher
+        const savedSub = localStorage.getItem('lastGvbmSubject') || 'Toán';
         const subSelect = document.getElementById('gvbm-vio-subject');
-        if (subSelect && savedSub) subSelect.value = savedSub;
+        if (subSelect) subSelect.value = savedSub;
+
+        const teacherInput = document.getElementById('gvbm-vio-teacher-name');
+        if (teacherInput && subSelect) {
+            const assigned = getSubjectTeacher(subSelect.value);
+            teacherInput.value = assigned || localStorage.getItem('lastGvbmTeacherName') || '';
+        }
 
         openModalUi('gvbm-violation-modal', 'gvbm-violation-content');
         lucide.createIcons();
@@ -4638,9 +4711,15 @@
     function handleGvbmSubjectChange() {
         const subSelect = document.getElementById('gvbm-vio-subject');
         const teacherInput = document.getElementById('gvbm-vio-teacher-name');
-        if (subSelect && teacherInput && currentUser && currentUser.subjectTeachers) {
-            const assigned = currentUser.subjectTeachers[subSelect.value];
-            if (assigned && !teacherInput.value) teacherInput.value = assigned;
+        if (subSelect && teacherInput) {
+            const assigned = getSubjectTeacher(subSelect.value);
+            // Nạp tên giáo viên của môn được chọn (có thể sửa đổi, ghi đè tự do)
+            if (assigned) {
+                teacherInput.value = assigned;
+            } else {
+                teacherInput.value = '';
+                teacherInput.placeholder = `Nhập tên GV môn ${subSelect.value}...`;
+            }
         }
     }
 
@@ -4667,6 +4746,12 @@
         // Save last used teacher name and subject
         localStorage.setItem('lastGvbmTeacherName', teacherName);
         localStorage.setItem('lastGvbmSubject', subject);
+
+        // Ghi đè và lưu lại tên GVBM cho môn học nếu checkbox được chọn
+        const shouldSaveTeacher = document.getElementById('gvbm-vio-save-teacher')?.checked;
+        if (teacherName && teacherName !== 'GVBM' && shouldSaveTeacher) {
+            saveSubjectTeacher(subject, teacherName);
+        }
 
         const d = new Date();
         const dateStr = `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
@@ -4695,12 +4780,49 @@
         }, 350);
     }
     
+    function normalizeSubjectKey(name) {
+        if (!name) return '';
+        const n = removeAccents(name.toLowerCase().trim()).replace(/[^a-z0-9]/g, '');
+        if (n.includes('toan')) return 'Toán';
+        if (n.includes('nguvan') || n === 'van') return 'Ngữ Văn';
+        if (n.includes('tienganh') || n === 'anh') return 'Tiếng Anh';
+        if (n.includes('vatly') || n === 'ly') return 'Vật Lý';
+        if (n.includes('hoahoc') || n === 'hoa') return 'Hóa Học';
+        if (n.includes('sinhhoc') || n === 'sinh') return 'Sinh Học';
+        if (n.includes('lichsu') || n === 'su') return 'Lịch Sử';
+        if (n.includes('dialy') || n === 'dia') return 'Địa Lý';
+        if (n.includes('gdkt') || n.includes('gdcd') || n.includes('phapluat')) return 'GDKT-PL';
+        if (n.includes('tinhoc') || n === 'tin') return 'Tin Học';
+        if (n.includes('congnghe') || n === 'cn') return 'Công Nghệ';
+        if (n.includes('theduc') || n.includes('gdtc')) return 'Thể Dục';
+        if (n.includes('gdqp') || n.includes('quocphong')) return 'GDQP';
+        if (n.includes('hdtn') || n.includes('trainhiem') || n.includes('shdc') || n.includes('shcn')) return 'HĐTN';
+        return name.trim();
+    }
+
+    function getSubjectTeacher(subject) {
+        if (!subject || !currentUser) return '';
+        const teachers = currentUser.subjectTeachers || {};
+        const norm = normalizeSubjectKey(subject);
+        return teachers[norm] || teachers[subject] || '';
+    }
+
     function saveSubjectTeacher(subject, teacherName) {
+        if (!currentUser) return;
         if (!currentUser.subjectTeachers) currentUser.subjectTeachers = {};
-        currentUser.subjectTeachers[subject] = teacherName.trim();
+        const norm = normalizeSubjectKey(subject);
+        const val = teacherName ? teacherName.trim() : '';
+        
+        // Ghi đè tên mới vào cả khóa chuẩn hóa và khóa gốc
+        currentUser.subjectTeachers[norm] = val;
+        if (subject && subject !== norm) {
+            currentUser.subjectTeachers[subject] = val;
+        }
+        
+        // Lưu dữ liệu vào storage
         saveUserToStorage();
-        applyTimetable();
-        renderOverview();
+        if (typeof applyTimetable === 'function') applyTimetable();
+        if (typeof renderOverviewTimetable === 'function') renderOverviewTimetable();
     }
 
     // --- ATTENDANCE ---
