@@ -9,7 +9,7 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     :root {
       --c1: #10b981; 
@@ -2002,7 +2002,7 @@
   </div>
 
   <!-- Modal Báo Lỗi Tùy Chỉnh -->
-  <div id="custom-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[700] p-4 opacity-0 transition-opacity duration-300">
+  <div id="custom-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[900] p-4 opacity-0 transition-opacity duration-300">
     <div class="bg-white rounded-[2rem] p-6 md:p-8 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col items-center border border-white/20" id="custom-modal-content">
       <div id="custom-modal-icon" class="w-20 h-20 rounded-full flex items-center justify-center mb-5 shadow-inner ring-4 ring-white"></div>
       <h3 id="custom-modal-title" class="text-xl md:text-2xl font-black text-slate-800 text-center mb-2 tracking-tight">Thông báo</h3>
@@ -5302,14 +5302,111 @@
         lucide.createIcons();
     }
 
+    // Bộ dựng file PDF khổ chuẩn A4 thuần JavaScript (100% Offline, không phụ thuộc thư viện ngoài, tương thích mọi trình duyệt)
+    function generateA4PdfBlobFromJpeg(jpegDataUrl, imgW, imgH) {
+        const base64Data = jpegDataUrl.replace(/^data:image\/[a-z]+;base64,/, '');
+        const binaryStr = window.atob(base64Data);
+        const jpegBytes = new Uint8Array(binaryStr.length);
+        for (let i = 0; i < binaryStr.length; i++) {
+            jpegBytes[i] = binaryStr.charCodeAt(i);
+        }
+
+        // Kích thước chuẩn A4 tính theo điểm PDF (72 points / inch): 210mm x 297mm = 595.28 x 841.89 pt
+        const a4W = 595.28;
+        const a4H = 841.89;
+        const margin = 18;
+        const maxW = a4W - margin * 2;
+        const maxH = a4H - margin * 2;
+
+        let renderW = maxW;
+        let renderH = (imgH * renderW) / imgW;
+        if (renderH > maxH) {
+            renderH = maxH;
+            renderW = (imgW * renderH) / imgH;
+        }
+        const posX = (a4W - renderW) / 2;
+        const posY = a4H - margin - renderH; // Hệ tọa độ PDF tính từ góc dưới bên trái
+
+        const contentStream = 'q ' + renderW.toFixed(2) + ' 0 0 ' + renderH.toFixed(2) + ' ' + posX.toFixed(2) + ' ' + posY.toFixed(2) + ' cm /Im1 Do Q';
+
+        const enc = new TextEncoder();
+        const parts = [];
+        const offsets = [];
+        let currentLen = 0;
+
+        function pushStr(s) {
+            const b = enc.encode(s);
+            parts.push(b);
+            currentLen += b.length;
+        }
+        function pushBytes(b) {
+            parts.push(b);
+            currentLen += b.length;
+        }
+
+        // PDF 1.4 header với binary marker
+        pushBytes(new Uint8Array([0x25, 0x50, 0x44, 0x46, 0x2d, 0x31, 0x2e, 0x34, 0x0a, 0x25, 0xe2, 0xe3, 0xcf, 0xd3, 0x0a]));
+
+        // Object 1: Catalog
+        offsets.push(currentLen);
+        pushStr('1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n');
+
+        // Object 2: Pages
+        offsets.push(currentLen);
+        pushStr('2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n');
+
+        // Object 3: Page (A4 Portrait)
+        offsets.push(currentLen);
+        pushStr('3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /XObject << /Im1 4 0 R >> >> /Contents 5 0 R >>\nendobj\n');
+
+        // Object 4: Image XObject
+        offsets.push(currentLen);
+        pushStr('4 0 obj\n<< /Type /XObject /Subtype /Image /Width ' + imgW + ' /Height ' + imgH + ' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ' + jpegBytes.length + ' >>\nstream\n');
+        pushBytes(jpegBytes);
+        pushStr('\nendstream\nendobj\n');
+
+        // Object 5: Content stream
+        offsets.push(currentLen);
+        const streamBytes = enc.encode(contentStream);
+        pushStr('5 0 obj\n<< /Length ' + streamBytes.length + ' >>\nstream\n');
+        pushBytes(streamBytes);
+        pushStr('\nendstream\nendobj\n');
+
+        // xref table
+        const xrefOffset = currentLen;
+        let xref = 'xref\n0 6\n0000000000 65535 f \n';
+        for (let i = 0; i < 5; i++) {
+            xref += String(offsets[i]).padStart(10, '0') + ' 00000 n \n';
+        }
+        xref += 'trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n' + xrefOffset + '\n%%EOF\n';
+        pushStr(xref);
+
+        return new Blob(parts, { type: 'application/pdf' });
+    }
+
+    function triggerBlobDownload(blob, filename) {
+        const downloadUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setTimeout(() => URL.revokeObjectURL(downloadUrl), 5000);
+    }
+
+    let isExportingGvbmPdf = false;
     async function downloadGvbmGuidePdf() {
-        if (!currentUser) return;
+        if (!currentUser || isExportingGvbmPdf) return;
+        isExportingGvbmPdf = true;
+
         syncGvbmAccountUI();
         const cleanClass = (currentUser.className || 'Lop').replace(/[^a-zA-Z0-9_-]/g, '_');
+        const filename = `Huong_Dan_Su_Dung_GVBM_Lop_${cleanClass}.pdf`;
         
-        showModal('info', 'Đang xuất file PDF', 'Hệ thống đang khởi tạo file PDF Hướng dẫn sử dụng GVBM khổ A4, quá trình tải sẽ bắt đầu ngay...');
+        showModal('info', 'Đang xuất file PDF', 'Hệ thống đang khởi tạo file PDF Hướng dẫn sử dụng GVBM khổ A4 sắc nét, quá trình tải sẽ bắt đầu ngay...');
 
-        // Tạo container tạm thời ở góc viewport để html2canvas chụp đúng kích thước và tọa độ
+        // Container tạm thời trong DOM để html2canvas kết xuất chính xác không gian và ảnh
         const tempContainer = document.createElement('div');
         tempContainer.id = 'gvbm-pdf-export-temp';
         tempContainer.style.position = 'fixed';
@@ -5317,54 +5414,99 @@
         tempContainer.style.left = '0';
         tempContainer.style.width = '794px';
         tempContainer.style.background = '#ffffff';
-        tempContainer.style.zIndex = '999999';
-        tempContainer.style.padding = '10px 14px';
+        tempContainer.style.zIndex = '600'; // Nằm dưới custom-modal (z-[900])
+        tempContainer.style.padding = '14px 20px';
         tempContainer.style.boxSizing = 'border-box';
         tempContainer.innerHTML = buildGvbmGuideDocumentHtml();
 
         document.body.appendChild(tempContainer);
 
         try {
-            // Đợi 300ms để DOM và ảnh QR code base64 hoàn tất vẽ
-            await new Promise(resolve => setTimeout(resolve, 300));
+            // Chờ 250ms để layout và ảnh QR base64 vẽ hoàn chỉnh
+            await new Promise(resolve => setTimeout(resolve, 250));
 
-            if (typeof html2pdf !== 'undefined') {
-                const opt = {
-                    margin: [4, 6, 4, 6],
-                    filename: `Huong_Dan_Su_Dung_GVBM_Lop_${cleanClass}.pdf`,
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: {
-                        scale: 2,
-                        useCORS: true,
-                        logging: false,
-                        scrollX: 0,
-                        scrollY: 0,
-                        windowWidth: 820
-                    },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-                };
-
-                await html2pdf().set(opt).from(tempContainer).save();
-                closeModalUi('custom-modal', 'custom-modal-content');
-                setTimeout(() => {
-                    showModal('success', 'Thành công', 'Đã tải xuống file PDF Hướng dẫn sử dụng GVBM thành công!');
-                }, 350);
-            } else {
-                closeModalUi('custom-modal', 'custom-modal-content');
-                printGvbmGuide();
+            if (typeof html2canvas === 'undefined') {
+                throw new Error('Thư viện html2canvas chưa sẵn sàng');
             }
-        } catch (err) {
-            console.error('Lỗi khi xuất PDF qua html2pdf:', err);
-            closeModalUi('custom-modal', 'custom-modal-content');
-            setTimeout(() => {
-                showModal('warning', 'Lưu ý', 'Đang chuyển sang giao diện In để bạn có thể chọn "Lưu dưới dạng PDF" (Save as PDF).');
-                printGvbmGuide();
-            }, 350);
-        } finally {
+
+            const canvas = await html2canvas(tempContainer, {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: '#ffffff',
+                logging: false,
+                windowWidth: 1024,
+                x: 0,
+                y: 0,
+                width: tempContainer.offsetWidth || 794,
+                height: tempContainer.offsetHeight,
+                scrollX: 0,
+                scrollY: 0
+            });
+
+            // Gỡ bỏ container tạm
             if (tempContainer && tempContainer.parentNode) {
                 tempContainer.parentNode.removeChild(tempContainer);
             }
+
+            const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+            // Kiểm tra jsPDF (nếu có từ CDN thì dùng, nếu không thì dùng bộ dựng thuần tiêu chuẩn)
+            const jsPDFClass = (window.jspdf && window.jspdf.jsPDF) ? window.jspdf.jsPDF : (typeof jsPDF !== 'undefined' ? jsPDF : null);
+            let downloaded = false;
+
+            if (typeof jsPDFClass === 'function') {
+                try {
+                    const pdf = new jsPDFClass({
+                        orientation: 'portrait',
+                        unit: 'mm',
+                        format: 'a4'
+                    });
+                    const pageWidth = 210;
+                    const pageHeight = 297;
+                    const margin = 8;
+                    const maxW = pageWidth - margin * 2;
+                    const maxH = pageHeight - margin * 2;
+
+                    let renderW = maxW;
+                    let renderH = (canvas.height * renderW) / canvas.width;
+                    if (renderH > maxH) {
+                        renderH = maxH;
+                        renderW = (canvas.width * renderH) / canvas.height;
+                    }
+                    const posX = (pageWidth - renderW) / 2;
+                    const posY = (pageHeight - renderH) / 2;
+
+                    pdf.addImage(imgData, 'JPEG', posX, posY, renderW, renderH);
+                    pdf.save(filename);
+                    downloaded = true;
+                } catch (jspdfErr) {
+                    console.warn('Lỗi jsPDF, kích hoạt bộ dựng PDF chuẩn tích hợp:', jspdfErr);
+                }
+            }
+
+            if (!downloaded) {
+                const pdfBlob = generateA4PdfBlobFromJpeg(imgData, canvas.width, canvas.height);
+                triggerBlobDownload(pdfBlob, filename);
+                downloaded = true;
+            }
+
+            closeModalUi('custom-modal', 'custom-modal-content');
+            setTimeout(() => {
+                showModal('success', 'Thành công', 'Đã tải xuống file PDF Hướng dẫn sử dụng GVBM thành công! Quý Thầy/Cô có thể mở xem và in ấn trực tiếp khổ A4.');
+            }, 350);
+
+        } catch (err) {
+            console.error('Lỗi khi xuất PDF:', err);
+            if (tempContainer && tempContainer.parentNode) {
+                tempContainer.parentNode.removeChild(tempContainer);
+            }
+            closeModalUi('custom-modal', 'custom-modal-content');
+            setTimeout(() => {
+                showModal('warning', 'Lưu ý', 'Không thể tạo file PDF tự động. Hệ thống sẽ mở giao diện In để bạn chọn "Lưu dưới dạng PDF" (Save as PDF).');
+                printGvbmGuide();
+            }, 350);
+        } finally {
+            isExportingGvbmPdf = false;
         }
     }
 
