@@ -9,6 +9,7 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     :root {
       --c1: #10b981; 
@@ -159,15 +160,34 @@
       will-change: transform, opacity;
     }
 
-    /* CSS In ấn báo cáo Kế hoạch & Thi đua chuẩn A4 Landscape */
+    /* CSS In ấn báo cáo Kế hoạch & Hướng dẫn sử dụng chuẩn A4 */
     @media print {
       body * {
         visibility: hidden !important;
       }
-      #monthly-plan-print-container, #monthly-plan-print-container * {
+      /* In Hướng dẫn sử dụng GVBM */
+      body.print-gvbm-guide #gvbm-guide-print-container, 
+      body.print-gvbm-guide #gvbm-guide-print-container * {
         visibility: visible !important;
       }
-      #monthly-plan-print-container {
+      body.print-gvbm-guide #gvbm-guide-print-container {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: white !important;
+        display: block !important;
+        box-shadow: none !important;
+        border: none !important;
+      }
+      /* Mặc định in Báo cáo Kế hoạch tháng & Thi đua tuần */
+      body:not(.print-gvbm-guide) #monthly-plan-print-container, 
+      body:not(.print-gvbm-guide) #monthly-plan-print-container * {
+        visibility: visible !important;
+      }
+      body:not(.print-gvbm-guide) #monthly-plan-print-container {
         position: absolute !important;
         left: 0 !important;
         top: 0 !important;
@@ -1624,6 +1644,62 @@
                     <button onclick="disconnectSupabase()" class="bg-rose-50 text-rose-600 border border-rose-100 px-4 py-2.5 rounded-xl font-bold hover:bg-rose-100 transition text-xs flex items-center justify-center gap-1.5"><i data-lucide="link-2" class="w-4 h-4"></i> Ngắt kết nối</button>
                   </div>
                   <div id="supabase-status-text" class="text-[10px] md:text-xs font-bold text-slate-400 mt-1.5 flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-slate-300 inline-block animate-pulse"></span> Chưa kết nối đám mây</div>
+              </div>
+
+              <!-- HƯỚNG DẪN SỬ DỤNG CHO GIÁO VIÊN BỘ MÔN (GVBM) -->
+              <div id="gvbm-guide-settings-card" class="bg-gradient-to-br from-indigo-50/90 via-white to-purple-50/70 p-5 md:p-7 rounded-3xl border-2 border-indigo-200/80 shadow-sm flex flex-col justify-between space-y-4">
+                <div>
+                  <div class="flex items-center justify-between gap-2 mb-2">
+                    <div class="flex items-center gap-2.5">
+                      <div class="w-11 h-11 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-black shadow-md shadow-indigo-200 shrink-0">
+                        <i data-lucide="book-open" class="w-5 h-5"></i>
+                      </div>
+                      <div>
+                        <h3 class="text-base md:text-lg font-black text-slate-800 tracking-tight">Hướng Dẫn Sử Dụng Cho GVBM</h3>
+                        <p class="text-xs text-slate-500 font-medium">Tài liệu nề nếp, sơ đồ chỗ ngồi & đánh lỗi vi phạm</p>
+                      </div>
+                    </div>
+                    <span class="bg-indigo-100 text-indigo-700 text-[10px] font-black px-2.5 py-1 rounded-full uppercase shrink-0">Bản In A4</span>
+                  </div>
+
+                  <p class="text-xs text-slate-600 leading-relaxed mb-3">
+                    Tài liệu tóm tắt quy trình và hướng dẫn thao tác đăng nhập, tra cứu sơ đồ chỗ ngồi, thời khóa biểu và ghi nhận lỗi vi phạm nề nếp dành riêng cho Giáo viên bộ môn. GVCN có thể tải file PDF hoặc in trực tiếp ra giấy A4 để gửi cho các Thầy/Cô bộ môn.
+                  </p>
+
+                  <!-- Thông tin tài khoản GVBM hiện tại -->
+                  <div class="bg-white/90 p-3.5 rounded-2xl border border-indigo-100 space-y-2 text-xs shadow-xs">
+                    <div class="flex items-center justify-between text-slate-500 font-bold border-b border-slate-100 pb-2">
+                      <span class="flex items-center gap-1.5"><i data-lucide="key" class="w-3.5 h-3.5 text-indigo-500"></i> Tài khoản GVBM của lớp:</span>
+                      <button onclick="copyGvbmCredentials()" class="text-indigo-600 hover:text-indigo-800 font-bold flex items-center gap-1 text-[11px]" title="Sao chép thông tin gửi Zalo">
+                        <i data-lucide="copy" class="w-3 h-3"></i> Sao chép
+                      </button>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 font-mono text-[11px] pt-0.5">
+                      <div class="bg-slate-50 px-2.5 py-1.5 rounded-xl border border-slate-100">
+                        <span class="text-slate-400 font-sans font-medium text-[10px] block">Username:</span>
+                        <b id="settings-gvbm-guide-user" class="text-indigo-700 font-bold">gvbm_12a17</b>
+                      </div>
+                      <div class="bg-slate-50 px-2.5 py-1.5 rounded-xl border border-slate-100">
+                        <span class="text-slate-400 font-sans font-medium text-[10px] block">Password:</span>
+                        <b id="settings-gvbm-guide-pass" class="text-slate-700 font-bold">gvbm123</b>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Nút thao tác -->
+                <div class="pt-1 space-y-2">
+                  <div class="flex flex-wrap gap-2">
+                    <button onclick="openGvbmGuideModal()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 py-2.5 rounded-xl font-bold shadow-md hover:scale-[1.01] transition text-xs flex items-center justify-center gap-1.5">
+                      <i data-lucide="eye" class="w-4 h-4"></i> Xem Hướng Dẫn
+                    </button>
+                    <button onclick="downloadGvbmGuidePdf()" class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-3.5 py-2.5 rounded-xl font-black shadow-md hover:scale-[1.01] transition text-xs flex items-center justify-center gap-1.5" title="Tải file PDF chuẩn A4">
+                      <i data-lucide="file-down" class="w-4 h-4"></i> Tải File PDF
+                    </button>
+                    <button onclick="printGvbmGuide()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2.5 rounded-xl font-bold transition text-xs flex items-center justify-center gap-1.5" title="In trực tiếp ra giấy A4">
+                      <i data-lucide="printer" class="w-4 h-4"></i> In A4
+                    </button>
+                  </div>
                 </div>
               </div>
           </div>
@@ -2087,6 +2163,60 @@
         </button>
       </div>
     </div>
+  </div>
+
+  <!-- Modal Hướng Dẫn Sử Dụng Dành Cho GVBM (Xem Trước, Tải PDF, In A4) -->
+  <div id="gvbm-guide-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[750] p-3 md:p-6 opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-[2rem] p-5 md:p-7 w-full max-w-4xl shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col max-h-[92vh] border border-white/20" id="gvbm-guide-content">
+      <!-- Header Modal -->
+      <div class="flex justify-between items-center pb-4 border-b border-slate-100 shrink-0">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold shadow-xs">
+            <i data-lucide="book-open" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base md:text-lg font-black text-slate-800 tracking-tight">Hướng Dẫn Sử Dụng Dành Cho Giáo Viên Bộ Môn</h3>
+            <p class="text-[11px] text-slate-400 font-bold">Xem tài liệu chuẩn bị sẵn sàng để in ấn hoặc xuất file PDF phát cho Thầy/Cô</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="downloadGvbmGuidePdf()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-1.5" title="Tải file PDF chuẩn A4">
+            <i data-lucide="file-down" class="w-4 h-4"></i> <span class="hidden sm:inline">Tải PDF</span>
+          </button>
+          <button onclick="printGvbmGuide()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-1.5" title="In trực tiếp ra giấy A4">
+            <i data-lucide="printer" class="w-4 h-4"></i> <span class="hidden sm:inline">In A4</span>
+          </button>
+          <button onclick="closeModalUi('gvbm-guide-modal', 'gvbm-guide-content')" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-full text-slate-500 transition">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Preview Body (Scrollable) -->
+      <div class="flex-1 overflow-y-auto custom-scrollbar my-4 p-2 md:p-4 bg-slate-100/70 rounded-2xl border border-slate-200/80">
+        <div id="gvbm-guide-content-body" class="bg-white p-6 md:p-10 rounded-2xl shadow-sm border border-slate-200/60 max-w-3xl mx-auto">
+          <!-- Dynamically populated by buildGvbmGuideDocumentHtml() -->
+        </div>
+      </div>
+
+      <!-- Footer Modal -->
+      <div class="flex items-center justify-between pt-3 border-t border-slate-100 shrink-0 text-xs">
+        <span class="text-slate-400 font-medium hidden sm:inline">Khổ giấy chuẩn: A4 Dọc (Portrait) • Tự động gắn thông tin lớp & tài khoản</span>
+        <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+          <button onclick="copyGvbmCredentials()" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition flex items-center gap-1.5">
+            <i data-lucide="copy" class="w-4 h-4"></i> Sao chép tin nhắn Zalo
+          </button>
+          <button onclick="closeModalUi('gvbm-guide-modal', 'gvbm-guide-content')" class="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold transition">
+            Đóng
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Container phục vụ in ấn và xuất file PDF chuẩn A4 cho Hướng dẫn sử dụng GVBM -->
+  <div id="gvbm-guide-print-container" style="position: fixed; left: -99999px; top: 0; width: 794px; background: #fff; z-index: -9999;">
+    <!-- Nội dung in ấn sẽ được nạp động khi in hoặc xuất file PDF -->
   </div>
 
   <!-- Modal Cập nhật Thông tin GVCN & Lớp -->
@@ -4279,6 +4409,7 @@
             }
         }
         
+        syncGvbmAccountUI();
         configureSidebarForRole();
         lucide.createIcons(); 
     }
@@ -4872,6 +5003,7 @@
         
         currentUser.gvbmAccount = { username, pass, enabled };
         saveAppData();
+        syncGvbmAccountUI();
         showModal('success', 'Thành công', `Đã lưu tài khoản dùng chung cho GVBM:\nTài khoản: ${username} | Mật khẩu: ${pass}`);
     }
 
@@ -4886,6 +5018,280 @@
         }).catch(err => {
             showPrompt('Sao chép tài khoản', 'Hãy sao chép nội dung bên dưới:', text, () => {});
         });
+    }
+
+    /* ========================================================================= */
+    /* HƯỚNG DẪN SỬ DỤNG DÀNH CHO GIÁO VIÊN BỘ MÔN (GVBM)                       */
+    /* ========================================================================= */
+
+    function syncGvbmAccountUI() {
+        if (!currentUser) return;
+        if (!currentUser.gvbmAccount) {
+            const cleanClass = (currentUser.className || '12a17').toLowerCase().replace(/[^a-z0-9]/g, '');
+            currentUser.gvbmAccount = {
+                username: `gvbm_${cleanClass}`,
+                pass: 'gvbm123',
+                enabled: true
+            };
+        }
+        const userEl = document.getElementById('settings-gvbm-guide-user');
+        const passEl = document.getElementById('settings-gvbm-guide-pass');
+        if (userEl) userEl.innerText = currentUser.gvbmAccount.username || '';
+        if (passEl) passEl.innerText = currentUser.gvbmAccount.pass || '';
+    }
+
+    function buildGvbmGuideDocumentHtml() {
+        const cUser = currentUser || {};
+        const className = cUser.className || '12A17';
+        const teacherName = cUser.teacherName || 'Thầy Tuấn';
+        const year = cUser.year || '2026 - 2027';
+        const cleanClass = className.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const gvbmUser = (cUser.gvbmAccount && cUser.gvbmAccount.username) ? cUser.gvbmAccount.username : `gvbm_${cleanClass}`;
+        const gvbmPass = (cUser.gvbmAccount && cUser.gvbmAccount.pass) ? cUser.gvbmAccount.pass : 'gvbm123';
+        const loginUrl = window.location.origin + window.location.pathname;
+        const today = new Date();
+        const dateStr = `ngày ${String(today.getDate()).padStart(2, '0')} tháng ${String(today.getMonth() + 1).padStart(2, '0')} năm ${today.getFullYear()}`;
+
+        return `
+        <div class="gvbm-guide-doc-wrapper" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #1e293b; background: #ffffff; line-height: 1.45; font-size: 13px; max-width: 100%; box-sizing: border-box;">
+          
+          <!-- Quốc hiệu & Tiêu ngữ -->
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #0f172a; padding-bottom: 10px; margin-bottom: 14px;">
+            <div style="text-align: left; font-size: 11.5px; line-height: 1.35;">
+              <div style="font-weight: 700; text-transform: uppercase; color: #475569; font-size: 10px; letter-spacing: 0.2px;">SỞ GIÁO DỤC VÀ ĐÀO TẠO TP. HỒ CHÍ MINH</div>
+              <div style="font-weight: 900; text-transform: uppercase; color: #0f172a; font-size: 12px; margin-top: 1px;">TẬP THỂ LỚP: ${className}</div>
+              <div style="font-size: 10.5px; color: #64748b; margin-top: 2px;">Năm học: <b style="color:#0f172a;">${year}</b> • GVCN: <b style="color:#0f172a;">${teacherName}</b></div>
+            </div>
+            <div style="text-align: center; font-size: 11.5px; line-height: 1.35;">
+              <div style="font-weight: 800; text-transform: uppercase; color: #0f172a; font-size: 11.5px;">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
+              <div style="font-weight: 700; color: #334155; font-size: 11px;">Độc lập - Tự do - Hạnh phúc</div>
+              <div style="margin: 4px auto 0; width: 110px; border-bottom: 1.5px solid #0f172a;"></div>
+            </div>
+          </div>
+
+          <!-- Tiêu đề văn bản -->
+          <div style="text-align: center; margin: 12px 0 14px;">
+            <h1 style="font-size: 16px; font-weight: 900; text-transform: uppercase; color: #1e1b4b; margin: 0 0 3px; letter-spacing: 0.3px;">
+              HƯỚNG DẪN SỬ DỤNG HỆ THỐNG QUẢN LÝ LỚP HỌC
+            </h1>
+            <div style="font-size: 12px; font-weight: 700; font-style: italic; color: #4338ca;">
+              (DÀNH CHO QUÝ THẦY / CÔ GIÁO VIÊN BỘ MÔN - GVBM)
+            </div>
+          </div>
+
+          <!-- Khung thông tin tài khoản đăng nhập -->
+          <div style="background-color: #f8fafc; border: 1.5px solid #c7d2fe; border-radius: 8px; padding: 9px 12px; margin-bottom: 12px;">
+            <div style="font-weight: 800; color: #312e81; font-size: 12px; margin-bottom: 6px; display: flex; align-items: center; gap: 5px;">
+              <span style="font-size: 14px;">🔑</span> THÔNG TIN ĐĂNG NHẬP DÙNG CHUNG CHO GIÁO VIÊN BỘ MÔN:
+            </div>
+            <div style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 6px 12px; font-size: 11.5px;">
+              <div><b>• Đường link truy cập:</b> <span style="color: #2563eb; font-weight: 600; word-break: break-all;">${loginUrl}</span></div>
+              <div><b>• Phạm vi lớp:</b> <span style="font-weight: 700; color: #0f172a;">Lớp ${className} (Năm học ${year})</span></div>
+              <div><b>• Tên đăng nhập (Username):</b> <span style="background: #e0e7ff; color: #3730a3; padding: 2px 7px; border-radius: 4px; font-weight: 800; font-family: monospace;">${gvbmUser}</span></div>
+              <div><b>• Mật khẩu mặc định (Password):</b> <span style="background: #e0e7ff; color: #3730a3; padding: 2px 7px; border-radius: 4px; font-weight: 800; font-family: monospace;">${gvbmPass}</span></div>
+            </div>
+          </div>
+
+          <!-- Mục 1: Mục đích & Ý nghĩa -->
+          <div style="margin-bottom: 11px;">
+            <div style="font-weight: 800; color: #0f172a; font-size: 12.5px; text-transform: uppercase; margin-bottom: 3px; display: flex; align-items: center; gap: 5px;">
+              <span>1. MỤC ĐÍCH & Ý NGHĨA</span>
+            </div>
+            <p style="margin: 0; text-align: justify; font-size: 11.5px; line-height: 1.45; color: #334155;">
+              Nhằm tăng cường phối hợp kịp thời giữa <b>Giáo viên bộ môn (GVBM)</b> và <b>Giáo viên chủ nhiệm (GVCN)</b> trong quản lý nề nếp, trật tự và kỷ luật học đường. Hệ thống cho phép Thầy/Cô tra cứu nhanh vị trí sơ đồ bàn học, thông tin học sinh và <b>ghi nhận trực tiếp vi phạm nề nếp</b> phát sinh trong tiết dạy. Điểm trừ được tự động tổng hợp vào bảng thi đua tuần và tháng của lớp.
+            </p>
+          </div>
+
+          <!-- Mục 2: Hướng dẫn đăng nhập -->
+          <div style="margin-bottom: 11px;">
+            <div style="font-weight: 800; color: #0f172a; font-size: 12.5px; text-transform: uppercase; margin-bottom: 3px;">
+              2. CÁCH THỨC ĐĂNG NHẬP VÀO HỆ THỐNG
+            </div>
+            <div style="font-size: 11.5px; line-height: 1.45; color: #334155;">
+              <div>• <b>Bước 1:</b> Mở trình duyệt web (Google Chrome, Safari, Cốc Cốc...) trên điện thoại hoặc máy tính và truy cập link trên.</div>
+              <div>• <b>Bước 2:</b> Tại màn hình đăng nhập, nhập <b>Tài khoản:</b> <code style="font-weight: 700; color: #3730a3;">${gvbmUser}</code> và <b>Mật khẩu:</b> <code style="font-weight: 700; color: #3730a3;">${gvbmPass}</code>.</div>
+              <div>• <b>Bước 3:</b> Nhấn <b>"Đăng nhập"</b> để vào trang chủ làm việc chuyên biệt dành cho Giáo viên bộ môn.</div>
+            </div>
+          </div>
+
+          <!-- Mục 3: Các tính năng chính -->
+          <div style="margin-bottom: 11px;">
+            <div style="font-weight: 800; color: #0f172a; font-size: 12.5px; text-transform: uppercase; margin-bottom: 4px;">
+              3. CÁC TÍNH NĂNG CHÍNH DÀNH CHO GVBM
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 11px;">
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 8px;">
+                <b style="color: #1e293b;">📋 Sơ Đồ Chỗ Ngồi Lớp:</b>
+                <div style="color: #475569; margin-top: 1px;">Tra cứu chính xác vị trí bàn ngồi theo dãy, tổ học tập để dễ dàng điểm danh, gọi bài và nhắc nhở.</div>
+              </div>
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 8px;">
+                <b style="color: #1e293b;">📅 Thời Khóa Biểu:</b>
+                <div style="color: #475569; margin-top: 1px;">Xem lịch phân công tiết học, thứ trong tuần, môn học và giáo viên phụ trách.</div>
+              </div>
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 8px;">
+                <b style="color: #1e293b;">👥 Danh Sách Học Sinh:</b>
+                <div style="color: #475569; margin-top: 1px;">Xem họ tên, ngày sinh, ban cán sự lớp (Lớp trưởng, Lớp phó, Tổ trưởng).</div>
+              </div>
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 8px;">
+                <b style="color: #1e293b;">⚠️ Đánh Lỗi Vi Phạm Nề Nếp:</b>
+                <div style="color: #475569; margin-top: 1px;">Chức năng trọng tâm ghi nhận lỗi học sinh ngay trong tiết dạy và tự động cập nhật trừ điểm.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mục 4: Quy trình đánh lỗi -->
+          <div style="margin-bottom: 11px;">
+            <div style="font-weight: 800; color: #0f172a; font-size: 12.5px; text-transform: uppercase; margin-bottom: 4px;">
+              4. QUY TRÌNH THỰC HIỆN "ĐÁNH LỖI VI PHẠM" TRONG TIẾT HỌC
+            </div>
+            <div style="background: #fff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 7px 10px; font-size: 11px; line-height: 1.45; color: #1e293b;">
+              <div>• <b>Bước 1:</b> Tại màn hình <b>Sơ đồ lớp</b> hoặc <b>Danh sách học sinh</b>, bấm vào học sinh vi phạm hoặc nhấn nút đỏ <b>"Đánh lỗi vi phạm"</b> (biểu tượng ⚠️).</div>
+              <div>• <b>Bước 2:</b> Chọn <b>Môn học</b> (Toán, Văn, Tiếng Anh, Lý, Hóa...) và <b>Tiết học</b> (Tiết 1 đến Tiết 5).</div>
+              <div>• <b>Bước 3:</b> Bấm chọn lỗi vi phạm nhanh trong danh mục (hoặc nhập nội dung chi tiết). Hệ thống tự động điền mức điểm trừ.</div>
+              <div>• <b>Bước 4:</b> Nhấn <b>"Ghi nhận vi phạm"</b>. Dữ liệu sẽ lập tức lưu vào hệ thống và thông báo ngay đến GVCN.</div>
+            </div>
+          </div>
+
+          <!-- Mục 5: Bảng quy chuẩn trừ điểm -->
+          <div style="margin-bottom: 12px;">
+            <div style="font-weight: 800; color: #0f172a; font-size: 12.5px; text-transform: uppercase; margin-bottom: 4px;">
+              5. BẢNG QUY CHUẨN ĐIỂM TRỪ CÁC LỖI THƯỜNG GẶP (THEO NỘI QUY LỚP)
+            </div>
+            <table style="width: 100%; border-collapse: collapse; font-size: 11px; text-align: left;">
+              <thead>
+                <tr style="background-color: #f1f5f9; border: 1px solid #cbd5e1;">
+                  <th style="padding: 4px 6px; border: 1px solid #cbd5e1; width: 32px; text-align: center;">STT</th>
+                  <th style="padding: 4px 6px; border: 1px solid #cbd5e1;">Lỗi vi phạm trong tiết học</th>
+                  <th style="padding: 4px 6px; border: 1px solid #cbd5e1; width: 85px; text-align: center;">Điểm trừ</th>
+                  <th style="padding: 4px 6px; border: 1px solid #cbd5e1; width: 170px;">Hình thức phối hợp xử lý</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="padding: 3.5px 6px; border: 1px solid #e2e8f0; text-align: center;">1</td>
+                  <td style="padding: 3.5px 6px; border: 1px solid #e2e8f0;">Không thuộc bài / Không làm bài tập về nhà</td>
+                  <td style="padding: 3.5px 6px; border: 1px solid #e2e8f0; text-align: center; font-weight: 700; color: #dc2626;">- 5 điểm</td>
+                  <td style="padding: 3.5px 6px; border: 1px solid #e2e8f0;">Nhắc nhở, ghi sổ đầu bài</td>
+                </tr>
+                <tr style="background: #f8fafc;">
+                  <td style="padding: 3.5px 6px; border: 1px solid #e2e8f0; text-align: center;">2</td>
+                  <td style="padding: 3.5px 6px; border: 1px solid #e2e8f0;">Nói chuyện riêng, gây ồn làm mất trật tự</td>
+                  <td style="padding: 3.5px 6px; border: 1px solid #e2e8f0; text-align: center; font-weight: 700; color: #dc2626;">- 5 điểm</td>
+                  <td style="padding: 3.5px 6px; border: 1px solid #e2e8f0;">Đổi chỗ, khiển trách trước lớp</td>
+                </tr>
+                <tr>
+                  <td style="padding: 3.5px 6px; border: 1px solid #e2e8f0; text-align: center;">3</td>
+                  <td style="padding: 3.5px 6px; border: 1px solid #e2e8f0;">Sử dụng điện thoại di động trong giờ học</td>
+                  <td style="padding: 3.5px 6px; border: 1px solid #e2e8f0; text-align: center; font-weight: 700; color: #dc2626;">- 10 điểm</td>
+                  <td style="padding: 3.5px 6px; border: 1px solid #e2e8f0;">Tạm giữ ĐT bàn giao GVCN</td>
+                </tr>
+                <tr style="background: #f8fafc;">
+                  <td style="padding: 3.5px 6px; border: 1px solid #e2e8f0; text-align: center;">4</td>
+                  <td style="padding: 3.5px 6px; border: 1px solid #e2e8f0;">Ngủ gật, làm việc riêng, không chú ý bài giảng</td>
+                  <td style="padding: 3.5px 6px; border: 1px solid #e2e8f0; text-align: center; font-weight: 700; color: #dc2626;">- 5 điểm</td>
+                  <td style="padding: 3.5px 6px; border: 1px solid #e2e8f0;">Yêu cầu đứng dậy rửa mặt</td>
+                </tr>
+                <tr>
+                  <td style="padding: 3.5px 6px; border: 1px solid #e2e8f0; text-align: center;">5</td>
+                  <td style="padding: 3.5px 6px; border: 1px solid #e2e8f0;">Không mang sách giáo khoa, tập ghi môn học</td>
+                  <td style="padding: 3.5px 6px; border: 1px solid #e2e8f0; text-align: center; font-weight: 700; color: #dc2626;">- 5 điểm</td>
+                  <td style="padding: 3.5px 6px; border: 1px solid #e2e8f0;">Xem chung bạn & ghi bù</td>
+                </tr>
+                <tr style="background: #f8fafc;">
+                  <td style="padding: 3.5px 6px; border: 1px solid #e2e8f0; text-align: center;">6</td>
+                  <td style="padding: 3.5px 6px; border: 1px solid #e2e8f0;">Đi học trễ, vào lớp muộn không có lý do</td>
+                  <td style="padding: 3.5px 6px; border: 1px solid #e2e8f0; text-align: center; font-weight: 700; color: #dc2626;">- 5 điểm</td>
+                  <td style="padding: 3.5px 6px; border: 1px solid #e2e8f0;">Ghi nhận điểm chuyên cần</td>
+                </tr>
+                <tr>
+                  <td style="padding: 3.5px 6px; border: 1px solid #e2e8f0; text-align: center;">7</td>
+                  <td style="padding: 3.5px 6px; border: 1px solid #e2e8f0;">Vô lễ, có thái độ chống đối giáo viên</td>
+                  <td style="padding: 3.5px 6px; border: 1px solid #e2e8f0; text-align: center; font-weight: 700; color: #dc2626;">- 20 điểm</td>
+                  <td style="padding: 3.5px 6px; border: 1px solid #e2e8f0;">Lập biên bản báo GVCN & BGH</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Mục 6: Lưu ý & Chữ ký -->
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 10px; font-size: 11px;">
+            <div style="max-width: 55%; color: #475569; font-style: italic; line-height: 1.4;">
+              <b>* Lưu ý bảo mật:</b> Tài khoản dành riêng cho Thầy/Cô giảng dạy tại lớp. Quý Thầy/Cô vui lòng giữ bí mật mật khẩu, tuyệt đối không cung cấp cho học sinh. Trân trọng cảm ơn sự phối hợp của Quý Thầy/Cô!
+            </div>
+            <div style="text-align: center; width: 40%;">
+              <div style="font-style: italic; color: #64748b; margin-bottom: 2px;">TP. Hồ Chí Minh, ${dateStr}</div>
+              <div style="font-weight: 800; text-transform: uppercase; color: #0f172a;">GIÁO VIÊN CHỦ NHIỆM</div>
+              <div style="font-size: 10px; color: #94a3b8; font-style: italic; margin-bottom: 40px;">(Ký và ghi rõ họ tên)</div>
+              <div style="font-weight: 800; font-size: 12.5px; color: #1e1b4b;">${teacherName}</div>
+            </div>
+          </div>
+        </div>
+        `;
+    }
+
+    function openGvbmGuideModal() {
+        if (!currentUser) return;
+        syncGvbmAccountUI();
+        const bodyEl = document.getElementById('gvbm-guide-content-body');
+        if (bodyEl) {
+            bodyEl.innerHTML = buildGvbmGuideDocumentHtml();
+        }
+        openModalUi('gvbm-guide-modal', 'gvbm-guide-content');
+        lucide.createIcons();
+    }
+
+    function downloadGvbmGuidePdf() {
+        if (!currentUser) return;
+        syncGvbmAccountUI();
+        const cleanClass = (currentUser.className || 'Lop').replace(/[^a-zA-Z0-9_-]/g, '_');
+        const printEl = document.getElementById('gvbm-guide-print-container');
+        if (!printEl) return;
+        
+        printEl.innerHTML = buildGvbmGuideDocumentHtml();
+        
+        if (typeof html2pdf !== 'undefined') {
+            showModal('info', 'Đang xuất file PDF', 'Hệ thống đang khởi tạo file PDF Hướng dẫn sử dụng GVBM khổ A4, quá trình tải sẽ bắt đầu ngay...');
+            
+            const opt = {
+                margin: [6, 8, 6, 8],
+                filename: `Huong_Dan_Su_Dung_GVBM_Lop_${cleanClass}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true, logging: false },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            
+            html2pdf().set(opt).from(printEl).save().then(() => {
+                closeModal();
+                showToast('Đã tải xuống file PDF thành công!');
+            }).catch(err => {
+                console.error('Lỗi khi xuất PDF qua html2pdf:', err);
+                closeModal();
+                printGvbmGuide();
+            });
+        } else {
+            printGvbmGuide();
+        }
+    }
+
+    function printGvbmGuide() {
+        if (!currentUser) return;
+        syncGvbmAccountUI();
+        const printEl = document.getElementById('gvbm-guide-print-container');
+        if (!printEl) return;
+        
+        printEl.innerHTML = buildGvbmGuideDocumentHtml();
+        document.body.classList.add('print-gvbm-guide');
+        
+        window.print();
+        
+        const cleanup = () => {
+            document.body.classList.remove('print-gvbm-guide');
+            window.removeEventListener('afterprint', cleanup);
+        };
+        window.addEventListener('afterprint', cleanup);
+        setTimeout(() => {
+            document.body.classList.remove('print-gvbm-guide');
+        }, 1500);
     }
 
     function renderSubjectTeachersModalGrid() {
