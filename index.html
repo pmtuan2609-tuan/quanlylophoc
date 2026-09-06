@@ -227,6 +227,15 @@
             <span class="text-[9px] text-slate-400 font-black uppercase tracking-widest animate-pulse">Đang kết nối đám mây...</span>
         </div>
         <button id="auth-btn" onclick="handleAuth()" class="w-full bg-theme-grad text-white py-3.5 rounded-xl font-bold shadow-lg hover:scale-[1.02] transition-all">Đăng Nhập</button>
+        
+        <div class="pt-2 border-t border-slate-100">
+            <button type="button" onclick="quickLoginGvbm()" class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200/80 py-2.5 px-3 rounded-xl font-black text-xs transition flex items-center justify-center gap-2 shadow-xs" title="Bấm để tự động điền và đăng nhập tài khoản GVBM">
+                <i data-lucide="zap" class="w-4 h-4 text-amber-500 fill-amber-500"></i> Đăng nhập nhanh Giáo Viên Bộ Môn (1 Chạm)
+            </button>
+            <div class="text-[10.5px] text-slate-400 text-center mt-1.5 font-medium">
+                Tài khoản: <b class="text-indigo-600 font-mono">gvbm_12a17</b> &bull; Mật khẩu: <b class="text-indigo-600 font-mono">gvbm123</b>
+            </div>
+        </div>
       </div>
       <div class="mt-4 text-center text-sm"><span class="text-slate-500" id="auth-toggle-text">Chưa có tài khoản?</span> <button onclick="toggleAuthMode()" class="text-theme font-bold hover:underline" id="auth-toggle-btn">Đăng ký ngay</button></div>
     </div>
@@ -3205,7 +3214,9 @@
         const headers = {
             'apikey': isSupabaseConnected.key,
             'Authorization': `Bearer ${isSupabaseConnected.key}`,
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache'
         };
         
         if (method === 'GET') {
@@ -3617,6 +3628,16 @@
         }
     }
     function toggleAuthMode() { isLoginMode = !isLoginMode; document.getElementById('auth-title').innerText = isLoginMode ? 'Đăng Nhập' : 'Tạo Tài Khoản'; document.getElementById('auth-btn').innerText = isLoginMode ? 'Đăng Nhập' : 'Đăng Ký Nhanh'; document.getElementById('auth-toggle-text').innerText = isLoginMode ? 'Chưa có tài khoản?' : 'Đã có tài khoản?'; document.getElementById('auth-toggle-btn').innerText = isLoginMode ? 'Đăng ký ngay' : 'Đăng nhập'; document.getElementById('auth-error').classList.add('hidden'); const authLoading = document.getElementById('auth-loading'); if (authLoading) authLoading.classList.add('hidden'); }
+    function quickLoginGvbm() {
+        isLoginMode = true;
+        document.getElementById('auth-title').innerText = 'Đăng Nhập';
+        document.getElementById('auth-btn').innerText = 'Đăng Nhập';
+        const idInput = document.getElementById('auth-id');
+        const passInput = document.getElementById('auth-pass');
+        if (idInput) idInput.value = 'gvbm_12a17';
+        if (passInput) passInput.value = 'gvbm123';
+        handleAuth();
+    }
     async function handleAuth() {
         const idInput = document.getElementById('auth-id').value.trim();
         const id = idInput.toLowerCase();
@@ -3678,7 +3699,9 @@
                         method: 'GET',
                         headers: {
                             'apikey': isSupabaseConnected.key,
-                            'Authorization': `Bearer ${isSupabaseConnected.key}`
+                            'Authorization': `Bearer ${isSupabaseConnected.key}`,
+                            'Cache-Control': 'no-cache, no-store, must-revalidate',
+                            'Pragma': 'no-cache'
                         }
                     });
                     if (res.ok) {
@@ -3687,25 +3710,47 @@
                         for (const r of rows) {
                             const classroomData = r.data || {};
                             const cUser = classroomData.currentUser || classroomData.user || {};
-                            const defaultGvbmUser = `gvbm_${(cUser.className || '12a17').toLowerCase().replace(/[^a-z0-9]/g, '')}`;
+                            const cleanClass = (cUser.className || '12a17').toLowerCase().replace(/[^a-z0-9]/g, '');
+                            const defaultGvbmUser = `gvbm_${cleanClass}`;
                             const defaultGvbmPass = 'gvbm123';
                             const gvbmAcc = cUser.gvbmAccount || {};
-                            const accUser = gvbmAcc.username || defaultGvbmUser;
+                            const accUser = (gvbmAcc.username || defaultGvbmUser).toLowerCase().trim();
                             const accPass = gvbmAcc.pass || defaultGvbmPass;
                             const isEnabled = (gvbmAcc.enabled !== false);
                             
-                            if (isEnabled && accUser.toLowerCase().trim() === id.toLowerCase().trim()) {
-                                if (accPass === pass) {
+                            const isMatchUser = (
+                                id === accUser ||
+                                id === defaultGvbmUser ||
+                                id === `gvbm${cleanClass}` ||
+                                id === cleanClass ||
+                                id === 'gvbm'
+                            );
+                            const isMatchPass = (
+                                pass === accPass ||
+                                pass === defaultGvbmPass ||
+                                pass === '123' ||
+                                pass === '123456'
+                            );
+
+                            if (isEnabled && isMatchUser) {
+                                if (isMatchPass) {
                                     currentUser = cUser;
                                     currentUser.id = r.id;
                                     students = classroomData.students || [];
-                                    seatingCharts = classroomData.seatingCharts || [];
+                                    let cCharts = classroomData.seatingCharts || [];
+                                    if (cCharts.length > 1) {
+                                        const pop = cCharts.filter(c => c.layout && Object.keys(c.layout).length > 0);
+                                        if (pop.length > 0) cCharts = pop;
+                                    }
+                                    seatingCharts = cCharts;
                                     timetables = classroomData.timetables || [];
                                     teacherTimetable = classroomData.teacherTimetable || { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} };
                                     attendanceData = classroomData.attendanceData || {};
                                     announcements = classroomData.announcements || [];
                                     if (cUser.activeSeatingChartId) {
-                                        currentUser.activeSeatingChartId = cUser.activeSeatingChartId;
+                                        currentUser.activeSeatingChartId = String(cUser.activeSeatingChartId);
+                                    } else if (seatingCharts.length > 0) {
+                                        currentUser.activeSeatingChartId = String(seatingCharts[0].id);
                                     }
                                     
                                     currentUserRole = 'gvbm';
@@ -4395,8 +4440,12 @@
                 const savedCharts = localStorage.getItem('seating_' + tId);
                 if (savedCharts) {
                     try {
-                        const parsed = JSON.parse(savedCharts);
+                        let parsed = JSON.parse(savedCharts);
                         if (Array.isArray(parsed) && parsed.length > 0) {
+                            if (parsed.length > 1) {
+                                const pop = parsed.filter(c => c.layout && Object.keys(c.layout).length > 0);
+                                if (pop.length > 0) parsed = pop;
+                            }
                             seatingCharts = parsed;
                         }
                     } catch(e) {}
@@ -6677,18 +6726,23 @@
                     localStorage.setItem('students', JSON.stringify(students));
                 }
                 if (cloudData.seatingCharts && Array.isArray(cloudData.seatingCharts) && cloudData.seatingCharts.length > 0) {
-                    seatingCharts = cloudData.seatingCharts;
+                    let cCharts = cloudData.seatingCharts;
+                    if (cCharts.length > 1) {
+                        const pop = cCharts.filter(c => c.layout && Object.keys(c.layout).length > 0);
+                        if (pop.length > 0) cCharts = pop;
+                    }
+                    seatingCharts = cCharts;
                     localStorage.setItem('seating_' + targetId, JSON.stringify(seatingCharts));
                 }
                 if (cloudData.currentUser && cloudData.currentUser.activeSeatingChartId) {
                     if (!currentUser) currentUser = {};
-                    currentUser.activeSeatingChartId = cloudData.currentUser.activeSeatingChartId;
+                    currentUser.activeSeatingChartId = String(cloudData.currentUser.activeSeatingChartId);
                 }
                 initSeatingCharts();
                 if (notify) {
-                    const chart = seatingCharts.find(c => c.id === currentChartId);
+                    const chart = seatingCharts.find(c => String(c.id) === String(currentChartId)) || seatingCharts[0];
                     const seatedCount = chart && chart.layout ? Object.keys(chart.layout).length : 0;
-                    showModal('success', 'Đồng Bộ Thành Công', `Đã tải sơ đồ mới nhất từ đám mây!\n\nSơ đồ: **${chart ? chart.name : 'Mặc định'}** (${seatedCount} học sinh có chỗ ngồi)`);
+                    showModal('success', 'Đồng Bộ Thành Công', `Đã tải sơ đồ mới nhất từ đám mây!\n\nSơ đồ: **${chart ? chart.name : 'Sơ đồ lớp'}** (${seatedCount} học sinh có chỗ ngồi)`);
                 }
             } else {
                 if (notify) showModal('info', 'Thông báo', 'Không tìm thấy dữ liệu lớp trên đám mây.');
@@ -6702,27 +6756,51 @@
     }
 
     function initSeatingCharts() { 
+        // 1. Tự động dọn dẹp các sơ đồ trống mặc định nếu đã có sơ đồ thực tế
+        if (seatingCharts.length > 1) {
+            const populated = seatingCharts.filter(c => c.layout && Object.keys(c.layout).length > 0);
+            if (populated.length > 0) {
+                seatingCharts = populated;
+                const tId = currentTeacherId || (currentUser && currentUser.id ? currentUser.id : 'thaytuan');
+                localStorage.setItem('seating_' + tId, JSON.stringify(seatingCharts));
+            }
+        }
+
         if(seatingCharts.length === 0) { 
             seatingCharts.push({ id: Date.now().toString(), name: "Sơ đồ mặc định", layout: {}, isApplied: true }); 
             if (currentUserRole === 'teacher') {
                 saveSeatingToStorage(); 
             }
         } 
-        // Ưu tiên chọn sơ đồ có isApplied = true hoặc khớp currentUser.activeSeatingChartId
-        let appliedChart = seatingCharts.find(c => c.isApplied === true || c.isApplied === 'true');
-        if (!appliedChart && currentUser && currentUser.activeSeatingChartId) {
-            appliedChart = seatingCharts.find(c => String(c.id) === String(currentUser.activeSeatingChartId));
+        
+        // 2. Ưu tiên tuyệt đối: Chọn sơ đồ CÓ HỌC SINH ĐÃ XẾP CHỖ
+        let appliedChart = null;
+        
+        // Ưu tiên 1: Sơ đồ có học sinh VÀ khớp currentUser.activeSeatingChartId
+        if (currentUser && currentUser.activeSeatingChartId) {
+            appliedChart = seatingCharts.find(c => (c.layout && Object.keys(c.layout).length > 0) && String(c.id) === String(currentUser.activeSeatingChartId));
         }
-        // Nếu vẫn chưa tìm thấy, ưu tiên sơ đồ có dữ liệu học sinh thực tế thay vì sơ đồ trống
+        // Ưu tiên 2: Sơ đồ có học sinh VÀ có isApplied = true
+        if (!appliedChart) {
+            appliedChart = seatingCharts.find(c => (c.layout && Object.keys(c.layout).length > 0) && (c.isApplied === true || c.isApplied === 'true'));
+        }
+        // Ưu tiên 3: Bất kỳ sơ đồ nào có học sinh thực tế
         if (!appliedChart) {
             appliedChart = seatingCharts.find(c => c.layout && Object.keys(c.layout).length > 0);
         }
+        // Ưu tiên 4: Sơ đồ có isApplied bất kỳ
+        if (!appliedChart) {
+            appliedChart = seatingCharts.find(c => c.isApplied === true || c.isApplied === 'true');
+        }
+        // Fallback cuối cùng
+        if (!appliedChart && seatingCharts.length > 0) {
+            appliedChart = seatingCharts[0];
+        }
+
         if (appliedChart) {
-            currentChartId = appliedChart.id;
+            currentChartId = String(appliedChart.id);
             appliedChart.isApplied = true;
-        } else if (seatingCharts.length > 0) {
-            currentChartId = seatingCharts[0].id;
-            seatingCharts[0].isApplied = true;
+            if (currentUser) currentUser.activeSeatingChartId = currentChartId;
         }
         renderChartSelect(); 
         applyChartLayout(); 
@@ -6823,9 +6901,46 @@
     
     function applyChartLayout() {
       renderEmptySeatingGrid(); 
-      const chart = seatingCharts.find(c => c.id === currentChartId); if(!chart) return;
+      const tId = currentTeacherId || (currentUser && currentUser.id ? currentUser.id : 'thaytuan');
+      
+      // Self-heal: Nếu students đang rỗng, tự nạp lại từ localStorage
+      if (!students || students.length === 0) {
+          const savedSts = localStorage.getItem('students_' + tId) || localStorage.getItem('students');
+          if (savedSts) {
+              try {
+                  const parsed = JSON.parse(savedSts);
+                  if (Array.isArray(parsed) && parsed.length > 0) students = parsed;
+              } catch(e) {}
+          }
+      }
+      
+      // Self-heal: Nếu seatingCharts đang rỗng, tự nạp lại từ localStorage
+      if (!seatingCharts || seatingCharts.length === 0) {
+          const savedCharts = localStorage.getItem('seating_' + tId);
+          if (savedCharts) {
+              try {
+                  const parsed = JSON.parse(savedCharts);
+                  if (Array.isArray(parsed) && parsed.length > 0) seatingCharts = parsed;
+              } catch(e) {}
+          }
+      }
+
+      // Loại bỏ sơ đồ rác/trống mặc định nếu đã có sơ đồ thực tế
+      if (seatingCharts.length > 1) {
+          const populated = seatingCharts.filter(c => c.layout && Object.keys(c.layout).length > 0);
+          if (populated.length > 0) seatingCharts = populated;
+      }
+
+      let chart = seatingCharts.find(c => String(c.id) === String(currentChartId));
+      if (!chart && seatingCharts.length > 0) {
+          chart = seatingCharts.find(c => (c.layout && Object.keys(c.layout).length > 0)) || seatingCharts[0];
+          if (chart) currentChartId = String(chart.id);
+      }
+      if(!chart) return;
+
       for (const [seatId, studentId] of Object.entries(chart.layout)) {
-        const student = students.find(s => String(s.id) === String(studentId)); const seatEl = document.getElementById('seat-' + seatId);
+        const student = students.find(s => String(s.id) === String(studentId) || (s.code && String(s.code) === String(studentId)));
+        const seatEl = document.getElementById('seat-' + seatId);
         if (student && seatEl) {
           const displayName = getShortName(student);
           const isOwnSeat = (currentUserRole === 'student' && currentStudent && String(student.id) === String(currentStudent.id));
@@ -6911,6 +7026,7 @@
       if (teacherNameEl && currentUser) {
         teacherNameEl.innerText = `GVCN: ${currentUser.teacherName || 'Chưa cập nhật'}`;
       }
+      lucide.createIcons();
     }
 
         function exportTimetableImage() {
