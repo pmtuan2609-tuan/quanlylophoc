@@ -1485,6 +1485,11 @@
               <i data-lucide="refresh-cw" class="w-4 h-4" id="icon-sync-chart"></i> <span class="hidden sm:inline">Đồng bộ</span>
             </button>
 
+            <!-- Nút Vòng Quay Gọi HS dành cho GVBM & GVCN -->
+            <button id="btn-seating-wheel" onclick="switchTab('tab-wheel')" class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-3 md:px-3.5 py-2.5 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1.5 shadow-sm hover:scale-[1.02] whitespace-nowrap" title="Mở vòng quay gọi học sinh">
+              <i data-lucide="dices" class="w-4 h-4"></i> <span>Quay gọi HS</span>
+            </button>
+
             <!-- Nút Áp Dụng sơ đồ lớp dành cho GVCN -->
             <button id="btn-apply-chart" onclick="applyActiveSeatingChart()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 md:px-4 py-2.5 rounded-xl text-xs md:text-sm font-black transition flex items-center gap-1.5 shadow-md hover:scale-[1.02] whitespace-nowrap" title="Áp dụng sơ đồ này làm sơ đồ chính thức của lớp cho GVBM & Học sinh">
               <i data-lucide="check" class="w-4 h-4"></i> <span>Áp dụng</span>
@@ -1576,6 +1581,7 @@
               </select>
             </div>
             <button onclick="startSpin()" id="spin-btn" class="w-full bg-gradient-to-r from-amber-400 to-orange-500 text-white py-3.5 md:py-4 rounded-xl font-black shadow-lg hover:scale-[1.02] active:scale-95 transition-all mt-2 text-base md:text-lg">🎲 QUAY NGAY</button>
+            <button onclick="switchTab('tab-seating')" class="w-full bg-slate-50 hover:bg-slate-100 text-slate-700 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 border border-slate-200 mt-2"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-indigo-500"></i> Xem sơ đồ chỗ ngồi lớp</button>
           </div>
           <div class="lg:col-span-3 bg-white p-5 md:p-6 rounded-3xl shadow-sm border border-slate-100">
             <h4 class="font-black text-slate-800 text-base md:text-lg mb-3 md:mb-4 flex items-center justify-between">
@@ -3025,14 +3031,24 @@
     <div id="result-content" class="bg-white rounded-[2rem] p-6 md:p-8 max-w-sm w-full text-center shadow-2xl transform scale-95 transition-transform duration-300 border border-white/20">
       <div class="w-20 h-20 bg-amber-400 rounded-full mx-auto flex items-center justify-center text-4xl shadow-lg animate-bounce mt-[-4rem] border-4 border-white">🎉</div>
       <h3 class="text-[10px] md:text-xs font-black uppercase tracking-widest text-theme mt-6">Người được chọn</h3>
-      <div class="my-6">
-        <div class="w-28 h-28 mx-auto rounded-full bg-theme-light border-4 border-white shadow-xl flex items-center justify-center text-6xl relative overflow-hidden" id="winner-avatar">👦</div>
-        <h2 id="winner-name" class="text-2xl md:text-3xl font-black text-slate-800 mt-4 tracking-tight">...</h2>
-        <span id="winner-id" class="inline-block mt-2 text-[10px] md:text-xs font-mono bg-slate-100 px-3 py-1 rounded-full text-slate-500 font-bold border border-slate-200">ID: ...</span>
+      <div class="my-5">
+        <div class="w-24 h-24 mx-auto rounded-full bg-theme-light border-4 border-white shadow-xl flex items-center justify-center text-5xl relative overflow-hidden" id="winner-avatar">👦</div>
+        <h2 id="winner-name" class="text-2xl md:text-3xl font-black text-slate-800 mt-3 tracking-tight">...</h2>
+        <span id="winner-id" class="inline-block mt-1.5 text-[10px] md:text-xs font-mono bg-slate-100 px-3 py-1 rounded-full text-slate-500 font-bold border border-slate-200">ID: ...</span>
       </div>
-      <div class="flex flex-col gap-3">
-        <button onclick="closeResultModal(false)" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 py-3.5 rounded-xl font-bold text-sm transition">Giữ lại để gọi tiếp</button>
-        <button onclick="closeResultModal(true)" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 py-3.5 rounded-xl font-bold text-sm transition">Tạm ẩn khỏi vòng quay</button>
+      
+      <!-- Các nút thao tác sư phạm nhanh cho Giáo viên / GVBM -->
+      <div class="flex flex-col gap-2.5">
+        <div class="grid grid-cols-2 gap-2" id="winner-teacher-actions">
+          <button id="btn-winner-violate" onclick="handleWinnerViolation()" class="hidden bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 py-2.5 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 shadow-xs"><i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> Đánh lỗi vi phạm</button>
+          <button id="btn-winner-praise" onclick="handleWinnerPraise()" class="bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 py-2.5 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 shadow-xs"><i data-lucide="award" class="w-3.5 h-3.5"></i> Khen thưởng</button>
+        </div>
+        <button id="btn-winner-seat" onclick="locateWinnerSeat()" class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 py-2.5 rounded-xl font-bold text-xs transition flex items-center justify-center gap-1.5"><i data-lucide="map-pin" class="w-3.5 h-3.5"></i> Xem vị trí trên sơ đồ lớp</button>
+        
+        <div class="grid grid-cols-2 gap-2 mt-1">
+          <button onclick="closeResultModal(false)" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 py-3 rounded-xl font-bold text-xs md:text-sm transition">Giữ lại gọi tiếp</button>
+          <button onclick="closeResultModal(true)" class="w-full bg-rose-500 hover:bg-rose-600 text-white py-3 rounded-xl font-bold text-xs md:text-sm transition shadow-sm">Tạm ẩn HS này</button>
+        </div>
       </div>
     </div>
   </div>
@@ -4482,7 +4498,19 @@
                 syncSeatingChartFromCloud(false);
             }
         }
-        if(tabId === 'tab-wheel') handleModeChange();
+        if(tabId === 'tab-wheel') {
+            const tId = currentTeacherId || (currentUser ? currentUser.id : null) || 'thaytuan';
+            if ((!students || students.length === 0) && tId) {
+                const savedSts = localStorage.getItem('students_' + tId) || localStorage.getItem('students');
+                if (savedSts) {
+                    try {
+                        const parsedSts = JSON.parse(savedSts);
+                        if (Array.isArray(parsedSts) && parsedSts.length > 0) students = parsedSts;
+                    } catch(e) {}
+                }
+            }
+            handleModeChange();
+        }
         closeSidebar();
     }
     let isClockStarted = false;
@@ -4652,9 +4680,10 @@
                 const bannerButtons = document.querySelector('#teacher-overview-container .shrink-0.md\\:mb-1');
                 if (bannerButtons) {
                     bannerButtons.innerHTML = `
-                        <button onclick="openGvbmViolationModal()" class="bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 text-white px-4 py-2.5 rounded-xl text-xs font-black shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="alert-triangle" class="w-4 h-4"></i> Đánh lỗi vi phạm</button>
-                        <button onclick="switchTab('tab-seating')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="map-pin" class="w-4 h-4"></i> Sơ đồ lớp</button>
-                        <button onclick="switchTab('tab-students')" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="users" class="w-4 h-4"></i> Danh sách lớp</button>
+                        <button onclick="openGvbmViolationModal()" class="bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 text-white px-3.5 md:px-4 py-2.5 rounded-xl text-xs font-black shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="alert-triangle" class="w-4 h-4"></i> Đánh lỗi vi phạm</button>
+                        <button onclick="switchTab('tab-wheel')" class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-3.5 md:px-4 py-2.5 rounded-xl text-xs font-black shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="dices" class="w-4 h-4"></i> Vòng quay gọi HS</button>
+                        <button onclick="switchTab('tab-seating')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 md:px-4 py-2.5 rounded-xl text-xs font-bold shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="map-pin" class="w-4 h-4"></i> Sơ đồ lớp</button>
+                        <button onclick="switchTab('tab-students')" class="bg-blue-500 hover:bg-blue-600 text-white px-3.5 md:px-4 py-2.5 rounded-xl text-xs font-bold shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="users" class="w-4 h-4"></i> Danh sách lớp</button>
                     `;
                 }
             } else {
@@ -8348,13 +8377,7 @@
           confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 }});
           
           setTimeout(() => {
-            document.getElementById('winner-name').innerText = selected.name; 
-            document.getElementById('winner-avatar').innerHTML = getAvatarHtml(selected.avatar); 
-            document.getElementById('winner-id').innerText = "ID: " + (selected.code || "...");
-            openModalUi('result-modal', 'result-content');
-            btn.disabled = false; 
-            btn.innerHTML = "🎲 QUAY LẠI"; 
-            btn.classList.remove('opacity-70');
+            showWinnerResult(selected, btn);
           }, 800);
         });
         return;
@@ -8468,17 +8491,82 @@
             
             // Wait 2 seconds for centered stage visual before showing results modal
             setTimeout(() => {
-              document.getElementById('winner-name').innerText = selected.name; 
-              document.getElementById('winner-avatar').innerHTML = getAvatarHtml(selected.avatar); 
-              document.getElementById('winner-id').innerText = "ID: " + (selected.code || "...");
-              openModalUi('result-modal', 'result-content');
-              btn.disabled = false; 
-              btn.innerHTML = "🎲 QUAY LẠI"; 
-              btn.classList.remove('opacity-70');
+              showWinnerResult(selected, btn);
             }, 2000);
           }
         }, intervalTime);
       }, 1800);
+    }
+
+    function showWinnerResult(selected, btn) {
+      currentWinner = selected;
+      document.getElementById('winner-name').innerText = selected.name; 
+      document.getElementById('winner-avatar').innerHTML = getAvatarHtml(selected.avatar); 
+      document.getElementById('winner-id').innerText = "ID: " + (selected.code || "...");
+
+      const violateBtn = document.getElementById('btn-winner-violate');
+      if (violateBtn) {
+        if (currentUserRole === 'gvbm') violateBtn.classList.remove('hidden');
+        else violateBtn.classList.add('hidden');
+      }
+
+      const praiseBtn = document.getElementById('btn-winner-praise');
+      if (praiseBtn) {
+        if (currentUserRole !== 'student') praiseBtn.classList.remove('hidden');
+        else praiseBtn.classList.add('hidden');
+      }
+
+      openModalUi('result-modal', 'result-content');
+      lucide.createIcons();
+
+      if (btn) {
+        btn.disabled = false; 
+        btn.innerHTML = "🎲 QUAY LẠI"; 
+        btn.classList.remove('opacity-70');
+      }
+    }
+
+    function handleWinnerViolation() {
+      if (!currentWinner) return;
+      const winId = currentWinner.id;
+      closeResultModal(false);
+      setTimeout(() => {
+        openGvbmViolationModal(winId);
+      }, 250);
+    }
+
+    function handleWinnerPraise() {
+      if (!currentWinner) return;
+      const winId = currentWinner.id;
+      closeResultModal(false);
+      setTimeout(() => {
+        openPraiseModal(winId);
+      }, 250);
+    }
+
+    function locateWinnerSeat() {
+      if (!currentWinner) return;
+      const winId = currentWinner.id;
+      closeResultModal(false);
+      switchTab('tab-seating');
+      setTimeout(() => {
+        const chart = seatingCharts.find(c => c.id === currentChartId) || seatingCharts[0];
+        if (chart && chart.layout) {
+          for (const [seatId, studentId] of Object.entries(chart.layout)) {
+            if (String(studentId) === String(winId)) {
+              const seatEl = document.getElementById('seat-' + seatId);
+              if (seatEl) {
+                seatEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                seatEl.classList.add('ring-4', 'ring-amber-400', 'scale-110', 'z-30');
+                setTimeout(() => {
+                  seatEl.classList.remove('ring-4', 'ring-amber-400', 'scale-110', 'z-30');
+                }, 3500);
+              }
+              break;
+            }
+          }
+        }
+      }, 400);
     }
 
     function closeResultModal(removeStudent) { 
@@ -8585,7 +8673,7 @@
             'btn-tab-monthly-plan': !isGVBM && !isStudent,
             'btn-tab-gifts': !isGVBM && !isStudent,
             'btn-tab-students': !isStudent,
-            'btn-tab-wheel': !isStudent && !isGVBM,
+            'btn-tab-wheel': !isStudent,
             'btn-tab-praise': !isStudent,
             'btn-tab-settings': !isStudent && !isGVBM,
             'btn-tab-notebook': hasNotebookAccess && !isGVBM
@@ -8726,9 +8814,10 @@
             const bannerButtons = document.querySelector('#teacher-overview-container .shrink-0.md\\:mb-1');
             if (bannerButtons) {
                 bannerButtons.innerHTML = `
-                    <button onclick="openGvbmViolationModal()" class="bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 text-white px-4 py-2.5 rounded-xl text-xs font-black shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="alert-triangle" class="w-4 h-4"></i> Đánh lỗi vi phạm</button>
-                    <button onclick="switchTab('tab-seating')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="map-pin" class="w-4 h-4"></i> Sơ đồ lớp</button>
-                    <button onclick="switchTab('tab-students')" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="users" class="w-4 h-4"></i> Danh sách lớp</button>
+                    <button onclick="openGvbmViolationModal()" class="bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 text-white px-3.5 md:px-4 py-2.5 rounded-xl text-xs font-black shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="alert-triangle" class="w-4 h-4"></i> Đánh lỗi vi phạm</button>
+                    <button onclick="switchTab('tab-wheel')" class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-3.5 md:px-4 py-2.5 rounded-xl text-xs font-black shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="dices" class="w-4 h-4"></i> Vòng quay gọi HS</button>
+                    <button onclick="switchTab('tab-seating')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 md:px-4 py-2.5 rounded-xl text-xs font-bold shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="map-pin" class="w-4 h-4"></i> Sơ đồ lớp</button>
+                    <button onclick="switchTab('tab-students')" class="bg-blue-500 hover:bg-blue-600 text-white px-3.5 md:px-4 py-2.5 rounded-xl text-xs font-bold shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="users" class="w-4 h-4"></i> Danh sách lớp</button>
                 `;
             }
         }
