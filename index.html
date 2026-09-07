@@ -1510,20 +1510,45 @@
            
            <div id="seating-chart-capture-area" class="min-w-[950px] pb-10 relative bg-white p-6 rounded-3xl border border-slate-100">
                <div class="grid grid-cols-4 gap-4 md:gap-8" id="seating-grid"></div>
-               <div class="relative flex justify-center items-end mt-10 h-16 md:h-20 w-full">
-                   <div class="bg-[#1e293b] shadow-xl text-white w-[35%] py-4 rounded-xl text-center font-black text-sm md:text-base tracking-[0.3em] border-4 border-slate-600 relative flex flex-col items-center justify-center z-10">
-                       <span class="opacity-90">BẢNG ĐEN</span>
-                       <span id="seating-teacher-name" class="text-[9px] md:text-[10px] text-slate-300 font-bold tracking-normal mt-1">GVCN: ...</span>
-                       <div class="absolute bottom-2 right-4 w-12 h-1 bg-white/30 rounded-full"></div>
+               <!-- KHU VỰC BỤC GIẢNG & BAN CÁN SỰ 2 BÊN CÂN ĐỐI -->
+               <div class="mt-8 md:mt-10 flex items-stretch justify-between gap-4 md:gap-6 w-full">
+                   <!-- Cánh Trái: Ban Cán Sự Lớp (Cột 1) -->
+                   <div class="w-[23%] min-w-[210px] bg-white border-2 border-slate-100 shadow-md hover:shadow-lg p-3 md:p-3.5 rounded-2xl flex flex-col justify-start z-10 transition">
+                       <div class="font-black text-slate-800 border-b border-slate-100 pb-1.5 mb-2 flex items-center justify-between uppercase tracking-wider text-[9px] md:text-[10px]">
+                           <span class="flex items-center gap-1.5 text-slate-800"><i data-lucide="award" class="w-3.5 h-3.5 text-amber-500"></i> Ban Cán Sự Lớp</span>
+                           <span class="text-[8px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200/60">Cánh Trái</span>
+                       </div>
+                       <div id="seating-monitor-list-left" class="space-y-1.5"></div>
                    </div>
-                   <div class="absolute right-0 bottom-0 bg-theme-sidebar shadow-2xl text-white w-24 md:w-32 py-3 md:py-4 rounded-2xl text-center font-black text-[10px] md:text-xs tracking-widest flex flex-col items-center border-b-4 border-slate-900 z-10">
-                       <span>BÀN GV</span>
-                       <div class="absolute -bottom-2.5 w-10 h-1.5 bg-slate-400/50 rounded-full"></div>
+
+                   <!-- Trung Tâm: Bục Giảng (Bảng Đen & Bàn Giáo Viên) -->
+                   <div class="flex-1 flex items-center justify-center gap-3 md:gap-4 z-10">
+                       <div class="bg-[#1e293b] shadow-xl text-white flex-1 max-w-[380px] py-3.5 md:py-4 rounded-2xl text-center font-black text-sm md:text-base tracking-[0.3em] border-4 border-slate-600 relative flex flex-col items-center justify-center">
+                           <span class="opacity-90">BẢNG ĐEN</span>
+                           <span id="seating-teacher-name" class="text-[9px] md:text-[10px] text-slate-300 font-bold tracking-normal mt-0.5">GVCN: ...</span>
+                           <div class="absolute bottom-1.5 right-4 w-10 h-1 bg-white/30 rounded-full"></div>
+                       </div>
+                       <div class="bg-theme-sidebar shadow-xl text-white w-24 md:w-28 py-3 md:py-3.5 rounded-2xl text-center font-black text-[10px] md:text-xs tracking-wider flex flex-col items-center justify-center border-b-4 border-slate-900 shrink-0 relative">
+                           <div class="flex items-center gap-1 opacity-95">
+                               <i data-lucide="presentation" class="w-3.5 h-3.5 text-amber-400"></i>
+                               <span>BÀN GV</span>
+                           </div>
+                           <span class="text-[8.5px] text-slate-300 font-bold tracking-normal mt-0.5">Bục giảng</span>
+                           <div class="absolute -bottom-2 w-8 h-1 bg-slate-400/50 rounded-full"></div>
+                       </div>
                    </div>
-                   <div class="absolute left-0 bottom-0 bg-white border-2 border-slate-100 shadow-lg p-3 rounded-2xl w-56 text-[10px] md:text-xs font-semibold text-slate-700 flex flex-col gap-1 z-10">
-                       <div class="font-black text-slate-800 border-b border-slate-100 pb-1.5 mb-1.5 flex items-center gap-1.5 uppercase tracking-wider text-[9px] md:text-[10px]"><i data-lucide="award" class="w-3.5 h-3.5 text-amber-500"></i> Ban Cán Sự Lớp</div>
-                       <div id="seating-monitor-list" class="space-y-1.5 max-h-24 overflow-y-auto custom-scrollbar"></div>
+
+                   <!-- Cánh Phải: Ban Cán Sự Lớp (Cột 2) -->
+                   <div class="w-[23%] min-w-[210px] bg-white border-2 border-slate-100 shadow-md hover:shadow-lg p-3 md:p-3.5 rounded-2xl flex flex-col justify-start z-10 transition">
+                       <div class="font-black text-slate-800 border-b border-slate-100 pb-1.5 mb-2 flex items-center justify-between uppercase tracking-wider text-[9px] md:text-[10px]">
+                           <span class="flex items-center gap-1.5 text-slate-800"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-indigo-500"></i> Ban Cán Sự Lớp</span>
+                           <span class="text-[8px] font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-200/60">Cánh Phải</span>
+                       </div>
+                       <div id="seating-monitor-list-right" class="space-y-1.5"></div>
                    </div>
+
+                   <!-- Thẻ ẩn tương thích ngược nếu có code cũ tìm kiếm -->
+                   <div id="seating-monitor-list" class="hidden"></div>
                </div>
            </div>
         </div>
@@ -6997,27 +7022,68 @@
         }
       }
 
-      // Render Class Officers list
+      // Render Class Officers list (Phân bổ cân đối 2 bên cánh trái & cánh phải)
+      const monitorListLeftEl = document.getElementById('seating-monitor-list-left');
+      const monitorListRightEl = document.getElementById('seating-monitor-list-right');
       const monitorListEl = document.getElementById('seating-monitor-list');
-      if (monitorListEl) {
-        const roleOrder = ["Lớp trưởng", "Lớp phó học tập", "Lớp phó kỷ luật", "Lớp phó LĐ-VS", "Bí thư chi đoàn", "Thủ quỹ", "Tổ trưởng"];
-        let officers = students.filter(s => s.role && s.role.trim() !== '');
-        officers.sort((a, b) => {
-          let idxA = roleOrder.indexOf(a.role);
-          let idxB = roleOrder.indexOf(b.role);
-          if (idxA === -1) idxA = 999;
-          if (idxB === -1) idxB = 999;
-          return idxA - idxB;
-        });
+
+      const roleOrder = ["Lớp trưởng", "Lớp phó học tập", "Lớp phó kỷ luật", "Lớp phó LĐ-VS", "Bí thư chi đoàn", "Thủ quỹ", "Tổ trưởng"];
+      let officers = students.filter(s => s.role && s.role.trim() !== '');
+      officers.sort((a, b) => {
+        let idxA = roleOrder.indexOf(a.role);
+        let idxB = roleOrder.indexOf(b.role);
+        if (idxA === -1) idxA = 999;
+        if (idxB === -1) idxB = 999;
+        return idxA - idxB;
+      });
+
+      function getRoleBadgeClass(role) {
+        if (!role) return "bg-slate-100 text-slate-700 border border-slate-200/80";
+        const r = role.toLowerCase();
+        if (r.includes("lớp trưởng") || r.includes("trưởng")) return "bg-amber-50 text-amber-800 border border-amber-200/80";
+        if (r.includes("học tập") || r.includes("ht")) return "bg-blue-50 text-blue-800 border border-blue-200/80";
+        if (r.includes("kỷ luật") || r.includes("kl")) return "bg-rose-50 text-rose-800 border border-rose-200/80";
+        if (r.includes("lao động") || r.includes("lđ") || r.includes("vệ sinh") || r.includes("vs")) return "bg-emerald-50 text-emerald-800 border border-emerald-200/80";
+        if (r.includes("bí thư") || r.includes("đoàn")) return "bg-purple-50 text-purple-800 border border-purple-200/80";
+        if (r.includes("thủ quỹ")) return "bg-teal-50 text-teal-800 border border-teal-200/80";
+        if (r.includes("tổ trưởng")) return "bg-cyan-50 text-cyan-800 border border-cyan-200/80";
+        return "bg-slate-100 text-slate-700 border border-slate-200/80";
+      }
+
+      function renderOfficerItem(s) {
+        const badgeClass = getRoleBadgeClass(s.role);
+        return `
+          <div class="flex items-center justify-between py-1 px-1.5 rounded-lg hover:bg-slate-50 transition border-b border-dashed border-slate-100 last:border-0 text-[10px] md:text-[11px] gap-2 group">
+            <span class="px-1.5 py-0.5 rounded-md text-[9px] md:text-[9.5px] font-bold ${badgeClass} shrink-0">${s.role}</span>
+            <span class="font-black text-slate-800 hover:text-theme transition cursor-pointer truncate text-right group-hover:underline" onclick="openProfileModal(${s.id})" title="Xem hồ sơ ${s.name}">${s.name}</span>
+          </div>
+        `;
+      }
+
+      if (monitorListLeftEl && monitorListRightEl) {
         if (officers.length > 0) {
-          monitorListEl.innerHTML = officers.map(s => `
-            <div class="flex justify-between items-center py-0.5 border-b border-dashed border-slate-100 last:border-0 text-[10px] md:text-[11px]">
-              <span class="text-slate-500 font-bold">${s.role}:</span>
-              <span class="font-black text-slate-800 hover:text-theme transition cursor-pointer" onclick="openProfileModal(${s.id})">${s.name}</span>
-            </div>
-          `).join('');
+          const half = Math.ceil(officers.length / 2);
+          const leftOfficers = officers.slice(0, half);
+          const rightOfficers = officers.slice(half);
+
+          monitorListLeftEl.innerHTML = leftOfficers.map(renderOfficerItem).join('');
+          
+          if (rightOfficers.length > 0) {
+            monitorListRightEl.innerHTML = rightOfficers.map(renderOfficerItem).join('');
+          } else {
+            monitorListRightEl.innerHTML = `<div class="text-slate-400 italic text-[10px] text-center py-2">Đang phân công thêm</div>`;
+          }
         } else {
-          monitorListEl.innerHTML = `<div class="text-slate-400 italic text-[10px] text-center py-1">Chưa bổ nhiệm (Sửa HS để đặt chức vụ)</div>`;
+          monitorListLeftEl.innerHTML = `<div class="text-slate-400 italic text-[10px] text-center py-2">Chưa phân công cán sự</div>`;
+          monitorListRightEl.innerHTML = `<div class="text-slate-400 italic text-[10px] text-center py-2">Chưa phân công cán sự</div>`;
+        }
+      }
+
+      if (monitorListEl) {
+        if (officers.length > 0) {
+          monitorListEl.innerHTML = officers.map(renderOfficerItem).join('');
+        } else {
+          monitorListEl.innerHTML = `<div class="text-slate-400 italic text-[10px] text-center py-1">Chưa bổ nhiệm</div>`;
         }
       }
 
