@@ -1,0 +1,35 @@
+{
+  "currentUser": {
+    "id": "cohakhtn",
+    "pass": "coha",
+    "teacherName": "Cô Hà",
+    "gender": "Nữ",
+    "className": "6A4",
+    "year": "2026 - 2027",
+    "slogan": "THCS Nguyễn An Khương - KHTN",
+    "theme": "emerald",
+    "role": "teacher"
+  },
+  "students": [],
+  "seatingCharts": [
+    {
+      "id": "chart_default",
+      "name": "Sơ đồ lớp 6A4",
+      "layout": {}
+    }
+  ],
+  "timetables": [
+    {
+      "id": "tkb_6a4",
+      "name": "TKB Lớp 6A4",
+      "data": {}
+    }
+  ],
+  "teacherTimetable": {
+    "id": "teacher_tkb",
+    "name": "TKB Giáo viên - Cô Hà",
+    "data": {}
+  },
+  "attendanceData": {},
+  "announcements": []
+}

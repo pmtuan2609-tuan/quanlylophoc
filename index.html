@@ -2349,8 +2349,8 @@
       </div>
 
       <!-- Preview Body (Scrollable) -->
-      <div class="flex-1 overflow-y-auto custom-scrollbar my-4 p-2 md:p-4 bg-slate-100/70 rounded-2xl border border-slate-200/80">
-        <div id="gvbm-guide-content-body" class="bg-white p-6 md:p-10 rounded-2xl shadow-sm border border-slate-200/60 max-w-3xl mx-auto">
+      <div class="flex-1 overflow-y-auto custom-scrollbar my-3 p-2 sm:p-4 bg-slate-100/80 rounded-2xl border border-slate-200/80 flex justify-center items-start">
+        <div id="gvbm-guide-content-body" class="bg-white rounded-xl shadow-lg border border-slate-200/80" style="width: 794px; max-width: 100%; box-sizing: border-box; padding: 20px 24px;">
           <!-- Dynamically populated by buildGvbmGuideDocumentHtml() -->
         </div>
       </div>
@@ -5379,11 +5379,11 @@
     }
 
     // Mã QR PNG chuẩn offline siêu nét dẫn đến https://quanlylophoc-gdtx.vercel.app
-    const APP_QR_CODE_BASE64 = "data:image/png;base64,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";
+    const APP_QR_CODE_BASE64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPgAAAD4CAIAAABOs7xcAAAE30lEQVR4nO3d0YkkNxRA0R0zYRgqIYe7CTU4j3YCbrBAsqS55/yuqa6Zvejj7bP66/1+/4Kf7o/dLwD/B6GTIHQShE6C0EkQOglCJ+H70x88f/716wavv39Pec7oz/vpc1c/Z/Xn/tQenOgkCJ0EoZMgdBKEToLQSRA67Tn66rn1qNE57q657+ice/W8/JNn8HNv78GJToLQSRA6CUInQegkCJ0EoZMwPEf/ZNZ8d9ZcdtccetQt++i39+BEJ0HoJAidBKGTIHQShE6C0EmYNke/3a77YW65L+V2TnQShE6C0EkQOglCJ0HoJAidhB87R581z75lX3z1/v3tnOgkCJ0EoZMgdBKEToLQSRA6CdPm6LvuyV79PZq75vGjz991P/otPTjRSRA6CUInQegkCJ0EoZMgdBKG5+i37Dev/h7NXfvru/bjb+/BiU6C0EkQOglCJ0HoJAidBKGT8PV+v3e/w9F2zYlvuU/mFk50EoROgtBJEDoJQidB6CQInfY++i3706vnvre//y7PpJ931nOc6CQInQShkyB0EoROgtBJEDoJ2/bRZ+1Jr57Xjr7P6PNPm9M/h/0eZj3HiU6C0EkQOglCJ0HoJAidBKGTMLyPPmrWvvWu7+PcdV/KaXvqr8XfP7r6/hwnOglCJ0HoJAidBKGTIHQShE7CtH301XPQ0/awb9lTv/0+lse9LvDfCZ0EoZMgdBKEToLQSRA6CcNz9J86b75lnn3a/vdr09/j6Ps40UkQOglCJ0HoJAidBKGTIHTa97qMmjUHPe37OE+br5/2vaqrzXofJzoJQidB6CQInQShkyB0EoROex991zx71/0wp30f6ur712c5bW/ePjppQidB6CQInQShkyB0EoROwvA++uq58urnfHLac1Z7Nu3N77pPxolOgtBJEDoJQidB6CQInQShk/B9y70fp82nZ+21n/Z7ey7fg7ePTprQSRA6CUInQegkCJ0EodOeo4/OR3fdF77arvvIZ83jT7vv/JPV7+9EJ0HoJAidBKGTIHQShE6C0GnP0WfNv3fdF37794yethf+2nSP+6y/dyc6CUInQegkCJ0EoZMgdBKETvt7Rm+Z767ed9/1/FGr/73iten3Oet9nOgkCJ0EoZMgdBKEToLQSRA6CdP20U+753vW83/qfTXP4nvTP5n1/zOMcqKTIHQShE6C0EkQOglCJ0HoJAzvo99i1978afe63PJ7eBbP6Z3oJAidBKGTIHQShE6C0EkQOgnD++in+TQ3nTWvHZ0Hz9pfP22v/Vn87wOr5+tOdBKEToLQSRA6CUInQegkCJ32HP2TXfPdXXP91Xvkq3+u0/bUZ3E/OvwLoZMgdBKEToLQSRA6CUInYXiOftr92bfcK7L6fU773tPT/n6d6CQInQShkyB0EoROgtBJEDoJ0+bopzltPr3aaT/Xc9hevhOdBKGTIHQShE6C0EkQOglCJ+HHztFnzWVv2Wuf9ZzXpntsVn+uE50EoZMgdBKEToLQSRA6CUInYdoc/bS97V3vs3q+Pvq5szyT5t+7PteJToLQSRA6CUInQegkCJ0EoZPwfcv3fe7aI5/136/et759X/w16fnuRydN6CQInQShkyB0EoROgtBJ+Hq/37vfAZZzopMgdBKEToLQSRA6CUInQej8KvgHsQQv5BRa4aoAAAAASUVORK5CYII=";
 
     // Trả về mã QR (sử dụng ảnh PNG Base64 tối ưu, tương thích 100% với html2canvas và in ấn)
-    function getAppQrSvg(size = 82) {
-        return `<img src="${APP_QR_CODE_BASE64}" width="${size}" height="${size}" style="display:block; border-radius:6px;" alt="Mã QR" />`;
+    function getAppQrSvg(size = 78) {
+        return `<img src="${APP_QR_CODE_BASE64}" width="${size}" height="${size}" style="display:block; margin:0 auto; border-radius:4px; max-width:${size}px;" alt="Mã QR" />`;
     }
 
     function buildGvbmGuideDocumentHtml() {
@@ -5569,9 +5569,10 @@
         // Kích thước chuẩn A4 tính theo điểm PDF (72 points / inch): 210mm x 297mm = 595.28 x 841.89 pt
         const a4W = 595.28;
         const a4H = 841.89;
-        const margin = 18;
-        const maxW = a4W - margin * 2;
-        const maxH = a4H - margin * 2;
+        const marginSide = 22.68; // 8mm
+        const marginTop = 22.68;  // 8mm từ mép trên A4
+        const maxW = a4W - marginSide * 2;
+        const maxH = a4H - marginTop - 22.68;
 
         let renderW = maxW;
         let renderH = (imgH * renderW) / imgW;
@@ -5580,7 +5581,7 @@
             renderW = (imgW * renderH) / imgH;
         }
         const posX = (a4W - renderW) / 2;
-        const posY = a4H - margin - renderH; // Hệ tọa độ PDF tính từ góc dưới bên trái
+        const posY = a4H - marginTop - renderH; // Căn chuẩn mép trên trang A4 (không bị lệch hay dạt đáy)
 
         const contentStream = 'q ' + renderW.toFixed(2) + ' 0 0 ' + renderH.toFixed(2) + ' ' + posX.toFixed(2) + ' ' + posY.toFixed(2) + ' cm /Im1 Do Q';
 
@@ -5659,53 +5660,62 @@
         const cleanClass = (currentUser.className || 'Lop').replace(/[^a-zA-Z0-9_-]/g, '_');
         const filename = `Huong_Dan_Su_Dung_GVBM_Lop_${cleanClass}.pdf`;
         
-        showModal('info', 'Đang xuất file PDF', 'Hệ thống đang khởi tạo file PDF Hướng dẫn sử dụng GVBM khổ A4 sắc nét, quá trình tải sẽ bắt đầu ngay...');
+        showModal('info', 'Đang xuất file PDF', 'Hệ thống đang tạo file PDF Hướng dẫn GVBM chuẩn A4 sắc nét (khớp 100% giao diện xem trước)...');
 
-        // Container tạm thời trong DOM để html2canvas kết xuất chính xác không gian và ảnh
-        const tempContainer = document.createElement('div');
-        tempContainer.id = 'gvbm-pdf-export-temp';
-        tempContainer.style.position = 'fixed';
-        tempContainer.style.top = '0';
-        tempContainer.style.left = '0';
-        tempContainer.style.width = '794px';
-        tempContainer.style.background = '#ffffff';
-        tempContainer.style.zIndex = '600'; // Nằm dưới custom-modal (z-[900])
-        tempContainer.style.padding = '14px 20px';
-        tempContainer.style.boxSizing = 'border-box';
-        tempContainer.innerHTML = buildGvbmGuideDocumentHtml();
+        // Tạo container ẩn có cùng kích thước và padding với bản xem trước trên web
+        const exportContainer = document.createElement('div');
+        exportContainer.id = 'gvbm-pdf-export-container';
+        exportContainer.style.position = 'fixed';
+        exportContainer.style.top = '0';
+        exportContainer.style.left = '-9999px';
+        exportContainer.style.width = '794px';
+        exportContainer.style.boxSizing = 'border-box';
+        exportContainer.style.padding = '20px 24px';
+        exportContainer.style.background = '#ffffff';
+        exportContainer.style.zIndex = '-9999';
+        exportContainer.innerHTML = buildGvbmGuideDocumentHtml();
 
-        document.body.appendChild(tempContainer);
+        document.body.appendChild(exportContainer);
 
         try {
-            // Chờ 250ms để layout và ảnh QR base64 vẽ hoàn chỉnh
-            await new Promise(resolve => setTimeout(resolve, 250));
+            // Đảm bảo tất cả hình ảnh (đặc biệt là mã QR Base64) đã load 100%
+            const imgs = Array.from(exportContainer.querySelectorAll('img'));
+            await Promise.all(imgs.map(img => {
+                if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+                return new Promise(resolve => {
+                    img.onload = resolve;
+                    img.onerror = resolve;
+                });
+            }));
+
+            // Đợi toàn bộ font chữ được nạp
+            if (document.fonts && document.fonts.ready) {
+                await document.fonts.ready;
+            }
+
+            await new Promise(resolve => setTimeout(resolve, 200));
 
             if (typeof html2canvas === 'undefined') {
                 throw new Error('Thư viện html2canvas chưa sẵn sàng');
             }
 
-            const canvas = await html2canvas(tempContainer, {
+            const canvas = await html2canvas(exportContainer, {
                 scale: 2,
                 useCORS: true,
                 backgroundColor: '#ffffff',
                 logging: false,
-                windowWidth: 1024,
-                x: 0,
-                y: 0,
-                width: tempContainer.offsetWidth || 794,
-                height: tempContainer.offsetHeight,
-                scrollX: 0,
-                scrollY: 0
+                width: 794,
+                windowWidth: 794
             });
 
             // Gỡ bỏ container tạm
-            if (tempContainer && tempContainer.parentNode) {
-                tempContainer.parentNode.removeChild(tempContainer);
+            if (exportContainer && exportContainer.parentNode) {
+                exportContainer.parentNode.removeChild(exportContainer);
             }
 
             const imgData = canvas.toDataURL('image/jpeg', 0.95);
 
-            // Kiểm tra jsPDF (nếu có từ CDN thì dùng, nếu không thì dùng bộ dựng thuần tiêu chuẩn)
+            // Kiểm tra jsPDF
             const jsPDFClass = (window.jspdf && window.jspdf.jsPDF) ? window.jspdf.jsPDF : (typeof jsPDF !== 'undefined' ? jsPDF : null);
             let downloaded = false;
 
@@ -5718,9 +5728,10 @@
                     });
                     const pageWidth = 210;
                     const pageHeight = 297;
-                    const margin = 8;
-                    const maxW = pageWidth - margin * 2;
-                    const maxH = pageHeight - margin * 2;
+                    const marginSide = 8;
+                    const marginTop = 8; // Đặt cách mép trên 8mm chuẩn đẹp, KHÔNG căn giữa trang làm thụt xuống 4cm
+                    const maxW = pageWidth - marginSide * 2;
+                    const maxH = pageHeight - marginTop - 8;
 
                     let renderW = maxW;
                     let renderH = (canvas.height * renderW) / canvas.width;
@@ -5729,7 +5740,7 @@
                         renderW = (canvas.width * renderH) / canvas.height;
                     }
                     const posX = (pageWidth - renderW) / 2;
-                    const posY = (pageHeight - renderH) / 2;
+                    const posY = marginTop;
 
                     pdf.addImage(imgData, 'JPEG', posX, posY, renderW, renderH);
                     pdf.save(filename);
@@ -5752,8 +5763,8 @@
 
         } catch (err) {
             console.error('Lỗi khi xuất PDF:', err);
-            if (tempContainer && tempContainer.parentNode) {
-                tempContainer.parentNode.removeChild(tempContainer);
+            if (exportContainer && exportContainer.parentNode) {
+                exportContainer.parentNode.removeChild(exportContainer);
             }
             closeModalUi('custom-modal', 'custom-modal-content');
             setTimeout(() => {
