@@ -3523,7 +3523,22 @@
         // 1. Try to load from Supabase first if configured
         if (isSupabaseConnected) {
             try {
-                const savedUserStr = localStorage.getItem('currentUser');
+                let savedUserStr = localStorage.getItem('currentUser');
+                // Tự động dọn dẹp nếu trình duyệt còn lưu cache tài khoản lớp khác (ví dụ: cohakhtn / 6A4)
+                if (savedUserStr) {
+                    try {
+                        const checkSaved = JSON.parse(savedUserStr);
+                        if (checkSaved && (checkSaved.id === 'cohakhtn' || checkSaved.className === '6A4')) {
+                            console.warn("Phát hiện tài khoản khác lớp trong cache, tự động hoàn trả về Thầy Tuấn (12A17)");
+                            localStorage.removeItem('currentUser');
+                            localStorage.removeItem('currentTeacherId');
+                            localStorage.removeItem('currentUserRole');
+                            localStorage.removeItem('currentStudent');
+                            savedUserStr = null;
+                        }
+                    } catch(e) {}
+                }
+
                 if (savedUserStr) {
                     const savedUser = JSON.parse(savedUserStr);
                     const savedTeacherId = localStorage.getItem('currentTeacherId');
@@ -3576,7 +3591,7 @@
                 if (res.ok) {
                     const backendData = await res.json();
                     const userObj = backendData.currentUser || backendData.user;
-                    if (userObj) {
+                    if (userObj && userObj.id !== 'cohakhtn' && userObj.className !== '6A4') {
                         currentUser = userObj;
                         if (!currentUser.id) currentUser.id = 'thaytuan';
                         students = backendData.students || [];
@@ -3600,7 +3615,7 @@
                 if (res.ok) {
                     const backendData = await res.json();
                     const userObj = backendData.currentUser || backendData.user;
-                    if (userObj) {
+                    if (userObj && userObj.id !== 'cohakhtn' && userObj.className !== '6A4') {
                         currentUser = userObj;
                         if (!currentUser.id) currentUser.id = 'thaytuan';
                         students = backendData.students || [];
@@ -3614,6 +3629,45 @@
                 }
             } catch(e) {
                 console.warn("Static data.json not available, falling back to LocalStorage.");
+            }
+        }
+
+        // Nếu chưa nạp được (hoặc vừa dọn dẹp cache), tự động kết nối Supabase nạp dữ liệu Thầy Tuấn (12A17)
+        if (!loaded && isSupabaseConnected) {
+            try {
+                const targetId = 'thaytuan';
+                const row = await callSupabaseRest('GET', targetId);
+                if (row && row.data) {
+                    const cloudData = row.data;
+                    currentUser = cloudData.currentUser || cloudData.user || {};
+                    if (!currentUser.id) currentUser.id = targetId;
+                    students = cloudData.students || [];
+                    seatingCharts = cloudData.seatingCharts || [];
+                    timetables = cloudData.timetables || [];
+                    teacherTimetable = cloudData.teacherTimetable || { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} };
+                    attendanceData = cloudData.attendanceData || {};
+                    announcements = cloudData.announcements || [];
+                    if (cloudData.currentUser) {
+                        if (cloudData.currentUser.activeSeatingChartId) {
+                            currentUser.activeSeatingChartId = cloudData.currentUser.activeSeatingChartId;
+                        }
+                        if (cloudData.currentUser.activeTimetableId) {
+                            currentUser.activeTimetableId = cloudData.currentUser.activeTimetableId;
+                        }
+                    }
+                    loaded = true;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    localStorage.setItem('user_' + targetId, JSON.stringify(currentUser));
+                    localStorage.setItem('students_' + targetId, JSON.stringify(students));
+                    localStorage.setItem('seating_' + targetId, JSON.stringify(seatingCharts));
+                    localStorage.setItem('timetables_' + targetId, JSON.stringify(timetables));
+                    localStorage.setItem('teacherTimetable_' + targetId, JSON.stringify(teacherTimetable));
+                    localStorage.setItem('attendance_' + targetId, JSON.stringify(attendanceData));
+                    localStorage.setItem('announcements_' + targetId, JSON.stringify(announcements));
+                    console.log("Auto-loaded Thay Tuan data from Supabase successfully!");
+                }
+            } catch(e) {
+                console.warn("Auto-load Thay Tuan error:", e);
             }
         }
 

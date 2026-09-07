@@ -1,33 +1,27 @@
 {
   "currentUser": {
-    "id": "cohakhtn",
-    "pass": "coha",
-    "teacherName": "Cô Hà",
-    "gender": "Nữ",
-    "className": "6A4",
+    "id": "thaytuan",
+    "pass": "minhtuan",
+    "teacherName": "Phạm Minh Tuấn",
+    "gender": "Nam",
+    "className": "12A17",
     "year": "2026 - 2027",
-    "slogan": "THCS Nguyễn An Khương - KHTN",
-    "theme": "emerald",
-    "role": "teacher"
+    "slogan": "12A17 - Đoàn kết là sức mạnh",
+    "theme": "indigo",
+    "role": "teacher",
+    "activeSeatingChartId": "1788399367642",
+    "gvbmAccount": {
+      "username": "gvbm_12a17",
+      "pass": "gvbm123",
+      "enabled": true
+    }
   },
   "students": [],
-  "seatingCharts": [
-    {
-      "id": "chart_default",
-      "name": "Sơ đồ lớp 6A4",
-      "layout": {}
-    }
-  ],
-  "timetables": [
-    {
-      "id": "tkb_6a4",
-      "name": "TKB Lớp 6A4",
-      "data": {}
-    }
-  ],
+  "seatingCharts": [],
+  "timetables": [],
   "teacherTimetable": {
     "id": "teacher_tkb",
-    "name": "TKB Giáo viên - Cô Hà",
+    "name": "TKB Giáo viên - Phạm Minh Tuấn",
     "data": {}
   },
   "attendanceData": {},
