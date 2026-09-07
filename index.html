@@ -1582,6 +1582,15 @@
             </div>
             <button onclick="startSpin()" id="spin-btn" class="w-full bg-gradient-to-r from-amber-400 to-orange-500 text-white py-3.5 md:py-4 rounded-xl font-black shadow-lg hover:scale-[1.02] active:scale-95 transition-all mt-2 text-base md:text-lg">🎲 QUAY NGAY</button>
             <button onclick="switchTab('tab-seating')" class="w-full bg-slate-50 hover:bg-slate-100 text-slate-700 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 border border-slate-200 mt-2"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-indigo-500"></i> Xem sơ đồ chỗ ngồi lớp</button>
+            
+            <!-- Hộp mẹo dành cho Giáo viên bộ môn -->
+            <div class="mt-2 p-3 bg-amber-50/80 border border-amber-200/70 rounded-2xl text-[11px] text-amber-900 flex items-start gap-2 shadow-xs">
+              <i data-lucide="sparkles" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
+              <div class="leading-relaxed">
+                <span class="font-black text-amber-800 uppercase text-[9px] tracking-wider block">Mẹo Sư Phạm Dành Cho GVBM</span>
+                Dùng vòng quay gọi HS kiểm tra bài cũ hoặc phát biểu. Sau khi quay, có thể chọn <b>"Đánh lỗi vi phạm"</b>, <b>"Khen thưởng"</b> hoặc <b>"Xem vị trí ngồi"</b> tức thì!
+              </div>
+            </div>
           </div>
           <div class="lg:col-span-3 bg-white p-5 md:p-6 rounded-3xl shadow-sm border border-slate-100">
             <h4 class="font-black text-slate-800 text-base md:text-lg mb-3 md:mb-4 flex items-center justify-between">
@@ -1708,7 +1717,7 @@
                 <i data-lucide="book-open" class="w-6 h-6 text-indigo-300"></i> Hướng Dẫn Sử Dụng Cho Giáo Viên Bộ Môn
               </h3>
               <p class="text-xs md:text-sm text-indigo-100/90 leading-relaxed max-w-2xl font-normal">
-                Tài liệu tóm tắt quy trình tra cứu sơ đồ chỗ ngồi, thời khóa biểu và chức năng ghi nhận lỗi nề nếp trong tiết học. GVCN có thể tải file PDF chuẩn A4 hoặc in trực tiếp phát cho các Thầy/Cô bộ môn của lớp.
+                Tài liệu tóm tắt quy trình tra cứu sơ đồ chỗ ngồi, thời khóa biểu, <b>vòng quay gọi học sinh trả bài</b> và chức năng ghi nhận lỗi nề nếp trong tiết học. GVCN có thể tải file PDF chuẩn A4 hoặc in trực tiếp phát cho các Thầy/Cô bộ môn của lớp.
               </p>
 
               <!-- Credentials bar -->
@@ -4683,7 +4692,7 @@
                         <button onclick="openGvbmViolationModal()" class="bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 text-white px-3.5 md:px-4 py-2.5 rounded-xl text-xs font-black shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="alert-triangle" class="w-4 h-4"></i> Đánh lỗi vi phạm</button>
                         <button onclick="switchTab('tab-wheel')" class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-3.5 md:px-4 py-2.5 rounded-xl text-xs font-black shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="dices" class="w-4 h-4"></i> Vòng quay gọi HS</button>
                         <button onclick="switchTab('tab-seating')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 md:px-4 py-2.5 rounded-xl text-xs font-bold shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="map-pin" class="w-4 h-4"></i> Sơ đồ lớp</button>
-                        <button onclick="switchTab('tab-students')" class="bg-blue-500 hover:bg-blue-600 text-white px-3.5 md:px-4 py-2.5 rounded-xl text-xs font-bold shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="users" class="w-4 h-4"></i> Danh sách lớp</button>
+                        <button onclick="openGvbmGuideModal()" class="bg-white/15 hover:bg-white/25 text-white border border-white/20 px-3.5 md:px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="book-open" class="w-4 h-4 text-amber-300"></i> Hướng dẫn sử dụng</button>
                     `;
                 }
             } else {
@@ -5340,7 +5349,7 @@
         if (!currentUser || !currentUser.gvbmAccount) return;
         const acc = currentUser.gvbmAccount;
         const className = currentUser.className || 'Lớp';
-        const text = `Kính gửi Quý Thầy/Cô Bộ Môn lớp ${className}:\nĐây là tài khoản dùng chung để Thầy/Cô đăng nhập ghi nhận lỗi vi phạm nề nếp của học sinh:\n- Trang web đăng nhập: https://quanlylophoc-gdtx.vercel.app\n- Tài khoản (Username): ${acc.username}\n- Mật khẩu (Password): ${acc.pass}\n(Thầy/Cô có thể quét mã QR trên tờ Hướng dẫn sử dụng hoặc mở link trên. Trân trọng cảm ơn Thầy/Cô đã phối hợp cùng GVCN!)`;
+        const text = `Kính gửi Quý Thầy/Cô Bộ Môn lớp ${className}:\nĐây là tài khoản dùng chung để Thầy/Cô đăng nhập sử dụng hệ thống quản lý lớp (Xem sơ đồ chỗ ngồi, Vòng quay gọi học sinh trả bài/phát biểu, Ghi nhận lỗi vi phạm nề nếp):\n- Trang web đăng nhập: https://quanlylophoc-gdtx.vercel.app\n- Tài khoản (Username): ${acc.username}\n- Mật khẩu (Password): ${acc.pass}\n(Thầy/Cô có thể quét mã QR trên tờ Hướng dẫn sử dụng hoặc bấm nút "⚡ Đăng nhập nhanh GVBM" trên trang đăng nhập. Trân trọng cảm ơn Thầy/Cô đã phối hợp cùng GVCN!)`;
         
         navigator.clipboard.writeText(text).then(() => {
             showModal('success', 'Đã sao chép!', 'Đã sao chép tin nhắn tài khoản GVBM và link quanlylophoc-gdtx.vercel.app. Thầy/cô chỉ cần dán (Ctrl+V) vào nhóm Zalo GVBM nhé!');
@@ -5390,128 +5399,147 @@
         const dateStr = `ngày ${String(today.getDate()).padStart(2, '0')} tháng ${String(today.getMonth() + 1).padStart(2, '0')} năm ${today.getFullYear()}`;
 
         return `
-        <div class="gvbm-guide-doc-wrapper" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #1e293b; background: #ffffff; line-height: 1.45; font-size: 13px; max-width: 100%; box-sizing: border-box;">
+        <div class="gvbm-guide-doc-wrapper" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #1e293b; background: #ffffff; line-height: 1.4; font-size: 12px; max-width: 100%; box-sizing: border-box;">
           
-          <!-- Header mới: Tiêu đề + Thông tin lớp + Khung Mã QR quét truy cập trực tiếp -->
-          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #4f46e5; padding-bottom: 11px; margin-bottom: 12px; gap: 12px;">
+          <!-- Header: Tiêu đề + Thông tin lớp + Khung Mã QR quét truy cập -->
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #4f46e5; padding-bottom: 9px; margin-bottom: 10px; gap: 12px;">
             <!-- Cột trái: Tên tài liệu & Thông tin lớp -->
             <div style="flex: 1;">
-              <div style="display: inline-block; background: #e0e7ff; color: #3730a3; font-weight: 800; font-size: 10.5px; padding: 2px 9px; border-radius: 9999px; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.4px;">
+              <div style="display: inline-block; background: #e0e7ff; color: #3730a3; font-weight: 800; font-size: 10px; padding: 2px 8px; border-radius: 9999px; text-transform: uppercase; margin-bottom: 3px; letter-spacing: 0.3px;">
                 ★ SỔ QUẢN LÝ NỀ NẾP & HỌC TẬP ĐIỆN TỬ
               </div>
-              <h1 style="font-size: 16.5px; font-weight: 900; text-transform: uppercase; color: #1e1b4b; margin: 0 0 3px; line-height: 1.25; letter-spacing: 0.2px;">
+              <h1 style="font-size: 15.5px; font-weight: 900; text-transform: uppercase; color: #1e1b4b; margin: 0 0 2px; line-height: 1.25; letter-spacing: 0.2px;">
                 HƯỚNG DẪN SỬ DỤNG HỆ THỐNG QUẢN LÝ LỚP HỌC
               </h1>
-              <div style="font-size: 12px; font-weight: 700; font-style: italic; color: #4338ca; margin-bottom: 8px;">
+              <div style="font-size: 11.5px; font-weight: 700; font-style: italic; color: #4338ca; margin-bottom: 6px;">
                 (DÀNH CHO QUÝ THẦY / CÔ GIÁO VIÊN BỘ MÔN - GVBM)
               </div>
-              <div style="display: flex; flex-wrap: wrap; gap: 6px; font-size: 11px; color: #334155; font-weight: 600;">
-                <span style="background: #f1f5f9; padding: 3px 9px; border-radius: 6px; border: 1px solid #cbd5e1;">LỚP: <b style="color: #0f172a; font-size: 12px;">${className}</b></span>
-                <span style="background: #f1f5f9; padding: 3px 9px; border-radius: 6px; border: 1px solid #cbd5e1;">Năm học: <b style="color: #0f172a;">${year}</b></span>
-                <span style="background: #f1f5f9; padding: 3px 9px; border-radius: 6px; border: 1px solid #cbd5e1;">GVCN: <b style="color: #0f172a;">${teacherName}</b></span>
+              <div style="display: flex; flex-wrap: wrap; gap: 5px; font-size: 10.5px; color: #334155; font-weight: 600;">
+                <span style="background: #f1f5f9; padding: 2px 8px; border-radius: 6px; border: 1px solid #cbd5e1;">LỚP: <b style="color: #0f172a; font-size: 11.5px;">${className}</b></span>
+                <span style="background: #f1f5f9; padding: 2px 8px; border-radius: 6px; border: 1px solid #cbd5e1;">Năm học: <b style="color: #0f172a;">${year}</b></span>
+                <span style="background: #f1f5f9; padding: 2px 8px; border-radius: 6px; border: 1px solid #cbd5e1;">GVCN: <b style="color: #0f172a;">${teacherName}</b></span>
               </div>
             </div>
 
             <!-- Cột phải: Mã QR Code to, rõ, đẹp mắt -->
-            <div style="text-align: center; background: #f8fafc; border: 1.5px solid #c7d2fe; border-radius: 12px; padding: 6px 10px; shrink-0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); min-width: 125px;">
-              <div style="font-size: 9.5px; font-weight: 800; text-transform: uppercase; color: #4338ca; margin-bottom: 3px; letter-spacing: 0.2px;">
+            <div style="text-align: center; background: #f8fafc; border: 1.5px solid #c7d2fe; border-radius: 10px; padding: 5px 9px; shrink-0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); min-width: 115px;">
+              <div style="font-size: 9px; font-weight: 800; text-transform: uppercase; color: #4338ca; margin-bottom: 2px; letter-spacing: 0.2px;">
                 📱 QUÉT MÃ VÀO WEB
               </div>
-              <div style="background: #ffffff; padding: 3px; border-radius: 6px; display: inline-block; border: 1px solid #e2e8f0; line-height: 0;">
-                ${getAppQrSvg(82)}
+              <div style="background: #ffffff; padding: 2px; border-radius: 6px; display: inline-block; border: 1px solid #e2e8f0; line-height: 0;">
+                ${getAppQrSvg(76)}
               </div>
-              <div style="font-size: 9px; font-weight: 800; color: #1e1b4b; margin-top: 3px; font-family: monospace;">
+              <div style="font-size: 8.5px; font-weight: 800; color: #1e1b4b; margin-top: 2px; font-family: monospace;">
                 quanlylophoc-gdtx.vercel.app
               </div>
-              <div style="font-size: 8px; color: #64748b; margin-top: 1px;">
+              <div style="font-size: 7.5px; color: #64748b; margin-top: 1px;">
                 (Camera / Zalo quét mã)
               </div>
             </div>
           </div>
 
           <!-- Khung thông tin tài khoản đăng nhập -->
-          <div style="background-color: #f8fafc; border: 1.5px solid #c7d2fe; border-radius: 8px; padding: 9px 12px; margin-bottom: 11px;">
-            <div style="font-weight: 800; color: #312e81; font-size: 12px; margin-bottom: 6px; display: flex; align-items: center; gap: 5px;">
-              <span style="font-size: 14px;">🔑</span> THÔNG TIN ĐĂNG NHẬP DÙNG CHUNG CHO GIÁO VIÊN BỘ MÔN:
+          <div style="background-color: #f8fafc; border: 1.5px solid #c7d2fe; border-radius: 8px; padding: 7px 11px; margin-bottom: 9px;">
+            <div style="font-weight: 800; color: #312e81; font-size: 11.5px; margin-bottom: 4px; display: flex; align-items: center; gap: 5px;">
+              <span style="font-size: 13px;">🔑</span> THÔNG TIN ĐĂNG NHẬP DÙNG CHUNG CHO GIÁO VIÊN BỘ MÔN:
             </div>
-            <div style="display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 6px 12px; font-size: 11.5px;">
+            <div style="display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 4px 10px; font-size: 11px;">
               <div><b>• Địa chỉ trang web:</b> <span style="color: #2563eb; font-weight: 800; word-break: break-all;">https://quanlylophoc-gdtx.vercel.app</span></div>
               <div><b>• Phạm vi lớp:</b> <span style="font-weight: 700; color: #0f172a;">Lớp ${className} (Năm học ${year})</span></div>
-              <div><b>• Tên đăng nhập (Username):</b> <span style="background: #e0e7ff; color: #3730a3; padding: 2px 7px; border-radius: 4px; font-weight: 800; font-family: monospace;">${gvbmUser}</span></div>
-              <div><b>• Mật khẩu mặc định (Password):</b> <span style="background: #e0e7ff; color: #3730a3; padding: 2px 7px; border-radius: 4px; font-weight: 800; font-family: monospace;">${gvbmPass}</span></div>
+              <div><b>• Tên đăng nhập (Username):</b> <span style="background: #e0e7ff; color: #3730a3; padding: 1.5px 6px; border-radius: 4px; font-weight: 800; font-family: monospace;">${gvbmUser}</span></div>
+              <div><b>• Mật khẩu mặc định (Password):</b> <span style="background: #e0e7ff; color: #3730a3; padding: 1.5px 6px; border-radius: 4px; font-weight: 800; font-family: monospace;">${gvbmPass}</span></div>
             </div>
           </div>
 
           <!-- Mục 1: Mục đích & Ý nghĩa -->
-          <div style="margin-bottom: 11px;">
-            <div style="font-weight: 800; color: #0f172a; font-size: 12.5px; text-transform: uppercase; margin-bottom: 3px; display: flex; align-items: center; gap: 5px;">
-              <span>1. MỤC ĐÍCH & Ý NGHĨA</span>
+          <div style="margin-bottom: 9px;">
+            <div style="font-weight: 800; color: #0f172a; font-size: 11.5px; text-transform: uppercase; margin-bottom: 2px;">
+              1. MỤC ĐÍCH & Ý NGHĨA
             </div>
-            <p style="margin: 0; text-align: justify; font-size: 11.5px; line-height: 1.45; color: #334155;">
-              Nhằm tăng cường phối hợp kịp thời giữa <b>Giáo viên bộ môn (GVBM)</b> và <b>Giáo viên chủ nhiệm (GVCN)</b> trong quản lý nề nếp, trật tự và kỷ luật học đường. Hệ thống cho phép Thầy/Cô tra cứu nhanh vị trí sơ đồ bàn học, thông tin học sinh và <b>ghi nhận trực tiếp vi phạm nề nếp</b> phát sinh trong tiết dạy. Điểm trừ được tự động tổng hợp vào bảng thi đua tuần và tháng của lớp.
+            <p style="margin: 0; text-align: justify; font-size: 10.5px; line-height: 1.4; color: #334155;">
+              Hệ thống điện tử giúp <b>Giáo viên bộ môn (GVBM)</b> phối hợp cùng <b>Giáo viên chủ nhiệm (GVCN)</b> quản lý nề nếp và tạo không khí học tập sôi nổi trong tiết dạy. Thầy/Cô có thể tra cứu nhanh <b>sơ đồ chỗ ngồi 4 dãy</b>, sử dụng <b>vòng quay gọi học sinh lên bảng</b> ngẫu nhiên công bằng, và <b>ghi nhận trực tiếp vi phạm nề nếp</b> để tự động đồng bộ vào bảng thi đua tuần của lớp.
             </p>
           </div>
 
           <!-- Mục 2: Hướng dẫn đăng nhập -->
-          <div style="margin-bottom: 11px;">
-            <div style="font-weight: 800; color: #0f172a; font-size: 12.5px; text-transform: uppercase; margin-bottom: 3px;">
+          <div style="margin-bottom: 9px;">
+            <div style="font-weight: 800; color: #0f172a; font-size: 11.5px; text-transform: uppercase; margin-bottom: 2px;">
               2. CÁCH THỨC ĐĂNG NHẬP VÀO HỆ THỐNG
             </div>
-            <div style="font-size: 11.5px; line-height: 1.45; color: #334155;">
-              <div>• <b>Bước 1:</b> Quét <b>mã QR ở góc trên</b> (bằng ứng dụng Zalo hoặc Camera điện thoại), hoặc mở trình duyệt web gõ địa chỉ: <b style="color: #2563eb;">quanlylophoc-gdtx.vercel.app</b>.</div>
-              <div>• <b>Bước 2:</b> Tại màn hình đăng nhập, nhập <b>Tài khoản:</b> <code style="font-weight: 700; color: #3730a3;">${gvbmUser}</code> và <b>Mật khẩu:</b> <code style="font-weight: 700; color: #3730a3;">${gvbmPass}</code>.</div>
-              <div>• <b>Bước 3:</b> Nhấn <b>"Đăng nhập"</b> để vào trang chủ làm việc chuyên biệt dành cho Giáo viên bộ môn.</div>
+            <div style="font-size: 10.5px; line-height: 1.4; color: #334155;">
+              <div>• <b>Bước 1:</b> Quét <b>mã QR ở góc trên</b> (bằng Zalo / Camera điện thoại) hoặc truy cập: <b style="color: #2563eb;">quanlylophoc-gdtx.vercel.app</b>.</div>
+              <div>• <b>Bước 2:</b> Bấm nút xanh <b>"⚡ Đăng nhập nhanh GVBM (1 chạm)"</b> hoặc nhập <b>Tài khoản:</b> <code style="font-weight: 700; color: #3730a3;">${gvbmUser}</code> | <b>Mật khẩu:</b> <code style="font-weight: 700; color: #3730a3;">${gvbmPass}</code>.</div>
+              <div>• <b>Bước 3:</b> Nhấn <b>"Đăng nhập"</b> để vào thẳng giao diện làm việc chuyên biệt dành cho Giáo viên bộ môn.</div>
             </div>
           </div>
 
-          <!-- Mục 3: Các tính năng chính -->
-          <div style="margin-bottom: 11px;">
-            <div style="font-weight: 800; color: #0f172a; font-size: 12.5px; text-transform: uppercase; margin-bottom: 4px;">
+          <!-- Mục 3: Các tính năng chính dành cho GVBM -->
+          <div style="margin-bottom: 9px;">
+            <div style="font-weight: 800; color: #0f172a; font-size: 11.5px; text-transform: uppercase; margin-bottom: 3px;">
               3. CÁC TÍNH NĂNG CHÍNH DÀNH CHO GVBM
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 11px;">
-              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 8px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 10.5px;">
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 5px 7px;">
                 <b style="color: #1e293b;">📋 Sơ Đồ Chỗ Ngồi Lớp:</b>
-                <div style="color: #475569; margin-top: 1px;">Tra cứu chính xác vị trí bàn ngồi theo dãy, tổ học tập để dễ dàng điểm danh, gọi bài và nhắc nhở.</div>
+                <div style="color: #475569; margin-top: 1px;">Xem 4 dãy bàn học sinh và 2 cánh Ban cán sự cân đối. Bấm vào học sinh để xem hoặc đánh lỗi.</div>
               </div>
-              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 8px;">
-                <b style="color: #1e293b;">📅 Thời Khóa Biểu:</b>
-                <div style="color: #475569; margin-top: 1px;">Xem lịch phân công tiết học, thứ trong tuần, môn học và giáo viên phụ trách.</div>
+              <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 5px 7px;">
+                <b style="color: #b45309;">🎲 Vòng Quay Gọi Tên HS:</b>
+                <div style="color: #92400e; margin-top: 1px;">Gọi ngẫu nhiên học sinh trả bài với 7 chế độ sinh động (Vòng quay, Xào bài, Đua vịt, Hộp quà...).</div>
               </div>
-              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 8px;">
-                <b style="color: #1e293b;">👥 Danh Sách Học Sinh:</b>
-                <div style="color: #475569; margin-top: 1px;">Xem họ tên, ngày sinh, ban cán sự lớp (Lớp trưởng, Lớp phó, Tổ trưởng).</div>
-              </div>
-              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 8px;">
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 5px 7px;">
                 <b style="color: #1e293b;">⚠️ Đánh Lỗi Vi Phạm Nề Nếp:</b>
-                <div style="color: #475569; margin-top: 1px;">Chức năng trọng tâm ghi nhận lỗi học sinh ngay trong tiết dạy và tự động cập nhật trừ điểm.</div>
+                <div style="color: #475569; margin-top: 1px;">Ghi nhận nhanh lỗi phát sinh trong tiết học, hệ thống tự động tính điểm trừ gửi đến GVCN.</div>
+              </div>
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 5px 7px;">
+                <b style="color: #1e293b;">👥 Danh Sách & Ban Cán Sự:</b>
+                <div style="color: #475569; margin-top: 1px;">Tra cứu họ tên, ngày sinh, chức vụ ban cán sự lớp để phối hợp nhắc nhở học sinh.</div>
               </div>
             </div>
           </div>
 
-          <!-- Mục 4: Quy trình đánh lỗi -->
-          <div style="margin-bottom: 11px;">
-            <div style="font-weight: 800; color: #0f172a; font-size: 12.5px; text-transform: uppercase; margin-bottom: 4px;">
+          <!-- Mục 4: Quy trình đánh lỗi vi phạm -->
+          <div style="margin-bottom: 9px;">
+            <div style="font-weight: 800; color: #0f172a; font-size: 11.5px; text-transform: uppercase; margin-bottom: 3px;">
               4. QUY TRÌNH THỰC HIỆN "ĐÁNH LỖI VI PHẠM" TRONG TIẾT HỌC
             </div>
-            <div style="background: #fff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 7px 10px; font-size: 11px; line-height: 1.45; color: #1e293b;">
-              <div>• <b>Bước 1:</b> Tại màn hình <b>Sơ đồ lớp</b> hoặc <b>Danh sách học sinh</b>, bấm vào học sinh vi phạm hoặc nhấn nút đỏ <b>"Đánh lỗi vi phạm"</b> (biểu tượng ⚠️).</div>
-              <div>• <b>Bước 2:</b> Chọn <b>Môn học</b> (Toán, Văn, Tiếng Anh, Lý, Hóa...) và <b>Tiết học</b> (Tiết 1 đến Tiết 5).</div>
-              <div>• <b>Bước 3:</b> Bấm chọn lỗi vi phạm nhanh trong danh mục (hoặc nhập nội dung chi tiết). Hệ thống tự động điền mức điểm trừ.</div>
-              <div>• <b>Bước 4:</b> Nhấn <b>"Ghi nhận vi phạm"</b>. Dữ liệu sẽ lập tức lưu vào hệ thống và thông báo ngay đến GVCN.</div>
+            <div style="background: #fff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 5px 8px; font-size: 10.5px; line-height: 1.4; color: #1e293b;">
+              <div>• <b>Bước 1:</b> Tại <b>Sơ đồ lớp</b>, <b>Danh sách lớp</b> hoặc ngay sau khi <b>Quay gọi tên</b>, chọn học sinh vi phạm hoặc bấm nút đỏ <b>"Đánh lỗi vi phạm"</b> (⚠️).</div>
+              <div>• <b>Bước 2:</b> Chọn <b>Môn học</b> (Toán, Văn, Anh, Lý, Hóa...) và <b>Tiết học</b> (Tiết 1 đến Tiết 5).</div>
+              <div>• <b>Bước 3:</b> Chọn lỗi vi phạm trong danh mục mẫu (hoặc nhập nội dung cụ thể), hệ thống tự động điền mức điểm trừ.</div>
+              <div>• <b>Bước 4:</b> Nhấn <b>"Ghi nhận vi phạm"</b>. Điểm trừ được cập nhật ngay lập tức vào bảng tổng hợp thi đua của lớp.</div>
+            </div>
+          </div>
+
+          <!-- Mục 5: Hướng dẫn sử dụng Vòng quay gọi HS -->
+          <div style="margin-bottom: 9px;">
+            <div style="font-weight: 800; color: #0f172a; font-size: 11.5px; text-transform: uppercase; margin-bottom: 3px; display: flex; align-items: center; gap: 5px;">
+              <span style="color: #d97706;">🎲</span> 5. HƯỚNG DẪN SỬ DỤNG VÒNG QUAY GỌI HỌC SINH (TRẢ BÀI / PHÁT BIỂU)
+            </div>
+            <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 5px 8px; font-size: 10.5px; line-height: 1.4; color: #92400e;">
+              <div>• <b>Cách mở:</b> Bấm mục <b>"🎲 Vòng quay gọi tên"</b> trên menu bên trái, hoặc bấm nút cam <b>"🎲 Quay gọi HS"</b> ngay trên thanh công cụ Sơ đồ lớp.</div>
+              <div>• <b>Thao tác:</b> Chọn chế độ hiển thị yêu thích (Vòng quay kỳ diệu, Xào bài, Đua vịt, Hộp quà...) rồi nhấn <b>"🎲 QUAY NGAY"</b>.</div>
+              <div>• <b>Tiện ích sư phạm sau khi quay trúng học sinh:</b>
+                <div style="display: flex; flex-wrap: wrap; gap: 3px 8px; margin-top: 2px; font-weight: 700;">
+                  <span>▸ ⚠️ <b style="color: #b91c1c;">Đánh lỗi vi phạm:</b> Ghi nhận trừ điểm nếu học sinh không thuộc bài.</span>
+                  <span>▸ ⭐ <b style="color: #b45309;">Khen thưởng:</b> Tuyên dương / cộng sao nếu trả lời tốt.</span>
+                  <span>▸ 🗺️ <b style="color: #4338ca;">Xem vị trí trên sơ đồ:</b> Tự động định vị và làm nổi bật chỗ ngồi của HS.</span>
+                  <span>▸ ❌ <b style="color: #475569;">Tạm ẩn HS này:</b> Tránh gọi lặp lại học sinh trong cùng tiết học.</span>
+                </div>
+              </div>
             </div>
           </div>
 
           <!-- Lưu ý & Chữ ký -->
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 18px; padding-top: 12px; border-top: 1px dashed #cbd5e1; font-size: 11.5px;">
-            <div style="max-width: 55%; color: #475569; font-style: italic; line-height: 1.5;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 10px; padding-top: 7px; border-top: 1px dashed #cbd5e1; font-size: 10.5px;">
+            <div style="max-width: 55%; color: #475569; font-style: italic; line-height: 1.4;">
               <b>* Lưu ý bảo mật:</b> Tài khoản dành riêng cho Thầy/Cô giảng dạy tại lớp. Quý Thầy/Cô vui lòng giữ bí mật mật khẩu, tuyệt đối không cung cấp cho học sinh. Trân trọng cảm ơn sự phối hợp của Quý Thầy/Cô!
             </div>
             <div style="text-align: center; width: 40%;">
-              <div style="font-style: italic; color: #64748b; margin-bottom: 2px;">TP. Hồ Chí Minh, ${dateStr}</div>
-              <div style="font-weight: 800; text-transform: uppercase; color: #0f172a; font-size: 12px;">GIÁO VIÊN CHỦ NHIỆM</div>
-              <div style="font-size: 10px; color: #94a3b8; font-style: italic; margin-bottom: 45px;">(Ký và ghi rõ họ tên)</div>
-              <div style="font-weight: 800; font-size: 13px; color: #1e1b4b;">${teacherName}</div>
+              <div style="font-style: italic; color: #64748b; margin-bottom: 1px;">TP. Hồ Chí Minh, ${dateStr}</div>
+              <div style="font-weight: 800; text-transform: uppercase; color: #0f172a; font-size: 11px;">GIÁO VIÊN CHỦ NHIỆM</div>
+              <div style="font-size: 9px; color: #94a3b8; font-style: italic; margin-bottom: 30px;">(Ký và ghi rõ họ tên)</div>
+              <div style="font-weight: 800; font-size: 12px; color: #1e1b4b;">${teacherName}</div>
             </div>
           </div>
         </div>
@@ -8817,7 +8845,7 @@
                     <button onclick="openGvbmViolationModal()" class="bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 text-white px-3.5 md:px-4 py-2.5 rounded-xl text-xs font-black shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="alert-triangle" class="w-4 h-4"></i> Đánh lỗi vi phạm</button>
                     <button onclick="switchTab('tab-wheel')" class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-3.5 md:px-4 py-2.5 rounded-xl text-xs font-black shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="dices" class="w-4 h-4"></i> Vòng quay gọi HS</button>
                     <button onclick="switchTab('tab-seating')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 md:px-4 py-2.5 rounded-xl text-xs font-bold shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="map-pin" class="w-4 h-4"></i> Sơ đồ lớp</button>
-                    <button onclick="switchTab('tab-students')" class="bg-blue-500 hover:bg-blue-600 text-white px-3.5 md:px-4 py-2.5 rounded-xl text-xs font-bold shadow-md hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="users" class="w-4 h-4"></i> Danh sách lớp</button>
+                    <button onclick="openGvbmGuideModal()" class="bg-white/15 hover:bg-white/25 text-white border border-white/20 px-3.5 md:px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm hover:scale-[1.02] transition flex items-center gap-1.5"><i data-lucide="book-open" class="w-4 h-4 text-amber-300"></i> Hướng dẫn sử dụng</button>
                 `;
             }
         }
