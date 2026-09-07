@@ -5152,7 +5152,7 @@
                     if (val.includes('|')) {
                         const parts = val.split('|');
                         subject = parts[0] || '';
-                        teacher = parts[1] || '';
+                        teacher = parts[1] || (subject ? getSubjectTeacher(subject) : '');
                     } else {
                         subject = val;
                         teacher = val ? getSubjectTeacher(val) : '';
@@ -6151,10 +6151,36 @@
     }
 
     function getSubjectTeacher(subject) {
-        if (!subject || !currentUser) return '';
-        const teachers = currentUser.subjectTeachers || {};
+        if (!subject) return '';
+        let teachers = (currentUser && currentUser.subjectTeachers) ? currentUser.subjectTeachers : null;
+        if (!teachers) {
+            try {
+                const targetId = (typeof currentTeacherId !== 'undefined' && currentTeacherId) || (currentUser ? currentUser.id : 'thaytuan');
+                const cachedUser = JSON.parse(localStorage.getItem('user_' + targetId) || localStorage.getItem('currentUser') || '{}');
+                teachers = cachedUser.subjectTeachers || {};
+            } catch(e) {
+                teachers = {};
+            }
+        }
+        if (!teachers) teachers = {};
         const norm = normalizeSubjectKey(subject);
-        return teachers[norm] || teachers[subject] || '';
+        let teacherName = teachers[norm] || teachers[subject] || '';
+        
+        if (!teacherName) {
+            const rawNorm = removeAccents(subject.toLowerCase().trim()).replace(/[^a-z0-9]/g, '');
+            for (const [k, v] of Object.entries(teachers)) {
+                if (removeAccents(k.toLowerCase().trim()).replace(/[^a-z0-9]/g, '') === rawNorm) {
+                    teacherName = v;
+                    break;
+                }
+            }
+        }
+        
+        // Tiết Sinh hoạt chủ nhiệm nếu chưa phân công riêng thì mặc định là GVCN
+        if (!teacherName && (subject.toUpperCase() === 'SHCN' || norm === 'SHCN')) {
+            teacherName = (currentUser && currentUser.teacherName) || '';
+        }
+        return teacherName;
     }
 
     function saveSubjectTeacher(subject, teacherName) {
@@ -6169,10 +6195,32 @@
             currentUser.subjectTeachers[subject] = val;
         }
         
+        // Lưu kèm các tên gọi viết tắt phổ biến trong TKB
+        const aliasMap = {
+            'Ngữ Văn': ['Văn', 'Van', 'nguvan'],
+            'Tiếng Anh': ['Anh', 'English', 'tienganh'],
+            'Vật Lý': ['Lý', 'Ly', 'vatly'],
+            'Hóa Học': ['Hóa', 'Hoa', 'hoahoc'],
+            'Sinh Học': ['Sinh', 'sinhhoc'],
+            'Lịch Sử': ['Sử', 'Su', 'lichsu'],
+            'Địa Lý': ['Địa', 'Dia', 'dialy'],
+            'Tin Học': ['Tin', 'tinhoc'],
+            'Công Nghệ': ['Công nghệ', 'CN', 'congnghe'],
+            'Thể Dục': ['Thể dục', 'GDTC', 'theduc'],
+            'GDKT-PL': ['GDCD', 'gdcd', 'gdkt'],
+            'GDQP': ['GDQP-AN', 'Quốc phòng', 'gdqp'],
+            'HĐTN': ['HĐTN-HN', 'Trải nghiệm', 'SHDC', 'SHCN']
+        };
+        if (aliasMap[norm]) {
+            aliasMap[norm].forEach(alias => {
+                currentUser.subjectTeachers[alias] = val;
+            });
+        }
+        
         // Lưu dữ liệu vào storage
         saveUserToStorage();
         if (typeof applyTimetable === 'function') applyTimetable();
-        if (typeof renderOverviewTimetable === 'function') renderOverviewTimetable();
+        if (typeof renderOverview === 'function') renderOverview();
     }
 
     // --- ATTENDANCE ---
@@ -8310,15 +8358,21 @@
               let subject = 'Nghỉ';
               let teacher = '';
               if (val) {
+                  let rawTeacher = '';
                   if (val.includes('|')) {
                       const parts = val.split('|');
-                      subject = parts[0] || 'Nghỉ';
-                      teacher = parts[1] ? `GV: ${parts[1]}` : '';
+                      subject = parts[0] ? parts[0].trim() : 'Nghỉ';
+                      rawTeacher = parts[1] ? parts[1].trim() : '';
                   } else {
-                      subject = val;
-                      const teachers = currentUser.subjectTeachers || {};
-                      const teacherName = teachers[val] || '';
-                      teacher = teacherName ? `GV: ${teacherName}` : '';
+                      subject = val.trim();
+                  }
+                  
+                  if (!rawTeacher && subject && subject !== 'Nghỉ') {
+                      rawTeacher = getSubjectTeacher(subject);
+                  }
+                  
+                  if (rawTeacher) {
+                      teacher = rawTeacher.startsWith('GV:') ? rawTeacher : `GV: ${rawTeacher}`;
                   }
               }
               
