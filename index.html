@@ -8997,6 +8997,12 @@
       }, 150);
     });
 
+    window.addEventListener('resize', () => {
+      if (typeof resizeDuckCanvas === 'function') resizeDuckCanvas();
+      if (typeof resizeF1Canvas === 'function') resizeF1Canvas();
+      if (typeof resizeHorseCanvas === 'function') resizeHorseCanvas();
+    });
+
     // Bấm phím Space để Bắt đầu đua / Chạy tiếp, hoặc phím C để đổi cảnh F1/Đua ngựa
     window.addEventListener('keydown', (e) => {
       const activeEl = document.activeElement;
@@ -12644,6 +12650,8 @@
     }
 
     function getHorseClosedCircuit(w, h, sceneKey) {
+      w = Math.max(400, w || 1000);
+      h = Math.max(250, h || 500);
       if (horseCurrentCircuit && horseCurrentCircuit.w === w && horseCurrentCircuit.h === h && horseCurrentCircuit.sceneKey === sceneKey) {
         return horseCurrentCircuit;
       }
@@ -12785,14 +12793,16 @@
       if (iconEl) iconEl.innerText = isHorseRandomScene ? '🎲' : scene.icon;
       if (nameEl) nameEl.innerText = isHorseRandomScene ? 'Ngẫu nhiên' : scene.name;
 
-      const visibleStudents = students.filter(s => !hiddenWheelIds.includes(s.id));
+      const visibleStudents = (typeof students !== 'undefined' && Array.isArray(students))
+        ? students.filter(s => !(hiddenWheelIds || []).includes(s.id))
+        : [];
       const count = visibleStudents.length;
 
-      const w = canvas.width;
-      const h = canvas.height;
+      const w = canvas.width || 1000;
+      const h = canvas.height || 500;
       const circuit = getHorseClosedCircuit(w, h, currentHorseSceneKey);
 
-      if (resetPositions || horseCarList.length !== count) {
+      if (resetPositions || !horseCarList || horseCarList.length !== count) {
         horseCarList = visibleStudents.map((s, idx) => {
           const row = Math.floor(idx / 2);
           const side = (idx % 2 === 0) ? -1 : 1;
@@ -12802,11 +12812,12 @@
           const startDist = -24 - row * 24;
           const pt = circuit.sampleDist(startDist);
 
+          const shortName = (typeof getShortName === 'function') ? getShortName(s) : s.name;
           return {
             id: s.id,
-            name: s.name,
+            name: shortName,
             fullName: s.name,
-            shortName: getShortName(s),
+            shortName: shortName,
             avatar: s.avatar,
             coat: coat,
             silkColor: silk.silk,
@@ -12830,7 +12841,23 @@
         });
       }
 
-      resetHorseRacePositions(true);
+      horseRaceRunning = false;
+      horseRaceState = 'idle';
+      horseDustParticles = [];
+
+      const statusEl = document.getElementById('horse-race-status');
+      if (statusEl) {
+        const lapDesc = horseTargetLaps > 1 ? ` - ${horseTargetLaps} Vòng khép kín` : ' - 1 Vòng';
+        statusEl.innerText = `${scene.icon} ${scene.name} (${count} chiến mã${lapDesc})`;
+      }
+
+      const gate = document.getElementById('horse-gate-overlay');
+      if (gate) gate.classList.add('hidden');
+
+      const leaderboard = document.getElementById('horse-leaderboard');
+      if (leaderboard) leaderboard.classList.add('hidden');
+
+      renderHorseRaceCanvas(performance.now());
     }
 
     function resizeHorseCanvas() {
@@ -12840,16 +12867,33 @@
       if (!container) return;
 
       const rect = container.getBoundingClientRect();
-      if (rect.width <= 0 || rect.height <= 0) return;
-
       const dpr = window.devicePixelRatio || 1;
-      const newW = Math.round(rect.width * dpr);
-      const newH = Math.round(rect.height * dpr);
+      const newW = (rect && rect.width > 0) ? Math.round(rect.width * dpr) : Math.round((container.clientWidth || 1000) * dpr);
+      const newH = (rect && rect.height > 0) ? Math.round(rect.height * dpr) : Math.round((container.clientHeight || 500) * dpr);
+
+      if (newW <= 0 || newH <= 0) return;
 
       if (canvas.width !== newW || canvas.height !== newH) {
         canvas.width = newW;
         canvas.height = newH;
         horseCurrentCircuit = null;
+        if (!horseRaceRunning && horseCarList && horseCarList.length > 0) {
+          const circuit = getHorseClosedCircuit(newW, newH, currentHorseSceneKey);
+          const count = horseCarList.length;
+          horseCarList.forEach((horse, idx) => {
+            const row = Math.floor(idx / 2);
+            const side = (idx % 2 === 0) ? -1 : 1;
+            horse.laneRatio = (count <= 1) ? 0 : side * 0.40;
+            horse.targetLaneRatio = horse.laneRatio;
+            horse.startDist = -24 - row * 24;
+            horse.dist = horse.startDist;
+            horse.prevDist = horse.startDist;
+            const pt = circuit.sampleDist(horse.dist);
+            horse.x = pt.x + pt.nx * horse.laneRatio * (circuit.roadW * 0.44);
+            horse.y = pt.y + pt.ny * horse.laneRatio * (circuit.roadW * 0.44);
+            horse.angle = pt.angle;
+          });
+        }
         renderHorseRaceCanvas(performance.now());
       }
     }
@@ -12868,8 +12912,8 @@
         initHorseRace(true);
         return;
       }
-      const w = canvas.width;
-      const h = canvas.height;
+      const w = canvas.width || 1000;
+      const h = canvas.height || 500;
       const circuit = getHorseClosedCircuit(w, h, currentHorseSceneKey);
       const count = horseCarList.length;
 
@@ -13324,7 +13368,7 @@
       // Sắp xếp thứ tự vẽ theo trục Y để ngựa phía dưới đè lên ngựa phía trên tự nhiên
       const drawOrder = [...horseCarList].sort((a, b) => a.y - b.y);
       drawOrder.forEach(horse => {
-        const isLeader = (horse.id === topLeader.id);
+        const isLeader = topLeader ? (horse.id === topLeader.id) : false;
         drawGallopingHorse(ctx, horse, isLeader, now, scene);
       });
     }
