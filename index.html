@@ -2196,16 +2196,20 @@
                 </div>
               </div>
 
-              <div class="grid grid-cols-3 gap-2.5 pt-1">
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
                 <button onclick="exportData()" class="bg-blue-50/80 hover:bg-blue-100 text-blue-700 border border-blue-200/70 p-3 rounded-2xl font-bold transition flex flex-col items-center text-center gap-1.5 text-xs shadow-xs">
                   <i data-lucide="download-cloud" class="w-5 h-5 text-blue-600"></i>
                   <span>Sao Lưu File</span>
                 </button>
                 <button onclick="document.getElementById('import-upload').click()" class="bg-emerald-50/80 hover:bg-emerald-100 text-emerald-700 border border-emerald-200/70 p-3 rounded-2xl font-bold transition flex flex-col items-center text-center gap-1.5 text-xs shadow-xs">
                   <i data-lucide="upload-cloud" class="w-5 h-5 text-emerald-600"></i>
-                  <span>Khôi Phục</span>
+                  <span>Khôi Phục File</span>
                 </button>
                 <input type="file" id="import-upload" accept=".json" class="hidden" onchange="importData(event)">
+                <button onclick="manualDeepDataRecovery()" class="bg-amber-50/80 hover:bg-amber-100 text-amber-800 border border-amber-200/70 p-3 rounded-2xl font-bold transition flex flex-col items-center text-center gap-1.5 text-xs shadow-xs" title="Quét toàn bộ bộ nhớ máy và đám mây để tìm và phục hồi TKB, Sơ đồ lớp, Ảnh bìa">
+                  <i data-lucide="scan-line" class="w-5 h-5 text-amber-600"></i>
+                  <span>Quét Phục Hồi</span>
+                </button>
                 <button onclick="resetAllPoints()" class="bg-rose-50/80 hover:bg-rose-100 text-rose-700 border border-rose-200/70 p-3 rounded-2xl font-bold transition flex flex-col items-center text-center gap-1.5 text-xs shadow-xs">
                   <i data-lucide="rotate-ccw" class="w-5 h-5 text-rose-600"></i>
                   <span>Reset Điểm</span>
@@ -3781,6 +3785,233 @@
     }
 
     function removeAccents(str) { return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D'); }
+
+    function countSeatedStudents(charts) {
+        if (!Array.isArray(charts)) return 0;
+        return charts.reduce((total, c) => total + (c && c.layout ? Object.keys(c.layout).length : 0), 0);
+    }
+
+    function countTimetableLessons(tkbList) {
+        if (!Array.isArray(tkbList)) return 0;
+        return tkbList.reduce((total, t) => total + (t && t.data ? Object.keys(t.data).length : 0), 0);
+    }
+
+    function countTeacherLessons(tt) {
+        return (tt && tt.data) ? Object.keys(tt.data).length : 0;
+    }
+
+    function autoRecoverClassData(targetId) {
+        const tId = targetId || currentTeacherId || (currentUser && currentUser.id) || 'thaytuan';
+
+        // 1. Phục hồi Sơ đồ chỗ ngồi
+        const currentSeated = countSeatedStudents(seatingCharts);
+        if (currentSeated === 0) {
+            let bestCharts = null;
+            let maxSeated = 0;
+            const keysToCheck = [
+                'seating_' + tId, 'seating_thaytuan', 'seating_cohakhtn', 
+                'seating_admin', 'backup_seating', 'seating_backup'
+            ];
+            for (let i = 0; i < localStorage.length; i++) {
+                const k = localStorage.key(i);
+                if (k && (k.startsWith('seating_') || k.includes('seating') || k.includes('backup_seating'))) {
+                    if (!keysToCheck.includes(k)) keysToCheck.push(k);
+                }
+            }
+            for (const k of keysToCheck) {
+                try {
+                    const raw = localStorage.getItem(k);
+                    if (!raw) continue;
+                    const parsed = JSON.parse(raw);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        const seated = countSeatedStudents(parsed);
+                        if (seated > maxSeated) {
+                            maxSeated = seated;
+                            bestCharts = parsed;
+                        }
+                    }
+                } catch(e) {}
+            }
+            if (bestCharts && maxSeated > 0) {
+                console.log(`[AutoRecover] Khôi phục ${maxSeated} chỗ ngồi vào seatingCharts từ bộ nhớ`);
+                seatingCharts = bestCharts;
+                localStorage.setItem('seating_' + tId, JSON.stringify(seatingCharts));
+                localStorage.setItem('backup_seating', JSON.stringify(seatingCharts));
+            }
+        } else {
+            try { localStorage.setItem('backup_seating', JSON.stringify(seatingCharts)); } catch(e) {}
+        }
+
+        // 2. Phục hồi Thời khóa biểu học sinh
+        const currentLessons = countTimetableLessons(timetables);
+        if (currentLessons === 0) {
+            let bestTimetables = null;
+            let maxLessons = 0;
+            const keysToCheck = [
+                'timetables_' + tId, 'timetables_thaytuan', 'timetables_cohakhtn', 
+                'timetables_admin', 'backup_timetables', 'timetables_backup'
+            ];
+            for (let i = 0; i < localStorage.length; i++) {
+                const k = localStorage.key(i);
+                if (k && (k.startsWith('timetables_') || k.includes('timetable') || k.includes('backup_timetables'))) {
+                    if (!keysToCheck.includes(k)) keysToCheck.push(k);
+                }
+            }
+            for (const k of keysToCheck) {
+                try {
+                    const raw = localStorage.getItem(k);
+                    if (!raw) continue;
+                    const parsed = JSON.parse(raw);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        const lessons = countTimetableLessons(parsed);
+                        if (lessons > maxLessons) {
+                            maxLessons = lessons;
+                            bestTimetables = parsed;
+                        }
+                    }
+                } catch(e) {}
+            }
+            if (bestTimetables && maxLessons > 0) {
+                console.log(`[AutoRecover] Khôi phục ${maxLessons} tiết TKB vào timetables từ bộ nhớ`);
+                timetables = bestTimetables;
+                localStorage.setItem('timetables_' + tId, JSON.stringify(timetables));
+                localStorage.setItem('backup_timetables', JSON.stringify(timetables));
+            }
+        } else {
+            try { localStorage.setItem('backup_timetables', JSON.stringify(timetables)); } catch(e) {}
+        }
+
+        // 3. Phục hồi Thời khóa biểu giáo viên
+        const currentTeacherLessons = countTeacherLessons(teacherTimetable);
+        if (currentTeacherLessons === 0) {
+            let bestTeacherTkb = null;
+            let maxTLessons = 0;
+            const keysToCheck = [
+                'teacherTimetable_' + tId, 'teacherTimetable_thaytuan', 'teacherTimetable_cohakhtn', 
+                'teacherTimetable_admin', 'backup_teacherTimetable', 'teacherTimetable_backup'
+            ];
+            for (let i = 0; i < localStorage.length; i++) {
+                const k = localStorage.key(i);
+                if (k && (k.startsWith('teacherTimetable_') || k.includes('teacherTimetable') || k.includes('backup_teacherTimetable'))) {
+                    if (!keysToCheck.includes(k)) keysToCheck.push(k);
+                }
+            }
+            for (const k of keysToCheck) {
+                try {
+                    const raw = localStorage.getItem(k);
+                    if (!raw) continue;
+                    const parsed = JSON.parse(raw);
+                    if (parsed && typeof parsed === 'object') {
+                        const lessons = countTeacherLessons(parsed);
+                        if (lessons > maxTLessons) {
+                            maxTLessons = lessons;
+                            bestTeacherTkb = parsed;
+                        }
+                    }
+                } catch(e) {}
+            }
+            if (bestTeacherTkb && maxTLessons > 0) {
+                console.log(`[AutoRecover] Khôi phục ${maxTLessons} tiết TKB giáo viên từ bộ nhớ`);
+                teacherTimetable = bestTeacherTkb;
+                localStorage.setItem('teacherTimetable_' + tId, JSON.stringify(teacherTimetable));
+                localStorage.setItem('backup_teacherTimetable', JSON.stringify(teacherTimetable));
+            }
+        } else {
+            try { localStorage.setItem('backup_teacherTimetable', JSON.stringify(teacherTimetable)); } catch(e) {}
+        }
+
+        // 4. Phục hồi Ảnh bìa
+        if (!currentUser) currentUser = {};
+        if (!currentUser.cover || typeof currentUser.cover !== 'string' || currentUser.cover.trim() === '') {
+            let recoveredCover = localStorage.getItem('cover_' + tId) ||
+                                 localStorage.getItem('cover_thaytuan') ||
+                                 localStorage.getItem('cover_cohakhtn') ||
+                                 localStorage.getItem('cover_photo') ||
+                                 localStorage.getItem('backup_cover');
+            
+            if (!recoveredCover) {
+                for (let i = 0; i < localStorage.length; i++) {
+                    const k = localStorage.key(i);
+                    if (k && (k.startsWith('user_') || k.includes('cover') || k === 'currentUser')) {
+                        try {
+                            const raw = localStorage.getItem(k);
+                            if (!raw) continue;
+                            if (raw.startsWith('data:image') || raw.startsWith('http')) {
+                                recoveredCover = raw;
+                                break;
+                            }
+                            const parsed = JSON.parse(raw);
+                            if (parsed && parsed.cover && typeof parsed.cover === 'string' && (parsed.cover.startsWith('data:image') || parsed.cover.startsWith('http'))) {
+                                recoveredCover = parsed.cover;
+                                break;
+                            }
+                        } catch(e) {}
+                    }
+                }
+            }
+
+            if (recoveredCover) {
+                console.log(`[AutoRecover] Khôi phục ảnh bìa lớp`);
+                currentUser.cover = recoveredCover;
+                try {
+                    localStorage.setItem('cover_' + tId, recoveredCover);
+                    localStorage.setItem('cover_photo', recoveredCover);
+                    localStorage.setItem('backup_cover', recoveredCover);
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                } catch(e) {}
+            }
+        } else {
+            try {
+                localStorage.setItem('cover_' + tId, currentUser.cover);
+                localStorage.setItem('cover_photo', currentUser.cover);
+                localStorage.setItem('backup_cover', currentUser.cover);
+            } catch(e) {}
+        }
+
+        // 5. Phục hồi Học sinh
+        if (!students || students.length === 0) {
+            let bestStudents = null;
+            let maxStudents = 0;
+            const keysToCheck = [
+                'students_' + tId, 'students_thaytuan', 'students_cohakhtn', 
+                'students', 'backup_students', 'students_backup'
+            ];
+            for (let i = 0; i < localStorage.length; i++) {
+                const k = localStorage.key(i);
+                if (k && (k.startsWith('students_') || k.includes('students') || k.includes('backup_students'))) {
+                    if (!keysToCheck.includes(k)) keysToCheck.push(k);
+                }
+            }
+            for (const k of keysToCheck) {
+                try {
+                    const raw = localStorage.getItem(k);
+                    if (!raw) continue;
+                    const parsed = JSON.parse(raw);
+                    if (Array.isArray(parsed) && parsed.length > maxStudents) {
+                        maxStudents = parsed.length;
+                        bestStudents = parsed;
+                    }
+                } catch(e) {}
+            }
+            if (bestStudents && maxStudents > 0) {
+                console.log(`[AutoRecover] Khôi phục ${maxStudents} học sinh từ bộ nhớ`);
+                students = bestStudents;
+                localStorage.setItem('students_' + tId, JSON.stringify(students));
+                localStorage.setItem('backup_students', JSON.stringify(students));
+            }
+        } else {
+            try { localStorage.setItem('backup_students', JSON.stringify(students)); } catch(e) {}
+        }
+
+        // Cập nhật ảnh bìa UI
+        if (currentUser && currentUser.cover) {
+            const coverEl = document.getElementById('cover-photo');
+            if (coverEl) coverEl.style.backgroundImage = `url('${currentUser.cover}')`;
+            const teacherCoverEl = document.getElementById('teacher-banner-cover');
+            if (teacherCoverEl) teacherCoverEl.style.backgroundImage = `url('${currentUser.cover}')`;
+        }
+    }
+
     function saveAppData() {
         if (!currentUser) currentUser = { id: 'thaytuan', className: '12A17', teacherName: 'Phạm Minh Tuấn', role: 'teacher' };
         const targetId = (currentUserRole === 'gvbm' || currentUserRole === 'student') && currentTeacherId 
@@ -3788,9 +4019,12 @@
                          : (currentUser.id || 'thaytuan');
         if (!currentUser.id) currentUser.id = targetId;
 
-        // Tự bảo vệ: Nếu mảng học sinh trong ram bị rỗng bất thường, tự phục hồi từ localStorage
+        // Tự phục hồi dữ liệu trước khi lưu để tránh ghi đè dữ liệu rỗng
+        autoRecoverClassData(targetId);
+
+        // Bảo toàn mảng học sinh nếu rỗng
         if ((!students || students.length === 0) && currentUserRole === 'teacher') {
-            const cachedSt = localStorage.getItem('students_' + targetId) || localStorage.getItem('students');
+            const cachedSt = localStorage.getItem('students_' + targetId) || localStorage.getItem('backup_students') || localStorage.getItem('students');
             if (cachedSt) {
                 try {
                     const parsed = JSON.parse(cachedSt);
@@ -3799,11 +4033,65 @@
             }
         }
 
+        // Bảo toàn Sơ đồ chỗ ngồi:
+        let chartsToSave = seatingCharts;
+        const ramSeated = countSeatedStudents(seatingCharts);
+        const cachedRawSeating = localStorage.getItem('seating_' + targetId) || localStorage.getItem('backup_seating');
+        if (cachedRawSeating) {
+            try {
+                const cachedSeating = JSON.parse(cachedRawSeating);
+                const cachedSeated = countSeatedStudents(cachedSeating);
+                if (cachedSeated > ramSeated) {
+                    chartsToSave = cachedSeating;
+                    seatingCharts = cachedSeating;
+                }
+            } catch(e) {}
+        }
+
+        // Bảo toàn Thời khóa biểu học sinh:
+        let timetablesToSave = timetables;
+        const ramLessons = countTimetableLessons(timetables);
+        const cachedRawTimetables = localStorage.getItem('timetables_' + targetId) || localStorage.getItem('backup_timetables');
+        if (cachedRawTimetables) {
+            try {
+                const cachedTkb = JSON.parse(cachedRawTimetables);
+                const cachedLessons = countTimetableLessons(cachedTkb);
+                if (cachedLessons > ramLessons) {
+                    timetablesToSave = cachedTkb;
+                    timetables = cachedTkb;
+                }
+            } catch(e) {}
+        }
+
+        // Bảo toàn Thời khóa biểu giáo viên:
+        let teacherTkbToSave = teacherTimetable;
+        const ramTLessons = countTeacherLessons(teacherTimetable);
+        const cachedRawTeacherTkb = localStorage.getItem('teacherTimetable_' + targetId) || localStorage.getItem('backup_teacherTimetable');
+        if (cachedRawTeacherTkb) {
+            try {
+                const cachedTT = JSON.parse(cachedRawTeacherTkb);
+                const cachedTLessons = countTeacherLessons(cachedTT);
+                if (cachedTLessons > ramTLessons) {
+                    teacherTkbToSave = cachedTT;
+                    teacherTimetable = cachedTT;
+                }
+            } catch(e) {}
+        }
+
+        // Bảo toàn Ảnh bìa:
+        if (!currentUser.cover || currentUser.cover.trim() === '') {
+            const cachedCover = localStorage.getItem('cover_' + targetId) || localStorage.getItem('cover_photo') || localStorage.getItem('backup_cover');
+            if (cachedCover) currentUser.cover = cachedCover;
+        }
+
         try {
-            localStorage.setItem('students_' + targetId, JSON.stringify(students));
-            localStorage.setItem('students', JSON.stringify(students));
-            if (currentUser.id && currentUser.id !== targetId) {
-                localStorage.setItem('students_' + currentUser.id, JSON.stringify(students));
+            if (students && students.length > 0) {
+                localStorage.setItem('students_' + targetId, JSON.stringify(students));
+                localStorage.setItem('students', JSON.stringify(students));
+                localStorage.setItem('backup_students', JSON.stringify(students));
+                if (currentUser.id && currentUser.id !== targetId) {
+                    localStorage.setItem('students_' + currentUser.id, JSON.stringify(students));
+                }
             }
             if (typeof currentStudent !== 'undefined' && currentStudent) {
                 const updatedSt = students.find(x => String(x.id) === String(currentStudent.id));
@@ -3813,16 +4101,34 @@
                 }
             }
 
-            // Bảo toàn sơ đồ lớp nếu không rỗng hoặc do GVCN thực hiện
-            if (seatingCharts.length > 0 || currentUserRole === 'teacher') {
-                localStorage.setItem('seating_' + targetId, JSON.stringify(seatingCharts));
+            if (chartsToSave && chartsToSave.length > 0) {
+                localStorage.setItem('seating_' + targetId, JSON.stringify(chartsToSave));
+                if (countSeatedStudents(chartsToSave) > 0) {
+                    localStorage.setItem('backup_seating', JSON.stringify(chartsToSave));
+                }
                 if (currentUser.id && currentUser.id !== targetId) {
-                    localStorage.setItem('seating_' + currentUser.id, JSON.stringify(seatingCharts));
+                    localStorage.setItem('seating_' + currentUser.id, JSON.stringify(chartsToSave));
                 }
             }
 
-            localStorage.setItem('timetables_' + targetId, JSON.stringify(timetables));
-            localStorage.setItem('teacherTimetable_' + targetId, JSON.stringify(teacherTimetable));
+            if (timetablesToSave && timetablesToSave.length > 0) {
+                localStorage.setItem('timetables_' + targetId, JSON.stringify(timetablesToSave));
+                if (countTimetableLessons(timetablesToSave) > 0) {
+                    localStorage.setItem('backup_timetables', JSON.stringify(timetablesToSave));
+                }
+            }
+
+            if (teacherTkbToSave && countTeacherLessons(teacherTkbToSave) > 0) {
+                localStorage.setItem('teacherTimetable_' + targetId, JSON.stringify(teacherTkbToSave));
+                localStorage.setItem('backup_teacherTimetable', JSON.stringify(teacherTkbToSave));
+            }
+
+            if (currentUser.cover) {
+                localStorage.setItem('cover_' + targetId, currentUser.cover);
+                localStorage.setItem('cover_photo', currentUser.cover);
+                localStorage.setItem('backup_cover', currentUser.cover);
+            }
+
             localStorage.setItem('attendance_' + targetId, JSON.stringify(attendanceData));
             localStorage.setItem('announcements_' + targetId, JSON.stringify(announcements));
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
@@ -3835,12 +4141,12 @@
         }
 
         // Bảo toàn sơ đồ lớp khi GVBM hoặc HS lưu dữ liệu (như ghi nhận lỗi)
-        let chartsToSync = seatingCharts;
+        let chartsToSync = chartsToSave;
         if (currentUserRole === 'gvbm' || currentUserRole === 'student') {
             try {
                 const cached = JSON.parse(localStorage.getItem('seating_' + targetId) || '[]');
-                const cachedSeated = (cached || []).reduce((acc, c) => acc + Object.keys(c.layout || {}).length, 0);
-                const currentSeated = (chartsToSync || []).reduce((acc, c) => acc + Object.keys(c.layout || {}).length, 0);
+                const cachedSeated = countSeatedStudents(cached);
+                const currentSeated = countSeatedStudents(chartsToSync);
                 if (cachedSeated > currentSeated) {
                     chartsToSync = cached;
                 }
@@ -3851,8 +4157,8 @@
             currentUser: currentUser,
             students: students,
             seatingCharts: chartsToSync,
-            timetables: timetables,
-            teacherTimetable: teacherTimetable,
+            timetables: timetablesToSave,
+            teacherTimetable: teacherTkbToSave,
             attendanceData: attendanceData,
             announcements: announcements
         };
@@ -4047,13 +4353,22 @@
                     if (!currentUser.id) currentUser.id = targetId;
                     if (savedTeacherId) currentTeacherId = savedTeacherId;
                     
-                    students = cloudData.students || [];
-                    seatingCharts = cloudData.seatingCharts || [];
-                    timetables = cloudData.timetables || [];
-                    teacherTimetable = cloudData.teacherTimetable || { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} };
-                    attendanceData = cloudData.attendanceData || {};
-                    announcements = cloudData.announcements || [];
+                    const cloudStudents = cloudData.students || [];
+                    const cloudCharts = cloudData.seatingCharts || [];
+                    const cloudTimetables = cloudData.timetables || [];
+                    const cloudTeacherTimetable = cloudData.teacherTimetable || { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} };
+                    
+                    if (cloudStudents.length > 0 || students.length === 0) students = cloudStudents;
+                    if (countSeatedStudents(cloudCharts) > 0 || countSeatedStudents(seatingCharts) === 0) seatingCharts = cloudCharts;
+                    if (countTimetableLessons(cloudTimetables) > 0 || countTimetableLessons(timetables) === 0) timetables = cloudTimetables;
+                    if (countTeacherLessons(cloudTeacherTimetable) > 0 || countTeacherLessons(teacherTimetable) === 0) teacherTimetable = cloudTeacherTimetable;
+                    attendanceData = cloudData.attendanceData || attendanceData || {};
+                    announcements = cloudData.announcements || announcements || [];
+
                     if (cloudData.currentUser) {
+                        if (cloudData.currentUser.cover && (!currentUser.cover || currentUser.cover.trim() === '')) {
+                            currentUser.cover = cloudData.currentUser.cover;
+                        }
                         if (cloudData.currentUser.activeSeatingChartId) {
                             currentUser.activeSeatingChartId = cloudData.currentUser.activeSeatingChartId;
                         }
@@ -4061,16 +4376,31 @@
                             currentUser.activeTimetableId = cloudData.currentUser.activeTimetableId;
                         }
                     }
+                    if (savedUser && savedUser.cover && (!currentUser.cover || currentUser.cover.trim() === '')) {
+                        currentUser.cover = savedUser.cover;
+                    }
                     loaded = true;
 
-                    // Lưu cache localStorage theo targetId
+                    // Lưu cache an toàn (chỉ lưu nếu có dữ liệu)
                     localStorage.setItem('currentUser', JSON.stringify(currentUser));
                     localStorage.setItem('user_' + targetId, JSON.stringify(currentUser));
-                    localStorage.setItem('students_' + targetId, JSON.stringify(students));
-                    localStorage.setItem('students', JSON.stringify(students));
-                    localStorage.setItem('seating_' + targetId, JSON.stringify(seatingCharts));
-                    localStorage.setItem('timetables_' + targetId, JSON.stringify(timetables));
-                    localStorage.setItem('teacherTimetable_' + targetId, JSON.stringify(teacherTimetable));
+                    if (students.length > 0) {
+                        localStorage.setItem('students_' + targetId, JSON.stringify(students));
+                        localStorage.setItem('students', JSON.stringify(students));
+                    }
+                    if (countSeatedStudents(seatingCharts) > 0) {
+                        localStorage.setItem('seating_' + targetId, JSON.stringify(seatingCharts));
+                    }
+                    if (countTimetableLessons(timetables) > 0) {
+                        localStorage.setItem('timetables_' + targetId, JSON.stringify(timetables));
+                    }
+                    if (countTeacherLessons(teacherTimetable) > 0) {
+                        localStorage.setItem('teacherTimetable_' + targetId, JSON.stringify(teacherTimetable));
+                    }
+                    if (currentUser.cover) {
+                        localStorage.setItem('cover_' + targetId, currentUser.cover);
+                        localStorage.setItem('cover_photo', currentUser.cover);
+                    }
                     localStorage.setItem('attendance_' + targetId, JSON.stringify(attendanceData));
                     localStorage.setItem('announcements_' + targetId, JSON.stringify(announcements));
                     
@@ -4140,13 +4470,23 @@
                     const cloudData = row.data;
                     currentUser = cloudData.currentUser || cloudData.user || {};
                     if (!currentUser.id) currentUser.id = targetId;
-                    students = cloudData.students || [];
-                    seatingCharts = cloudData.seatingCharts || [];
-                    timetables = cloudData.timetables || [];
-                    teacherTimetable = cloudData.teacherTimetable || { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} };
-                    attendanceData = cloudData.attendanceData || {};
-                    announcements = cloudData.announcements || [];
+                    
+                    const cloudStudents = cloudData.students || [];
+                    const cloudCharts = cloudData.seatingCharts || [];
+                    const cloudTimetables = cloudData.timetables || [];
+                    const cloudTeacherTimetable = cloudData.teacherTimetable || { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} };
+
+                    if (cloudStudents.length > 0 || students.length === 0) students = cloudStudents;
+                    if (countSeatedStudents(cloudCharts) > 0 || countSeatedStudents(seatingCharts) === 0) seatingCharts = cloudCharts;
+                    if (countTimetableLessons(cloudTimetables) > 0 || countTimetableLessons(timetables) === 0) timetables = cloudTimetables;
+                    if (countTeacherLessons(cloudTeacherTimetable) > 0 || countTeacherLessons(teacherTimetable) === 0) teacherTimetable = cloudTeacherTimetable;
+                    attendanceData = cloudData.attendanceData || attendanceData || {};
+                    announcements = cloudData.announcements || announcements || [];
+
                     if (cloudData.currentUser) {
+                        if (cloudData.currentUser.cover && (!currentUser.cover || currentUser.cover.trim() === '')) {
+                            currentUser.cover = cloudData.currentUser.cover;
+                        }
                         if (cloudData.currentUser.activeSeatingChartId) {
                             currentUser.activeSeatingChartId = cloudData.currentUser.activeSeatingChartId;
                         }
@@ -4155,15 +4495,6 @@
                         }
                     }
                     loaded = true;
-                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                    localStorage.setItem('user_' + targetId, JSON.stringify(currentUser));
-                    localStorage.setItem('students_' + targetId, JSON.stringify(students));
-                    localStorage.setItem('students', JSON.stringify(students));
-                    localStorage.setItem('seating_' + targetId, JSON.stringify(seatingCharts));
-                    localStorage.setItem('timetables_' + targetId, JSON.stringify(timetables));
-                    localStorage.setItem('teacherTimetable_' + targetId, JSON.stringify(teacherTimetable));
-                    localStorage.setItem('attendance_' + targetId, JSON.stringify(attendanceData));
-                    localStorage.setItem('announcements_' + targetId, JSON.stringify(announcements));
                     console.log("Auto-loaded Thay Tuan data from Supabase successfully!");
                 }
             } catch(e) {
@@ -4173,26 +4504,44 @@
 
         if (loaded) {
             const targetId = currentTeacherId || (currentUser ? currentUser.id : 'thaytuan');
-            if (targetId) {
-                const localSavedStudents = localStorage.getItem('students_' + targetId) || localStorage.getItem('students') || localStorage.getItem('students_thaytuan');
-                if (localSavedStudents && (!students || students.length === 0)) {
-                    try {
-                        const parsedLocal = JSON.parse(localSavedStudents);
-                        if (Array.isArray(parsedLocal) && parsedLocal.length > 0) {
-                            students = parsedLocal;
+            autoRecoverClassData(targetId);
+
+            // Nếu sơ đồ hoặc TKB vẫn còn rỗng, quét toàn bộ các bản ghi trong bảng classroom_data để tự phục hồi
+            if (isSupabaseConnected && (countSeatedStudents(seatingCharts) === 0 || countTimetableLessons(timetables) === 0 || (!currentUser.cover || currentUser.cover.trim() === ''))) {
+                try {
+                    const url = `${isSupabaseConnected.url}/rest/v1/classroom_data?select=id,data`;
+                    const res = await fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'apikey': isSupabaseConnected.key,
+                            'Authorization': `Bearer ${isSupabaseConnected.key}`,
+                            'Cache-Control': 'no-cache, no-store, must-revalidate'
                         }
-                    } catch(e) {}
-                }
-                const localSavedSeating = localStorage.getItem('seating_' + targetId) || localStorage.getItem('seating_thaytuan');
-                if (localSavedSeating && (!seatingCharts || seatingCharts.length === 0)) {
-                    try {
-                        const parsedSeating = JSON.parse(localSavedSeating);
-                        if (Array.isArray(parsedSeating) && parsedSeating.length > 0) {
-                            seatingCharts = parsedSeating;
+                    });
+                    if (res.ok) {
+                        const rows = await res.json();
+                        for (const r of rows) {
+                            const cData = r.data || {};
+                            if (countSeatedStudents(seatingCharts) === 0 && countSeatedStudents(cData.seatingCharts) > 0) {
+                                seatingCharts = cData.seatingCharts;
+                            }
+                            if (countTimetableLessons(timetables) === 0 && countTimetableLessons(cData.timetables) > 0) {
+                                timetables = cData.timetables;
+                            }
+                            if (countTeacherLessons(teacherTimetable) === 0 && countTeacherLessons(cData.teacherTimetable) > 0) {
+                                teacherTimetable = cData.teacherTimetable;
+                            }
+                            if ((!currentUser.cover || currentUser.cover.trim() === '') && cData.currentUser && cData.currentUser.cover) {
+                                currentUser.cover = cData.currentUser.cover;
+                            }
+                            if ((!students || students.length === 0) && Array.isArray(cData.students) && cData.students.length > 0) {
+                                students = cData.students;
+                            }
                         }
-                    } catch(e) {}
-                }
+                    }
+                } catch(e) {}
             }
+            autoRecoverClassData(targetId);
             restoreRoleState();
             authScreen.classList.add('hidden');
             authScreen.classList.remove('flex');
@@ -4794,7 +5143,9 @@
         currentUser.year = document.getElementById('ob-year').value || '2026'; 
         currentUser.slogan = document.getElementById('ob-slogan').value || 'Lớp học yêu thương'; 
         currentUser.theme = 'emerald'; 
-        currentUser.cover = DEFAULT_COVERS[Math.floor(Math.random() * DEFAULT_COVERS.length)]; 
+        if (!currentUser.cover || typeof currentUser.cover !== 'string' || currentUser.cover.trim() === '') {
+            currentUser.cover = DEFAULT_COVERS[Math.floor(Math.random() * DEFAULT_COVERS.length)]; 
+        }
         if(saveUserToStorage()) { 
             document.getElementById('onboarding-screen').classList.replace('flex', 'hidden'); 
             loadUserData(); 
@@ -4829,13 +5180,22 @@
                 const row = await callSupabaseRest('GET', targetTeacherId);
                 if (row && row.data) {
                     const cloudData = row.data;
-                    students = cloudData.students || [];
-                    seatingCharts = cloudData.seatingCharts || [];
-                    timetables = cloudData.timetables || [];
-                    teacherTimetable = cloudData.teacherTimetable || { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} };
-                    attendanceData = cloudData.attendanceData || {};
-                    announcements = cloudData.announcements || [];
+                    const cloudStudents = cloudData.students || [];
+                    const cloudCharts = cloudData.seatingCharts || [];
+                    const cloudTimetables = cloudData.timetables || [];
+                    const cloudTeacherTimetable = cloudData.teacherTimetable || { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} };
+
+                    if (cloudStudents.length > 0 || students.length === 0) students = cloudStudents;
+                    if (countSeatedStudents(cloudCharts) > 0 || countSeatedStudents(seatingCharts) === 0) seatingCharts = cloudCharts;
+                    if (countTimetableLessons(cloudTimetables) > 0 || countTimetableLessons(timetables) === 0) timetables = cloudTimetables;
+                    if (countTeacherLessons(cloudTeacherTimetable) > 0 || countTeacherLessons(teacherTimetable) === 0) teacherTimetable = cloudTeacherTimetable;
+                    attendanceData = cloudData.attendanceData || attendanceData || {};
+                    announcements = cloudData.announcements || announcements || [];
+
                     if (cloudData.currentUser) {
+                        if (cloudData.currentUser.cover && (!currentUser.cover || currentUser.cover.trim() === '')) {
+                            currentUser.cover = cloudData.currentUser.cover;
+                        }
                         if (cloudData.currentUser.activeSeatingChartId) {
                             currentUser.activeSeatingChartId = cloudData.currentUser.activeSeatingChartId;
                         }
@@ -4846,12 +5206,24 @@
                     loadedFromCloud = true;
                     console.log("Loaded student data from Supabase successfully!");
 
-                    // Cập nhật bộ nhớ cục bộ theo targetTeacherId
-                    localStorage.setItem('students_' + targetTeacherId, JSON.stringify(students));
-                    localStorage.setItem('students', JSON.stringify(students));
-                    localStorage.setItem('seating_' + targetTeacherId, JSON.stringify(seatingCharts));
-                    localStorage.setItem('timetables_' + targetTeacherId, JSON.stringify(timetables));
-                    localStorage.setItem('teacherTimetable_' + targetTeacherId, JSON.stringify(teacherTimetable));
+                    // Cập nhật bộ nhớ cục bộ theo targetTeacherId (chỉ lưu nếu có dữ liệu thật)
+                    if (students.length > 0) {
+                        localStorage.setItem('students_' + targetTeacherId, JSON.stringify(students));
+                        localStorage.setItem('students', JSON.stringify(students));
+                    }
+                    if (countSeatedStudents(seatingCharts) > 0) {
+                        localStorage.setItem('seating_' + targetTeacherId, JSON.stringify(seatingCharts));
+                    }
+                    if (countTimetableLessons(timetables) > 0) {
+                        localStorage.setItem('timetables_' + targetTeacherId, JSON.stringify(timetables));
+                    }
+                    if (countTeacherLessons(teacherTimetable) > 0) {
+                        localStorage.setItem('teacherTimetable_' + targetTeacherId, JSON.stringify(teacherTimetable));
+                    }
+                    if (currentUser.cover) {
+                        localStorage.setItem('cover_' + targetTeacherId, currentUser.cover);
+                        localStorage.setItem('cover_photo', currentUser.cover);
+                    }
                     localStorage.setItem('attendance_' + targetTeacherId, JSON.stringify(attendanceData));
                     localStorage.setItem('announcements_' + targetTeacherId, JSON.stringify(announcements));
                 }
@@ -4862,20 +5234,22 @@
         }
 
         if (!loadedFromCloud) {
+            autoRecoverClassData(targetTeacherId);
             const savedStudents = localStorage.getItem('students_' + targetTeacherId) || localStorage.getItem('students_' + currentUser.id) || localStorage.getItem('students'); 
-            students = savedStudents ? JSON.parse(savedStudents) : []; 
+            if (savedStudents && students.length === 0) { try { students = JSON.parse(savedStudents); } catch(e) {} }
             const savedCharts = localStorage.getItem('seating_' + targetTeacherId) || localStorage.getItem('seating_' + currentUser.id); 
-            seatingCharts = savedCharts ? JSON.parse(savedCharts) : []; 
+            if (savedCharts && countSeatedStudents(seatingCharts) === 0) { try { seatingCharts = JSON.parse(savedCharts); } catch(e) {} }
             const savedTimetables = localStorage.getItem('timetables_' + targetTeacherId);
-            if (savedTimetables) { try { timetables = JSON.parse(savedTimetables); } catch(e) {} }
+            if (savedTimetables && countTimetableLessons(timetables) === 0) { try { timetables = JSON.parse(savedTimetables); } catch(e) {} }
             const savedTkb = localStorage.getItem('teacherTimetable_' + targetTeacherId);
-            if (savedTkb) { try { teacherTimetable = JSON.parse(savedTkb); } catch(e) {} }
+            if (savedTkb && countTeacherLessons(teacherTimetable) === 0) { try { teacherTimetable = JSON.parse(savedTkb); } catch(e) {} }
             const savedAttendance = localStorage.getItem('attendance_' + targetTeacherId);
             if (savedAttendance) { try { attendanceData = JSON.parse(savedAttendance); } catch(e) {} }
             const savedAnnouncements = localStorage.getItem('announcements_' + targetTeacherId) || localStorage.getItem('announcements_' + currentUser.id);
-            announcements = savedAnnouncements ? JSON.parse(savedAnnouncements) : []; 
+            if (savedAnnouncements) { try { announcements = JSON.parse(savedAnnouncements); } catch(e) {} }
         }
         
+        autoRecoverClassData(targetTeacherId);
         restoreRoleState();
         ensureStudentCodes(); 
         initAttendance(); 
@@ -5420,8 +5794,10 @@
 
     function initTimetables() { 
         const tId = currentTeacherId || (currentUser && currentUser.id ? currentUser.id : 'thaytuan');
+        autoRecoverClassData(tId);
+
         if (!timetables || timetables.length === 0) {
-            const saved = localStorage.getItem('timetables_' + tId) || localStorage.getItem('timetables_thaytuan'); 
+            const saved = localStorage.getItem('timetables_' + tId) || localStorage.getItem('timetables_thaytuan') || localStorage.getItem('backup_timetables'); 
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -5431,10 +5807,10 @@
         }
         if (!timetables || timetables.length === 0) { 
             timetables = [{ id: 'tkb_' + Date.now(), name: 'TKB Lần 1', data: {} }]; 
-            if (currentUserRole === 'teacher') saveTimetables(); 
+            // Không gọi saveTimetables() khi mảng trắng để tránh ghi đè dữ liệu
         } 
         if (!teacherTimetable || !teacherTimetable.id || Object.keys(teacherTimetable.data || {}).length === 0) {
-            const savedTeacher = localStorage.getItem('teacherTimetable_' + tId) || localStorage.getItem('teacherTimetable_thaytuan');
+            const savedTeacher = localStorage.getItem('teacherTimetable_' + tId) || localStorage.getItem('teacherTimetable_thaytuan') || localStorage.getItem('backup_teacherTimetable');
             if (savedTeacher) {
                 try {
                     const parsedTeacher = JSON.parse(savedTeacher);
@@ -5445,10 +5821,14 @@
         if (!teacherTimetable || !teacherTimetable.id) {
             teacherTimetable = { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} };
         }
-        currentTimetableId = (currentUser && currentUser.activeTimetableId) || (timetables[0] ? timetables[0].id : null); 
-        if (!timetables.some(t => t.id === currentTimetableId)) {
-            currentTimetableId = timetables[0] ? timetables[0].id : null;
-        }
+
+        // Ưu tiên chọn TKB đã có dữ liệu
+        const tkbWithData = timetables.find(t => t.data && Object.keys(t.data).length > 0);
+        const activeId = currentUser && currentUser.activeTimetableId;
+        currentTimetableId = (activeId && timetables.some(t => t.id === activeId)) 
+                             ? activeId 
+                             : (tkbWithData ? tkbWithData.id : (timetables[0] ? timetables[0].id : null));
+
         renderTimetableSelect(); 
         applyTimetable(); 
     }
@@ -7507,6 +7887,9 @@
     }
 
     function initSeatingCharts() { 
+        const tId = currentTeacherId || (currentUser && currentUser.id ? currentUser.id : 'thaytuan');
+        autoRecoverClassData(tId);
+
         // 1. Chỉ loại bỏ sơ đồ mặc định ban đầu nếu có sơ đồ khác và sơ đồ mặc định không có chỗ ngồi
         if (seatingCharts.length > 1) {
             const hasRealChart = seatingCharts.some(c => c.name !== 'Sơ đồ mặc định' || (c.layout && Object.keys(c.layout).length > 0));
@@ -7514,7 +7897,6 @@
                 const cleaned = seatingCharts.filter(c => !(c.name === 'Sơ đồ mặc định' && (!c.layout || Object.keys(c.layout).length === 0)));
                 if (cleaned.length > 0) {
                     seatingCharts = cleaned;
-                    const tId = currentTeacherId || (currentUser && currentUser.id ? currentUser.id : 'thaytuan');
                     localStorage.setItem('seating_' + tId, JSON.stringify(seatingCharts));
                 }
             }
@@ -7522,9 +7904,7 @@
 
         if(seatingCharts.length === 0) { 
             seatingCharts.push({ id: Date.now().toString(), name: "Sơ đồ mặc định", layout: {}, isApplied: true }); 
-            if (currentUserRole === 'teacher') {
-                saveSeatingToStorage(); 
-            }
+            // Không tự động gọi saveSeatingToStorage() khi sơ đồ trắng rỗng
         } 
         
         // 2. Ưu tiên tuyệt đối: Chọn sơ đồ CÓ HỌC SINH ĐÃ XẾP CHỖ
@@ -14203,6 +14583,97 @@
     function resetAllPoints() { showModal('confirm', 'Reset Toàn Bộ Điểm', 'CẢNH BÁO: Đặt điểm của TOÀN BỘ học sinh về 0, đồng thời xóa sạch lịch sử đánh giá. Phù hợp khi bắt đầu Học Kỳ mới. Bạn chắc chắn chứ?', () => { students.forEach(s => { s.points = 0; s.history = []; }); saveAppData(); renderAll(); setTimeout(() => showModal('success', 'Hoàn tất', 'Tất cả điểm số và lịch sử đã được đặt về 0.'), 350); }); }
     function exportData() { const data = { user: currentUser, students: students, seatingCharts: seatingCharts, timetables: timetables, teacherTimetable: teacherTimetable, attendanceData: attendanceData, announcements: announcements }; const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data)); const downloadAnchorNode = document.createElement('a'); downloadAnchorNode.setAttribute("href", dataStr); downloadAnchorNode.setAttribute("download", `Data_LopHoc_${currentUser.className}.json`); document.body.appendChild(downloadAnchorNode); downloadAnchorNode.click(); downloadAnchorNode.remove(); showModal('success', 'Thành công', 'Đã lưu file dữ liệu (Backup) về máy!'); }
     function importData(event) { const file = event.target.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = function(e) { try { const data = JSON.parse(e.target.result); const userObj = data.currentUser || data.user; if(userObj && data.students) { showModal('confirm', 'Khôi phục dữ liệu', 'Bạn có muốn GHI ĐÈ toàn bộ dữ liệu hiện tại bằng dữ liệu từ file Backup không?', () => { currentUser = userObj; students = data.students || []; seatingCharts = data.seatingCharts || []; timetables = data.timetables || []; teacherTimetable = data.teacherTimetable || { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} }; attendanceData = data.attendanceData || {}; announcements = data.announcements || []; saveAppData(); initTimetables(); initSeatingCharts(); initAttendance(); renderAll(); updateUI(); setTimeout(()=>showModal('success', 'Thành công', 'Đã khôi phục dữ liệu thành công!'), 400); }); } else throw new Error("Invalid"); } catch(error) { showModal('error', 'Lỗi', 'File dữ liệu không hợp lệ.'); } }; reader.readAsText(file); event.target.value = ''; }
+
+    async function manualDeepDataRecovery() {
+        const tId = currentTeacherId || (currentUser && currentUser.id) || 'thaytuan';
+        showModal('info', 'Đang quét bộ nhớ...', 'Hệ thống đang quét toàn bộ bộ nhớ trình duyệt và đám mây để tìm dữ liệu...');
+
+        let recoveredMsg = [];
+        // 1. Quét bộ nhớ máy (LocalStorage)
+        autoRecoverClassData(tId);
+
+        // 2. Quét đám mây Supabase
+        if (isSupabaseConnected) {
+            try {
+                const url = `${isSupabaseConnected.url}/rest/v1/classroom_data?select=id,data`;
+                const res = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'apikey': isSupabaseConnected.key,
+                        'Authorization': `Bearer ${isSupabaseConnected.key}`,
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache'
+                    }
+                });
+                if (res.ok) {
+                    const rows = await res.json();
+                    for (const r of rows) {
+                        const cData = r.data || {};
+                        const cSeated = countSeatedStudents(cData.seatingCharts);
+                        const curSeated = countSeatedStudents(seatingCharts);
+                        if (cSeated > curSeated) {
+                            seatingCharts = cData.seatingCharts;
+                            recoveredMsg.push(`Sơ đồ lớp (${cSeated} chỗ từ ${r.id})`);
+                        }
+                        const cLessons = countTimetableLessons(cData.timetables);
+                        const curLessons = countTimetableLessons(timetables);
+                        if (cLessons > curLessons) {
+                            timetables = cData.timetables;
+                            recoveredMsg.push(`TKB Lớp (${cLessons} tiết từ ${r.id})`);
+                        }
+                        const cTLessons = countTeacherLessons(cData.teacherTimetable);
+                        const curTLessons = countTeacherLessons(teacherTimetable);
+                        if (cTLessons > curTLessons) {
+                            teacherTimetable = cData.teacherTimetable;
+                            recoveredMsg.push(`TKB Giáo viên (${cTLessons} tiết từ ${r.id})`);
+                        }
+                        if ((!currentUser.cover || currentUser.cover.trim() === '') && cData.currentUser && cData.currentUser.cover) {
+                            currentUser.cover = cData.currentUser.cover;
+                            recoveredMsg.push(`Ảnh bìa lớp (từ ${r.id})`);
+                        }
+                        if ((!students || students.length === 0) && Array.isArray(cData.students) && cData.students.length > 0) {
+                            students = cData.students;
+                            recoveredMsg.push(`Danh sách ${students.length} học sinh (từ ${r.id})`);
+                        }
+                    }
+                }
+            } catch(e) {
+                console.warn("Cloud recovery fetch failed:", e);
+            }
+        }
+
+        // Tự phục hồi lại lần nữa để đảm bảo đồng bộ
+        autoRecoverClassData(tId);
+
+        saveAppData();
+        initTimetables();
+        initSeatingCharts();
+        initAttendance();
+        renderAll();
+        updateUI();
+
+        const seatedCount = countSeatedStudents(seatingCharts);
+        const lessonsCount = countTimetableLessons(timetables);
+        const teacherLessonsCount = countTeacherLessons(teacherTimetable);
+        const hasCover = !!(currentUser && currentUser.cover);
+
+        const html = `
+            <div class="text-left space-y-3 text-xs">
+                <p class="font-bold text-slate-800">Quét & phục hồi dữ liệu hoàn tất:</p>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1.5">
+                    <div class="flex justify-between"><span>👨‍🎓 <b>Học sinh:</b></span> <span class="font-bold ${students && students.length > 0 ? 'text-emerald-600' : 'text-slate-400'}">${students ? students.length : 0} em</span></div>
+                    <div class="flex justify-between"><span>🪑 <b>Sơ đồ chỗ ngồi:</b></span> <span class="font-bold ${seatedCount > 0 ? 'text-emerald-600' : 'text-slate-400'}">${seatingCharts ? seatingCharts.length : 0} sơ đồ (${seatedCount} em đã xếp chỗ)</span></div>
+                    <div class="flex justify-between"><span>📅 <b>Thời khóa biểu HS:</b></span> <span class="font-bold ${lessonsCount > 0 ? 'text-emerald-600' : 'text-slate-400'}">${timetables ? timetables.length : 0} TKB (${lessonsCount} tiết đã nhập)</span></div>
+                    <div class="flex justify-between"><span>👨‍🏫 <b>TKB Giáo viên:</b></span> <span class="font-bold ${teacherLessonsCount > 0 ? 'text-emerald-600' : 'text-slate-400'}">${teacherLessonsCount} tiết</span></div>
+                    <div class="flex justify-between"><span>🖼️ <b>Ảnh bìa lớp:</b></span> <span class="font-bold ${hasCover ? 'text-emerald-600' : 'text-slate-400'}">${hasCover ? 'Đã tìm thấy & áp dụng' : 'Chưa có (bạn có thể tải lên)'}</span></div>
+                </div>
+                ${recoveredMsg.length > 0 ? `<p class="text-[11px] text-emerald-700 font-semibold">✨ Đã tự động khôi phục: ${recoveredMsg.join(', ')}.</p>` : `<p class="text-[11px] text-slate-500">Tất cả dữ liệu hiện tại đã được sao lưu an toàn vào bộ nhớ máy.</p>`}
+            </div>
+        `;
+        setTimeout(() => {
+            showModal('success', 'Kết Quả Quét Dữ Liệu', html);
+        }, 500);
+    }
 
     // --- Xem Tất Cả Hoạt Động & Quản Trị Hệ Thống ---
     function openAllActivitiesModal() {
