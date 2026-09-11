@@ -1625,10 +1625,13 @@
                 </div>
                 
                 <div class="flex items-center gap-1.5 md:gap-2">
+                  <button onclick="if(!duckRaceRunning) startSpin();" class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-3 py-1.5 rounded-xl shadow-sm text-xs font-black flex items-center gap-1.5 transition hover:scale-105 active:scale-95" title="Bấm vào đây hoặc nhấn phím Space trên bàn phím để chạy đua">
+                    <kbd class="px-1.5 py-0.5 bg-black/20 rounded text-[10px] font-mono text-white/95">Space</kbd> <span>Đua ngay</span>
+                  </button>
                   <button id="btn-duck-sound" onclick="toggleDuckSound()" class="bg-white/95 hover:bg-white backdrop-blur-md px-2.5 md:px-3 py-1.5 rounded-xl shadow-sm border border-white/60 text-xs font-bold text-slate-700 flex items-center gap-1 transition" title="Bật/Tắt âm thanh">
                     <span id="duck-sound-icon">🔊</span> <span class="hidden sm:inline" id="duck-sound-text">Âm thanh</span>
                   </button>
-                  <button onclick="toggleDuckFullscreen()" class="bg-white/95 hover:bg-white backdrop-blur-md px-2.5 md:px-3 py-1.5 rounded-xl shadow-sm border border-white/60 text-xs font-bold text-slate-700 flex items-center gap-1 transition hover:text-indigo-600" title="Toàn màn hình trình chiếu máy chiếu/TV">
+                  <button onclick="toggleDuckFullscreen()" class="bg-white/95 hover:bg-white backdrop-blur-md px-2.5 md:px-3 py-1.5 rounded-xl shadow-sm border border-white/60 text-xs font-bold text-slate-700 flex items-center gap-1 transition hover:text-indigo-600" title="Toàn màn hình trình chiếu máy chiếu/TV (Bấm Space để chạy)">
                     <i data-lucide="maximize" class="w-3.5 h-3.5 text-indigo-600"></i> <span class="hidden sm:inline">Toàn màn hình</span>
                   </button>
                   <button onclick="resetDuckRacePositions()" class="bg-white/95 hover:bg-white backdrop-blur-md px-2.5 md:px-3 py-1.5 rounded-xl shadow-sm border border-white/60 text-xs font-bold text-slate-700 flex items-center gap-1 transition hover:text-rose-600" title="Đặt lại vạch xuất phát">
@@ -8665,6 +8668,38 @@
       setTimeout(() => { if (typeof resizeDuckCanvas === 'function') resizeDuckCanvas(); }, 150);
     });
 
+    // Bấm phím Space để Bắt đầu đua / Chạy tiếp (Đặc biệt thuận tiện khi phóng to màn hình hoặc chiếu TV/máy chiếu)
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' || e.key === ' ') {
+        const activeEl = document.activeElement;
+        if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable)) {
+          return;
+        }
+
+        const isWheelTab = document.getElementById('tab-wheel') && !document.getElementById('tab-wheel').classList.contains('hidden');
+        const isDuckMode = document.getElementById('spin-mode') && document.getElementById('spin-mode').value === 'duck';
+        const isFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement);
+
+        if ((isWheelTab && isDuckMode) || isFullscreen) {
+          e.preventDefault();
+
+          // Nếu bảng kết quả HS chiến thắng đang mở, nhấn Space sẽ tự đóng và mở vòng đua tiếp theo
+          const resultModal = document.getElementById('result-modal');
+          if (resultModal && !resultModal.classList.contains('hidden')) {
+            closeResultModal(false);
+            setTimeout(() => {
+              startSpin();
+            }, 260);
+            return;
+          }
+
+          if (!duckRaceRunning) {
+            startSpin();
+          }
+        }
+      }
+    });
+
     let duckRaceRunning = false;
     let duckRaceState = 'idle'; // 'idle' | 'countdown' | 'racing' | 'finished'
     let duckRaceAnimId = null;
@@ -8680,6 +8715,31 @@
     let duckRiverDecorations = [];
     let duckWaterParticles = [];
     let duckQuackTimer = 0;
+
+    // Bảng màu đa dạng cho các chú vịt (16 phong cách màu sắc sinh động khác nhau)
+    const DUCK_COLOR_PALETTES = [
+      { name: 'Vàng cổ điển', body: '#facc15', outline: '#d97706', wing: '#f59e0b', wingOutline: '#b45309', beak: '#ea580c', beakOutline: '#c2410c' },
+      { name: 'Hồng kẹo ngọt', body: '#f472b6', outline: '#db2777', wing: '#ec4899', wingOutline: '#be185d', beak: '#ea580c', beakOutline: '#c2410c' },
+      { name: 'Xanh da trời', body: '#38bdf8', outline: '#0284c7', wing: '#0ea5e9', wingOutline: '#0369a1', beak: '#ea580c', beakOutline: '#c2410c' },
+      { name: 'Xanh lá mạ', body: '#4ade80', outline: '#16a34a', wing: '#22c55e', wingOutline: '#15803d', beak: '#ea580c', beakOutline: '#c2410c' },
+      { name: 'Tím mộng mơ', body: '#c084fc', outline: '#9333ea', wing: '#a855f7', wingOutline: '#7e22ce', beak: '#f59e0b', beakOutline: '#d97706' },
+      { name: 'Cam rực rỡ', body: '#fb923c', outline: '#ea580c', wing: '#f97316', wingOutline: '#c2410c', beak: '#facc15', beakOutline: '#ca8a04' },
+      { name: 'Trắng tuyết', body: '#f8fafc', outline: '#94a3b8', wing: '#e2e8f0', wingOutline: '#64748b', beak: '#ea580c', beakOutline: '#c2410c' },
+      { name: 'Đỏ ruby', body: '#f87171', outline: '#dc2626', wing: '#ef4444', wingOutline: '#b91c1c', beak: '#fbbf24', beakOutline: '#d97706' },
+      { name: 'Xanh ngọc bích', body: '#2dd4bf', outline: '#0d9488', wing: '#14b8a6', wingOutline: '#0f766e', beak: '#ea580c', beakOutline: '#c2410c' },
+      { name: 'Xanh hoàng gia', body: '#60a5fa', outline: '#2563eb', wing: '#3b82f6', wingOutline: '#1d4ed8', beak: '#facc15', beakOutline: '#d97706' },
+      { name: 'Vàng chanh', body: '#fde047', outline: '#ca8a04', wing: '#facc15', wingOutline: '#a16207', beak: '#ea580c', beakOutline: '#c2410c' },
+      { name: 'Hồng san hô', body: '#fb7185', outline: '#e11d48', wing: '#f43f5e', wingOutline: '#be123c', beak: '#ea580c', beakOutline: '#c2410c' },
+      { name: 'Tím chàm', body: '#818cf8', outline: '#4f46e5', wing: '#6366f1', wingOutline: '#4338ca', beak: '#f59e0b', beakOutline: '#d97706' },
+      { name: 'Ngọc lục bảo', body: '#34d399', outline: '#059669', wing: '#10b981', wingOutline: '#047857', beak: '#ea580c', beakOutline: '#c2410c' },
+      { name: 'Nâu socola', body: '#d97706', outline: '#92400e', wing: '#b45309', wingOutline: '#78350f', beak: '#facc15', beakOutline: '#ca8a04' },
+      { name: 'Hồng tím fuchsia', body: '#e879f9', outline: '#c026d3', wing: '#d946ef', wingOutline: '#a21caf', beak: '#facc15', beakOutline: '#d97706' }
+    ];
+
+    const DUCK_CAP_COLORS = [
+      '#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', 
+      '#06b6d4', '#84cc16', '#f97316', '#6366f1', '#e11d48', '#14b8a6', '#d946ef'
+    ];
 
     function resizeDuckCanvas() {
       const container = document.getElementById('duck-race-container');
@@ -8705,12 +8765,14 @@
       const waterH = h - topBankH - botBankH;
       const count = duckList.length;
       if (count > 0) {
-        const numLanes = Math.min(Math.max(4, Math.ceil(count / 4)), 10);
-        const laneH = waterH / (numLanes + 1);
+        const padY = 22;
+        const usableH = Math.max(30, waterH - padY * 2);
+        const spacingY = count > 1 ? usableH / (count - 1) : usableH / 2;
         duckList.forEach((d, idx) => {
-          const lane = idx % numLanes;
-          d.baseY = topBankH + (lane + 1) * laneH + (Math.sin(idx * 83) * (laneH * 0.25));
+          d.baseY = topBankH + padY + (count > 1 ? idx * spacingY : usableH / 2);
+          d.startX = duckStartX - 28; // Tất cả vịt cùng 1 vị trí xuất phát
           if (duckRaceState === 'idle') {
+            d.x = d.startX;
             d.y = d.baseY;
           }
         });
@@ -8734,18 +8796,16 @@
       const visible = students.filter(s => !hiddenWheelIds.includes(s.id));
       const count = visible.length;
 
-      const capColors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16', '#f97316', '#6366f1'];
-      const duckBodyTints = ['#fde047', '#facc15', '#fbbf24', '#fef08a'];
-
-      const numLanes = Math.min(Math.max(4, Math.ceil(count / 4)), 10);
-      const laneH = waterH / (numLanes + 1);
-
       if (resetPositions || duckList.length !== count) {
+        const padY = 22;
+        const usableH = Math.max(30, waterH - padY * 2);
+        const spacingY = count > 1 ? usableH / (count - 1) : usableH / 2;
+        const startDuckX = duckStartX - 28; // TẤT CẢ VỊT CÙNG Ở VỊ TRÍ XUẤT PHÁT NHƯ NHAU!
+
         duckList = visible.map((st, i) => {
-          const lane = i % numLanes;
-          const col = Math.floor(i / numLanes);
-          const baseY = topBankH + (lane + 1) * laneH + (Math.sin(i * 83) * (laneH * 0.25));
-          const startDuckX = duckStartX - 35 - (col * 42) + (Math.sin(i * 47) * 15);
+          const baseY = topBankH + padY + (count > 1 ? i * spacingY : usableH / 2);
+          const palette = DUCK_COLOR_PALETTES[i % DUCK_COLOR_PALETTES.length];
+          const capColor = DUCK_CAP_COLORS[(i * 3 + 1) % DUCK_CAP_COLORS.length];
 
           const nameParts = (st.name || '').trim().split(/\s+/);
           const shortName = nameParts.length > 2 ? nameParts.slice(-2).join(' ') : (st.name || 'HS');
@@ -8757,14 +8817,18 @@
             x: startDuckX,
             y: baseY,
             baseY: baseY,
-            lane: lane,
-            col: col,
+            lane: i,
             startX: startDuckX,
             targetX: startDuckX,
             speedFactor: 0.92 + (Math.sin(i * 31) * 0.08) + (Math.random() * 0.08),
             wobbleOffset: i * 0.85,
-            bodyColor: duckBodyTints[i % duckBodyTints.length],
-            capColor: capColors[i % capColors.length],
+            bodyColor: palette.body,
+            outlineColor: palette.outline,
+            wingColor: palette.wing,
+            wingOutline: palette.wingOutline,
+            beakColor: palette.beak,
+            beakOutline: palette.beakOutline,
+            capColor: capColor,
             burstTimer: 0,
             burstSpeed: 0,
             rank: i + 1,
@@ -9267,13 +9331,14 @@
       ctx.stroke();
       ctx.restore();
 
-      const s = 0.88;
+      const count = duckList ? duckList.length : 20;
+      const s = count > 32 ? 0.74 : (count > 20 ? 0.81 : 0.88);
       ctx.scale(s, s);
 
       // Body
       ctx.save();
       ctx.fillStyle = duck.bodyColor || '#facc15';
-      ctx.strokeStyle = '#d97706';
+      ctx.strokeStyle = duck.outlineColor || '#d97706';
       ctx.lineWidth = 2;
 
       ctx.beginPath();
@@ -9292,11 +9357,11 @@
       ctx.save();
       ctx.translate(-2, 2);
       ctx.rotate(flapAngle);
-      ctx.fillStyle = '#f59e0b';
+      ctx.fillStyle = duck.wingColor || '#f59e0b';
       ctx.beginPath();
       ctx.ellipse(0, 0, 9, 6, -0.2, 0, Math.PI * 2);
       ctx.fill();
-      ctx.strokeStyle = '#b45309';
+      ctx.strokeStyle = duck.wingOutline || '#b45309';
       ctx.lineWidth = 1.2;
       ctx.stroke();
       ctx.restore();
@@ -9306,7 +9371,7 @@
       ctx.arc(11, -12, 10.5, 0, Math.PI * 2);
       ctx.fillStyle = duck.bodyColor || '#facc15';
       ctx.fill();
-      ctx.strokeStyle = '#d97706';
+      ctx.strokeStyle = duck.outlineColor || '#d97706';
       ctx.lineWidth = 2;
       ctx.stroke();
 
@@ -9321,8 +9386,8 @@
       ctx.fill();
 
       // Beak
-      ctx.fillStyle = '#ea580c';
-      ctx.strokeStyle = '#c2410c';
+      ctx.fillStyle = duck.beakColor || '#ea580c';
+      ctx.strokeStyle = duck.beakOutline || '#c2410c';
       ctx.lineWidth = 1.5;
       ctx.beginPath();
       ctx.moveTo(20, -13);
@@ -9338,8 +9403,13 @@
       ctx.ellipse(9, -17, 7, 3, 0.1, 0, Math.PI * 2);
       ctx.fill();
       ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 1;
+      ctx.lineWidth = 1.2;
       ctx.stroke();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(9, -17, 1.8, 0, Math.PI * 2);
+      ctx.fill();
 
       // Crown for winner
       if (duckRaceState === 'finished' && duck.isWinner) {
