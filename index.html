@@ -1659,10 +1659,10 @@
             </div>
 
             <!-- ĐƯỜNG ĐUA XE F1 QUANH CO -->
-            <div id="f1-race-container" class="hidden flex flex-col relative w-full h-[440px] md:h-[520px] bg-slate-950 border border-slate-700 rounded-3xl overflow-hidden shadow-inner select-none transition-all">
-              <!-- Thanh điều khiển đường đua F1 -->
-              <div class="absolute top-3 left-3 right-3 z-30 flex flex-wrap items-center justify-between gap-2 pointer-events-auto">
-                <div class="flex items-center gap-2 bg-slate-900/90 backdrop-blur-md px-3 py-1.5 rounded-2xl shadow-sm border border-white/20 text-white">
+            <div id="f1-race-container" class="hidden flex flex-col relative w-full h-[460px] md:h-[540px] bg-slate-950 border border-slate-700 rounded-3xl overflow-hidden shadow-inner select-none transition-all">
+              <!-- Thanh điều khiển đường đua F1 (Tách riêng trên cùng, KHÔNG CHE KHUẤT đường đua và vạch đích) -->
+              <div class="shrink-0 px-3.5 py-2 bg-slate-900/95 border-b border-slate-800/80 z-30 flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2 bg-slate-950/80 backdrop-blur-md px-3 py-1.5 rounded-xl shadow-sm border border-white/10 text-white">
                   <span class="text-xs font-black text-rose-500 flex items-center gap-1.5"><span class="text-base animate-pulse">🏎️</span> GIẢI ĐUA F1 GRAND PRIX</span>
                   <span class="h-3.5 w-[1px] bg-slate-700"></span>
                   <span id="f1-race-status" class="text-[11px] font-bold text-slate-300">Sẵn sàng xuất phát</span>
@@ -1685,43 +1685,43 @@
                       <button onclick="selectF1Scene('monaco')" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
                         <span class="text-base">🌴</span>
                         <div class="flex-1">
-                          <div class="font-bold text-slate-200 group-hover:text-amber-300 flex items-center justify-between">Monaco GP <span class="text-[9px] text-emerald-400 font-normal">Cua tay áo</span></div>
-                          <div class="text-[10px] text-slate-400">Ven biển Monte Carlo & 6 khúc quanh co</div>
+                          <div class="font-bold text-slate-200 group-hover:text-amber-300 flex items-center justify-between">Monaco GP <span class="text-[9px] text-emerald-400 font-normal">12 khúc quanh co</span></div>
+                          <div class="text-[10px] text-slate-400">Ven biển Monte Carlo, cua tay áo & bể bơi</div>
                         </div>
                       </button>
                       <button onclick="selectF1Scene('singapore')" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
                         <span class="text-base">🌃</span>
                         <div class="flex-1">
-                          <div class="font-bold text-slate-200 group-hover:text-amber-300 flex items-center justify-between">Singapore Đêm <span class="text-[9px] text-cyan-400 font-normal">Đèn pha neon</span></div>
-                          <div class="text-[10px] text-slate-400">Marina Bay & 7 khúc cua đô thị</div>
+                          <div class="font-bold text-slate-200 group-hover:text-amber-300 flex items-center justify-between">Singapore Đêm <span class="text-[9px] text-cyan-400 font-normal">14 góc cua</span></div>
+                          <div class="text-[10px] text-slate-400">Marina Bay & góc cua đô thị rực sáng neon</div>
                         </div>
                       </button>
                       <button onclick="selectF1Scene('bahrain')" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
                         <span class="text-base">🏜️</span>
                         <div class="flex-1">
-                          <div class="font-bold text-slate-200 group-hover:text-amber-300 flex items-center justify-between">Bahrain Sa Mạc <span class="text-[9px] text-amber-400 font-normal">Hoàng hôn</span></div>
-                          <div class="text-[10px] text-slate-400">Đụn cát óng ả & Cua kỹ thuật Sakhir</div>
+                          <div class="font-bold text-slate-200 group-hover:text-amber-300 flex items-center justify-between">Bahrain Sa Mạc <span class="text-[9px] text-amber-400 font-normal">10 khúc cua</span></div>
+                          <div class="text-[10px] text-slate-400">Hoàng hôn, đụn cát óng ả & cua kỹ thuật Sakhir</div>
                         </div>
                       </button>
                       <button onclick="selectF1Scene('silverstone')" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
                         <span class="text-base">🌧️</span>
                         <div class="flex-1">
-                          <div class="font-bold text-slate-200 group-hover:text-amber-300 flex items-center justify-between">Silverstone Mưa <span class="text-[9px] text-sky-400 font-normal">Ướt & Bụi nước</span></div>
-                          <div class="text-[10px] text-slate-400">Mưa bão, vệt nước & Cua Esses dồn dập</div>
+                          <div class="font-bold text-slate-200 group-hover:text-amber-300 flex items-center justify-between">Silverstone Mưa <span class="text-[9px] text-sky-400 font-normal">Esses liên hoàn</span></div>
+                          <div class="text-[10px] text-slate-400">Mưa bão, bụi nước & khúc cua Maggotts-Becketts</div>
                         </div>
                       </button>
                       <button onclick="selectF1Scene('straight')" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
                         <span class="text-base">🚀</span>
                         <div class="flex-1">
-                          <div class="font-bold text-slate-200 group-hover:text-amber-300 flex items-center justify-between">Đua Đường Thẳng <span class="text-[9px] text-emerald-400 font-normal">Sprint Drag</span></div>
-                          <div class="text-[10px] text-slate-400">Đại lộ Monza thẳng tắp, bứt phá max tốc độ</div>
+                          <div class="font-bold text-slate-200 group-hover:text-amber-300 flex items-center justify-between">Đua Đường Thẳng <span class="text-[9px] text-emerald-400 font-normal">Speedway Oval</span></div>
+                          <div class="text-[10px] text-slate-400">Đại lộ Monza thẳng tắp & chicanes tốc độ cao</div>
                         </div>
                       </button>
                       <button onclick="selectF1Scene('cyberpunk')" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
                         <span class="text-base">⚡</span>
                         <div class="flex-1">
-                          <div class="font-bold text-slate-200 group-hover:text-amber-300 flex items-center justify-between">Tokyo Cyberpunk <span class="text-[9px] text-fuchsia-400 font-normal">Tương lai 2099</span></div>
-                          <div class="text-[10px] text-slate-400">Lưới laser synthwave & 8 góc cua lượn</div>
+                          <div class="font-bold text-slate-200 group-hover:text-amber-300 flex items-center justify-between">Tokyo Cyberpunk <span class="text-[9px] text-fuchsia-400 font-normal">14 góc laser</span></div>
+                          <div class="text-[10px] text-slate-400">Lưới laser synthwave & cua zíc-zắc 2099</div>
                         </div>
                       </button>
                       <div class="border-t border-white/10 pt-1">
@@ -1758,20 +1758,25 @@
                 </div>
               </div>
 
-              <!-- Bảng Dẫn Đầu F1 (Live Leaderboard) -->
-              <div id="f1-leaderboard" class="absolute bottom-3 left-3 z-30 bg-black/85 backdrop-blur-md px-3.5 py-2 rounded-2xl shadow-xl border border-rose-500/40 text-white text-[11px] max-w-[260px] hidden transition-all">
-                <div class="font-black text-rose-400 uppercase text-[9px] tracking-wider mb-1 flex items-center justify-between">
-                  <span class="flex items-center gap-1">🏁 Top Dẫn Đầu F1</span>
-                  <span id="f1-leaderboard-lap" class="bg-rose-500/30 text-rose-300 px-1.5 py-0.2 rounded text-[8px] font-mono">VÒNG 1/1</span>
+              <!-- KHUNG CHỨA CANVAS ĐƯỜNG ĐUA & OVERLAYS (FULL KHÔNG GIAN BÊN DƯỚI) -->
+              <div class="relative flex-1 w-full min-h-0 overflow-hidden" id="f1-canvas-wrapper">
+                <!-- Canvas đường đua F1 -->
+                <canvas id="f1-race-canvas" class="w-full h-full block"></canvas>
+
+                <!-- Bảng Dẫn Đầu F1 (Live Leaderboard) nằm trong lòng sân nội đồng (Infield), KHÔNG CHE KHUẤT xe hay đường đua -->
+                <div id="f1-leaderboard" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 bg-slate-950/85 backdrop-blur-md px-3.5 py-2 rounded-2xl shadow-2xl border border-rose-500/40 text-white text-[11px] w-[260px] hidden transition-all pointer-events-auto">
+                  <div class="font-black text-rose-400 uppercase text-[9px] tracking-wider mb-1 flex items-center justify-between">
+                    <span class="flex items-center gap-1">🏁 Top Dẫn Đầu F1</span>
+                    <div class="flex items-center gap-1.5">
+                      <span id="f1-leaderboard-lap" class="bg-rose-500/30 text-rose-300 px-1.5 py-0.2 rounded text-[8px] font-mono">VÒNG 1/1</span>
+                      <button type="button" onclick="toggleF1LeaderboardCollapse(event)" id="btn-f1-lb-toggle" class="hover:bg-white/10 px-1 rounded text-[10px] text-slate-400 hover:text-white transition" title="Thu gọn / Mở rộng">➖</button>
+                    </div>
+                  </div>
+                  <div id="f1-top-list" class="space-y-0.5"></div>
                 </div>
-                <div id="f1-top-list" class="space-y-0.5"></div>
-              </div>
 
-              <!-- Canvas đường đua F1 -->
-              <canvas id="f1-race-canvas" class="w-full h-full block"></canvas>
-
-              <!-- Dàn 5 đèn đỏ F1 xuất phát -->
-              <div id="f1-gantry-overlay" class="absolute inset-0 bg-black/55 backdrop-blur-xs flex flex-col items-center justify-center z-40 hidden pointer-events-none">
+                <!-- Dàn 5 đèn đỏ F1 xuất phát -->
+                <div id="f1-gantry-overlay" class="absolute inset-0 bg-black/55 backdrop-blur-xs flex flex-col items-center justify-center z-40 hidden pointer-events-none">
                 <div class="bg-slate-950/95 p-5 md:p-6 rounded-3xl border-4 border-slate-700 shadow-2xl flex flex-col items-center gap-3">
                   <div class="text-xs font-black text-white/80 uppercase tracking-widest text-center">FORMULA 1 STARTING LIGHTS</div>
                   <div class="flex items-center gap-3 md:gap-4 p-3 bg-black rounded-2xl border border-slate-800 shadow-inner">
@@ -9865,6 +9870,9 @@
         localStorage.setItem('f1_view_mode', f1ViewMode);
       } catch(e) {}
       updateF1ViewButtonUI();
+      if (typeof updateF1LeaderboardPosition === 'function') {
+        updateF1LeaderboardPosition();
+      }
       renderF1RaceCanvas(performance.now());
     }
 
@@ -9897,14 +9905,14 @@
         id: 'monaco',
         name: 'Monaco GP',
         icon: '🌴',
-        subtitle: 'Ven biển Monte Carlo & Vòng đua khép kín',
+        subtitle: 'Ven biển Monte Carlo & 12 khúc quanh co',
         kerb1: '#ef4444',
         kerb2: '#ffffff',
         roadEdge: '#64748b',
         dashColor: 'rgba(255, 255, 255, 0.5)',
         banner: 'GRAND PRIX DE MONACO 🇲🇨',
-        topCurve: (u) => Math.sin(u * Math.PI * 4.0) * 0.75 - Math.cos(u * Math.PI * 2.0) * 0.35,
-        botCurve: (u) => -Math.sin(u * Math.PI * 5.0) * 0.70 + Math.sin(u * Math.PI * 2.5) * 0.30,
+        topCurve: (u) => Math.sin(u * Math.PI * 6.0) * 0.72 + Math.sin(u * Math.PI * 3.0 + 0.6) * 0.40 - Math.cos(u * Math.PI * 9.0) * 0.22,
+        botCurve: (u) => -Math.sin(u * Math.PI * 7.0) * 0.68 + Math.cos(u * Math.PI * 3.5) * 0.38 - Math.sin(u * Math.PI * 10.5) * 0.20,
         curve: (p) => Math.sin(p * Math.PI * 10.0) * 0.44 + Math.sin(p * Math.PI * 5.0 + 0.8) * 0.38 - Math.cos(p * Math.PI * 2.2) * 0.22
       },
       straight: {
@@ -9917,36 +9925,36 @@
         roadEdge: '#3b82f6',
         dashColor: 'rgba(255, 255, 255, 0.75)',
         banner: 'MONZA SUPER SPEEDWAY OVAL 🚀',
-        topCurve: (u) => 0,
-        botCurve: (u) => 0,
+        topCurve: (u) => Math.sin(u * Math.PI * 4.0) * 0.38,
+        botCurve: (u) => -Math.sin(u * Math.PI * 4.0) * 0.38,
         curve: (p) => 0
       },
       singapore: {
         id: 'singapore',
         name: 'Singapore Đêm',
         icon: '🌃',
-        subtitle: 'Marina Bay & Khúc cua đô thị rực sáng',
+        subtitle: 'Marina Bay & 14 khúc cua đô thị',
         kerb1: '#06b6d4',
         kerb2: '#84cc16',
         roadEdge: '#0284c7',
         dashColor: 'rgba(56, 189, 248, 0.65)',
         banner: 'SINGAPORE NIGHT GRAND PRIX 🌃',
-        topCurve: (u) => Math.sin(u * Math.PI * 6.0) * 0.65,
-        botCurve: (u) => Math.sin(u * Math.PI * 7.0) * 0.60,
+        topCurve: (u) => Math.sin(u * Math.PI * 8.0) * 0.68 + Math.cos(u * Math.PI * 4.0) * 0.42 - Math.sin(u * Math.PI * 12.0) * 0.18,
+        botCurve: (u) => Math.sin(u * Math.PI * 8.0) * 0.65 - Math.cos(u * Math.PI * 4.5) * 0.38 + Math.sin(u * Math.PI * 11.0) * 0.18,
         curve: (p) => Math.sin(p * Math.PI * 11.0 - 0.4) * 0.42 + Math.cos(p * Math.PI * 5.5) * 0.35 + Math.sin(p * Math.PI * 2.5) * 0.26
       },
       bahrain: {
         id: 'bahrain',
         name: 'Bahrain Sa Mạc',
         icon: '🏜️',
-        subtitle: 'Hoàng hôn sa mạc & Khúc quanh cồn cát Sakhir',
+        subtitle: 'Hoàng hôn & 10 khúc quanh cồn cát Sakhir',
         kerb1: '#b91c1c',
         kerb2: '#fef08a',
         roadEdge: '#78350f',
         dashColor: 'rgba(254, 240, 138, 0.6)',
         banner: 'BAHRAIN SAKHIR GRAND PRIX 🏜️',
-        topCurve: (u) => Math.sin(u * Math.PI * 3.5) * 0.75,
-        botCurve: (u) => -Math.sin(u * Math.PI * 4.0) * 0.70,
+        topCurve: (u) => Math.sin(u * Math.PI * 5.5) * 0.75 - Math.sin(u * Math.PI * 2.5) * 0.38 + Math.cos(u * Math.PI * 8.5) * 0.22,
+        botCurve: (u) => -Math.sin(u * Math.PI * 6.0) * 0.72 + Math.cos(u * Math.PI * 3.0) * 0.38 - Math.sin(u * Math.PI * 9.0) * 0.20,
         curve: (p) => Math.sin(p * Math.PI * 9.5) * 0.48 + Math.cos(p * Math.PI * 4.5 + 0.3) * 0.36 + Math.sin(p * Math.PI * 2.0) * 0.2
       },
       silverstone: {
@@ -9959,22 +9967,22 @@
         roadEdge: '#334155',
         dashColor: 'rgba(255, 255, 255, 0.35)',
         banner: 'SILVERSTONE WET GP 🌧️',
-        topCurve: (u) => Math.sin(u * Math.PI * 5.0) * 0.70,
-        botCurve: (u) => -Math.sin(u * Math.PI * 5.5) * 0.70,
+        topCurve: (u) => Math.sin(u * Math.PI * 7.0 + 0.4) * 0.75 - Math.cos(u * Math.PI * 3.5) * 0.42 + Math.sin(u * Math.PI * 10.5) * 0.20,
+        botCurve: (u) => -Math.sin(u * Math.PI * 7.5) * 0.72 + Math.sin(u * Math.PI * 3.0) * 0.40 - Math.cos(u * Math.PI * 11.0) * 0.18,
         curve: (p) => Math.sin(p * Math.PI * 10.5 + 0.6) * 0.42 + Math.sin(p * Math.PI * 4.5) * 0.38 - Math.cos(p * Math.PI * 13.0) * 0.16
       },
       cyberpunk: {
         id: 'cyberpunk',
         name: 'Tokyo Cyberpunk',
         icon: '⚡',
-        subtitle: 'Lưới laser & Đường đua tương lai 2099',
+        subtitle: 'Lưới laser & 14 góc cua tương lai 2099',
         kerb1: '#ec4899',
         kerb2: '#06b6d4',
         roadEdge: '#a855f7',
         dashColor: 'rgba(236, 72, 153, 0.75)',
         banner: 'TOKYO 2099 CYBER SPEEDWAY ⚡',
-        topCurve: (u) => Math.sin(u * Math.PI * 6.5) * 0.70,
-        botCurve: (u) => -Math.sin(u * Math.PI * 6.0) * 0.70,
+        topCurve: (u) => Math.sin(u * Math.PI * 9.0) * 0.70 + Math.cos(u * Math.PI * 4.5) * 0.38 - Math.sin(u * Math.PI * 13.5) * 0.22,
+        botCurve: (u) => -Math.sin(u * Math.PI * 8.5) * 0.68 - Math.cos(u * Math.PI * 4.0) * 0.38 + Math.cos(u * Math.PI * 12.5) * 0.20,
         curve: (p) => Math.sin(p * Math.PI * 12.0) * 0.40 + Math.sin(p * Math.PI * 6.0) * 0.40 + Math.cos(p * Math.PI * 3.0) * 0.22
       }
     };
@@ -10055,26 +10063,26 @@
       }
 
       const scene = F1_SCENES[sceneKey] || F1_SCENES.monaco;
-      const roadW = Math.max(52, Math.min(68, h * 0.15));
-      const margin = Math.max(32, Math.min(52, w * 0.04));
-      const topY = margin + roadW * 0.5 + 24;
-      const botY = h - margin - roadW * 0.5 - 24;
+      const roadW = Math.max(50, Math.min(62, h * 0.14));
+      const margin = Math.max(30, Math.min(48, w * 0.038));
+      const topY = margin + roadW * 0.5 + 16;
+      const botY = h - margin - roadW * 0.5 - 16;
       const midY = (topY + botY) / 2;
       const radiusY = (botY - topY) / 2;
       const radiusX = Math.min(radiusY * 0.95, (w * 0.5 - margin) * 0.38);
 
       const leftX = margin + radiusX + roadW * 0.5;
       const rightX = w - margin - radiusX - roadW * 0.5;
-      const maxAmp = (sceneKey === 'straight') ? 0 : Math.min(28, radiusY * 0.28);
+      const maxAmp = (sceneKey === 'straight') ? Math.min(18, radiusY * 0.16) : Math.min(36, radiusY * 0.30);
 
       const loop = [];
-      const N_TOP = 120, N_RIGHT = 60, N_BOT = 120, N_LEFT = 60;
+      const N_TOP = 140, N_RIGHT = 60, N_BOT = 140, N_LEFT = 60;
 
       // 1. Phân đoạn 1: Đoạn thẳng & uốn lượn phía trên (Từ trái sang phải)
       for (let i = 0; i < N_TOP; i++) {
         const u = i / N_TOP;
         const x = leftX + u * (rightX - leftX);
-        const env = Math.sin(Math.PI * u) ** 2;
+        const env = Math.sin(Math.PI * u) ** 1.5;
         const wave = (typeof scene.topCurve === 'function') ? scene.topCurve(u) : Math.sin(u * Math.PI * 4) * 0.7;
         const y = topY + wave * env * maxAmp;
         loop.push({ x, y });
@@ -10093,7 +10101,7 @@
       for (let i = 0; i < N_BOT; i++) {
         const u = i / N_BOT;
         const x = rightX - u * (rightX - leftX);
-        const env = Math.sin(Math.PI * u) ** 2;
+        const env = Math.sin(Math.PI * u) ** 1.5;
         const wave = (typeof scene.botCurve === 'function') ? scene.botCurve(u) : -Math.sin(u * Math.PI * 5) * 0.7;
         const y = botY + wave * env * maxAmp;
         loop.push({ x, y });
@@ -10286,7 +10294,7 @@
     function resizeF1Canvas() {
       const canvas = document.getElementById('f1-race-canvas');
       if (!canvas) return;
-      const container = document.getElementById('f1-race-container');
+      const container = document.getElementById('f1-canvas-wrapper') || document.getElementById('f1-race-container');
       if (!container) return;
 
       const rect = container.getBoundingClientRect();
@@ -10448,7 +10456,10 @@
             if (statusEl) statusEl.innerText = '🏎️ ĐANG TRANH ĐUA GAY CẤN!';
 
             const leaderboard = document.getElementById('f1-leaderboard');
-            if (leaderboard) leaderboard.classList.remove('hidden');
+            if (leaderboard) {
+              if (typeof updateF1LeaderboardPosition === 'function') updateF1LeaderboardPosition();
+              leaderboard.classList.remove('hidden');
+            }
 
             f1Loop(performance.now());
           }, lightsOutDelay);
@@ -10650,6 +10661,34 @@
           <span class="text-[9px] font-mono opacity-70">${i === 0 ? 'LEADER' : '+' + Math.max(0, (sorted[0].dist - c.dist) * 0.08).toFixed(1) + 'm'}</span>
         </div>
       `).join('');
+    }
+
+    function toggleF1LeaderboardCollapse(e) {
+      if (e) e.stopPropagation();
+      const topList = document.getElementById('f1-top-list');
+      const toggleBtn = document.getElementById('btn-f1-lb-toggle');
+      if (!topList || !toggleBtn) return;
+      if (topList.classList.contains('hidden')) {
+        topList.classList.remove('hidden');
+        toggleBtn.innerText = '➖';
+        toggleBtn.title = 'Thu gọn bảng dẫn đầu';
+      } else {
+        topList.classList.add('hidden');
+        toggleBtn.innerText = '➕';
+        toggleBtn.title = 'Mở rộng bảng dẫn đầu';
+      }
+    }
+
+    function updateF1LeaderboardPosition() {
+      const lb = document.getElementById('f1-leaderboard');
+      if (!lb) return;
+      if (f1ViewMode === 'cockpit') {
+        // Trong chế độ buồng lái 3D: đặt góc trên trái
+        lb.className = "absolute top-3 left-3 z-20 bg-slate-950/85 backdrop-blur-md px-3.5 py-2 rounded-2xl shadow-2xl border border-rose-500/40 text-white text-[11px] w-[240px] transition-all pointer-events-auto";
+      } else {
+        // Trong chế độ Toàn cảnh 2D: đặt chính giữa nội đồng sân đua (Infield) - không che bất kỳ khúc cua hay xe nào!
+        lb.className = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 bg-slate-950/85 backdrop-blur-md px-3.5 py-2 rounded-2xl shadow-2xl border border-rose-500/40 text-white text-[11px] w-[260px] transition-all pointer-events-auto";
+      }
     }
 
     // ==========================================
@@ -11522,30 +11561,35 @@
           ctx.fillRect(circuit.leftX - 12, y, infieldW, 11);
         }
 
-        // Biển hiệu vòm trung tâm Grand Prix (Emblem Badge)
-        const bannerW = Math.min(320, infieldW * 0.75);
-        const bannerH = 36;
-        const bannerX = w * 0.5 - bannerW * 0.5;
-        const bannerY = midY - bannerH * 0.5;
+        // Biển hiệu vòm trung tâm Grand Prix (chỉ vẽ khi bảng xếp hạng đang ẩn để không bị đè nhau)
+        const lbEl = document.getElementById('f1-leaderboard');
+        const lbIsVisible = lbEl && !lbEl.classList.contains('hidden');
 
-        ctx.fillStyle = (scene.id === 'cyberpunk') ? 'rgba(30, 27, 75, 0.90)' : 'rgba(15, 23, 42, 0.88)';
-        ctx.strokeStyle = (scene.id === 'cyberpunk') ? '#ec4899' : (scene.id === 'singapore' ? '#38bdf8' : '#f59e0b');
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.roundRect(bannerX, bannerY, bannerW, bannerH, 8);
-        ctx.fill();
-        ctx.stroke();
+        if (!lbIsVisible) {
+          const bannerW = Math.min(320, infieldW * 0.75);
+          const bannerH = 36;
+          const bannerX = w * 0.5 - bannerW * 0.5;
+          const bannerY = midY - bannerH * 0.5;
 
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '900 11.5px system-ui, -apple-system, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(`${scene.icon} ${scene.banner}`, w * 0.5, bannerY + 12);
+          ctx.fillStyle = (scene.id === 'cyberpunk') ? 'rgba(30, 27, 75, 0.90)' : 'rgba(15, 23, 42, 0.88)';
+          ctx.strokeStyle = (scene.id === 'cyberpunk') ? '#ec4899' : (scene.id === 'singapore' ? '#38bdf8' : '#f59e0b');
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.roundRect(bannerX, bannerY, bannerW, bannerH, 8);
+          ctx.fill();
+          ctx.stroke();
 
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
-        ctx.font = 'bold 9.5px system-ui, sans-serif';
-        const lapTitle = f1TargetLaps > 1 ? `${f1TargetLaps} VÒNG ĐUA KHÉP KÍN` : '1 VÒNG ĐUA';
-        ctx.fillText(`CIRCUIT GRAND PRIX • ${lapTitle}`, w * 0.5, bannerY + 25);
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '900 11.5px system-ui, -apple-system, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(`${scene.icon} ${scene.banner}`, w * 0.5, bannerY + 12);
+
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+          ctx.font = 'bold 9.5px system-ui, sans-serif';
+          const lapTitle = f1TargetLaps > 1 ? `${f1TargetLaps} VÒNG ĐUA KHÉP KÍN` : '1 VÒNG ĐUA';
+          ctx.fillText(`CIRCUIT GRAND PRIX • ${lapTitle}`, w * 0.5, bannerY + 25);
+        }
       }
       ctx.restore();
 
