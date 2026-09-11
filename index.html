@@ -1846,16 +1846,23 @@
                 <!-- Canvas đường đua F1 -->
                 <canvas id="f1-race-canvas" class="w-full h-full block"></canvas>
 
-                <!-- Bảng Dẫn Đầu F1 (Live Leaderboard) nằm trong lòng sân nội đồng (Infield), KHÔNG CHE KHUẤT xe hay đường đua -->
-                <div id="f1-leaderboard" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 bg-slate-950/85 backdrop-blur-md px-3.5 py-2.5 rounded-2xl shadow-2xl border border-rose-500/40 text-white text-[11px] w-[275px] md:w-[290px] hidden transition-all pointer-events-auto">
-                  <div class="font-black text-rose-400 uppercase text-[9px] tracking-wider mb-1 flex items-center justify-between">
-                    <span class="flex items-center gap-1">🏁 Top Dẫn Đầu F1</span>
+                <!-- Bảng Dẫn Đầu F1 (Live Leaderboard) có thể kéo thả di chuyển tự do hoặc chuyển góc tránh che đường đua, tên học sinh hiển thị đầy đủ -->
+                <div id="f1-leaderboard" class="absolute z-20 bg-slate-950/90 backdrop-blur-md px-3.5 py-2.5 rounded-2xl shadow-2xl border border-rose-500/40 text-white text-[11px] w-[310px] sm:w-[350px] md:w-[390px] max-w-[92vw] hidden transition-all pointer-events-auto select-none">
+                  <div id="f1-leaderboard-header" class="font-black text-rose-400 uppercase text-[9px] tracking-wider mb-1.5 flex items-center justify-between cursor-grab active:cursor-grabbing pb-1.5 border-b border-white/10" title="Nhấn giữ vào đây để kéo thả di chuyển vị trí bất kỳ">
+                    <span class="flex items-center gap-1.5">
+                      <span class="text-xs">🏁</span>
+                      <span>Top Dẫn Đầu F1</span>
+                      <span class="text-[8px] text-slate-400 lowercase font-normal hidden sm:inline">(kéo để dời)</span>
+                    </span>
                     <div class="flex items-center gap-1.5">
-                      <span id="f1-leaderboard-lap" class="bg-rose-500/30 text-rose-300 px-1.5 py-0.2 rounded text-[8px] font-mono">VÒNG 1/1</span>
-                      <button type="button" onclick="toggleF1LeaderboardCollapse(event)" id="btn-f1-lb-toggle" class="hover:bg-white/10 px-1 rounded text-[10px] text-slate-400 hover:text-white transition" title="Thu gọn / Mở rộng">➖</button>
+                      <span id="f1-leaderboard-lap" class="bg-rose-500/30 text-rose-300 px-1.5 py-0.5 rounded text-[8px] font-mono">VÒNG 1/1</span>
+                      <button type="button" onclick="cycleF1LeaderboardPos(event)" id="btn-f1-lb-pos" class="hover:bg-white/15 px-1.5 py-0.5 rounded text-[9.5px] text-amber-300 font-bold flex items-center gap-0.5 transition" title="Đổi vị trí bảng xếp hạng (Tránh che đường đua)">
+                        <span>📍</span> <span id="f1-lb-pos-text" class="text-[8.5px]">Tự động</span>
+                      </button>
+                      <button type="button" onclick="toggleF1LeaderboardCollapse(event)" id="btn-f1-lb-toggle" class="hover:bg-white/15 px-1.5 py-0.5 rounded text-[10px] text-slate-300 hover:text-white transition" title="Thu gọn / Mở rộng">➖</button>
                     </div>
                   </div>
-                  <div id="f1-top-list" class="space-y-0.5"></div>
+                  <div id="f1-top-list" class="space-y-1"></div>
                 </div>
 
                 <!-- Dàn 5 đèn đỏ F1 xuất phát -->
@@ -10735,7 +10742,7 @@
         roadEdge: '#38bdf8',
         dashColor: 'rgba(56, 189, 248, 0.75)',
         banner: 'SINGAPORE GRAND PRIX 🇸🇬',
-        roadW: 42,
+        roadW: 76,
         waypoints: [
           { x: 820, y: 560 }, // Start / Finish line dọc F1 Pit Building
           { x: 825, y: 440 },
@@ -10800,7 +10807,7 @@
         roadEdge: '#e2e8f0',
         dashColor: 'rgba(255, 255, 255, 0.65)',
         banner: 'BRITISH GRAND PRIX • SILVERSTONE 🇬🇧',
-        roadW: 42,
+        roadW: 76,
         waypoints: [
           { x: 240, y: 480 }, // Start line
           { x: 310, y: 460 },
@@ -10849,7 +10856,7 @@
         roadEdge: '#facc15',
         dashColor: 'rgba(254, 240, 138, 0.75)',
         banner: 'BELGIAN GP • CIRCUIT DE SPA 🇧🇪',
-        roadW: 42,
+        roadW: 76,
         waypoints: [
           { x: 250, y: 350 }, // Start line
           { x: 340, y: 360 },
@@ -10897,7 +10904,7 @@
         roadEdge: '#ef4444',
         dashColor: 'rgba(254, 240, 138, 0.75)',
         banner: 'SHANGHAI INTERNATIONAL CIRCUIT 🇨🇳',
-        roadW: 42,
+        roadW: 76,
         waypoints: [
           { x: 220, y: 520 }, // Start line
           { x: 220, y: 380 },
@@ -10943,7 +10950,7 @@
         roadEdge: '#f43f5e',
         dashColor: 'rgba(255, 255, 255, 0.7)',
         banner: 'QATAR GRAND PRIX • LUSAIL 🇶🇦',
-        roadW: 42,
+        roadW: 76,
         waypoints: [
           { x: 180, y: 520 }, // Start line
           { x: 450, y: 520 },
@@ -10987,7 +10994,7 @@
         roadEdge: '#64748b',
         dashColor: 'rgba(255, 255, 255, 0.6)',
         banner: 'GRAND PRIX DE MONACO 🇲🇨',
-        roadW: 42,
+        roadW: 76,
         waypoints: [
           { x: 630, y: 540 }, // Start line
           { x: 730, y: 540 },
@@ -11172,6 +11179,7 @@
         renderF1RaceCanvas(performance.now());
       }
 
+      if (typeof updateF1LeaderboardPosition === 'function') updateF1LeaderboardPosition();
       updateF1SceneMenuHighlight();
     }
 
@@ -11197,8 +11205,8 @@
         const wpW = maxX - minX || 1;
         const wpH = maxY - minY || 1;
 
-        // Bề rộng mặt đường phù hợp với hình dáng đường đua thực tế
-        const roadW = scene.roadW || Math.max(36, Math.min(46, Math.min(w, h) * 0.072));
+        // Bề rộng mặt đường nới rộng để vẽ đủ 4 làn đường xe chạy thoải mái
+        const roadW = scene.roadW || Math.max(68, Math.min(84, Math.min(w, h) * 0.125));
 
         // Lề an toàn để đường đua không bị chạm viền canvas
         const marginX = Math.max(36, w * 0.04) + roadW * 0.5;
@@ -11309,7 +11317,7 @@
       }
 
       // NẾU LÀ CHẶNG ĐUA HÌNH BẦU DỤC / OVAL TRUYỀN THỐNG (FALLBACK)
-      const roadW = Math.max(50, Math.min(62, h * 0.14));
+      const roadW = Math.max(68, Math.min(84, h * 0.16));
       const margin = Math.max(30, Math.min(48, w * 0.038));
       const topY = margin + roadW * 0.5 + 16;
       const botY = h - margin - roadW * 0.5 - 16;
@@ -11478,12 +11486,13 @@
       f1FinishX = circuit.startPt.x;
 
       if (resetPositions || f1CarList.length !== count) {
+        const laneOffsets = [-0.75, -0.25, 0.25, 0.75];
         f1CarList = visibleStudents.map((s, idx) => {
-          const row = Math.floor(idx / 2);
-          const side = (idx % 2 === 0) ? -1 : 1;
-          const laneRatio = (count <= 1) ? 0 : side * 0.42;
+          const row = Math.floor(idx / 4);
+          const laneIndex = idx % 4;
+          const laneRatio = (count <= 1) ? 0 : laneOffsets[laneIndex];
           const teamTheme = F1_TEAM_COLORS[idx % F1_TEAM_COLORS.length];
-          const startDist = -24 - row * 22;
+          const startDist = -24 - row * 24;
           const pt = circuit.sampleDist(startDist);
           const startXPos = pt.x + pt.nx * laneRatio * (circuit.roadW * 0.44);
           const startYPos = pt.y + pt.ny * laneRatio * (circuit.roadW * 0.44);
@@ -11512,7 +11521,7 @@
             isWinner: false,
             rank: idx + 1,
             wobbleOffset: Math.random() * Math.PI * 2,
-            wobbleAmp: 1.5 + Math.random() * 2.5,
+            wobbleAmp: 0.6 + Math.random() * 0.6,
             speedVariation: 0.95 + Math.random() * 0.10
           };
         });
@@ -11535,6 +11544,9 @@
 
       const leaderboard = document.getElementById('f1-leaderboard');
       if (leaderboard) leaderboard.classList.add('hidden');
+
+      if (typeof initF1LeaderboardDraggable === 'function') initF1LeaderboardDraggable();
+      if (typeof updateF1LeaderboardPosition === 'function') updateF1LeaderboardPosition();
 
       renderF1RaceCanvas(performance.now());
     }
@@ -11586,12 +11598,13 @@
       f1StartX = circuit.startPt.x;
       f1FinishX = circuit.startPt.x;
       const count = f1CarList.length;
+      const laneOffsets = [-0.75, -0.25, 0.25, 0.75];
 
       f1CarList.forEach((car, idx) => {
-        const row = Math.floor(idx / 2);
-        const side = (idx % 2 === 0) ? -1 : 1;
-        car.laneRatio = (count <= 1) ? 0 : side * 0.42;
-        car.startDist = -24 - row * 22;
+        const row = Math.floor(idx / 4);
+        const laneIndex = idx % 4;
+        car.laneRatio = (count <= 1) ? 0 : laneOffsets[laneIndex];
+        car.startDist = -24 - row * 24;
         car.dist = car.startDist;
         const pt = circuit.sampleDist(car.dist);
         car.x = pt.x + pt.nx * car.laneRatio * (circuit.roadW * 0.44);
@@ -11796,7 +11809,7 @@
 
         // Lấy tọa độ tâm đường, góc hướng và vector pháp tuyến
         const pt = circuit.sampleDist(car.dist);
-        const wobble = (f1RaceRunning ? Math.sin(now * 0.006 + car.wobbleOffset) * car.wobbleAmp : 0);
+        const wobble = (f1RaceRunning ? Math.sin(now * 0.006 + car.wobbleOffset) * Math.min(car.wobbleAmp, 1.0) : 0);
         car.x = pt.x + pt.nx * (car.laneRatio * (circuit.roadW * 0.44) + wobble);
         car.y = pt.y + pt.ny * (car.laneRatio * (circuit.roadW * 0.44) + wobble);
         car.angle = pt.angle;
@@ -11887,6 +11900,166 @@
       updateF1Leaderboard();
     }
 
+    let f1LeaderboardPosMode = 'smart'; // 'smart', 'top-left', 'top-right', 'bottom-right', 'bottom-left', 'center'
+    let f1LbIsCustomPositioned = false; // Đã kéo thả thủ công
+
+    function getF1SmartPosClass(sceneKey) {
+      switch (sceneKey) {
+        case 'singapore':
+          return 'top-4 left-4';
+        case 'silverstone':
+          return 'top-4 right-4';
+        case 'spa':
+          return 'bottom-4 right-4';
+        case 'shanghai':
+          return 'bottom-4 left-4';
+        case 'lusail':
+          return 'top-4 left-4';
+        case 'monaco':
+        default:
+          return 'top-4 left-4';
+      }
+    }
+
+    function updateF1LeaderboardPosition() {
+      const lb = document.getElementById('f1-leaderboard');
+      const posText = document.getElementById('f1-lb-pos-text');
+      if (!lb) return;
+
+      if (f1LbIsCustomPositioned) {
+        if (posText) posText.innerText = 'Tự do';
+        return;
+      }
+
+      // Xóa các inline style tọa độ cũ nếu có
+      lb.style.top = '';
+      lb.style.left = '';
+      lb.style.bottom = '';
+      lb.style.right = '';
+      lb.style.transform = '';
+
+      const baseClasses = "absolute z-20 bg-slate-950/90 backdrop-blur-md px-3.5 py-2.5 rounded-2xl shadow-2xl border border-rose-500/40 text-white text-[11px] w-[310px] sm:w-[350px] md:w-[390px] max-w-[92vw] transition-all pointer-events-auto select-none";
+
+      if (f1ViewMode === 'cockpit') {
+        lb.className = `${baseClasses} top-3 left-3`;
+        if (posText) posText.innerText = 'Góc trái';
+        return;
+      }
+
+      let posClass = '';
+      let label = 'Tự động';
+
+      if (f1LeaderboardPosMode === 'smart') {
+        posClass = getF1SmartPosClass(currentF1SceneKey);
+        label = 'Tự động';
+      } else if (f1LeaderboardPosMode === 'top-left') {
+        posClass = 'top-4 left-4';
+        label = 'Trên-Trái';
+      } else if (f1LeaderboardPosMode === 'top-right') {
+        posClass = 'top-4 right-4';
+        label = 'Trên-Phải';
+      } else if (f1LeaderboardPosMode === 'bottom-right') {
+        posClass = 'bottom-4 right-4';
+        label = 'Dưới-Phải';
+      } else if (f1LeaderboardPosMode === 'bottom-left') {
+        posClass = 'bottom-4 left-4';
+        label = 'Dưới-Trái';
+      } else if (f1LeaderboardPosMode === 'center') {
+        posClass = 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2';
+        label = 'Chính giữa';
+      }
+
+      lb.className = `${baseClasses} ${posClass}`;
+      if (posText) posText.innerText = label;
+    }
+
+    function cycleF1LeaderboardPos(e) {
+      if (e) e.stopPropagation();
+      f1LbIsCustomPositioned = false;
+      const modes = ['smart', 'top-left', 'top-right', 'bottom-right', 'bottom-left', 'center'];
+      const curIdx = modes.indexOf(f1LeaderboardPosMode);
+      const nextIdx = (curIdx + 1) % modes.length;
+      f1LeaderboardPosMode = modes[nextIdx];
+      updateF1LeaderboardPosition();
+    }
+
+    function initF1LeaderboardDraggable() {
+      const header = document.getElementById('f1-leaderboard-header');
+      const lb = document.getElementById('f1-leaderboard');
+      const wrapper = document.getElementById('f1-canvas-wrapper');
+      if (!header || !lb || !wrapper || header.dataset.dragInit) return;
+      header.dataset.dragInit = 'true';
+
+      let isDragging = false;
+      let startX = 0, startY = 0;
+      let initialLeft = 0, initialTop = 0;
+
+      function onPointerDown(e) {
+        if (e.target.closest('button')) return;
+
+        isDragging = true;
+        f1LbIsCustomPositioned = true;
+        const posText = document.getElementById('f1-lb-pos-text');
+        if (posText) posText.innerText = 'Tự do';
+
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+        const lbRect = lb.getBoundingClientRect();
+        const wrapRect = wrapper.getBoundingClientRect();
+
+        startX = clientX;
+        startY = clientY;
+        initialLeft = lbRect.left - wrapRect.left;
+        initialTop = lbRect.top - wrapRect.top;
+
+        lb.style.transform = 'none';
+        lb.style.bottom = 'auto';
+        lb.style.right = 'auto';
+        lb.style.left = initialLeft + 'px';
+        lb.style.top = initialTop + 'px';
+
+        document.addEventListener('pointermove', onPointerMove);
+        document.addEventListener('pointerup', onPointerUp);
+        document.addEventListener('touchmove', onPointerMove, { passive: false });
+        document.addEventListener('touchend', onPointerUp);
+      }
+
+      function onPointerMove(e) {
+        if (!isDragging) return;
+        if (e.cancelable && e.type.startsWith('touch')) e.preventDefault();
+
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+        const dx = clientX - startX;
+        const dy = clientY - startY;
+
+        const wrapRect = wrapper.getBoundingClientRect();
+        const lbRect = lb.getBoundingClientRect();
+
+        let newLeft = initialLeft + dx;
+        let newTop = initialTop + dy;
+
+        newLeft = Math.max(4, Math.min(newLeft, wrapRect.width - lbRect.width - 4));
+        newTop = Math.max(4, Math.min(newTop, wrapRect.height - lbRect.height - 4));
+
+        lb.style.left = newLeft + 'px';
+        lb.style.top = newTop + 'px';
+      }
+
+      function onPointerUp() {
+        isDragging = false;
+        document.removeEventListener('pointermove', onPointerMove);
+        document.removeEventListener('pointerup', onPointerUp);
+        document.removeEventListener('touchmove', onPointerMove);
+        document.removeEventListener('touchend', onPointerUp);
+      }
+
+      header.addEventListener('pointerdown', onPointerDown);
+      header.addEventListener('touchstart', onPointerDown, { passive: true });
+    }
+
     function updateF1Leaderboard() {
       const topListEl = document.getElementById('f1-top-list');
       if (!topListEl || f1CarList.length === 0) return;
@@ -11908,27 +12081,28 @@
       const top4 = sorted.slice(0, 4);
       topListEl.innerHTML = top4.map((c, i) => {
         const isLeader = (i === 0);
+        const displayName = c.fullName || c.name;
         if (isLeader) {
           return `
-            <div class="flex items-center justify-between gap-1.5 py-1.5 px-2 rounded-xl bg-gradient-to-r from-amber-500/25 via-rose-500/20 to-transparent border border-amber-400/40 text-white shadow-sm mb-1">
-              <div class="flex items-center gap-2 truncate min-w-0">
+            <div class="flex items-center justify-between gap-2 py-1.5 px-2.5 rounded-xl bg-gradient-to-r from-amber-500/25 via-rose-500/20 to-transparent border border-amber-400/40 text-white shadow-sm mb-1">
+              <div class="flex items-center gap-2 min-w-0 flex-1">
                 <span class="text-[10px] px-1.5 py-0.5 rounded-md font-mono bg-amber-400 text-slate-950 font-black shadow-xs shrink-0">P1</span>
                 <span class="w-3 h-3 rounded-full shrink-0 ring-2 ring-amber-400/60 shadow-xs" style="background-color: ${c.color}"></span>
-                <span class="truncate text-xs md:text-[13px] font-black tracking-tight text-amber-200" title="${c.fullName}">${c.fullName}</span>
+                <span class="text-xs sm:text-[13px] font-black tracking-tight text-amber-200 break-words leading-tight flex-1" title="${displayName}">${displayName}</span>
               </div>
-              <span class="text-[9px] font-mono font-black text-amber-300 bg-amber-400/20 px-1.5 py-0.5 rounded shrink-0">LEADER</span>
+              <span class="text-[9px] font-mono font-black text-amber-300 bg-amber-400/20 px-1.5 py-0.5 rounded shrink-0 self-center">LEADER</span>
             </div>
           `;
         } else {
           const gapMeters = Math.max(0, (sorted[0].dist - c.dist) * 0.08).toFixed(1);
           return `
-            <div class="flex items-center justify-between gap-1.5 py-0.5 px-2 rounded-lg text-slate-300 font-bold hover:bg-white/5 transition">
-              <div class="flex items-center gap-1.5 truncate min-w-0">
-                <span class="text-[9px] px-1 py-0.2 rounded font-mono bg-slate-800 text-slate-400 font-bold shrink-0">P${i + 1}</span>
-                <span class="w-2 h-2 rounded-full shrink-0" style="background-color: ${c.color}"></span>
-                <span class="truncate text-[10.5px] text-slate-200" title="${c.fullName}">${c.fullName}</span>
+            <div class="flex items-center justify-between gap-2 py-1 px-2 rounded-lg text-slate-300 font-bold hover:bg-white/5 transition">
+              <div class="flex items-center gap-2 min-w-0 flex-1">
+                <span class="text-[9px] px-1 py-0.5 rounded font-mono bg-slate-800 text-slate-400 font-bold shrink-0">P${i + 1}</span>
+                <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${c.color}"></span>
+                <span class="text-[11px] sm:text-[12px] text-slate-200 font-semibold break-words leading-tight flex-1" title="${displayName}">${displayName}</span>
               </div>
-              <span class="text-[9px] font-mono text-slate-400 opacity-80 shrink-0">+${gapMeters}m</span>
+              <span class="text-[9px] font-mono text-slate-400 opacity-80 shrink-0 self-center">+${gapMeters}m</span>
             </div>
           `;
         }
@@ -11948,18 +12122,6 @@
         topList.classList.add('hidden');
         toggleBtn.innerText = '➕';
         toggleBtn.title = 'Mở rộng bảng dẫn đầu';
-      }
-    }
-
-    function updateF1LeaderboardPosition() {
-      const lb = document.getElementById('f1-leaderboard');
-      if (!lb) return;
-      if (f1ViewMode === 'cockpit') {
-        // Trong chế độ buồng lái 3D: đặt góc trên trái
-        lb.className = "absolute top-3 left-3 z-20 bg-slate-950/85 backdrop-blur-md px-3.5 py-2.5 rounded-2xl shadow-2xl border border-rose-500/40 text-white text-[11px] w-[260px] md:w-[280px] transition-all pointer-events-auto";
-      } else {
-        // Trong chế độ Toàn cảnh 2D: đặt chính giữa nội đồng sân đua (Infield) - không che bất kỳ khúc cua hay xe nào!
-        lb.className = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 bg-slate-950/85 backdrop-blur-md px-3.5 py-2.5 rounded-2xl shadow-2xl border border-rose-500/40 text-white text-[11px] w-[275px] md:w-[290px] transition-all pointer-events-auto";
       }
     }
 
@@ -13175,18 +13337,23 @@
         });
       }
 
-      // 7. VẠCH SƠN TIM ĐƯỜNG PHÂN LÀN ĐỨT ĐOẠN (DASHED CENTERLINE)
+      // 7. VẠCH SƠN PHÂN 4 LÀN ĐƯỜNG ĐỨT ĐOẠN (3 DASHED LANE DIVIDERS FOR 4 LANES)
       ctx.save();
-      ctx.strokeStyle = scene.dashColor || 'rgba(255, 255, 255, 0.4)';
-      ctx.lineWidth = 2;
-      ctx.setLineDash([16, 14]);
-      ctx.beginPath();
-      for (let i = 0; i <= K; i++) {
-        const p = raw[i % K];
-        if (i === 0) ctx.moveTo(p.x, p.y);
-        else ctx.lineTo(p.x, p.y);
-      }
-      ctx.stroke();
+      ctx.strokeStyle = scene.dashColor || 'rgba(255, 255, 255, 0.42)';
+      ctx.lineWidth = 1.6;
+      ctx.setLineDash([14, 12]);
+      [-0.5, 0, 0.5].forEach(laneOffset => {
+        ctx.beginPath();
+        for (let i = 0; i <= K; i++) {
+          const idx = i % K;
+          const pt = circuit.sampleDist(circuit.cumDist[idx]);
+          const lx = pt.x + pt.nx * (laneOffset * halfRoad);
+          const ly = pt.y + pt.ny * (laneOffset * halfRoad);
+          if (i === 0) ctx.moveTo(lx, ly);
+          else ctx.lineTo(lx, ly);
+        }
+        ctx.stroke();
+      });
       ctx.setLineDash([]);
       ctx.restore();
 
@@ -13208,21 +13375,24 @@
       });
 
       // ==========================================
-      // 9. VẠCH VỊ TRÍ XUẤT PHÁT (STARTING GRID BOXES)
+      // 9. VẠCH VỊ TRÍ XUẤT PHÁT CHO 4 LÀN XE (STARTING GRID BOXES - 4 LANES)
       // ==========================================
-      for (let r = 0; r < 8; r++) {
-        const gridDist = -24 - r * 22;
+      const gridOffsets = [-0.75, -0.25, 0.25, 0.75];
+      const maxGridRows = Math.min(10, Math.ceil((f1CarList ? f1CarList.length : 16) / 4));
+      for (let r = 0; r < maxGridRows; r++) {
+        const gridDist = -24 - r * 24;
         const gPt = circuit.sampleDist(gridDist);
-        const side = (r % 2 === 0) ? -1 : 1;
-        const boxX = gPt.x + gPt.nx * (side * 0.42 * halfRoad);
-        const boxY = gPt.y + gPt.ny * (side * 0.42 * halfRoad);
-        ctx.save();
-        ctx.translate(boxX, boxY);
-        ctx.rotate(gPt.angle);
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
-        ctx.lineWidth = 1.2;
-        ctx.strokeRect(-12, -7, 24, 14);
-        ctx.restore();
+        gridOffsets.forEach(ratio => {
+          const boxX = gPt.x + gPt.nx * (ratio * (circuit.roadW * 0.44));
+          const boxY = gPt.y + gPt.ny * (ratio * (circuit.roadW * 0.44));
+          ctx.save();
+          ctx.translate(boxX, boxY);
+          ctx.rotate(gPt.angle);
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.32)';
+          ctx.lineWidth = 1.2;
+          ctx.strokeRect(-11, -7.5, 22, 15);
+          ctx.restore();
+        });
       }
 
       // ==========================================
@@ -13276,6 +13446,7 @@
       ctx.save();
       ctx.translate(car.x, car.y);
       ctx.rotate(car.angle);
+      ctx.scale(0.82, 0.82);
 
       // ĐÈN PHA XE F1 CHIẾU SÁNG TRONG ĐÊM (Singapore Night GP)
       if (scene && scene.id === 'singapore') {
