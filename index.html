@@ -9003,31 +9003,39 @@
 
         const raceDistance = duckFinishX - duckStartX;
 
+        let hasWinnerFinished = false;
+
         duckList.forEach(d => {
           let targetProgress = 0;
 
           if (d.isWinner) {
-            if (p < 0.55) {
-              const subP = p / 0.55;
-              targetProgress = subP * 0.52;
-            } else if (p < 0.85) {
-              const subP = (p - 0.55) / 0.3;
-              targetProgress = 0.52 + subP * 0.35;
+            if (p < 0.5) {
+              const subP = p / 0.5;
+              targetProgress = subP * 0.48;
+            } else if (p < 0.8) {
+              const subP = (p - 0.5) / 0.3;
+              targetProgress = 0.48 + subP * 0.36;
             } else {
-              const subP = (p - 0.85) / 0.15;
+              const subP = (p - 0.8) / 0.2;
               const sprintEase = 1 - Math.pow(1 - subP, 2);
-              targetProgress = 0.87 + sprintEase * 0.15;
+              targetProgress = 0.84 + sprintEase * 0.16;
             }
           } else {
-            const maxReach = 0.78 + (d.speedFactor - 0.9) * 1.5;
+            const maxReach = 0.75 + (d.speedFactor - 0.9) * 1.4;
             const ease = Math.min(1.0, p * d.speedFactor);
-            const surge = Math.sin(p * Math.PI * 4 + d.wobbleOffset) * 0.035;
+            const surge = Math.sin(p * Math.PI * 4 + d.wobbleOffset) * 0.03;
             targetProgress = (ease * maxReach) + surge;
           }
 
           const targetX = d.startX + raceDistance * targetProgress;
-          d.x += (targetX - d.x) * 0.2;
+          d.x += (targetX - d.x) * 0.25;
           d.y = d.baseY + Math.sin(now * 0.007 + d.wobbleOffset) * 3.5;
+
+          // Vừa chạm vạch đích là kích hoạt chiến thắng luôn
+          if (d.isWinner && (d.x >= duckFinishX - 16 || p >= 1.0)) {
+            d.x = duckFinishX - 10;
+            hasWinnerFinished = true;
+          }
 
           if (p < 1.0 && Math.random() < (d.isWinner && p > 0.7 ? 0.6 : 0.25)) {
             duckWaterParticles.push({
@@ -9043,7 +9051,7 @@
 
         const maxDuckX = Math.max(...duckList.map(d => d.x));
         const targetCamX = Math.max(0, Math.min(duckTrackLength - w, maxDuckX - w * 0.42));
-        duckCameraX += (targetCamX - duckCameraX) * 0.1;
+        duckCameraX += (targetCamX - duckCameraX) * 0.15;
 
         const sorted = [...duckList].sort((a, b) => b.x - a.x);
         const top3 = sorted.slice(0, 3);
@@ -9060,7 +9068,8 @@
           `).join('');
         }
 
-        if (p >= 1.0) {
+        // VỀ ĐÍCH LÀ GỌI TÊN LUÔN, DỪNG CHẠY NGAY
+        if (hasWinnerFinished) {
           duckRaceState = 'finished';
           duckRaceRunning = false;
 
@@ -9068,22 +9077,23 @@
           DuckAudio.playQuack(1.3);
 
           if (typeof confetti === 'function') {
-            confetti({ particleCount: 150, spread: 90, origin: { y: 0.55 } });
+            confetti({ particleCount: 160, spread: 90, origin: { y: 0.55 } });
           }
 
           const statusEl = document.getElementById('duck-race-status');
           if (statusEl && duckRaceWinner) {
-            statusEl.innerHTML = `🏆 Quán quân: <b class="text-amber-600">${duckRaceWinner.name}</b>!`;
+            statusEl.innerHTML = `🏆 Về đích: <b class="text-amber-600">${duckRaceWinner.name}</b>!`;
           }
 
+          // Gọi tên luôn ngay lập tức, không chờ đợi thêm
           if (duckRaceCallback) {
             duckRaceCallback();
           }
         }
       } else if (duckRaceState === 'finished') {
+        // Dừng hẳn tại vị trí đã về đích, không chạy thêm gì nữa
         duckList.forEach(d => {
-          const mult = d.isWinner ? 6 : 2.5;
-          d.y = d.baseY + Math.sin(now * 0.005 + d.wobbleOffset) * mult;
+          d.y = d.baseY + Math.sin(now * 0.003 + d.wobbleOffset) * (d.isWinner ? 4 : 2);
         });
 
         const maxDuckX = Math.max(...duckList.map(d => d.x));
@@ -9606,13 +9616,12 @@
       // If duck mode, run Duck River Race simulation
       if (mode === 'duck') {
         const durationSec = parseInt(document.getElementById('spin-duration').value || 3);
-        const raceDuration = Math.max(5000, durationSec * 1400);
+        const raceDuration = Math.max(3800, durationSec * 1200);
         btn.innerHTML = "🦆 ĐANG ĐUA VỊT...";
         startDuckRace(selected, raceDuration, () => {
           currentWinner = selected;
-          setTimeout(() => {
-            showWinnerResult(selected, btn);
-          }, 1500);
+          // Vừa chạm vạch đích là lập tức gọi tên luôn, không chờ thêm
+          showWinnerResult(selected, btn);
         });
         return;
       }
