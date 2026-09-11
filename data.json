@@ -1,4 +1,42 @@
 {
+  "currentUser": {
+    "id": "thaytuan",
+    "pass": "minhtuan",
+    "teacherName": "Phạm Minh Tuấn",
+    "gender": "Nam",
+    "className": "12A17",
+    "year": "2026 - 2027",
+    "slogan": "12A17 - Đoàn kết là sức mạnh",
+    "theme": "indigo",
+    "cover": "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80",
+    "role": "teacher",
+    "activeSeatingChartId": "1788399367642",
+    "activeTimetableId": "tkb_1788767819333",
+    "gvbmAccount": {
+      "username": "gvbm_12a17",
+      "pass": "gvbm123",
+      "enabled": true
+    }
+  },
+  "user": {
+    "id": "thaytuan",
+    "pass": "minhtuan",
+    "teacherName": "Phạm Minh Tuấn",
+    "gender": "Nam",
+    "className": "12A17",
+    "year": "2026 - 2027",
+    "slogan": "12A17 - Đoàn kết là sức mạnh",
+    "theme": "indigo",
+    "cover": "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80",
+    "role": "teacher",
+    "activeSeatingChartId": "1788399367642",
+    "activeTimetableId": "tkb_1788767819333",
+    "gvbmAccount": {
+      "username": "gvbm_12a17",
+      "pass": "gvbm123",
+      "enabled": true
+    }
+  },
   "students": [
     {
       "id": 1,
@@ -353,7 +391,7 @@
       "birthplace": "Đa Khoa Khu Vực Hóc Môn - Xã Hóc Môn - Tp Hồ Chí Minh",
       "fatherCccd": "079086029305",
       "fatherName": "Đào Anh Tuấn",
-      "loginCount": 0,
+      "loginCount": 1,
       "motherCccd": "079187011979",
       "motherName": "Nguyễn Thị Như Ý",
       "fatherPhone": "0383131044",
@@ -443,7 +481,7 @@
       "birthplace": "bệnh viện Hùng Vương - Phường Chợ Lớn - Tp Hồ Chí Minh",
       "fatherCccd": "079077017941",
       "fatherName": "Lê Quang Thuận",
-      "loginCount": 0,
+      "loginCount": 1,
       "motherCccd": "079180015598",
       "motherName": "Lê Thị Thanh",
       "fatherPhone": "0392682425",
@@ -560,7 +598,7 @@
       "fatherJob": "lao động tự do",
       "motherDob": "1987",
       "motherJob": "công nhân",
-      "birthplace": "₫a khoa vị thanh  - Xã Hỏa Lựu - Tp Cần Thơ",
+      "birthplace": "₫a khoa vị thanh  - Xã Hỏa Lựu - Tp Cần Thơ",
       "fatherCccd": "072067002627",
       "fatherName": "Nguyễn duy khang",
       "loginCount": 0,
@@ -568,7 +606,7 @@
       "motherName": "Nguyễn Thị Kiều Tiên",
       "fatherPhone": "0388595867",
       "motherPhone": "không biết",
-      "birthRegPlace": "Xã Hỏa Lựu - Tp Cần Thơ"
+      "birthRegPlace": "Xã Hỏa Lựu - Tp Cần Thơ"
     },
     {
       "id": 20,
@@ -1103,7 +1141,7 @@
       "birthplace": "Trạm Y Tế - Xã Đức Đồng - Tỉnh Hà Tĩnh",
       "fatherCccd": "042084010053",
       "fatherName": "Nguyễn Chí Thiết",
-      "loginCount": 0,
+      "loginCount": 1,
       "motherCccd": "042184015639",
       "motherName": "Nguyễn Thị Thanh Nga",
       "fatherPhone": "0398447684",
@@ -1433,7 +1471,7 @@
       "birthplace": "Nhà Hổ Sinh Tân Bình - Tp Hồ Chí Minh",
       "fatherCccd": "040077007944",
       "fatherName": "Nguyễn Văn Thương",
-      "loginCount": 0,
+      "loginCount": 1,
       "motherCccd": "040184032855",
       "motherName": "Lê Thị Sương",
       "fatherPhone": "0779822668",
@@ -1463,7 +1501,7 @@
       "birthplace": "Bệnh viện Hóc Môn - Xã Hóc Môn - Tp Hồ Chí Minh",
       "fatherCccd": "079072035507",
       "fatherName": "Nguyễn Trịnh Hoàng",
-      "loginCount": 0,
+      "loginCount": 1,
       "motherCccd": "080174000169",
       "motherName": "Nguyễn Thị Thuỳ Linh",
       "fatherPhone": "0906912276",
@@ -1643,7 +1681,7 @@
       "birthplace": "Bệnh viện đa khoa Mang Thít - Xã Cái Nhum - Tỉnh Vĩnh Long",
       "fatherCccd": "084083014411",
       "fatherName": "Mai Hữu Cường",
-      "loginCount": 0,
+      "loginCount": 1,
       "motherCccd": "086185002392",
       "motherName": "Nguyễn Thị Ngọc Thu",
       "fatherPhone": "0367111719",
@@ -1681,71 +1719,133 @@
       "birthRegPlace": "Xã Đông Thạnh - Tp Hồ Chí Minh"
     }
   ],
-  "timetables": [
-    {
-      "id": "tkb_1788767819333",
-      "data": {},
-      "name": "TKB Lần 1"
-    }
-  ],
-  "currentUser": {
-    "id": "thaytuan",
-    "pass": "minhtuan",
-    "role": "teacher",
-    "year": "2026 - 2027",
-    "theme": "indigo",
-    "gender": "Nam",
-    "slogan": "12A17 - Đoàn kết là sức mạnh",
-    "className": "12A17",
-    "gvbmAccount": {
-      "pass": "gvbm123",
-      "enabled": true,
-      "username": "gvbm_12a17"
-    },
-    "teacherName": "Phạm Minh Tuấn",
-    "monthlyPlans": {
-      "2026-09": {
-        "tasks": [
-          {
-            "tt": 1,
-            "plan": "Ổn định tổ chức lớp, bầu ban cán sự lớp, phân chia tổ và sơ đồ chỗ ngồi",
-            "measure": "Tiết sinh hoạt chủ nhiệm đầu năm"
-          },
-          {
-            "tt": 2,
-            "plan": "Quán triệt nội quy trung tâm, đồng phục, tác phong và giờ giấc",
-            "measure": "Ký cam kết nội quy học sinh"
-          },
-          {
-            "tt": 3,
-            "plan": "Tổ chức Đại hội Chi đoàn lớp nhiệm kỳ mới",
-            "measure": "Phối hợp với Đoàn trường"
-          },
-          {
-            "tt": 4,
-            "plan": "Khảo sát học lực đầu năm, lập danh sách học sinh cần phụ đạo",
-            "measure": "Phối hợp với giáo viên bộ môn"
-          }
-        ],
-        "finalRank": "",
-        "weekOverrides": {}
-      }
-    },
-    "activeSeatingChartId": "1788399367642"
-  },
-  "announcements": [],
   "seatingCharts": [
     {
       "id": "1788399367642",
       "name": "Sơ đồ lớp từ 7/9",
-      "layout": {},
+      "layout": {
+        "d1-b7-1": "17",
+        "d1-b7-2": "11",
+        "d1-b6-1": "15",
+        "d1-b6-2": "50",
+        "d1-b5-1": "51",
+        "d1-b5-2": "16",
+        "d1-b4-1": "7",
+        "d1-b4-2": "45",
+        "d1-b3-1": "6",
+        "d1-b3-2": "34",
+        "d1-b2-1": "25",
+        "d1-b2-2": "52",
+        "d1-b1-1": "40",
+        "d1-b1-2": "5",
+        "d2-b7-1": "18",
+        "d2-b7-2": "10",
+        "d2-b6-1": "47",
+        "d2-b6-2": "8",
+        "d2-b5-1": "46",
+        "d2-b5-2": "31",
+        "d2-b4-1": "43",
+        "d2-b4-2": "9",
+        "d2-b3-1": "29",
+        "d2-b3-2": "14",
+        "d2-b2-1": "33",
+        "d2-b2-2": "24",
+        "d2-b1-1": "1",
+        "d2-b1-2": "23",
+        "d3-b7-1": "22",
+        "d3-b7-2": "48",
+        "d3-b6-1": "20",
+        "d3-b6-2": "13",
+        "d3-b5-1": "42",
+        "d3-b5-2": "12",
+        "d3-b4-1": "36",
+        "d3-b4-2": "3",
+        "d3-b3-1": "44",
+        "d3-b3-2": "4",
+        "d3-b2-1": "53",
+        "d3-b2-2": "30",
+        "d3-b1-1": "39",
+        "d3-b1-2": "21",
+        "d4-b7-1": "27",
+        "d4-b7-2": "2",
+        "d4-b6-1": "55",
+        "d4-b6-2": "56",
+        "d4-b5-1": "35",
+        "d4-b5-2": "37",
+        "d4-b4-1": "32",
+        "d4-b4-2": "28",
+        "d4-b3-1": "49",
+        "d4-b3-2": "41",
+        "d4-b2-1": "38",
+        "d4-b2-2": "54",
+        "d4-b1-1": "26",
+        "d4-b1-2": "19"
+      },
       "isApplied": true
     }
   ],
-  "attendanceData": {},
+  "timetables": [
+    {
+      "id": "tkb_1788767819333",
+      "name": "TKB Áp dụng từ 07/9/2026",
+      "data": {
+        "d2_p1": "SHDC|Thầy Tuấn",
+        "d2_p2": "SHCN|Thầy Tuấn",
+        "d2_p3": "Toán|Thầy Tuấn",
+        "d2_p4": "Sử|Cô Nương",
+        "d2_p5": "Sử|Cô Nương",
+        "d3_p1": "Toán|Thầy Tuấn",
+        "d3_p2": "Toán|Thầy Tuấn",
+        "d3_p3": "Anh|Cô Bình",
+        "d3_p4": "Hóa|Thầy Toàn",
+        "d3_p5": "Hóa|Thầy Toàn",
+        "d4_p1": "Toán|Thầy Tuấn",
+        "d4_p2": "GDKT-PL|Cô Chung",
+        "d4_p3": "GDKT-PL|Cô Chung",
+        "d4_p4": "Văn|Cô Phương",
+        "d4_p5": "Văn|Cô Phương",
+        "d5_p1": "Sinh|Cô Thùy",
+        "d5_p2": "Sinh|Cô Thùy",
+        "d5_p3": "Sử|Cô Nương",
+        "d5_p4": "Anh|Cô Bình",
+        "d5_p5": "Anh|Cô Bình",
+        "d6_p1": "Văn|Cô Phương",
+        "d6_p2": "Văn|Cô Phương",
+        "d6_p3": "HĐTN|Thầy Tuấn",
+        "d6_p4": "Địa|Cô Trâm",
+        "d6_p5": "Địa|Cô Trâm"
+      }
+    }
+  ],
   "teacherTimetable": {
     "id": "teacher_tkb",
-    "data": {},
-    "name": "TKB Giáo viên - Phạm Minh Tuấn"
-  }
+    "name": "TKB Giảng dạy Thầy Tuấn",
+    "data": {
+      "d2_p1": "SHDC",
+      "d2_p2": "SHCN",
+      "d2_p3": "12A17",
+      "d2_p4": "12A12",
+      "d2_p5": "12A32",
+      "d2_p8": "12HT1",
+      "d2_p9": "12HT1",
+      "d3_p1": "12A17",
+      "d3_p2": "12A17",
+      "d3_p3": "12A12",
+      "d3_p4": "12A32",
+      "d3_p5": "12A32",
+      "d3_p8": "12HT2",
+      "d3_p9": "12HT2",
+      "d4_p1": "12A17",
+      "d4_p3": "12A32",
+      "d4_p8": "12HT1",
+      "d4_p9": "12HT1",
+      "d5_p8": "12HT2",
+      "d5_p9": "12HT2",
+      "d6_p3": "HĐTN",
+      "d6_p4": "12A12",
+      "d6_p5": "12A12"
+    }
+  },
+  "attendanceData": {},
+  "announcements": []
 }
