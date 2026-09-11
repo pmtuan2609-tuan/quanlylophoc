@@ -9796,75 +9796,76 @@
     let f1NextScreechTime = 0;
     let f1SkidMarks = [];
     let f1WaterSpray = [];
+    let f1RevealX = 0; // Tọa độ mở đường đua chạy đến đâu hiển thị tới đó
 
     // ==========================================
-    // 5 CHẶNG ĐUA F1 & CẢNH QUANH CO (F1 SCENES & CIRCUITS)
+    // 5 CHẶNG ĐUA F1 & CẢNH QUANH CO (10 - 12 KHÚC CUA LIÊN HOÀN)
     // ==========================================
     const F1_SCENES = {
       monaco: {
         id: 'monaco',
         name: 'Monaco GP',
         icon: '🌴',
-        subtitle: 'Ven biển Monte Carlo & 6 khúc quanh co',
+        subtitle: 'Ven biển Monte Carlo & 10 khúc quanh co',
         kerb1: '#ef4444',
         kerb2: '#ffffff',
         roadEdge: '#64748b',
         dashColor: 'rgba(255, 255, 255, 0.5)',
         banner: 'GRAND PRIX DE MONACO 🇲🇨',
-        // 6 khúc quanh co uốn lượn liên hoàn với khúc cua tay áo Fairmont Hairpin
-        curve: (p) => Math.sin(p * Math.PI * 6.0) * 0.58 + Math.sin(p * Math.PI * 3.0 + 0.6) * 0.38 - Math.cos(p * Math.PI * 1.5) * 0.22
+        // 10 khúc quanh co uốn lượn liên hoàn với khúc cua tay áo Fairmont Hairpin & Chicane
+        curve: (p) => Math.sin(p * Math.PI * 10.0) * 0.44 + Math.sin(p * Math.PI * 5.0 + 0.8) * 0.38 - Math.cos(p * Math.PI * 2.2) * 0.22
       },
       singapore: {
         id: 'singapore',
         name: 'Singapore Đêm',
         icon: '🌃',
-        subtitle: 'Marina Bay & 7 khúc cua đô thị',
+        subtitle: 'Marina Bay & 11 khúc cua đô thị',
         kerb1: '#06b6d4',
         kerb2: '#84cc16',
         roadEdge: '#0284c7',
         dashColor: 'rgba(56, 189, 248, 0.65)',
         banner: 'SINGAPORE NIGHT GRAND PRIX 🌃',
-        // 7 khúc cua đô thị góc gắt & chicane dồn dập
-        curve: (p) => Math.sin(p * Math.PI * 7.0 - 0.4) * 0.52 + Math.cos(p * Math.PI * 3.5) * 0.35 + Math.sin(p * Math.PI * 1.8) * 0.25
+        // 11 khúc cua đô thị góc gắt & chicane dồn dập
+        curve: (p) => Math.sin(p * Math.PI * 11.0 - 0.4) * 0.42 + Math.cos(p * Math.PI * 5.5) * 0.35 + Math.sin(p * Math.PI * 2.5) * 0.26
       },
       bahrain: {
         id: 'bahrain',
         name: 'Bahrain Sa Mạc',
         icon: '🏜️',
-        subtitle: 'Hoàng hôn & Cua cồn cát Sakhir',
+        subtitle: 'Hoàng hôn & 10 khúc cua cồn cát Sakhir',
         kerb1: '#b91c1c',
         kerb2: '#fef08a',
         roadEdge: '#78350f',
         dashColor: 'rgba(254, 240, 138, 0.6)',
         banner: 'BAHRAIN SAKHIR GRAND PRIX 🏜️',
-        // Cua uốn lượn qua cồn cát sa mạc biên độ rộng
-        curve: (p) => Math.sin(p * Math.PI * 5.0) * 0.65 + Math.cos(p * Math.PI * 2.5 + 0.3) * 0.42
+        // 10 khúc cua uốn lượn qua cồn cát sa mạc
+        curve: (p) => Math.sin(p * Math.PI * 9.5) * 0.48 + Math.cos(p * Math.PI * 4.5 + 0.3) * 0.36 + Math.sin(p * Math.PI * 2.0) * 0.2
       },
       silverstone: {
         id: 'silverstone',
         name: 'Silverstone Mưa',
         icon: '🌧️',
-        subtitle: 'Mưa bão, bụi nước & Cua Esses',
+        subtitle: 'Mưa bão, bụi nước & 11 khúc cua Esses',
         kerb1: '#dc2626',
         kerb2: '#cbd5e1',
         roadEdge: '#334155',
         dashColor: 'rgba(255, 255, 255, 0.35)',
         banner: 'SILVERSTONE WET GP 🌧️',
-        // Cua Esses liên hoàn & thung lũng lượn sóng
-        curve: (p) => Math.sin(p * Math.PI * 5.5 + 0.8) * 0.55 + Math.sin(p * Math.PI * 2.2) * 0.45 - Math.cos(p * Math.PI * 8.0) * 0.18
+        // 11 khúc cua Esses liên hoàn & thung lũng lượn sóng
+        curve: (p) => Math.sin(p * Math.PI * 10.5 + 0.6) * 0.42 + Math.sin(p * Math.PI * 4.5) * 0.38 - Math.cos(p * Math.PI * 13.0) * 0.16
       },
       cyberpunk: {
         id: 'cyberpunk',
         name: 'Tokyo Cyberpunk',
         icon: '⚡',
-        subtitle: 'Lưới laser & 8 góc cua 2099',
+        subtitle: 'Lưới laser & 12 góc cua 2099',
         kerb1: '#ec4899',
         kerb2: '#06b6d4',
         roadEdge: '#a855f7',
         dashColor: 'rgba(236, 72, 153, 0.75)',
         banner: 'TOKYO 2099 CYBER SPEEDWAY ⚡',
-        // 8 góc cua siêu tốc liên tục
-        curve: (p) => Math.sin(p * Math.PI * 8.0) * 0.48 + Math.sin(p * Math.PI * 4.0) * 0.48 + Math.cos(p * Math.PI * 2.0) * 0.2
+        // 12 góc cua siêu tốc liên tục
+        curve: (p) => Math.sin(p * Math.PI * 12.0) * 0.40 + Math.sin(p * Math.PI * 6.0) * 0.40 + Math.cos(p * Math.PI * 3.0) * 0.22
       }
     };
 
@@ -10044,6 +10045,7 @@
       f1RaceState = 'idle';
       f1SkidMarks = [];
       f1WaterSpray = [];
+      f1RevealX = f1StartX + 95; // Ban đầu chỉ hiện vạch xuất phát và khúc cua đầu tiên
 
       const statusEl = document.getElementById('f1-race-status');
       if (statusEl) statusEl.innerText = `${scene.icon} ${scene.name} (${count} xe đua F1)`;
@@ -10076,6 +10078,7 @@
         f1RoadWidth = Math.max(125, Math.min(185, newH * 0.35));
         f1StartX = Math.max(90, Math.min(140, newW * 0.11));
         f1FinishX = Math.max(newW - 140, newW * 0.89);
+        if (f1RaceState === 'idle') f1RevealX = f1StartX + 95;
         renderF1RaceCanvas(performance.now());
       }
     }
@@ -10106,6 +10109,7 @@
       f1RaceState = 'idle';
       f1SkidMarks = [];
       f1WaterSpray = [];
+      f1RevealX = f1StartX + 95; // Đặt lại vạch xuất phát, các khúc cua ẩn chờ xe chạy tới
 
       const scene = F1_SCENES[currentF1SceneKey] || F1_SCENES.monaco;
       const statusEl = document.getElementById('f1-race-status');
@@ -10140,6 +10144,7 @@
 
       // Đặt tất cả xe về cùng vạch xuất phát
       resetF1RacePositions(false);
+      f1RevealX = f1StartX + 95;
 
       f1CarList.forEach(car => {
         car.isWinner = (car.id === winnerStudent.id);
@@ -10165,6 +10170,7 @@
       }
       if (gantryText) gantryText.innerText = 'CHUẨN BỊ XUẤT PHÁT...';
 
+      // Đèn xuất phát nhanh gọn (150ms/đèn, xuất phát thần tốc <1s không phải chờ đợi lâu)
       let lightIdx = 1;
       const lightInterval = setInterval(() => {
         if (lightIdx <= 5) {
@@ -10179,10 +10185,8 @@
           clearInterval(lightInterval);
           if (gantryText) gantryText.innerText = 'TẬP TRUNG TỐI ĐA...';
 
-          // Khoảng dừng ngẫu nhiên theo tiêu chuẩn xuất phát F1
-          const lightsOutDelay = 380 + Math.random() * 400;
+          const lightsOutDelay = 160 + Math.random() * 120;
           setTimeout(() => {
-            // Tắt đồng loạt 5 đèn
             for (let i = 1; i <= 5; i++) {
               const light = document.getElementById('f1-light-' + i);
               if (light) {
@@ -10196,13 +10200,13 @@
 
             setTimeout(() => {
               if (gantry) gantry.classList.add('hidden');
-            }, 450);
+            }, 350);
 
-            // Bắt đầu lăn bánh
+            // Bắt đầu lăn bánh phóng xe
             f1RaceState = 'racing';
             f1RaceStartTime = performance.now();
             f1LastNow = f1RaceStartTime;
-            f1NextScreechTime = f1RaceStartTime + 1100 + Math.random() * 1400;
+            f1NextScreechTime = f1RaceStartTime + 900 + Math.random() * 1200;
             if (statusEl) statusEl.innerText = '🏎️ ĐANG TRANH ĐUA GAY CẤN!';
 
             const leaderboard = document.getElementById('f1-leaderboard');
@@ -10211,7 +10215,7 @@
             f1Loop(performance.now());
           }, lightsOutDelay);
         }
-      }, 450);
+      }, 150);
     }
 
     function f1Loop(now) {
@@ -10235,12 +10239,18 @@
       const progress = Math.min(1.0, elapsed / f1TargetDuration);
 
       const totalDist = (f1FinishX - 16) - (f1StartX - 28);
-      const targetWinnerX = (f1StartX - 28) + totalDist * Math.pow(progress, 0.95);
+      const targetWinnerX = (f1StartX - 28) + totalDist * Math.pow(progress, 0.92);
+
+      // Cập nhật đường đua mở ra dần (chạy đến đâu hiển thị tới đó)
+      const leadCarX = Math.max(...f1CarList.map(c => c.x));
+      const targetRevealX = (progress >= 0.86) ? canvas.width : Math.max(f1StartX + 100, leadCarX + 155);
+      f1RevealX += (targetRevealX - f1RevealX) * 0.28;
+      if (f1RevealX > canvas.width) f1RevealX = canvas.width;
 
       // Âm thanh rít lốp ngẫu nhiên ở các khúc cua gắt
       if (now > f1NextScreechTime && progress < 0.9) {
         F1Audio.playTireScreech();
-        f1NextScreechTime = now + 1600 + Math.random() * 2000;
+        f1NextScreechTime = now + 1400 + Math.random() * 1800;
       }
 
       f1CarList.forEach(car => {
@@ -10249,19 +10259,20 @@
           desiredX = targetWinnerX;
         } else {
           // Các xe khác tranh chấp dẫn đầu lúc đầu/giữa đường đua
-          const wavePhase = Math.sin(progress * Math.PI * 2.5 + car.wobbleOffset);
+          const wavePhase = Math.sin(progress * Math.PI * 3.0 + car.wobbleOffset);
           let leadOffset = 0;
-          if (progress < 0.35) {
-            leadOffset = wavePhase * 35;
-          } else if (progress < 0.75) {
-            leadOffset = wavePhase * 25 - 15;
+          if (progress < 0.3) {
+            leadOffset = wavePhase * 30;
+          } else if (progress < 0.68) {
+            leadOffset = wavePhase * 20 - 15;
           } else {
-            leadOffset = -25 - (progress - 0.75) * 120;
+            // Sau 68% chặng đua, xe chiến thắng bứt phá dẫn đầu tuyệt đối để cán đích đầu tiên
+            leadOffset = -35 - (progress - 0.68) * 160;
           }
-          desiredX = (f1StartX - 28) + totalDist * (progress * 0.92 * car.speedVariation) + leadOffset;
+          desiredX = (f1StartX - 28) + totalDist * (progress * 0.90 * car.speedVariation) + leadOffset;
         }
 
-        car.x += (desiredX - car.x) * 0.16;
+        car.x += (desiredX - car.x) * 0.20;
 
         // Bám theo tâm đường cong uốn lượn
         const trackCenterY = getF1TrackCenterY(car.x, h);
@@ -10300,24 +10311,30 @@
         }
 
         // =========================================================================
-        // ĐIỀU KIỆN VỀ ĐÍCH: Cán vạch đích
+        // ĐIỀU KIỆN VỀ ĐÍCH: KHI CÓ XE CHẠM VẠCH ĐÍCH ĐẦU TIÊN -> GỌI TÊN NGAY LẬP TỨC!
         // =========================================================================
-        if (car.isWinner && car.x >= f1FinishX - 16) {
+        if (car.isWinner && car.x >= f1FinishX - 18) {
           f1RaceRunning = false;
           f1RaceState = 'finished';
+          f1RevealX = canvas.width; // Mở toàn bộ đường đua ngay lập tức
+
           if (f1RaceAnimId) {
             cancelAnimationFrame(f1RaceAnimId);
             f1RaceAnimId = null;
           }
 
+          car.x = f1FinishX - 4; // Cố định ngay vạch đích
+
           const statusEl = document.getElementById('f1-race-status');
           if (statusEl) statusEl.innerText = '🏁 ' + car.name + ' CHIẾN THẮNG!';
 
           F1Audio.playFinishFanfare();
-          confetti({ particleCount: 240, spread: 110, origin: { y: 0.6 } });
+          confetti({ particleCount: 260, spread: 110, origin: { y: 0.6 } });
 
+          // Vẽ lại frame cán đích hoàn chỉnh
           renderF1RaceCanvas(now);
 
+          // LẬP TỨC GỌI TÊN HỌC SINH CHIẾN THẮNG, KHÔNG PHẢI CHỜ GÌ NỮA!
           if (typeof f1FinishCallback === 'function') {
             const cb = f1FinishCallback;
             f1FinishCallback = null;
@@ -10739,10 +10756,12 @@
 
       const halfRoad = f1RoadWidth * 0.5;
       const step = 4;
+      // Giới hạn mở đường đua (Chạy đến đâu hiển thị các vòng quanh co tới đó)
+      const revealLimit = Math.max(f1StartX + 70, Math.min(w, f1RevealX));
 
-      // 2. VẼ DẢI KERBS GỜ GIẢM TỐC THEO TỪNG CHẶNG ĐUA (Uốn lượn mượt mà theo cua)
-      for (let x = 0; x < w; x += step) {
-        const xNext = Math.min(w, x + step);
+      // 2. VẼ DẢI KERBS GỜ GIẢM TỐC (Chỉ hiện ra đến vị trí revealLimit)
+      for (let x = 0; x < revealLimit; x += step) {
+        const xNext = Math.min(revealLimit, x + step);
         const cy1 = getF1TrackCenterY(x, h);
         const cy2 = getF1TrackCenterY(xNext, h);
         const kerbColor = (Math.floor(x / 18) % 2 === 0) ? scene.kerb1 : scene.kerb2;
@@ -10768,13 +10787,14 @@
         ctx.fill();
       }
 
-      // 3. MẶT ĐƯỜNG NHỰA ASPHALT F1 UỐN LƯỢN QUANH CO
+      // 3. MẶT ĐƯỜNG NHỰA ASPHALT F1 UỐN LƯỢN QUANH CO (Chỉ trải dài đến revealLimit)
       ctx.beginPath();
       ctx.moveTo(0, getF1TrackCenterY(0, h) - halfRoad);
-      for (let x = step; x <= w; x += step) {
+      for (let x = step; x <= revealLimit; x += step) {
         ctx.lineTo(x, getF1TrackCenterY(x, h) - halfRoad);
       }
-      for (let x = w; x >= 0; x -= step) {
+      ctx.lineTo(revealLimit, getF1TrackCenterY(revealLimit, h) + halfRoad);
+      for (let x = revealLimit; x >= 0; x -= step) {
         ctx.lineTo(x, getF1TrackCenterY(x, h) + halfRoad);
       }
       ctx.closePath();
@@ -10801,29 +10821,53 @@
       ctx.lineWidth = 1.5;
       ctx.stroke();
 
-      // 4. VẼ VẾT LỐP XE (SKID MARKS)
+      // VẠCH NĂNG LƯỢNG / MẶT CẮT ĐẦU ĐƯỜNG ĐANG MỞ RA (Glowing Reveal Front)
+      if (revealLimit < w - 20) {
+        const headCY = getF1TrackCenterY(revealLimit, h);
+        ctx.save();
+        const beamGrad = ctx.createLinearGradient(revealLimit - 12, 0, revealLimit + 26, 0);
+        beamGrad.addColorStop(0, 'rgba(255, 255, 255, 0.85)');
+        beamGrad.addColorStop(0.4, (scene.id === 'cyberpunk') ? '#06b6d4' : (scene.id === 'singapore' ? '#38bdf8' : '#fbbf24'));
+        beamGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = beamGrad;
+        ctx.fillRect(revealLimit - 8, headCY - halfRoad - 6, 28, f1RoadWidth + 12);
+
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(revealLimit, headCY - halfRoad - 8);
+        ctx.lineTo(revealLimit, headCY + halfRoad + 8);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // 4. VẼ VẾT LỐP XE (SKID MARKS) - Chỉ trong vùng đã mở
       f1SkidMarks.forEach(sm => {
-        ctx.fillStyle = `rgba(15, 23, 42, ${Math.max(0, sm.alpha)})`;
-        ctx.fillRect(sm.x, sm.y - 4, 8, 2.5);
-        ctx.fillRect(sm.x, sm.y + 4, 8, 2.5);
+        if (sm.x <= revealLimit) {
+          ctx.fillStyle = `rgba(15, 23, 42, ${Math.max(0, sm.alpha)})`;
+          ctx.fillRect(sm.x, sm.y - 4, 8, 2.5);
+          ctx.fillRect(sm.x, sm.y + 4, 8, 2.5);
+        }
       });
 
       // 5. BỤI NƯỚC MƯA SAU XE (WATER SPRAY IN SILVERSTONE)
       if (scene.id === 'silverstone') {
         f1WaterSpray.forEach(ws => {
-          ctx.fillStyle = `rgba(241, 245, 249, ${Math.max(0, ws.alpha)})`;
-          ctx.beginPath();
-          ctx.arc(ws.x, ws.y, ws.radius, 0, Math.PI * 2);
-          ctx.fill();
+          if (ws.x <= revealLimit + 20) {
+            ctx.fillStyle = `rgba(241, 245, 249, ${Math.max(0, ws.alpha)})`;
+            ctx.beginPath();
+            ctx.arc(ws.x, ws.y, ws.radius, 0, Math.PI * 2);
+            ctx.fill();
+          }
         });
       }
 
-      // 6. VẠCH SƠN TIM ĐƯỜNG PHÂN LÀN ĐỨT ĐOẠN THEO KHÚC CUA
+      // 6. VẠCH SƠN TIM ĐƯỜNG PHÂN LÀN ĐỨT ĐOẠN (Chỉ đến revealLimit - 10)
       ctx.strokeStyle = scene.dashColor || 'rgba(255, 255, 255, 0.4)';
       ctx.lineWidth = 2;
       ctx.setLineDash([18, 14]);
       ctx.beginPath();
-      for (let x = 0; x <= w; x += step) {
+      for (let x = 0; x <= revealLimit - 10; x += step) {
         const cy = getF1TrackCenterY(x, h);
         if (x === 0) ctx.moveTo(x, cy);
         else ctx.lineTo(x, cy);
@@ -10831,23 +10875,25 @@
       ctx.stroke();
       ctx.setLineDash([]);
 
-      // 7. MŨI TÊN CHỈ HƯỚNG TỐC ĐỘ (SPEED CHEVRONS) TẠI CÁC KHÚC CUA
-      const chevronPositions = [w * 0.22, w * 0.38, w * 0.54, w * 0.70, w * 0.84];
+      // 7. MŨI TÊN CHỈ HƯỚNG TỐC ĐỘ (SPEED CHEVRONS)
+      const chevronPositions = [w * 0.18, w * 0.32, w * 0.48, w * 0.64, w * 0.8];
       chevronPositions.forEach(cx => {
-        const cy = getF1TrackCenterY(cx, h);
-        const slope = getF1TrackSlope(cx, h);
-        ctx.save();
-        ctx.translate(cx, cy);
-        ctx.rotate(slope);
-        ctx.fillStyle = (scene.id === 'cyberpunk') ? 'rgba(236, 72, 153, 0.25)' : 'rgba(255, 255, 255, 0.14)';
-        ctx.beginPath();
-        ctx.moveTo(-14, -16);
-        ctx.lineTo(14, 0);
-        ctx.lineTo(-14, 16);
-        ctx.lineTo(-5, 0);
-        ctx.closePath();
-        ctx.fill();
-        ctx.restore();
+        if (cx < revealLimit - 25) {
+          const cy = getF1TrackCenterY(cx, h);
+          const slope = getF1TrackSlope(cx, h);
+          ctx.save();
+          ctx.translate(cx, cy);
+          ctx.rotate(slope);
+          ctx.fillStyle = (scene.id === 'cyberpunk') ? 'rgba(236, 72, 153, 0.25)' : 'rgba(255, 255, 255, 0.14)';
+          ctx.beginPath();
+          ctx.moveTo(-14, -16);
+          ctx.lineTo(14, 0);
+          ctx.lineTo(-14, 16);
+          ctx.lineTo(-5, 0);
+          ctx.closePath();
+          ctx.fill();
+          ctx.restore();
+        }
       });
 
       // ==========================================
@@ -10882,39 +10928,74 @@
       ctx.restore();
 
       // ==========================================
-      // VẠCH ĐÍCH F1 (FINISH LINE)
+      // VẠCH ĐÍCH F1 (FINISH LINE) - Chỉ hiện khi đường đua mở tới đích
       // ==========================================
-      const finishCY = getF1TrackCenterY(f1FinishX, h);
-      const finishTopY = finishCY - halfRoad;
-      const finishBotY = finishCY + halfRoad;
+      if (revealLimit >= f1FinishX - 25) {
+        const finishCY = getF1TrackCenterY(f1FinishX, h);
+        const finishTopY = finishCY - halfRoad;
+        const finishBotY = finishCY + halfRoad;
 
-      for (let y = finishTopY; y < finishBotY; y += sqSize) {
-        for (let col = 0; col < 2; col++) {
-          ctx.fillStyle = ((Math.floor(y / sqSize) + col) % 2 === 0) ? '#ffffff' : '#000000';
-          ctx.fillRect(f1FinishX - 6 + col * sqSize, y, sqSize, sqSize);
+        for (let y = finishTopY; y < finishBotY; y += sqSize) {
+          for (let col = 0; col < 2; col++) {
+            ctx.fillStyle = ((Math.floor(y / sqSize) + col) % 2 === 0) ? '#ffffff' : '#000000';
+            ctx.fillRect(f1FinishX - 6 + col * sqSize, y, sqSize, sqSize);
+          }
         }
+
+        // Cột và cổng vòm về đích F1
+        ctx.save();
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(f1FinishX - 6, finishTopY - 32, 6, 32);
+        ctx.fillRect(f1FinishX + 14, finishTopY - 32, 6, 32);
+
+        ctx.fillStyle = (scene.id === 'cyberpunk') ? '#06b6d4' : '#f59e0b';
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(f1FinishX - 28, finishTopY - 30, 72, 22, 6);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#0f172a';
+        ctx.font = '900 11px system-ui, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('FINISH 🏁', f1FinishX + 8, finishTopY - 19);
+        ctx.restore();
       }
 
-      // Cột và cổng vòm về đích F1
-      ctx.save();
-      ctx.fillStyle = '#1e293b';
-      ctx.fillRect(f1FinishX - 6, finishTopY - 32, 6, 32);
-      ctx.fillRect(f1FinishX + 14, finishTopY - 32, 6, 32);
+      // 8. MÀN SƯƠNG BÍ ẨN CHE KHUẤT CÁC KHÚC CUA PHÍA TRƯỚC (CHẠY ĐẾN ĐÂU MỞ TỚI ĐÓ)
+      if (revealLimit < w - 5) {
+        ctx.save();
+        const fogStart = Math.max(0, revealLimit - 25);
+        const fogGrad = ctx.createLinearGradient(fogStart, 0, revealLimit + 55, 0);
 
-      ctx.fillStyle = (scene.id === 'cyberpunk') ? '#06b6d4' : '#f59e0b';
-      ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.roundRect(f1FinishX - 28, finishTopY - 30, 72, 22, 6);
-      ctx.fill();
-      ctx.stroke();
+        let fogSolid = '#064e3b';
+        if (scene.id === 'singapore') fogSolid = '#020617';
+        else if (scene.id === 'cyberpunk') fogSolid = '#09090b';
+        else if (scene.id === 'bahrain') fogSolid = '#451a03';
+        else if (scene.id === 'silverstone') fogSolid = '#0f172a';
 
-      ctx.fillStyle = '#0f172a';
-      ctx.font = '900 11px system-ui, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('FINISH 🏁', f1FinishX + 8, finishTopY - 19);
-      ctx.restore();
+        fogGrad.addColorStop(0, 'rgba(0, 0, 0, 0)');
+        fogGrad.addColorStop(0.5, fogSolid);
+        fogGrad.addColorStop(1, fogSolid);
+
+        ctx.fillStyle = fogGrad;
+        ctx.fillRect(fogStart, 0, (revealLimit + 55) - fogStart, h);
+
+        ctx.fillStyle = fogSolid;
+        ctx.fillRect(revealLimit + 55, 0, w - (revealLimit + 55), h);
+
+        // Thông báo radar hé lộ khúc cua tiếp theo
+        if (w - revealLimit > 140) {
+          const pulseAlpha = 0.5 + Math.sin(now * 0.007) * 0.35;
+          ctx.fillStyle = `rgba(255, 255, 255, ${pulseAlpha * 0.6})`;
+          ctx.font = 'bold 11px system-ui, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('⚡ Khúc cua tiếp theo đang mở ra...', revealLimit + 105, h * 0.5);
+        }
+        ctx.restore();
+      }
 
       // ==========================================
       // VẼ TẤT CẢ CÁC XE ĐUA F1 THEO THỨ TỰ Y (DEPTH SORT)
