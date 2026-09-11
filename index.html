@@ -230,12 +230,18 @@
         </div>
         <button id="auth-btn" onclick="handleAuth()" class="w-full bg-theme-grad text-white py-3.5 rounded-xl font-bold shadow-lg hover:scale-[1.02] transition-all">Đăng Nhập</button>
         
-        <div class="pt-2 border-t border-slate-100">
+        <div class="pt-2 border-t border-slate-100 space-y-2">
+            <button type="button" onclick="quickLoginTeacher()" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white py-2.5 px-3 rounded-xl font-black text-xs transition flex items-center justify-center gap-2 shadow-md hover:scale-[1.01]" title="Bấm để đăng nhập ngay tài khoản GVCN Thầy Tuấn">
+                <i data-lucide="sparkles" class="w-4 h-4 text-amber-300"></i> Đăng nhập GVCN Thầy Tuấn (12A17) - 1 Chạm
+            </button>
             <button type="button" onclick="quickLoginGvbm()" class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200/80 py-2.5 px-3 rounded-xl font-black text-xs transition flex items-center justify-center gap-2 shadow-xs" title="Bấm để tự động điền và đăng nhập tài khoản GVBM">
                 <i data-lucide="zap" class="w-4 h-4 text-amber-500 fill-amber-500"></i> Đăng nhập nhanh Giáo Viên Bộ Môn (1 Chạm)
             </button>
-            <div class="text-[10.5px] text-slate-400 text-center mt-1.5 font-medium">
-                Tài khoản: <b class="text-indigo-600 font-mono">gvbm_12a17</b> &bull; Mật khẩu: <b class="text-indigo-600 font-mono">gvbm123</b>
+            <button type="button" onclick="manualDeepDataRecovery()" class="w-full bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200/80 py-2 px-3 rounded-xl font-bold text-[11px] transition flex items-center justify-center gap-1.5 shadow-xs" title="Quét tìm lại toàn bộ sơ đồ, TKB, học sinh, ảnh bìa từ bộ nhớ hoặc đám mây">
+                <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-amber-600"></i> Quét & Phục Hồi Dữ Liệu Cũ
+            </button>
+            <div class="text-[10px] text-slate-400 text-center font-medium">
+                Thầy Tuấn: <b class="text-emerald-700 font-mono">thaytuan</b> &bull; GVBM: <b class="text-indigo-600 font-mono">gvbm_12a17</b>
             </div>
         </div>
       </div>
@@ -268,6 +274,14 @@
         </div>
         <div><label class="text-xs font-bold text-slate-600">Khẩu hiệu</label><input type="text" id="ob-slogan" class="w-full mt-1 px-4 py-3 border border-slate-200 rounded-xl ring-theme outline-none text-sm" placeholder="VD: Chuyến Tàu Tuổi Trẻ"></div>
         <button onclick="saveOnboarding()" class="w-full bg-theme-grad text-white py-3.5 rounded-xl font-bold shadow-lg hover:scale-[1.02] transition mt-4">Lưu & Bắt đầu</button>
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+            <button type="button" onclick="quickLoginTeacher()" class="text-emerald-600 font-bold hover:underline flex items-center gap-1">
+                <i data-lucide="log-in" class="w-3.5 h-3.5"></i> Đăng nhập Thầy Tuấn
+            </button>
+            <button type="button" onclick="manualDeepDataRecovery()" class="text-amber-700 font-bold hover:underline flex items-center gap-1">
+                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Quét phục hồi dữ liệu cũ
+            </button>
+        </div>
       </div>
     </div>
   </div>
@@ -4599,6 +4613,16 @@
         }
     }
     function toggleAuthMode() { isLoginMode = !isLoginMode; document.getElementById('auth-title').innerText = isLoginMode ? 'Đăng Nhập' : 'Tạo Tài Khoản'; document.getElementById('auth-btn').innerText = isLoginMode ? 'Đăng Nhập' : 'Đăng Ký Nhanh'; document.getElementById('auth-toggle-text').innerText = isLoginMode ? 'Chưa có tài khoản?' : 'Đã có tài khoản?'; document.getElementById('auth-toggle-btn').innerText = isLoginMode ? 'Đăng ký ngay' : 'Đăng nhập'; document.getElementById('auth-error').classList.add('hidden'); const authLoading = document.getElementById('auth-loading'); if (authLoading) authLoading.classList.add('hidden'); }
+    function quickLoginTeacher() {
+        isLoginMode = true;
+        document.getElementById('auth-title').innerText = 'Đăng Nhập';
+        document.getElementById('auth-btn').innerText = 'Đăng Nhập';
+        const idInput = document.getElementById('auth-id');
+        const passInput = document.getElementById('auth-pass');
+        if (idInput) idInput.value = 'thaytuan';
+        if (passInput) passInput.value = 'minhtuan';
+        handleAuth();
+    }
     function quickLoginGvbm() {
         isLoginMode = true;
         document.getElementById('auth-title').innerText = 'Đăng Nhập';
@@ -4633,12 +4657,21 @@
                                 cloudUser.pass = 'minhtuan';
                             }
                             currentUser = cloudUser;
-                            students = row.data.students || [];
-                            seatingCharts = row.data.seatingCharts || [];
-                            timetables = row.data.timetables || [];
-                            teacherTimetable = row.data.teacherTimetable || { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} };
-                            attendanceData = row.data.attendanceData || {};
-                            announcements = row.data.announcements || [];
+                            const cloudStudents = row.data.students || [];
+                            const cloudCharts = row.data.seatingCharts || [];
+                            const cloudTimetables = row.data.timetables || [];
+                            const cloudTeacherTimetable = row.data.teacherTimetable || { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} };
+
+                            if (cloudStudents.length > 0 || students.length === 0) students = cloudStudents;
+                            if (countSeatedStudents(cloudCharts) > 0 || countSeatedStudents(seatingCharts) === 0) seatingCharts = cloudCharts;
+                            if (countTimetableLessons(cloudTimetables) > 0 || countTimetableLessons(timetables) === 0) timetables = cloudTimetables;
+                            if (countTeacherLessons(cloudTeacherTimetable) > 0 || countTeacherLessons(teacherTimetable) === 0) teacherTimetable = cloudTeacherTimetable;
+                            if (row.data.attendanceData && Object.keys(row.data.attendanceData).length > 0) attendanceData = row.data.attendanceData;
+                            if (row.data.announcements && row.data.announcements.length > 0) announcements = row.data.announcements;
+
+                            // Quét phục hồi thêm từ các nguồn backup nội bộ nếu còn thiếu
+                            autoRecoverClassData(id);
+
                             currentUserRole = 'teacher';
                             currentStudent = null;
                             currentTeacherId = '';
@@ -4647,10 +4680,23 @@
                             localStorage.removeItem('currentStudent');
                             localStorage.removeItem('currentTeacherId');
                             localStorage.setItem('user_' + id, JSON.stringify(cloudUser));
-                            localStorage.setItem('students_' + id, JSON.stringify(students));
-                            localStorage.setItem('seating_' + id, JSON.stringify(seatingCharts));
-                            localStorage.setItem('timetables_' + id, JSON.stringify(timetables));
-                            localStorage.setItem('teacherTimetable_' + id, JSON.stringify(teacherTimetable));
+                            if (students.length > 0) {
+                                localStorage.setItem('students_' + id, JSON.stringify(students));
+                                localStorage.setItem('students', JSON.stringify(students));
+                            }
+                            if (countSeatedStudents(seatingCharts) > 0) {
+                                localStorage.setItem('seating_' + id, JSON.stringify(seatingCharts));
+                            }
+                            if (countTimetableLessons(timetables) > 0) {
+                                localStorage.setItem('timetables_' + id, JSON.stringify(timetables));
+                            }
+                            if (countTeacherLessons(teacherTimetable) > 0) {
+                                localStorage.setItem('teacherTimetable_' + id, JSON.stringify(teacherTimetable));
+                            }
+                            if (currentUser.cover) {
+                                localStorage.setItem('cover_' + id, currentUser.cover);
+                                localStorage.setItem('cover_photo', currentUser.cover);
+                            }
                             localStorage.setItem('attendance_' + id, JSON.stringify(attendanceData));
                             localStorage.setItem('announcements_' + id, JSON.stringify(announcements));
                             
@@ -4866,17 +4912,37 @@
                 if (pass === expectedPass) {
                     if (fetchedUser) {
                         currentUser = fetchedUser;
-                        students = fetchedData.students || [];
-                        seatingCharts = fetchedData.seatingCharts || [];
-                        timetables = fetchedData.timetables || [];
-                        teacherTimetable = fetchedData.teacherTimetable || { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} };
-                        attendanceData = fetchedData.attendanceData || {};
-                        announcements = fetchedData.announcements || [];
+                        const fStudents = fetchedData.students || [];
+                        const fCharts = fetchedData.seatingCharts || [];
+                        const fTimetables = fetchedData.timetables || [];
+                        const fTeacherTimetable = fetchedData.teacherTimetable || { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} };
+
+                        if (fStudents.length > 0 || students.length === 0) students = fStudents;
+                        if (countSeatedStudents(fCharts) > 0 || countSeatedStudents(seatingCharts) === 0) seatingCharts = fCharts;
+                        if (countTimetableLessons(fTimetables) > 0 || countTimetableLessons(timetables) === 0) timetables = fTimetables;
+                        if (countTeacherLessons(fTeacherTimetable) > 0 || countTeacherLessons(teacherTimetable) === 0) teacherTimetable = fTeacherTimetable;
+                        if (fetchedData.attendanceData && Object.keys(fetchedData.attendanceData).length > 0) attendanceData = fetchedData.attendanceData;
+                        if (fetchedData.announcements && fetchedData.announcements.length > 0) announcements = fetchedData.announcements;
+
+                        autoRecoverClassData(currentUser.id || 'thaytuan');
                         
-                        localStorage.setItem('students_' + currentUser.id, JSON.stringify(students));
-                        localStorage.setItem('seating_' + currentUser.id, JSON.stringify(seatingCharts));
-                        localStorage.setItem('timetables_' + currentUser.id, JSON.stringify(timetables));
-                        localStorage.setItem('teacherTimetable_' + currentUser.id, JSON.stringify(teacherTimetable));
+                        if (students.length > 0) {
+                            localStorage.setItem('students_' + currentUser.id, JSON.stringify(students));
+                            localStorage.setItem('students', JSON.stringify(students));
+                        }
+                        if (countSeatedStudents(seatingCharts) > 0) {
+                            localStorage.setItem('seating_' + currentUser.id, JSON.stringify(seatingCharts));
+                        }
+                        if (countTimetableLessons(timetables) > 0) {
+                            localStorage.setItem('timetables_' + currentUser.id, JSON.stringify(timetables));
+                        }
+                        if (countTeacherLessons(teacherTimetable) > 0) {
+                            localStorage.setItem('teacherTimetable_' + currentUser.id, JSON.stringify(teacherTimetable));
+                        }
+                        if (currentUser.cover) {
+                            localStorage.setItem('cover_' + currentUser.id, currentUser.cover);
+                            localStorage.setItem('cover_photo', currentUser.cover);
+                        }
                         localStorage.setItem('attendance_' + currentUser.id, JSON.stringify(attendanceData));
                         localStorage.setItem('announcements_' + currentUser.id, JSON.stringify(announcements));
                     } else {
@@ -4886,6 +4952,7 @@
                             localStorage.setItem('user_thaytuan', JSON.stringify(adminData));
                         } else adminData = JSON.parse(adminData);
                         currentUser = adminData;
+                        autoRecoverClassData('thaytuan');
                     }
                     
                     currentUserRole = 'teacher';
@@ -14589,6 +14656,34 @@
         showModal('info', 'Đang quét bộ nhớ...', 'Hệ thống đang quét toàn bộ bộ nhớ trình duyệt và đám mây để tìm dữ liệu...');
 
         let recoveredMsg = [];
+
+        // 0. Phục hồi thông tin tài khoản nếu đang bị đăng xuất hoặc rỗng
+        if (!currentUser || !currentUser.className) {
+            let foundUser = null;
+            const backupTeacher = localStorage.getItem('user_thaytuan') || localStorage.getItem('currentUser');
+            if (backupTeacher) {
+                try {
+                    const parsed = JSON.parse(backupTeacher);
+                    if (parsed && parsed.className) foundUser = parsed;
+                } catch(e) {}
+            }
+            if (!foundUser) {
+                for (let i = 0; i < localStorage.length; i++) {
+                    const k = localStorage.key(i);
+                    if (k && k.startsWith('user_') && k !== 'user_admin') {
+                        try {
+                            const parsed = JSON.parse(localStorage.getItem(k));
+                            if (parsed && parsed.className) { foundUser = parsed; break; }
+                        } catch(e) {}
+                    }
+                }
+            }
+            if (foundUser) {
+                currentUser = foundUser;
+                recoveredMsg.push(`Tài khoản ${currentUser.teacherName || currentUser.id} (${currentUser.className})`);
+            }
+        }
+
         // 1. Quét bộ nhớ máy (LocalStorage)
         autoRecoverClassData(tId);
 
@@ -14609,6 +14704,11 @@
                     const rows = await res.json();
                     for (const r of rows) {
                         const cData = r.data || {};
+                        if ((!currentUser || !currentUser.className) && cData.currentUser && cData.currentUser.className) {
+                            currentUser = cData.currentUser;
+                            if (!currentUser.id) currentUser.id = r.id;
+                            recoveredMsg.push(`Tài khoản ${currentUser.teacherName || currentUser.id} (${currentUser.className})`);
+                        }
                         const cSeated = countSeatedStudents(cData.seatingCharts);
                         const curSeated = countSeatedStudents(seatingCharts);
                         if (cSeated > curSeated) {
@@ -14644,6 +14744,18 @@
 
         // Tự phục hồi lại lần nữa để đảm bảo đồng bộ
         autoRecoverClassData(tId);
+
+        if (currentUser && currentUser.className) {
+            currentUserRole = 'teacher';
+            localStorage.setItem('currentUserRole', 'teacher');
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            localStorage.setItem('user_' + (currentUser.id || 'thaytuan'), JSON.stringify(currentUser));
+            localStorage.removeItem('userLoggedOut');
+            const authScreen = document.getElementById('auth-screen');
+            if (authScreen) { authScreen.classList.add('hidden'); authScreen.classList.remove('flex'); }
+            const obScreen = document.getElementById('onboarding-screen');
+            if (obScreen) { obScreen.classList.add('hidden'); obScreen.classList.remove('flex'); }
+        }
 
         saveAppData();
         initTimetables();
