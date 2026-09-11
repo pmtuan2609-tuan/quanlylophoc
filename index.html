@@ -1832,8 +1832,9 @@
                 </div>
               </div>
             </div>
+          </div>
 
-            <!-- TRƯỜNG ĐUA NGỰA HOÀNG GIA KHÉP KÍN (ROYAL DERBY CLOSED-CIRCUIT) -->
+          <!-- TRƯỜNG ĐUA NGỰA HOÀNG GIA KHÉP KÍN (ROYAL DERBY CLOSED-CIRCUIT) -->
             <div id="horse-race-container" class="hidden flex flex-col relative w-full h-[460px] md:h-[540px] bg-emerald-950 border border-emerald-800/80 rounded-3xl overflow-hidden shadow-inner select-none transition-all">
               <!-- Thanh điều khiển trường đua ngựa (Tách riêng trên cùng, KHÔNG CHE KHUẤT đường đua và vạch đích) -->
               <div class="shrink-0 px-2.5 sm:px-3 py-1.5 sm:py-2 bg-emerald-950/95 border-b border-emerald-800/80 z-40 flex items-center justify-between gap-1.5 sm:gap-2 flex-nowrap overflow-visible relative">
@@ -1974,7 +1975,6 @@
             </div>
           </div>
         </div>
-      </div>
       </section>
 
       <!-- TAB TUYÊN DƯƠNG -->
@@ -8835,14 +8835,28 @@
         `).join('');
       }
       const modeSelect = document.getElementById('spin-mode');
-      if (modeSelect && modeSelect.value === 'wheel_pie') {
-        drawWheel();
-      } else if (modeSelect && modeSelect.value === 'duck') {
-        if (typeof initDuckRace === 'function') initDuckRace(false);
-      } else if (modeSelect && modeSelect.value === 'f1') {
-        if (typeof initF1Race === 'function') initF1Race(false);
-      } else if (modeSelect && modeSelect.value === 'horse') {
-        if (typeof initHorseRace === 'function') initHorseRace(false);
+      if (modeSelect) {
+        const m = modeSelect.value;
+        if (m === 'wheel_pie' || m === 'duck' || m === 'f1' || m === 'horse') {
+          if (grid) grid.classList.add('hidden');
+        }
+        if (m === 'wheel_pie') {
+          const c = document.getElementById('wheel-canvas-container');
+          if (c) c.classList.remove('hidden');
+          drawWheel();
+        } else if (m === 'duck') {
+          const c = document.getElementById('duck-race-container');
+          if (c) c.classList.remove('hidden');
+          if (typeof initDuckRace === 'function') initDuckRace(false);
+        } else if (m === 'f1') {
+          const c = document.getElementById('f1-race-container');
+          if (c) c.classList.remove('hidden');
+          if (typeof initF1Race === 'function') initF1Race(false);
+        } else if (m === 'horse') {
+          const c = document.getElementById('horse-race-container');
+          if (c) c.classList.remove('hidden');
+          if (typeof initHorseRace === 'function') initHorseRace(false);
+        }
       }
     }
 
