@@ -1586,7 +1586,7 @@
                   <option value="spin">Quay Chong Chóng 🌀</option>
                   <option value="duck">Đua Vịt Trên Sông 🦆🌊</option>
                   <option value="f1">Đua Xe F1 Quanh Co 🏎️💨 (Mới)</option>
-                  <option value="horse">Đua Ngựa 🐎</option>
+                  <option value="horse">Đua Ngựa Khép Kín 🐎🏆</option>
               </select>
             </div>
             <button onclick="startSpin()" id="spin-btn" class="w-full bg-gradient-to-r from-amber-400 to-orange-500 text-white py-3.5 md:py-4 rounded-xl font-black shadow-lg hover:scale-[1.02] active:scale-95 transition-all mt-2 text-base md:text-lg">🎲 QUAY NGAY</button>
@@ -1829,6 +1829,146 @@
                     <div id="f1-light-5" class="w-7 h-7 md:w-9 md:h-9 rounded-full bg-slate-800 border-2 border-slate-700 transition-all duration-100"></div>
                   </div>
                   <div id="f1-gantry-text" class="text-xs md:text-sm font-black text-rose-400 uppercase tracking-wide animate-pulse">CHUẨN BỊ XUẤT PHÁT...</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TRƯỜNG ĐUA NGỰA HOÀNG GIA KHÉP KÍN (ROYAL DERBY CLOSED-CIRCUIT) -->
+            <div id="horse-race-container" class="hidden flex flex-col relative w-full h-[460px] md:h-[540px] bg-emerald-950 border border-emerald-800/80 rounded-3xl overflow-hidden shadow-inner select-none transition-all">
+              <!-- Thanh điều khiển trường đua ngựa (Tách riêng trên cùng, KHÔNG CHE KHUẤT đường đua và vạch đích) -->
+              <div class="shrink-0 px-2.5 sm:px-3 py-1.5 sm:py-2 bg-emerald-950/95 border-b border-emerald-800/80 z-40 flex items-center justify-between gap-1.5 sm:gap-2 flex-nowrap overflow-visible relative">
+                <div class="flex items-center gap-1.5 sm:gap-2 bg-emerald-900/80 backdrop-blur-md px-2.5 py-1.5 rounded-xl shadow-sm border border-white/10 text-white min-w-0 max-w-[180px] sm:max-w-xs md:max-w-md">
+                  <span class="text-xs font-black text-amber-400 flex items-center gap-1 shrink-0"><span class="text-base animate-bounce">🐎</span> <span class="hidden md:inline">TRƯỜNG ĐUA NGỰA</span></span>
+                  <span class="h-3.5 w-[1px] bg-emerald-700 shrink-0"></span>
+                  <span id="horse-race-status" class="text-[11px] font-bold text-emerald-100 truncate">Sẵn sàng xuất phát</span>
+                </div>
+                
+                <div class="flex items-center gap-1 sm:gap-1.5 md:gap-2 shrink-0">
+                  <!-- Nút chuyển cảnh chặng đua Ngựa -->
+                  <div class="relative" id="horse-scene-dropdown-wrapper">
+                    <button type="button" id="btn-horse-scene" onclick="toggleHorseSceneMenu(event)" class="bg-emerald-900/90 hover:bg-emerald-800 backdrop-blur-md px-2.5 md:px-3 py-1.5 rounded-xl shadow-sm border border-amber-400/40 text-xs font-bold text-amber-300 flex items-center gap-1.5 transition hover:scale-105 active:scale-95 shrink-0" title="Đổi mặt sân trường đua (Phím C)">
+                      <span id="horse-scene-icon">🌿</span>
+                      <span id="horse-scene-name" class="hidden sm:inline">Royal Ascot Cỏ</span>
+                      <span class="text-[9px] text-amber-400/80">▼</span>
+                    </button>
+                    <!-- Dropdown danh sách cảnh -->
+                    <div id="horse-scene-dropdown" class="hidden absolute right-0 top-full mt-2 w-72 max-w-[90vw] max-h-[75vh] overflow-y-auto bg-emerald-950/98 backdrop-blur-2xl border border-amber-400/40 rounded-2xl shadow-2xl p-2 z-50 text-white text-xs space-y-1">
+                      <div class="px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-amber-400/90 border-b border-white/10 flex items-center justify-between">
+                        <span>Mặt Sân Trường Đua</span>
+                        <span class="text-[9px] font-mono text-emerald-300 font-normal">Phím C đổi</span>
+                      </div>
+                      <button type="button" onclick="selectHorseScene('turf', event)" data-scene="turf" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
+                        <span class="text-base shrink-0">🌿</span>
+                        <div class="flex-1 min-w-0">
+                          <div class="font-bold text-emerald-100 group-hover:text-amber-300 flex items-center justify-between">
+                            <span>Royal Ascot (Đường Cỏ)</span>
+                            <span class="flex items-center gap-1">
+                              <span class="text-[9px] text-emerald-400 font-normal">Turf Track</span>
+                              <span class="horse-scene-check hidden text-amber-400 font-bold">✓</span>
+                            </span>
+                          </div>
+                          <div class="text-[10px] text-emerald-300/80 truncate">Thảm cỏ xanh mướt, hàng rào trắng Ascot & cờ hoa</div>
+                        </div>
+                      </button>
+                      <button type="button" onclick="selectHorseScene('dirt', event)" data-scene="dirt" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
+                        <span class="text-base shrink-0">🏜️</span>
+                        <div class="flex-1 min-w-0">
+                          <div class="font-bold text-emerald-100 group-hover:text-amber-300 flex items-center justify-between">
+                            <span>Churchill Downs (Đất Nện)</span>
+                            <span class="flex items-center gap-1">
+                              <span class="text-[9px] text-amber-400 font-normal">Dirt Track</span>
+                              <span class="horse-scene-check hidden text-amber-400 font-bold">✓</span>
+                            </span>
+                          </div>
+                          <div class="text-[10px] text-emerald-300/80 truncate">Đường cát nện vàng óng & bụi đất tung bay Derby</div>
+                        </div>
+                      </button>
+                      <button type="button" onclick="selectHorseScene('sunset', event)" data-scene="sunset" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
+                        <span class="text-base shrink-0">🌸</span>
+                        <div class="flex-1 min-w-0">
+                          <div class="font-bold text-emerald-100 group-hover:text-amber-300 flex items-center justify-between">
+                            <span>Sunset Meadow (Hoàng Hôn)</span>
+                            <span class="flex items-center gap-1">
+                              <span class="text-[9px] text-rose-300 font-normal">Twilight</span>
+                              <span class="horse-scene-check hidden text-amber-400 font-bold">✓</span>
+                            </span>
+                          </div>
+                          <div class="text-[10px] text-emerald-300/80 truncate">Bầu trời hoàng hôn tím hồng lãng mạn & đèn lồng</div>
+                        </div>
+                      </button>
+                      <div class="border-t border-white/10 pt-1">
+                        <button type="button" onclick="selectHorseScene('random', event)" data-scene="random" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-amber-500/20 transition group">
+                          <span class="text-base shrink-0">🎲</span>
+                          <div class="flex-1 min-w-0">
+                            <div class="font-bold text-amber-300 flex items-center justify-between">
+                              <span>Tự Đổi Cảnh Ngẫu Nhiên</span>
+                              <span class="flex items-center gap-1">
+                                <span class="text-[9px] text-amber-400 font-mono">Auto</span>
+                                <span class="horse-scene-check hidden text-amber-400 font-bold">✓</span>
+                              </span>
+                            </div>
+                            <div class="text-[10px] text-emerald-200 truncate">Tự chọn mặt sân mới mỗi lần xuất phát</div>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Nút chọn số vòng đua khép kín (Laps Selector) -->
+                  <button id="btn-horse-laps" onclick="cycleHorseTargetLaps()" class="bg-emerald-900/90 hover:bg-emerald-800 backdrop-blur-md px-2.5 md:px-3 py-1.5 rounded-xl shadow-sm border border-emerald-400/40 text-xs font-bold text-emerald-300 flex items-center gap-1.5 transition hover:scale-105 active:scale-95 shrink-0" title="Chọn số vòng đua khép kín (Phím L: 1 vòng, 2 vòng, 3 vòng...)">
+                    <span id="horse-laps-icon">🔄</span> <span id="horse-laps-text">1 Vòng</span>
+                  </button>
+
+                  <!-- Nút Đua ngay -->
+                  <button onclick="if(!horseRaceRunning) startSpin();" class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-3 py-1.5 rounded-xl shadow-sm text-xs font-black flex items-center gap-1.5 transition hover:scale-105 active:scale-95 shrink-0" title="Bấm vào đây hoặc nhấn phím Space trên bàn phím để chạy đua">
+                    <kbd class="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-mono text-white">Space</kbd> <span class="hidden xs:inline">Đua ngay</span>
+                  </button>
+
+                  <!-- Nút Âm thanh -->
+                  <button id="btn-horse-sound" onclick="toggleHorseSound()" class="bg-emerald-900/90 hover:bg-emerald-800 backdrop-blur-md px-2.5 md:px-3 py-1.5 rounded-xl shadow-sm border border-white/20 text-xs font-bold text-slate-200 flex items-center gap-1 transition shrink-0" title="Bật/Tắt âm thanh trường đua">
+                    <span id="horse-sound-icon">🔊</span> <span class="hidden sm:inline" id="horse-sound-text">Âm thanh</span>
+                  </button>
+
+                  <!-- Nút Toàn màn hình -->
+                  <button onclick="toggleHorseFullscreen()" class="bg-emerald-900/90 hover:bg-emerald-800 backdrop-blur-md px-2.5 md:px-3 py-1.5 rounded-xl shadow-sm border border-white/20 text-xs font-bold text-slate-200 flex items-center gap-1 transition hover:text-amber-300 shrink-0" title="Toàn màn hình trình chiếu máy chiếu/TV (Bấm Space để chạy)">
+                    <i data-lucide="maximize" class="w-3.5 h-3.5 text-amber-400"></i> <span class="hidden sm:inline">Toàn màn hình</span>
+                  </button>
+
+                  <!-- Nút Đặt lại vị trí -->
+                  <button onclick="resetHorseRacePositions()" class="bg-emerald-900/90 hover:bg-emerald-800 backdrop-blur-md px-2.5 md:px-3 py-1.5 rounded-xl shadow-sm border border-white/20 text-xs font-bold text-slate-200 flex items-center gap-1 transition hover:text-rose-400 shrink-0" title="Đặt lại vạch xuất phát">
+                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-400"></i> <span class="hidden sm:inline">Đặt lại</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- KHUNG CHỨA CANVAS ĐƯỜNG ĐUA NGỰA & OVERLAYS -->
+              <div class="relative flex-1 w-full min-h-0 overflow-hidden" id="horse-canvas-wrapper">
+                <!-- Canvas trường đua ngựa -->
+                <canvas id="horse-race-canvas" class="w-full h-full block"></canvas>
+
+                <!-- Bảng Dẫn Đầu Thời Gian Thực (Live Leaderboard) trong lòng sân nội đồng -->
+                <div id="horse-leaderboard" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 bg-slate-950/85 backdrop-blur-md px-3.5 py-2.5 rounded-2xl shadow-2xl border border-amber-500/40 text-white text-[11px] w-[275px] md:w-[290px] hidden transition-all pointer-events-auto">
+                  <div class="font-black text-amber-400 uppercase text-[9px] tracking-wider mb-1 flex items-center justify-between">
+                    <span class="flex items-center gap-1">🏆 Top Ngựa Dẫn Đầu</span>
+                    <div class="flex items-center gap-1.5">
+                      <span id="horse-leaderboard-lap" class="bg-amber-500/30 text-amber-300 px-1.5 py-0.2 rounded text-[8px] font-mono">VÒNG 1/1</span>
+                      <button type="button" onclick="toggleHorseLeaderboardCollapse(event)" id="btn-horse-lb-toggle" class="hover:bg-white/10 px-1 rounded text-[10px] text-slate-400 hover:text-white transition" title="Thu gọn / Mở rộng">➖</button>
+                    </div>
+                  </div>
+                  <div id="horse-top-list" class="space-y-0.5"></div>
+                </div>
+
+                <!-- Cổng Chuồng Xuất Phát (Starting Gate Overlay) -->
+                <div id="horse-gate-overlay" class="absolute inset-0 bg-black/60 backdrop-blur-xs flex flex-col items-center justify-center z-40 hidden pointer-events-none">
+                  <div class="bg-emerald-950/95 p-5 md:p-6 rounded-3xl border-4 border-amber-500/60 shadow-2xl flex flex-col items-center gap-3">
+                    <div class="text-xs font-black text-amber-300 uppercase tracking-widest text-center flex items-center gap-2">
+                      <span>🎺</span> <span>CỔNG XUẤT PHÁT TRƯỜNG ĐUA HOÀNG GIA</span> <span>🐎</span>
+                    </div>
+                    <div class="text-2xl md:text-3xl font-black text-white text-center drop-shadow-md" id="horse-gate-countdown">
+                      SẴN SÀNG...
+                    </div>
+                    <div id="horse-gate-status" class="text-xs md:text-sm font-bold text-amber-400 animate-pulse">CÁC CHIẾN MÃ ĐANG VÀO VỊ TRÍ!</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -8701,6 +8841,8 @@
         if (typeof initDuckRace === 'function') initDuckRace(false);
       } else if (modeSelect && modeSelect.value === 'f1') {
         if (typeof initF1Race === 'function') initF1Race(false);
+      } else if (modeSelect && modeSelect.value === 'horse') {
+        if (typeof initHorseRace === 'function') initHorseRace(false);
       }
     }
 
@@ -8844,16 +8986,18 @@
       setTimeout(() => {
         if (typeof resizeDuckCanvas === 'function') resizeDuckCanvas();
         if (typeof resizeF1Canvas === 'function') resizeF1Canvas();
+        if (typeof resizeHorseCanvas === 'function') resizeHorseCanvas();
       }, 150);
     });
     document.addEventListener('webkitfullscreenchange', () => {
       setTimeout(() => {
         if (typeof resizeDuckCanvas === 'function') resizeDuckCanvas();
         if (typeof resizeF1Canvas === 'function') resizeF1Canvas();
+        if (typeof resizeHorseCanvas === 'function') resizeHorseCanvas();
       }, 150);
     });
 
-    // Bấm phím Space để Bắt đầu đua / Chạy tiếp, hoặc phím C để đổi cảnh F1
+    // Bấm phím Space để Bắt đầu đua / Chạy tiếp, hoặc phím C để đổi cảnh F1/Đua ngựa
     window.addEventListener('keydown', (e) => {
       const activeEl = document.activeElement;
       if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable)) {
@@ -8863,11 +9007,17 @@
       const isWheelTab = document.getElementById('tab-wheel') && !document.getElementById('tab-wheel').classList.contains('hidden');
       const isDuckMode = document.getElementById('spin-mode') && document.getElementById('spin-mode').value === 'duck';
       const isF1Mode = document.getElementById('spin-mode') && document.getElementById('spin-mode').value === 'f1';
+      const isHorseMode = document.getElementById('spin-mode') && document.getElementById('spin-mode').value === 'horse';
       const isFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement);
 
-      // Phím C: Chuyển cảnh đường đua F1
-      if ((e.key === 'c' || e.key === 'C') && (isF1Mode || isFullscreen)) {
-        if (typeof nextF1Scene === 'function') {
+      // Phím C: Chuyển cảnh đường đua F1 hoặc Trường đua ngựa
+      if ((e.key === 'c' || e.key === 'C') && (isF1Mode || isHorseMode || isFullscreen)) {
+        if (isHorseMode && typeof nextHorseScene === 'function') {
+          e.preventDefault();
+          nextHorseScene();
+          return;
+        }
+        if (isF1Mode && typeof nextF1Scene === 'function') {
           e.preventDefault();
           nextF1Scene();
           return;
@@ -8884,8 +9034,13 @@
       }
 
       // Phím L: Đổi số vòng đua khép kín (1 vòng, 2 vòng, 3 vòng, 5 vòng)
-      if ((e.key === 'l' || e.key === 'L') && (isF1Mode || isFullscreen)) {
-        if (typeof cycleF1TargetLaps === 'function') {
+      if ((e.key === 'l' || e.key === 'L') && (isF1Mode || isHorseMode || isFullscreen)) {
+        if (isHorseMode && typeof cycleHorseTargetLaps === 'function') {
+          e.preventDefault();
+          cycleHorseTargetLaps();
+          return;
+        }
+        if (isF1Mode && typeof cycleF1TargetLaps === 'function') {
           e.preventDefault();
           cycleF1TargetLaps();
           return;
@@ -8893,7 +9048,7 @@
       }
 
       if (e.code === 'Space' || e.key === ' ') {
-        if ((isWheelTab && (isDuckMode || isF1Mode)) || isFullscreen) {
+        if ((isWheelTab && (isDuckMode || isF1Mode || isHorseMode)) || isFullscreen) {
           e.preventDefault();
 
           // Nếu bảng kết quả HS chiến thắng đang mở, nhấn Space sẽ tự đóng và mở vòng đua tiếp theo
@@ -8909,6 +9064,8 @@
           if (isDuckMode && !duckRaceRunning) {
             startSpin();
           } else if (isF1Mode && !f1RaceRunning) {
+            startSpin();
+          } else if (isHorseMode && !horseRaceRunning) {
             startSpin();
           }
         }
@@ -12106,6 +12263,1335 @@
       ctx.restore();
     }
 
+    // =========================================================================
+    // MODULE: TRƯỜNG ĐUA NGỰA HOÀNG GIA KHÉP KÍN (ROYAL DERBY HORSE RACE)
+    // =========================================================================
+    const HorseAudio = {
+      ctx: null,
+      enabled: true,
+      init() {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) this.ctx = new AudioCtx();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      },
+      playCallToThePost() {
+        if (!this.enabled) return;
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime;
+          const notes = [
+            { f: 261.63, d: 0.11, t: 0 },
+            { f: 329.63, d: 0.11, t: 0.13 },
+            { f: 392.00, d: 0.11, t: 0.26 },
+            { f: 523.25, d: 0.25, t: 0.39 },
+            { f: 392.00, d: 0.11, t: 0.68 },
+            { f: 523.25, d: 0.11, t: 0.81 },
+            { f: 659.25, d: 0.11, t: 0.94 },
+            { f: 783.99, d: 0.35, t: 1.08 }
+          ];
+          notes.forEach(n => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(n.f, now + n.t);
+            gain.gain.setValueAtTime(0.001, now + n.t);
+            gain.gain.linearRampToValueAtTime(0.20, now + n.t + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + n.t + n.d);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now + n.t);
+            osc.stop(now + n.t + n.d + 0.05);
+          });
+        } catch(e) {}
+      },
+      playGateOpen() {
+        if (!this.enabled) return;
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(140, now);
+          osc.frequency.exponentialRampToValueAtTime(45, now + 0.18);
+          gain.gain.setValueAtTime(0.28, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.20);
+        } catch(e) {}
+      },
+      playHoofStep() {
+        if (!this.enabled) return;
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          const filter = this.ctx.createBiquadFilter();
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(480, now);
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(120 + Math.random() * 30, now);
+          osc.frequency.exponentialRampToValueAtTime(40, now + 0.05);
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.06);
+        } catch(e) {}
+      },
+      playNeigh() {
+        if (!this.enabled) return;
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(540, now);
+          osc.frequency.linearRampToValueAtTime(860, now + 0.15);
+          osc.frequency.linearRampToValueAtTime(620, now + 0.35);
+          osc.frequency.linearRampToValueAtTime(740, now + 0.50);
+          osc.frequency.exponentialRampToValueAtTime(320, now + 0.75);
+          gain.gain.setValueAtTime(0.001, now);
+          gain.gain.linearRampToValueAtTime(0.16, now + 0.05);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.75);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.80);
+        } catch(e) {}
+      },
+      playFinishFanfare() {
+        if (!this.enabled) return;
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime;
+          const notes = [
+            { f: 523.25, d: 0.14, t: 0 },
+            { f: 659.25, d: 0.14, t: 0.15 },
+            { f: 783.99, d: 0.14, t: 0.30 },
+            { f: 1046.50, d: 0.45, t: 0.45 }
+          ];
+          notes.forEach(n => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(n.f, now + n.t);
+            gain.gain.setValueAtTime(0.24, now + n.t);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + n.t + n.d);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now + n.t);
+            osc.stop(now + n.t + n.d + 0.05);
+          });
+        } catch(e) {}
+      }
+    };
+
+    function toggleHorseSound() {
+      HorseAudio.enabled = !HorseAudio.enabled;
+      const icon = document.getElementById('horse-sound-icon');
+      const text = document.getElementById('horse-sound-text');
+      if (icon) icon.innerText = HorseAudio.enabled ? '🔊' : '🔇';
+      if (text) text.innerText = HorseAudio.enabled ? 'Âm thanh' : 'Đã tắt tiếng';
+    }
+
+    function toggleHorseFullscreen() {
+      const container = document.getElementById('horse-race-container');
+      if (!container) return;
+      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        if (container.requestFullscreen) container.requestFullscreen();
+        else if (container.webkitRequestFullscreen) container.webkitRequestFullscreen();
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      }
+    }
+
+    const HORSE_SCENES = {
+      turf: {
+        id: 'turf',
+        name: 'Royal Ascot (Đường Cỏ)',
+        icon: '🌿',
+        type: 'grass',
+        trackColor: '#15803d',
+        trackStripe: '#16a34a',
+        infieldColor: '#14532d',
+        railColor: '#ffffff',
+        railPostColor: '#e2e8f0',
+        skyTop: '#0284c7',
+        skyBot: '#bae6fd',
+        banner: 'ROYAL ASCOT DERBY 🌿'
+      },
+      dirt: {
+        id: 'dirt',
+        name: 'Churchill Downs (Đất Nện)',
+        icon: '🏜️',
+        type: 'dirt',
+        trackColor: '#b45309',
+        trackStripe: '#92400e',
+        infieldColor: '#166534',
+        railColor: '#ffffff',
+        railPostColor: '#78350f',
+        skyTop: '#0369a1',
+        skyBot: '#fde68a',
+        banner: 'CHURCHILL DOWNS DERBY 🏜️'
+      },
+      sunset: {
+        id: 'sunset',
+        name: 'Sunset Meadow (Hoàng Hôn)',
+        icon: '🌸',
+        type: 'sunset',
+        trackColor: '#14532d',
+        trackStripe: '#15803d',
+        infieldColor: '#0f172a',
+        railColor: '#fef08a',
+        railPostColor: '#f43f5e',
+        skyTop: '#4c1d95',
+        skyBot: '#f43f5e',
+        banner: 'SUNSET MEADOW DERBY 🌸'
+      }
+    };
+
+    const HORSE_COATS = [
+      { name: 'Bay', body: '#78350f', highlight: '#92400e', points: '#1e293b', mane: '#0f172a', tail: '#0f172a' },
+      { name: 'Chestnut', body: '#9a3412', highlight: '#c2410c', points: '#7c2d12', mane: '#7c2d12', tail: '#7c2d12' },
+      { name: 'Black', body: '#1e293b', highlight: '#334155', points: '#0f172a', mane: '#020617', tail: '#020617' },
+      { name: 'White', body: '#f1f5f9', highlight: '#ffffff', points: '#cbd5e1', mane: '#e2e8f0', tail: '#e2e8f0' },
+      { name: 'Palomino', body: '#d97706', highlight: '#f59e0b', points: '#b45309', mane: '#fef3c7', tail: '#fef3c7' },
+      { name: 'Dapple Grey', body: '#94a3b8', highlight: '#cbd5e1', points: '#64748b', mane: '#475569', tail: '#475569' }
+    ];
+
+    const HORSE_SILKS = [
+      { silk: '#dc2626', saddle: '#ef4444', text: '#ffffff' }, // Đỏ
+      { silk: '#2563eb', saddle: '#3b82f6', text: '#ffffff' }, // Xanh lam
+      { silk: '#059669', saddle: '#10b981', text: '#ffffff' }, // Xanh lục
+      { silk: '#7c3aed', saddle: '#8b5cf6', text: '#ffffff' }, // Tím
+      { silk: '#d97706', saddle: '#f59e0b', text: '#000000' }, // Vàng cam
+      { silk: '#db2777', saddle: '#ec4899', text: '#ffffff' }, // Hồng
+      { silk: '#0891b2', saddle: '#06b6d4', text: '#ffffff' }, // Xanh ngọc
+      { silk: '#ea580c', saddle: '#f97316', text: '#ffffff' }  // Cam
+    ];
+
+    let horseRaceRunning = false;
+    let horseRaceState = 'idle'; // 'idle' | 'gate' | 'racing' | 'finished'
+    let horseRaceAnimId = null;
+    let horseCarList = [];
+    let horseWinnerTarget = null;
+    let horseRaceStartTime = 0;
+    let horseTargetDuration = 7000;
+    let horseFinishCallback = null;
+    let horseTargetLaps = 1;
+    const HORSE_LAP_OPTIONS = [1, 2, 3, 5];
+    let currentHorseSceneKey = 'turf';
+    let isHorseRandomScene = false;
+    let horseCurrentCircuit = null;
+    let horseDustParticles = [];
+    let horseNextHoofTime = 0;
+
+    function cycleHorseTargetLaps() {
+      const curIdx = HORSE_LAP_OPTIONS.indexOf(horseTargetLaps);
+      const nextIdx = (curIdx + 1) % HORSE_LAP_OPTIONS.length;
+      horseTargetLaps = HORSE_LAP_OPTIONS[nextIdx];
+      try {
+        localStorage.setItem('horse_target_laps', String(horseTargetLaps));
+      } catch(e) {}
+      updateHorseLapsButtonUI();
+      if (!horseRaceRunning) {
+        resetHorseRacePositions(true);
+      }
+    }
+
+    function updateHorseLapsButtonUI() {
+      const textEl = document.getElementById('horse-laps-text');
+      const btnEl = document.getElementById('btn-horse-laps');
+      if (textEl) textEl.innerText = `${horseTargetLaps} Vòng`;
+      if (btnEl) {
+        btnEl.title = `Đua khép kín ${horseTargetLaps} vòng (Bấm hoặc nhấn phím L để đổi 1, 2, 3, 5 vòng)`;
+      }
+    }
+
+    function updateHorseSceneMenuHighlight() {
+      const menu = document.getElementById('horse-scene-dropdown');
+      if (!menu) return;
+      const buttons = menu.querySelectorAll('button[data-scene]');
+      buttons.forEach(btn => {
+        const sc = btn.getAttribute('data-scene');
+        const isActive = isHorseRandomScene ? (sc === 'random') : (sc === currentHorseSceneKey);
+        const checkEl = btn.querySelector('.horse-scene-check');
+        if (isActive) {
+          btn.classList.add('bg-amber-500/20', 'border', 'border-amber-400/60');
+          btn.classList.remove('hover:bg-white/10');
+          if (checkEl) checkEl.classList.remove('hidden');
+        } else {
+          btn.classList.remove('bg-amber-500/20', 'border', 'border-amber-400/60');
+          btn.classList.add('hover:bg-white/10');
+          if (checkEl) checkEl.classList.add('hidden');
+        }
+      });
+    }
+
+    function toggleHorseSceneMenu(e) {
+      if (e) {
+        e.stopPropagation();
+        e.preventDefault();
+      }
+      const menu = document.getElementById('horse-scene-dropdown');
+      if (!menu) return;
+      const isOpening = menu.classList.contains('hidden');
+      if (isOpening) {
+        menu.classList.remove('hidden');
+        updateHorseSceneMenuHighlight();
+      } else {
+        menu.classList.add('hidden');
+      }
+    }
+
+    document.addEventListener('click', (e) => {
+      const wrapper = document.getElementById('horse-scene-dropdown-wrapper');
+      const menu = document.getElementById('horse-scene-dropdown');
+      if (wrapper && menu && !wrapper.contains(e.target)) {
+        menu.classList.add('hidden');
+      }
+    });
+
+    function selectHorseScene(sceneKey, e) {
+      if (e) {
+        e.stopPropagation();
+        e.preventDefault();
+      }
+      const menu = document.getElementById('horse-scene-dropdown');
+      if (menu) menu.classList.add('hidden');
+
+      if (sceneKey === 'random') {
+        isHorseRandomScene = true;
+        const keys = Object.keys(HORSE_SCENES);
+        const randomKey = keys[Math.floor(Math.random() * keys.length)];
+        applyHorseScene(randomKey, true);
+      } else {
+        isHorseRandomScene = false;
+        applyHorseScene(sceneKey, false);
+      }
+    }
+
+    function nextHorseScene() {
+      const keys = Object.keys(HORSE_SCENES);
+      const curIdx = keys.indexOf(currentHorseSceneKey);
+      const nextIdx = (curIdx + 1) % keys.length;
+      isHorseRandomScene = false;
+      applyHorseScene(keys[nextIdx], false);
+    }
+
+    function applyHorseScene(sceneKey, isRandom = false) {
+      if (!HORSE_SCENES[sceneKey]) sceneKey = 'turf';
+      currentHorseSceneKey = sceneKey;
+      try {
+        localStorage.setItem('horse_scene', isRandom ? 'random' : sceneKey);
+      } catch(e) {}
+
+      horseCurrentCircuit = null;
+
+      const scene = HORSE_SCENES[sceneKey];
+      const iconEl = document.getElementById('horse-scene-icon');
+      const nameEl = document.getElementById('horse-scene-name');
+      if (iconEl) iconEl.innerText = isRandom ? '🎲' : scene.icon;
+      if (nameEl) nameEl.innerText = isRandom ? 'Ngẫu nhiên' : scene.name;
+
+      const carCount = (horseCarList && horseCarList.length > 0) ? horseCarList.length : students.filter(s => !hiddenWheelIds.includes(s.id)).length;
+      const statusEl = document.getElementById('horse-race-status');
+      if (statusEl && !horseRaceRunning) {
+        const lapDesc = horseTargetLaps > 1 ? ` - ${horseTargetLaps} Vòng` : '';
+        statusEl.innerText = `${scene.icon} ${scene.name} (${carCount} chiến mã${lapDesc})`;
+      }
+
+      if (!horseCarList || horseCarList.length === 0) {
+        initHorseRace(true);
+      } else if (!horseRaceRunning) {
+        resetHorseRacePositions(true);
+      } else {
+        renderHorseRaceCanvas(performance.now());
+      }
+
+      updateHorseSceneMenuHighlight();
+    }
+
+    function toggleHorseLeaderboardCollapse(e) {
+      if (e) e.stopPropagation();
+      const list = document.getElementById('horse-top-list');
+      const btn = document.getElementById('btn-horse-lb-toggle');
+      if (!list || !btn) return;
+      if (list.classList.contains('hidden')) {
+        list.classList.remove('hidden');
+        btn.innerText = '➖';
+      } else {
+        list.classList.add('hidden');
+        btn.innerText = '➕';
+      }
+    }
+
+    function getHorseClosedCircuit(w, h, sceneKey) {
+      if (horseCurrentCircuit && horseCurrentCircuit.w === w && horseCurrentCircuit.h === h && horseCurrentCircuit.sceneKey === sceneKey) {
+        return horseCurrentCircuit;
+      }
+
+      const roadW = Math.max(54, Math.min(70, h * 0.15));
+      const margin = Math.max(32, Math.min(50, w * 0.04));
+      const topY = margin + roadW * 0.5 + 16;
+      const botY = h - margin - roadW * 0.5 - 16;
+      const midY = (topY + botY) / 2;
+      const radiusY = (botY - topY) / 2;
+      const radiusX = Math.min(radiusY * 0.96, (w * 0.5 - margin) * 0.40);
+
+      const leftX = margin + radiusX + roadW * 0.5;
+      const rightX = w - margin - radiusX - roadW * 0.5;
+
+      const loop = [];
+      const N_TOP = 140, N_RIGHT = 60, N_BOT = 140, N_LEFT = 60;
+
+      // Phân đoạn 1: Đoạn thẳng phía trên (từ trái sang phải)
+      for (let i = 0; i < N_TOP; i++) {
+        const u = i / N_TOP;
+        const x = leftX + u * (rightX - leftX);
+        const y = topY + Math.sin(Math.PI * u) * 8;
+        loop.push({ x, y });
+      }
+
+      // Phân đoạn 2: Khúc cua cong bên phải (từ trên xuống dưới)
+      for (let i = 0; i < N_RIGHT; i++) {
+        const u = i / N_RIGHT;
+        const alpha = -Math.PI / 2 + u * Math.PI;
+        const x = rightX + radiusX * Math.cos(alpha);
+        const y = midY + radiusY * Math.sin(alpha);
+        loop.push({ x, y });
+      }
+
+      // Phân đoạn 3: Đoạn thẳng phía dưới (từ phải sang trái)
+      for (let i = 0; i < N_BOT; i++) {
+        const u = i / N_BOT;
+        const x = rightX - u * (rightX - leftX);
+        const y = botY - Math.sin(Math.PI * u) * 8;
+        loop.push({ x, y });
+      }
+
+      // Phân đoạn 4: Khúc cua cong bên trái (từ dưới lên trên kết nối về đích)
+      for (let i = 0; i < N_LEFT; i++) {
+        const u = i / N_LEFT;
+        const beta = Math.PI / 2 + u * Math.PI;
+        const x = leftX + radiusX * Math.cos(beta);
+        const y = midY + radiusY * Math.sin(beta);
+        loop.push({ x, y });
+      }
+
+      // Đặt vạch đích ở vị trí 22% đoạn thẳng đỉnh
+      const startIdx = Math.round(N_TOP * 0.22);
+      const raw = [];
+      for (let i = 0; i < loop.length; i++) {
+        raw.push(loop[(startIdx + i) % loop.length]);
+      }
+
+      const K = raw.length;
+      const cumDist = new Float64Array(K + 1);
+      cumDist[0] = 0;
+      for (let i = 0; i < K; i++) {
+        const p1 = raw[i];
+        const p2 = raw[(i + 1) % K];
+        cumDist[i + 1] = cumDist[i] + Math.hypot(p2.x - p1.x, p2.y - p1.y);
+      }
+      const totalLength = cumDist[K];
+
+      function sampleDist(dist) {
+        let s = (dist % totalLength) / totalLength;
+        if (s < 0) s += 1.0;
+        const targetD = s * totalLength;
+        let low = 0, high = K;
+        while (low < high) {
+          const mid = (low + high) >> 1;
+          if (cumDist[mid] < targetD) low = mid + 1;
+          else high = mid;
+        }
+        const idx = Math.max(0, low - 1);
+        const d0 = cumDist[idx];
+        const d1 = cumDist[idx + 1];
+        const t = (d1 > d0) ? (targetD - d0) / (d1 - d0) : 0;
+        const p1 = raw[idx % K];
+        const p2 = raw[(idx + 1) % K];
+        const x = p1.x + (p2.x - p1.x) * t;
+        const y = p1.y + (p2.y - p1.y) * t;
+        const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x);
+        const nx = -Math.sin(angle);
+        const ny = Math.cos(angle);
+        return { x, y, angle, nx, ny };
+      }
+
+      horseCurrentCircuit = {
+        w,
+        h,
+        sceneKey,
+        raw,
+        cumDist,
+        totalLength,
+        roadW,
+        sampleDist,
+        startPt: sampleDist(0),
+        topY,
+        botY,
+        midY,
+        leftX,
+        rightX
+      };
+
+      return horseCurrentCircuit;
+    }
+
+    function initHorseRace(resetPositions = true) {
+      const canvas = document.getElementById('horse-race-canvas');
+      if (!canvas) return;
+      resizeHorseCanvas();
+
+      try {
+        const saved = localStorage.getItem('horse_scene');
+        if (saved === 'random') {
+          isHorseRandomScene = true;
+          const keys = Object.keys(HORSE_SCENES);
+          currentHorseSceneKey = keys[Math.floor(Math.random() * keys.length)];
+        } else if (saved && HORSE_SCENES[saved]) {
+          currentHorseSceneKey = saved;
+          isHorseRandomScene = false;
+        }
+        const savedLaps = parseInt(localStorage.getItem('horse_target_laps'), 10);
+        if (savedLaps && HORSE_LAP_OPTIONS.includes(savedLaps)) {
+          horseTargetLaps = savedLaps;
+        }
+      } catch(e) {}
+      updateHorseLapsButtonUI();
+
+      const scene = HORSE_SCENES[currentHorseSceneKey] || HORSE_SCENES.turf;
+      const iconEl = document.getElementById('horse-scene-icon');
+      const nameEl = document.getElementById('horse-scene-name');
+      if (iconEl) iconEl.innerText = isHorseRandomScene ? '🎲' : scene.icon;
+      if (nameEl) nameEl.innerText = isHorseRandomScene ? 'Ngẫu nhiên' : scene.name;
+
+      const visibleStudents = students.filter(s => !hiddenWheelIds.includes(s.id));
+      const count = visibleStudents.length;
+
+      const w = canvas.width;
+      const h = canvas.height;
+      const circuit = getHorseClosedCircuit(w, h, currentHorseSceneKey);
+
+      if (resetPositions || horseCarList.length !== count) {
+        horseCarList = visibleStudents.map((s, idx) => {
+          const row = Math.floor(idx / 2);
+          const side = (idx % 2 === 0) ? -1 : 1;
+          const laneRatio = (count <= 1) ? 0 : side * 0.40;
+          const coat = HORSE_COATS[idx % HORSE_COATS.length];
+          const silk = HORSE_SILKS[idx % HORSE_SILKS.length];
+          const startDist = -24 - row * 24;
+          const pt = circuit.sampleDist(startDist);
+
+          return {
+            id: s.id,
+            name: s.name,
+            fullName: s.name,
+            shortName: getShortName(s),
+            avatar: s.avatar,
+            coat: coat,
+            silkColor: silk.silk,
+            saddleColor: silk.saddle,
+            number: idx + 1,
+            row: row,
+            laneRatio: laneRatio,
+            targetLaneRatio: laneRatio,
+            startDist: startDist,
+            dist: startDist,
+            prevDist: startDist,
+            x: pt.x + pt.nx * laneRatio * (circuit.roadW * 0.44),
+            y: pt.y + pt.ny * laneRatio * (circuit.roadW * 0.44),
+            angle: pt.angle,
+            speed: 0,
+            baseSpeed: 0,
+            phaseOffset: Math.random() * Math.PI * 2,
+            isWinner: false,
+            lapsCompleted: 0
+          };
+        });
+      }
+
+      resetHorseRacePositions(true);
+    }
+
+    function resizeHorseCanvas() {
+      const canvas = document.getElementById('horse-race-canvas');
+      if (!canvas) return;
+      const container = document.getElementById('horse-canvas-wrapper') || document.getElementById('horse-race-container');
+      if (!container) return;
+
+      const rect = container.getBoundingClientRect();
+      if (rect.width <= 0 || rect.height <= 0) return;
+
+      const dpr = window.devicePixelRatio || 1;
+      const newW = Math.round(rect.width * dpr);
+      const newH = Math.round(rect.height * dpr);
+
+      if (canvas.width !== newW || canvas.height !== newH) {
+        canvas.width = newW;
+        canvas.height = newH;
+        horseCurrentCircuit = null;
+        renderHorseRaceCanvas(performance.now());
+      }
+    }
+
+    function resetHorseRacePositions(render = true) {
+      if (horseRaceAnimId) {
+        cancelAnimationFrame(horseRaceAnimId);
+        horseRaceAnimId = null;
+      }
+      const canvas = document.getElementById('horse-race-canvas');
+      if (!canvas) return;
+      if (canvas.width <= 0 || canvas.height <= 0) {
+        resizeHorseCanvas();
+      }
+      if (!horseCarList || horseCarList.length === 0) {
+        initHorseRace(true);
+        return;
+      }
+      const w = canvas.width;
+      const h = canvas.height;
+      const circuit = getHorseClosedCircuit(w, h, currentHorseSceneKey);
+      const count = horseCarList.length;
+
+      horseCarList.forEach((horse, idx) => {
+        const row = Math.floor(idx / 2);
+        const side = (idx % 2 === 0) ? -1 : 1;
+        horse.laneRatio = (count <= 1) ? 0 : side * 0.40;
+        horse.targetLaneRatio = horse.laneRatio;
+        horse.startDist = -24 - row * 24;
+        horse.dist = horse.startDist;
+        horse.prevDist = horse.startDist;
+        const pt = circuit.sampleDist(horse.dist);
+        horse.x = pt.x + pt.nx * horse.laneRatio * (circuit.roadW * 0.44);
+        horse.y = pt.y + pt.ny * horse.laneRatio * (circuit.roadW * 0.44);
+        horse.speed = 0;
+        horse.isWinner = false;
+        horse.angle = pt.angle;
+        horse.lapsCompleted = 0;
+      });
+
+      horseRaceRunning = false;
+      horseRaceState = 'idle';
+      horseDustParticles = [];
+
+      const scene = HORSE_SCENES[currentHorseSceneKey] || HORSE_SCENES.turf;
+      const statusEl = document.getElementById('horse-race-status');
+      if (statusEl) {
+        const lapDesc = horseTargetLaps > 1 ? ` - ${horseTargetLaps} Vòng khép kín` : ' - 1 Vòng';
+        statusEl.innerText = `${scene.icon} ${scene.name} (${count} chiến mã${lapDesc})`;
+      }
+
+      const gate = document.getElementById('horse-gate-overlay');
+      if (gate) gate.classList.add('hidden');
+
+      const leaderboard = document.getElementById('horse-leaderboard');
+      if (leaderboard) leaderboard.classList.add('hidden');
+
+      if (render) renderHorseRaceCanvas(performance.now());
+    }
+
+    function startHorseRace(winnerStudent, durationMs, callback) {
+      if (horseRaceRunning) return;
+
+      if (isHorseRandomScene) {
+        const keys = Object.keys(HORSE_SCENES);
+        const otherKeys = keys.filter(k => k !== currentHorseSceneKey);
+        const nextKey = otherKeys[Math.floor(Math.random() * keys.length)] || keys[0];
+        applyHorseScene(nextKey, true);
+      }
+
+      if (!horseCarList || horseCarList.length === 0) initHorseRace(true);
+      if (horseCarList.length === 0) return;
+
+      horseWinnerTarget = winnerStudent;
+      horseTargetDuration = durationMs || 7000;
+      horseFinishCallback = callback;
+
+      resetHorseRacePositions(false);
+
+      horseCarList.forEach(horse => {
+        horse.isWinner = (horse.id === winnerStudent.id);
+      });
+
+      // Hiệu ứng mở chuồng xuất phát (Starting Gate Call to the Post)
+      horseRaceRunning = true;
+      horseRaceState = 'gate';
+      const gateOverlay = document.getElementById('horse-gate-overlay');
+      const gateCount = document.getElementById('horse-gate-countdown');
+      const gateStatus = document.getElementById('horse-gate-status');
+      if (gateOverlay) gateOverlay.classList.remove('hidden');
+      if (gateCount) gateCount.innerText = 'SẴN SÀNG...';
+      if (gateStatus) gateStatus.innerText = 'CÁC CHIẾN MÃ ĐANG VÀO VỊ TRÍ!';
+
+      HorseAudio.playCallToThePost();
+
+      setTimeout(() => {
+        if (!horseRaceRunning) return;
+        if (gateCount) gateCount.innerText = '3';
+      }, 350);
+
+      setTimeout(() => {
+        if (!horseRaceRunning) return;
+        if (gateCount) gateCount.innerText = '2';
+      }, 750);
+
+      setTimeout(() => {
+        if (!horseRaceRunning) return;
+        if (gateCount) gateCount.innerText = '1';
+      }, 1150);
+
+      setTimeout(() => {
+        if (!horseRaceRunning) return;
+        if (gateCount) gateCount.innerText = 'MỞ CỔNG! 🐎💨';
+        if (gateStatus) gateStatus.innerText = 'XUẤT PHÁT!';
+        HorseAudio.playGateOpen();
+        HorseAudio.playNeigh();
+
+        setTimeout(() => {
+          if (gateOverlay) gateOverlay.classList.add('hidden');
+          startHorseSprint();
+        }, 300);
+      }, 1500);
+    }
+
+    function startHorseSprint() {
+      horseRaceState = 'racing';
+      horseRaceStartTime = performance.now();
+      const canvas = document.getElementById('horse-race-canvas');
+      const w = canvas ? canvas.width : 1000;
+      const h = canvas ? canvas.height : 500;
+      const circuit = getHorseClosedCircuit(w, h, currentHorseSceneKey);
+      const totalCircuitLength = circuit.totalLength;
+      const totalRaceDist = totalCircuitLength * horseTargetLaps;
+
+      const durationSec = horseTargetDuration / 1000;
+      const avgSpeed = totalRaceDist / durationSec;
+
+      horseCarList.forEach(horse => {
+        const variance = (Math.random() - 0.5) * 0.16;
+        horse.baseSpeed = avgSpeed * (1 + variance);
+        horse.speed = horse.baseSpeed * 0.7;
+        horse.stamina = 85 + Math.random() * 30;
+      });
+
+      const lb = document.getElementById('horse-leaderboard');
+      if (lb) lb.classList.remove('hidden');
+
+      horseRaceAnimId = requestAnimationFrame(runHorseRaceLoop);
+    }
+
+    function runHorseRaceLoop(now) {
+      if (!horseRaceRunning) return;
+      const canvas = document.getElementById('horse-race-canvas');
+      if (!canvas) return;
+      const w = canvas.width;
+      const h = canvas.height;
+      const circuit = getHorseClosedCircuit(w, h, currentHorseSceneKey);
+      const totalCircuitLength = circuit.totalLength;
+      const totalRaceDist = totalCircuitLength * horseTargetLaps;
+
+      const elapsed = now - horseRaceStartTime;
+      const progress = Math.min(1.0, elapsed / horseTargetDuration);
+
+      // Tiếng vó ngựa phi theo nhịp
+      if (now >= horseNextHoofTime) {
+        HorseAudio.playHoofStep();
+        const cadence = Math.max(70, 150 - progress * 60);
+        horseNextHoofTime = now + cadence;
+      }
+
+      let winnerHasFinished = false;
+
+      horseCarList.forEach((horse, idx) => {
+        horse.prevDist = horse.dist;
+
+        if (progress < 0.25) {
+          // Giai đoạn xuất phát tăng tốc
+          const accel = Math.min(1.0, progress / 0.20);
+          horse.speed = horse.baseSpeed * (0.6 + accel * 0.4);
+        } else if (progress < 0.75) {
+          // Giữa cuộc đua: ngựa luân phiên bứt phá
+          const wave = Math.sin(progress * Math.PI * 6 + idx * 1.3);
+          horse.speed = horse.baseSpeed * (0.95 + wave * 0.12);
+        } else {
+          // Khúc cua cuối & giai đoạn nước rút về đích (Home Stretch Sprint)
+          const sprintT = (progress - 0.75) / 0.25;
+          if (horse.isWinner) {
+            // Ngựa chiến thắng bứt tốc mạnh mẽ vượt lên đầu
+            const surge = 1.0 + sprintT * 0.55;
+            horse.speed = horse.baseSpeed * surge;
+          } else {
+            const tire = Math.max(0.75, 1.0 - sprintT * 0.22);
+            horse.speed = horse.baseSpeed * tire;
+          }
+        }
+
+        const dt = 0.016;
+        horse.dist += horse.speed * dt;
+
+        // Chuyển làn nhẹ nhàng tự nhiên
+        if (Math.random() < 0.02) {
+          const side = (idx % 2 === 0) ? -1 : 1;
+          horse.targetLaneRatio = side * (0.15 + Math.random() * 0.32);
+        }
+        horse.laneRatio += (horse.targetLaneRatio - horse.laneRatio) * 0.04;
+
+        // Vị trí trên đường đua
+        const pt = circuit.sampleDist(horse.dist);
+        horse.x = pt.x + pt.nx * horse.laneRatio * (circuit.roadW * 0.44);
+        horse.y = pt.y + pt.ny * horse.laneRatio * (circuit.roadW * 0.44);
+        horse.angle = pt.angle;
+
+        // Bụi đất / cỏ văng theo vó ngựa
+        if (Math.random() < 0.35) {
+          horseDustParticles.push({
+            x: horse.x - Math.cos(horse.angle) * 16 + (Math.random() - 0.5) * 6,
+            y: horse.y - Math.sin(horse.angle) * 16 + (Math.random() - 0.5) * 6,
+            vx: -Math.cos(horse.angle) * (1.5 + Math.random() * 2) + (Math.random() - 0.5) * 1.5,
+            vy: -Math.sin(horse.angle) * (1.5 + Math.random() * 2) + (Math.random() - 0.5) * 1.5,
+            size: 2 + Math.random() * 3,
+            alpha: 0.6,
+            color: (currentHorseSceneKey === 'dirt') ? '#b45309' : '#16a34a'
+          });
+        }
+
+        // Kiểm tra cán đích
+        if (horse.dist >= totalRaceDist) {
+          if (horse.isWinner) {
+            winnerHasFinished = true;
+          }
+        }
+      });
+
+      // Cập nhật bụi đất
+      for (let i = horseDustParticles.length - 1; i >= 0; i--) {
+        const p = horseDustParticles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= 0.035;
+        p.size *= 0.96;
+        if (p.alpha <= 0) horseDustParticles.splice(i, 1);
+      }
+
+      // Xếp hạng thời gian thực
+      const sorted = [...horseCarList].sort((a, b) => b.dist - a.dist);
+      const leader = sorted[0];
+      const curLap = Math.min(horseTargetLaps, Math.floor(Math.max(0, leader.dist) / totalCircuitLength) + 1);
+
+      // Cập nhật Leaderboard
+      const lapBadge = document.getElementById('horse-leaderboard-lap');
+      if (lapBadge) {
+        lapBadge.innerText = `VÒNG ${curLap}/${horseTargetLaps}`;
+      }
+      const topListEl = document.getElementById('horse-top-list');
+      if (topListEl) {
+        topListEl.innerHTML = sorted.slice(0, 5).map((h, rank) => {
+          const isP1 = (rank === 0);
+          const bg = isP1 
+            ? 'bg-gradient-to-r from-amber-500/25 via-emerald-500/20 to-transparent border border-amber-400/40 text-amber-200' 
+            : 'bg-white/5 border border-white/10 text-slate-300';
+          const p1Badge = isP1 ? `<span class="bg-amber-400 text-slate-950 font-black text-[9px] px-1 py-0.2 rounded font-mono shadow-xs animate-pulse">P1 TOP</span>` : '';
+          const p1NameClass = isP1 ? 'text-xs md:text-[13px] font-black text-amber-300' : 'text-[11px] font-bold text-slate-200';
+          return `
+            <div class="flex items-center justify-between px-2 py-1 rounded-lg ${bg} transition-all">
+              <div class="flex items-center gap-1.5 min-w-0">
+                <span class="font-mono font-black ${isP1 ? 'text-amber-400 text-sm' : 'text-slate-400 text-xs'} w-4 text-center">#${rank + 1}</span>
+                <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background:${h.silkColor};"></span>
+                <span class="${p1NameClass} truncate max-w-[145px] sm:max-w-[170px]" title="${h.fullName}">${h.fullName}</span>
+              </div>
+              <div class="flex items-center gap-1 shrink-0">
+                ${p1Badge}
+                <span class="text-[10px] font-mono font-semibold ${isP1 ? 'text-emerald-300' : 'text-slate-400'}">Đua #${h.number}</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      renderHorseRaceCanvas(now);
+
+      // Khi người thắng cán đích
+      if (winnerHasFinished || progress >= 1.0) {
+        horseRaceRunning = false;
+        horseRaceState = 'finished';
+
+        HorseAudio.playFinishFanfare();
+        HorseAudio.playNeigh();
+
+        if (typeof confetti === 'function') {
+          confetti({ particleCount: 160, spread: 80, origin: { y: 0.6 } });
+        }
+
+        if (typeof horseFinishCallback === 'function') {
+          const cb = horseFinishCallback;
+          horseFinishCallback = null;
+          cb();
+        }
+        return;
+      }
+
+      horseRaceAnimId = requestAnimationFrame(runHorseRaceLoop);
+    }
+
+    function renderHorseRaceCanvas(now) {
+      const canvas = document.getElementById('horse-race-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+
+      ctx.clearRect(0, 0, w, h);
+
+      const scene = HORSE_SCENES[currentHorseSceneKey] || HORSE_SCENES.turf;
+
+      // 1. Vẽ bối cảnh ngoại vi (Bầu trời & sân cỏ nền)
+      renderHorseScenery(ctx, w, h, scene, now);
+
+      const circuit = getHorseClosedCircuit(w, h, currentHorseSceneKey);
+      const halfRoad = circuit.roadW * 0.5;
+      const raw = circuit.raw;
+      const K = raw.length;
+
+      // 2. Vẽ Lòng sân nội đồng (Infield)
+      ctx.save();
+      const midY = circuit.midY;
+      const infieldW = circuit.rightX - circuit.leftX + 24;
+      const infieldH = circuit.botY - circuit.topY - circuit.roadW - 10;
+      if (infieldH > 24) {
+        ctx.fillStyle = (scene.type === 'dirt') ? 'rgba(22, 101, 52, 0.45)' : 'rgba(20, 83, 45, 0.35)';
+        ctx.beginPath();
+        ctx.roundRect(circuit.leftX - 12, circuit.topY + halfRoad + 5, infieldW, infieldH, 16);
+        ctx.fill();
+
+        // Bụi cây hoa trang trí trường đua hoàng gia
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+        for (let y = circuit.topY + halfRoad + 8; y < circuit.botY - halfRoad - 8; y += 24) {
+          ctx.fillRect(circuit.leftX - 8, y, infieldW - 8, 12);
+        }
+      }
+      ctx.restore();
+
+      // 3. Vẽ bề mặt đường đua khép kín (Track Ribbon Surface)
+      ctx.save();
+      // Lớp viền cỏ/đất nền
+      ctx.beginPath();
+      for (let i = 0; i < K; i++) {
+        const pt = circuit.sampleDist(circuit.cumDist[i]);
+        const ox = pt.x + pt.nx * (halfRoad + 6);
+        const oy = pt.y + pt.ny * (halfRoad + 6);
+        if (i === 0) ctx.moveTo(ox, oy);
+        else ctx.lineTo(ox, oy);
+      }
+      ctx.closePath();
+      ctx.fillStyle = (scene.type === 'dirt') ? '#78350f' : '#064e3b';
+      ctx.fill();
+
+      // Bề mặt đường đua chính
+      ctx.beginPath();
+      for (let i = 0; i < K; i++) {
+        const pt = circuit.sampleDist(circuit.cumDist[i]);
+        const ox = pt.x + pt.nx * halfRoad;
+        const oy = pt.y + pt.ny * halfRoad;
+        if (i === 0) ctx.moveTo(ox, oy);
+        else ctx.lineTo(ox, oy);
+      }
+      ctx.closePath();
+      ctx.fillStyle = scene.trackColor;
+      ctx.fill();
+
+      // Các sọc cỏ cắt manicured turf hoặc cát đầm
+      ctx.strokeStyle = scene.trackStripe;
+      ctx.lineWidth = 4;
+      ctx.setLineDash([16, 24]);
+      ctx.beginPath();
+      for (let i = 0; i < K; i++) {
+        const pt = circuit.sampleDist(circuit.cumDist[i]);
+        if (i === 0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      }
+      ctx.closePath();
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // 4. Hàng rào trắng đặc trưng của trường đua ngựa (White Running Rails)
+      // Hàng rào ngoài (Outer Rail)
+      ctx.strokeStyle = scene.railColor;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      for (let i = 0; i < K; i++) {
+        const pt = circuit.sampleDist(circuit.cumDist[i]);
+        const ox = pt.x + pt.nx * (halfRoad + 1);
+        const oy = pt.y + pt.ny * (halfRoad + 1);
+        if (i === 0) ctx.moveTo(ox, oy);
+        else ctx.lineTo(ox, oy);
+      }
+      ctx.closePath();
+      ctx.stroke();
+
+      // Hàng rào trong (Inner Rail)
+      ctx.beginPath();
+      for (let i = 0; i < K; i++) {
+        const pt = circuit.sampleDist(circuit.cumDist[i]);
+        const ix = pt.x - pt.nx * (halfRoad + 1);
+        const iy = pt.y - pt.ny * (halfRoad + 1);
+        if (i === 0) ctx.moveTo(ix, iy);
+        else ctx.lineTo(ix, iy);
+      }
+      ctx.closePath();
+      ctx.stroke();
+
+      // Cột rào trắng (Fence Posts)
+      ctx.fillStyle = scene.railPostColor;
+      for (let i = 0; i < K; i += 8) {
+        const pt = circuit.sampleDist(circuit.cumDist[i]);
+        // Cột ngoài
+        ctx.fillRect(pt.x + pt.nx * (halfRoad + 1) - 1.5, pt.y + pt.ny * (halfRoad + 1) - 1.5, 3, 3);
+        // Cột trong
+        ctx.fillRect(pt.x - pt.nx * (halfRoad + 1) - 1.5, pt.y - pt.ny * (halfRoad + 1) - 1.5, 3, 3);
+      }
+
+      // 5. Vạch Xuất Phát / Về Đích (Start / Finish Winning Post)
+      const startPt = circuit.startPt;
+      ctx.save();
+      ctx.translate(startPt.x, startPt.y);
+      ctx.rotate(startPt.angle);
+
+      // Dải cờ ca-rô đích trên mặt sân
+      const numChecks = 10;
+      const checkW = 6;
+      const checkH = circuit.roadW / numChecks;
+      for (let c = 0; c < numChecks; c++) {
+        ctx.fillStyle = (c % 2 === 0) ? '#ffffff' : '#000000';
+        ctx.fillRect(-checkW, -halfRoad + c * checkH, checkW, checkH);
+        ctx.fillStyle = (c % 2 === 0) ? '#000000' : '#ffffff';
+        ctx.fillRect(0, -halfRoad + c * checkH, checkW, checkH);
+      }
+
+      // Cột mốc về đích (Winning Post - Đỏ trắng truyền thống)
+      ctx.fillStyle = '#dc2626';
+      ctx.fillRect(-4, -halfRoad - 18, 8, 18);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(-4, -halfRoad - 14, 8, 5);
+      ctx.beginPath();
+      ctx.arc(0, -halfRoad - 18, 6, 0, Math.PI * 2);
+      ctx.fillStyle = '#f59e0b';
+      ctx.fill();
+
+      // Biển báo cờ hiệu FINISH
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 9px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('FINISH', 0, -halfRoad - 22);
+
+      ctx.restore();
+      ctx.restore();
+
+      // 6. Vẽ các hạt bụi đất / cát / cỏ bay
+      ctx.save();
+      horseDustParticles.forEach(p => {
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.alpha;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.restore();
+
+      // 7. Vẽ các chú ngựa phi nước đại (Galloping Horses)
+      const sortedHorses = [...horseCarList].sort((a, b) => b.dist - a.dist);
+      const topLeader = sortedHorses[0];
+
+      // Sắp xếp thứ tự vẽ theo trục Y để ngựa phía dưới đè lên ngựa phía trên tự nhiên
+      const drawOrder = [...horseCarList].sort((a, b) => a.y - b.y);
+      drawOrder.forEach(horse => {
+        const isLeader = (horse.id === topLeader.id);
+        drawGallopingHorse(ctx, horse, isLeader, now, scene);
+      });
+    }
+
+    function renderHorseScenery(ctx, w, h, scene, now) {
+      // Bầu trời & nền
+      const grad = ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, scene.skyTop);
+      grad.addColorStop(1, scene.skyBot);
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, w, h);
+
+      // Mặt cỏ/đồi thoai thoải ở góc xa
+      ctx.fillStyle = (scene.type === 'dirt') ? 'rgba(180, 83, 9, 0.25)' : 'rgba(22, 101, 52, 0.35)';
+      ctx.beginPath();
+      ctx.arc(w * 0.2, h * 0.1, w * 0.35, 0, Math.PI);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(w * 0.8, h * 0.15, w * 0.4, 0, Math.PI);
+      ctx.fill();
+
+      // Banner tên trường đua ở góc trên
+      ctx.save();
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+      ctx.font = '900 16px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(scene.banner, w * 0.5, 26);
+      ctx.restore();
+    }
+
+    // =========================================================================
+    // VẼ CHIẾN MÃ PHI NƯỚC ĐẠI & KỴ SĨ (GALLOPING HORSE & JOCKEY)
+    // =========================================================================
+    function drawGallopingHorse(ctx, horse, isLeader, now, scene) {
+      ctx.save();
+      ctx.translate(horse.x, horse.y);
+      ctx.rotate(horse.angle);
+
+      // Nhịp phi nước đại (Gallop Phase) dựa trên quãng đường chạy
+      const phase = (horse.dist * 0.20) + horse.phaseOffset;
+      const bodyBob = -Math.abs(Math.sin(phase)) * 4; // Ngựa nhún lên xuống khi phi
+
+      // 1. Bóng đổ dưới mặt đất
+      ctx.save();
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.28)';
+      ctx.beginPath();
+      ctx.ellipse(0, 5, 20, 7, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      const coat = horse.coat;
+
+      // 2. Chân sau bên phải (Far Hind Leg)
+      const hind2Stride = Math.sin(phase + 0.9);
+      drawHorseLeg(ctx, -14, bodyBob, hind2Stride, coat.points, false, true);
+
+      // 3. Chân trước bên phải (Far Fore Leg)
+      const fore2Stride = Math.sin(phase + 0.5);
+      drawHorseLeg(ctx, 12, bodyBob, fore2Stride, coat.points, true, true);
+
+      // 4. Đuôi ngựa (Flowing Tail)
+      ctx.save();
+      ctx.fillStyle = coat.tail;
+      ctx.beginPath();
+      const tailWave = Math.sin(phase * 1.8) * 5;
+      ctx.moveTo(-16, bodyBob);
+      ctx.quadraticCurveTo(-26, bodyBob - 4 + tailWave, -34, bodyBob + 2 + tailWave);
+      ctx.quadraticCurveTo(-24, bodyBob + 6 + tailWave, -16, bodyBob + 3);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+
+      // 5. Thân ngựa (Muscular Horse Torso)
+      ctx.save();
+      // Khối hông & mông tròn nở
+      ctx.fillStyle = coat.body;
+      ctx.beginPath();
+      ctx.ellipse(-10, bodyBob, 11, 7, -0.08, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Bụng & ức ngực vạm vỡ
+      ctx.beginPath();
+      ctx.ellipse(6, bodyBob - 1, 12, 7.5, 0.08, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Highlight ánh bóng trên lưng
+      ctx.fillStyle = coat.highlight;
+      ctx.beginPath();
+      ctx.ellipse(-2, bodyBob - 3, 10, 3, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // 6. Cổ & Đầu ngựa vươn dài (Neck & Head)
+      ctx.save();
+      ctx.fillStyle = coat.body;
+      const neckBob = bodyBob + Math.sin(phase) * 2;
+      ctx.beginPath();
+      ctx.moveTo(8, bodyBob - 4);
+      ctx.lineTo(19, neckBob - 10);
+      ctx.lineTo(26, neckBob - 7); // Mõm ngựa
+      ctx.lineTo(23, neckBob - 2);
+      ctx.lineTo(12, bodyBob + 4);
+      ctx.closePath();
+      ctx.fill();
+
+      // Tai ngựa vểnh lên phía trước
+      ctx.fillStyle = coat.points;
+      ctx.beginPath();
+      ctx.moveTo(17, neckBob - 10);
+      ctx.lineTo(19, neckBob - 15);
+      ctx.lineTo(21, neckBob - 10);
+      ctx.fill();
+
+      // Mõm đen & Mắt sáng
+      ctx.fillStyle = coat.points;
+      ctx.fillRect(24, neckBob - 7, 3, 3);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(20, neckBob - 8, 2, 2);
+      ctx.fillStyle = '#000000';
+      ctx.fillRect(20.5, neckBob - 7.5, 1, 1);
+
+      // Bờm ngựa bay phấp phới trong gió (Flowing Mane)
+      ctx.fillStyle = coat.mane;
+      ctx.beginPath();
+      for (let m = 0; m < 5; m++) {
+        const mx = 10 + m * 2;
+        const my = bodyBob - 5 - m * 1.4;
+        const maneWave = Math.sin(phase * 2 + m) * 3;
+        ctx.moveTo(mx, my);
+        ctx.lineTo(mx - 4 + maneWave, my - 5);
+        ctx.lineTo(mx - 2, my + 1);
+      }
+      ctx.fill();
+
+      // Dây cương (Bridle & Reins)
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(23, neckBob - 4);
+      ctx.lineTo(19, neckBob - 8);
+      ctx.lineTo(4, bodyBob - 6); // Nối về tay kỵ sĩ
+      ctx.stroke();
+      ctx.restore();
+
+      // 7. Chân sau bên trái (Near Hind Leg - Ở góc nhìn gần)
+      const hind1Stride = Math.sin(phase - 0.4);
+      drawHorseLeg(ctx, -12, bodyBob, hind1Stride, coat.body, false, false);
+
+      // 8. Chân trước bên trái (Near Fore Leg)
+      const fore1Stride = Math.sin(phase);
+      drawHorseLeg(ctx, 10, bodyBob, fore1Stride, coat.body, true, false);
+
+      // 9. Tấm lót yên & Kỵ sĩ (Saddle Cloth & Jockey)
+      ctx.save();
+      // Tấm thảm yên có màu cờ của học sinh
+      ctx.fillStyle = horse.saddleColor;
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(-7, bodyBob - 7, 14, 10, 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Số hiệu trên yên ngựa (#1, #2...)
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 7px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(String(horse.number), 0, bodyBob - 2);
+
+      // Kỵ sĩ cúi người sát lưng ngựa phi (Jockey Racing Crouch)
+      // Thân kỵ sĩ (Áo lụa màu đội)
+      ctx.fillStyle = horse.silkColor;
+      ctx.beginPath();
+      ctx.ellipse(-2, bodyBob - 9, 6, 4, 0.35, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Quần cưỡi ngựa màu trắng
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(-6, bodyBob - 7, 4, 4);
+
+      // Mũ bảo hiểm & Đầu kỵ sĩ
+      ctx.fillStyle = horse.silkColor;
+      ctx.beginPath();
+      ctx.arc(3, bodyBob - 12, 3.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Kính bảo hộ (Goggles)
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillRect(4.5, bodyBob - 13, 2, 2);
+
+      ctx.restore();
+
+      // 10. Thẻ Tên Học Sinh Nổi Trên Đầu Chiến Mã (Name Badge)
+      // Quay ngược góc lại để thẻ tên luôn nằm ngang hoàn hảo, dễ đọc 100%
+      ctx.rotate(-horse.angle);
+
+      const badgeText = horse.shortName;
+      ctx.font = isLeader ? 'bold 11px sans-serif' : 'bold 10px sans-serif';
+      const textMetrics = ctx.measureText(badgeText);
+      const badgeW = Math.max(textMetrics.width + 24, 52);
+      const badgeH = 20;
+      const badgeX = -badgeW / 2;
+      const badgeY = -34;
+
+      // Hào quang dẫn đầu nếu là ngựa P1
+      if (isLeader) {
+        ctx.save();
+        ctx.shadowColor = '#f59e0b';
+        ctx.shadowBlur = 12;
+        ctx.fillStyle = 'rgba(245, 158, 11, 0.95)';
+        ctx.beginPath();
+        ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 10);
+        ctx.fill();
+        ctx.restore();
+
+        ctx.fillStyle = '#78350f';
+        ctx.strokeStyle = '#fef08a';
+        ctx.lineWidth = 1.8;
+      } else {
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.90)';
+        ctx.strokeStyle = horse.silkColor;
+        ctx.lineWidth = 1.5;
+      }
+
+      ctx.beginPath();
+      ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 10);
+      ctx.fill();
+      ctx.stroke();
+
+      // Chữ trên thẻ tên
+      ctx.fillStyle = isLeader ? '#ffffff' : '#f8fafc';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      const icon = isLeader ? '👑 ' : `[#${horse.number}] `;
+      ctx.fillText(icon + badgeText, 0, badgeY + badgeH / 2);
+
+      ctx.restore();
+    }
+
+    // Hàm vẽ chân ngựa với khớp gối & móng guốc
+    function drawHorseLeg(ctx, hipX, hipY, stride, color, isFore, isFar) {
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.fillStyle = '#1e293b'; // Màu móng guốc
+      ctx.lineWidth = isFar ? 2.2 : 2.8;
+
+      const sign = isFore ? 1 : -1;
+      const kneeReach = stride * 8;
+      const footReach = stride * 12;
+
+      const kneeX = hipX + sign * 4 + kneeReach * 0.5;
+      const kneeY = hipY + 7;
+      const footX = hipX + sign * 2 + footReach;
+      const footY = hipY + 14 + Math.abs(stride) * 2;
+
+      ctx.beginPath();
+      ctx.moveTo(hipX, hipY);
+      ctx.lineTo(kneeX, kneeY);
+      ctx.lineTo(footX, footY);
+      ctx.stroke();
+
+      // Móng guốc (Hoof)
+      ctx.fillRect(footX - 1.5, footY - 1, 3, 2.5);
+      ctx.restore();
+    }
+
     let wheelAngle = 0;
     function handleModeChange() {
       const mode = document.getElementById('spin-mode').value;
@@ -12113,11 +13599,13 @@
       const canvasContainer = document.getElementById('wheel-canvas-container');
       const duckContainer = document.getElementById('duck-race-container');
       const f1Container = document.getElementById('f1-race-container');
+      const horseContainer = document.getElementById('horse-race-container');
 
       if (grid) grid.classList.add('hidden');
       if (canvasContainer) canvasContainer.classList.add('hidden');
       if (duckContainer) duckContainer.classList.add('hidden');
       if (f1Container) f1Container.classList.add('hidden');
+      if (horseContainer) horseContainer.classList.add('hidden');
 
       if (mode === 'wheel_pie') {
         if (canvasContainer) canvasContainer.classList.remove('hidden');
@@ -12130,6 +13618,13 @@
         if (f1Container) f1Container.classList.remove('hidden');
         initF1Race(true);
         setTimeout(() => { if (typeof resizeF1Canvas === 'function') resizeF1Canvas(); }, 50);
+      } else if (mode === 'horse') {
+        if (horseContainer) horseContainer.classList.remove('hidden');
+        initHorseRace(true);
+        setTimeout(() => { 
+          if (typeof resizeHorseCanvas === 'function') resizeHorseCanvas(); 
+          if (window.lucide) lucide.createIcons();
+        }, 50);
       } else {
         if (grid) grid.classList.remove('hidden');
         renderStage();
@@ -12261,6 +13756,20 @@
         const raceDuration = Math.max(4000, Math.round(durationSec * 1300 * lapMultiplier));
         btn.innerHTML = "🏎️ ĐANG ĐUA F1...";
         startF1Race(selected, raceDuration, () => {
+          currentWinner = selected;
+          // Vừa chạm vạch đích là lập tức gọi tên luôn, không chờ thêm
+          showWinnerResult(selected, btn);
+        });
+        return;
+      }
+
+      // If horse mode, run Royal Derby Horse Race simulation
+      if (mode === 'horse') {
+        const durationSec = parseInt(document.getElementById('spin-duration').value || 3);
+        const lapMultiplier = (horseTargetLaps > 1) ? (1 + (horseTargetLaps - 1) * 0.75) : 1;
+        const raceDuration = Math.max(4000, Math.round(durationSec * 1300 * lapMultiplier));
+        btn.innerHTML = "🐎 ĐANG ĐUA NGỰA...";
+        startHorseRace(selected, raceDuration, () => {
           currentWinner = selected;
           // Vừa chạm vạch đích là lập tức gọi tên luôn, không chờ thêm
           showWinnerResult(selected, btn);
@@ -12431,7 +13940,8 @@
         const mode = document.getElementById('spin-mode') ? document.getElementById('spin-mode').value : '';
         const isDuck = (mode === 'duck');
         const isF1 = (mode === 'f1');
-        btn.innerHTML = isF1 ? "🏎️ ĐUA TIẾP" : (isDuck ? "🦆 ĐUA TIẾP" : "🎲 QUAY LẠI"); 
+        const isHorse = (mode === 'horse');
+        btn.innerHTML = isF1 ? "🏎️ ĐUA TIẾP" : (isHorse ? "🐎 ĐUA TIẾP" : (isDuck ? "🦆 ĐUA TIẾP" : "🎲 QUAY LẠI")); 
         btn.classList.remove('opacity-70');
       }
     }
@@ -12489,6 +13999,8 @@
         initDuckRace(true);
       } else if (mode === 'f1') {
         initF1Race(true);
+      } else if (mode === 'horse') {
+        initHorseRace(true);
       }
       closeModalUi('result-modal', 'result-content'); 
 
@@ -12508,6 +14020,8 @@
         initDuckRace(true);
       } else if (mode === 'f1') {
         initF1Race(true);
+      } else if (mode === 'horse') {
+        initHorseRace(true);
       }
     }
 
