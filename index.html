@@ -1661,17 +1661,17 @@
             <!-- ĐƯỜNG ĐUA XE F1 QUANH CO -->
             <div id="f1-race-container" class="hidden flex flex-col relative w-full h-[460px] md:h-[540px] bg-slate-950 border border-slate-700 rounded-3xl overflow-hidden shadow-inner select-none transition-all">
               <!-- Thanh điều khiển đường đua F1 (Tách riêng trên cùng, KHÔNG CHE KHUẤT đường đua và vạch đích) -->
-              <div class="shrink-0 px-3.5 py-2 bg-slate-900/95 border-b border-slate-800/80 z-30 flex flex-wrap items-center justify-between gap-2">
-                <div class="flex items-center gap-2 bg-slate-950/80 backdrop-blur-md px-3 py-1.5 rounded-xl shadow-sm border border-white/10 text-white">
-                  <span class="text-xs font-black text-rose-500 flex items-center gap-1.5"><span class="text-base animate-pulse">🏎️</span> GIẢI ĐUA F1 GRAND PRIX</span>
-                  <span class="h-3.5 w-[1px] bg-slate-700"></span>
-                  <span id="f1-race-status" class="text-[11px] font-bold text-slate-300">Sẵn sàng xuất phát</span>
+              <div class="shrink-0 px-3 py-2 bg-slate-900/95 border-b border-slate-800/80 z-30 flex items-center justify-between gap-2 overflow-x-auto no-scrollbar">
+                <div class="flex items-center gap-2 bg-slate-950/80 backdrop-blur-md px-2.5 py-1.5 rounded-xl shadow-sm border border-white/10 text-white shrink-0 min-w-0">
+                  <span class="text-xs font-black text-rose-500 flex items-center gap-1 shrink-0"><span class="text-base animate-pulse">🏎️</span> <span class="hidden md:inline">GIẢI ĐUA F1</span></span>
+                  <span class="h-3.5 w-[1px] bg-slate-700 shrink-0"></span>
+                  <span id="f1-race-status" class="text-[11px] font-bold text-slate-300 truncate max-w-[200px] sm:max-w-[280px] md:max-w-[360px]">Sẵn sàng xuất phát</span>
                 </div>
                 
-                <div class="flex items-center gap-1.5 md:gap-2">
+                <div class="flex items-center gap-1.5 md:gap-2 shrink-0">
                   <!-- Nút chuyển cảnh chặng đua F1 -->
                   <div class="relative" id="f1-scene-dropdown-wrapper">
-                    <button id="btn-f1-scene" onclick="toggleF1SceneMenu(event)" class="bg-slate-900/90 hover:bg-slate-800 backdrop-blur-md px-2.5 md:px-3 py-1.5 rounded-xl shadow-sm border border-amber-400/40 text-xs font-bold text-amber-300 flex items-center gap-1.5 transition hover:scale-105 active:scale-95" title="Đổi cảnh đường đua F1 (Phím C)">
+                    <button id="btn-f1-scene" onclick="toggleF1SceneMenu(event)" class="bg-slate-900/90 hover:bg-slate-800 backdrop-blur-md px-2.5 md:px-3 py-1.5 rounded-xl shadow-sm border border-amber-400/40 text-xs font-bold text-amber-300 flex items-center gap-1.5 transition hover:scale-105 active:scale-95 shrink-0" title="Đổi cảnh đường đua F1 (Phím C)">
                       <span id="f1-scene-icon">🌴</span>
                       <span id="f1-scene-name" class="hidden sm:inline">Monaco GP</span>
                       <span class="text-[9px] text-amber-400/80">▼</span>
@@ -1736,23 +1736,23 @@
                     </div>
                   </div>
                   <!-- Nút chọn số vòng đua khép kín (Laps Selector: 1 vòng, 2 vòng, 3 vòng, 5 vòng) -->
-                  <button id="btn-f1-laps" onclick="cycleF1TargetLaps()" class="bg-slate-900/90 hover:bg-slate-800 backdrop-blur-md px-2.5 md:px-3 py-1.5 rounded-xl shadow-sm border border-emerald-400/40 text-xs font-bold text-emerald-300 flex items-center gap-1.5 transition hover:scale-105 active:scale-95" title="Chọn số vòng đua khép kín (Phím L: 1 vòng, 2 vòng, 3 vòng...)">
+                  <button id="btn-f1-laps" onclick="cycleF1TargetLaps()" class="bg-slate-900/90 hover:bg-slate-800 backdrop-blur-md px-2.5 md:px-3 py-1.5 rounded-xl shadow-sm border border-emerald-400/40 text-xs font-bold text-emerald-300 flex items-center gap-1.5 transition hover:scale-105 active:scale-95 shrink-0" title="Chọn số vòng đua khép kín (Phím L: 1 vòng, 2 vòng, 3 vòng...)">
                     <span id="f1-laps-icon">🔄</span> <span id="f1-laps-text">1 Vòng</span>
                   </button>
-                  <button onclick="if(!f1RaceRunning) startSpin();" class="bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-700 hover:to-red-700 text-white px-3 py-1.5 rounded-xl shadow-sm text-xs font-black flex items-center gap-1.5 transition hover:scale-105 active:scale-95" title="Bấm vào đây hoặc nhấn phím Space trên bàn phím để chạy đua">
-                    <kbd class="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-mono text-white">Space</kbd> <span>Đua ngay</span>
+                  <button onclick="if(!f1RaceRunning) startSpin();" class="bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-700 hover:to-red-700 text-white px-3 py-1.5 rounded-xl shadow-sm text-xs font-black flex items-center gap-1.5 transition hover:scale-105 active:scale-95 shrink-0" title="Bấm vào đây hoặc nhấn phím Space trên bàn phím để chạy đua">
+                    <kbd class="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-mono text-white">Space</kbd> <span class="hidden xs:inline">Đua ngay</span>
                   </button>
                   <!-- Nút chuyển đổi Góc nhìn Buồng lái F1 trực diện / Toàn cảnh -->
-                  <button id="btn-f1-view" onclick="toggleF1ViewMode()" class="bg-slate-900/90 hover:bg-slate-800 backdrop-blur-md px-2.5 md:px-3 py-1.5 rounded-xl shadow-sm border border-cyan-400/40 text-xs font-bold text-cyan-300 flex items-center gap-1.5 transition hover:scale-105 active:scale-95" title="Đổi góc nhìn Buồng Lái / Toàn Cảnh (Phím V)">
+                  <button id="btn-f1-view" onclick="toggleF1ViewMode()" class="bg-slate-900/90 hover:bg-slate-800 backdrop-blur-md px-2.5 md:px-3 py-1.5 rounded-xl shadow-sm border border-cyan-400/40 text-xs font-bold text-cyan-300 flex items-center gap-1.5 transition hover:scale-105 active:scale-95 shrink-0" title="Đổi góc nhìn Buồng Lái / Toàn Cảnh (Phím V)">
                     <span id="f1-view-icon">🕹️</span> <span class="hidden sm:inline" id="f1-view-text">Buồng lái 3D</span>
                   </button>
-                  <button id="btn-f1-sound" onclick="toggleF1Sound()" class="bg-slate-900/90 hover:bg-slate-800 backdrop-blur-md px-2.5 md:px-3 py-1.5 rounded-xl shadow-sm border border-white/20 text-xs font-bold text-slate-200 flex items-center gap-1 transition" title="Bật/Tắt âm thanh">
+                  <button id="btn-f1-sound" onclick="toggleF1Sound()" class="bg-slate-900/90 hover:bg-slate-800 backdrop-blur-md px-2.5 md:px-3 py-1.5 rounded-xl shadow-sm border border-white/20 text-xs font-bold text-slate-200 flex items-center gap-1 transition shrink-0" title="Bật/Tắt âm thanh">
                     <span id="f1-sound-icon">🔊</span> <span class="hidden sm:inline" id="f1-sound-text">Âm thanh</span>
                   </button>
-                  <button onclick="toggleF1Fullscreen()" class="bg-slate-900/90 hover:bg-slate-800 backdrop-blur-md px-2.5 md:px-3 py-1.5 rounded-xl shadow-sm border border-white/20 text-xs font-bold text-slate-200 flex items-center gap-1 transition hover:text-rose-400" title="Toàn màn hình trình chiếu máy chiếu/TV (Bấm Space để chạy)">
+                  <button onclick="toggleF1Fullscreen()" class="bg-slate-900/90 hover:bg-slate-800 backdrop-blur-md px-2.5 md:px-3 py-1.5 rounded-xl shadow-sm border border-white/20 text-xs font-bold text-slate-200 flex items-center gap-1 transition hover:text-rose-400 shrink-0" title="Toàn màn hình trình chiếu máy chiếu/TV (Bấm Space để chạy)">
                     <i data-lucide="maximize" class="w-3.5 h-3.5 text-rose-500"></i> <span class="hidden sm:inline">Toàn màn hình</span>
                   </button>
-                  <button onclick="resetF1RacePositions()" class="bg-slate-900/90 hover:bg-slate-800 backdrop-blur-md px-2.5 md:px-3 py-1.5 rounded-xl shadow-sm border border-white/20 text-xs font-bold text-slate-200 flex items-center gap-1 transition hover:text-rose-400" title="Đặt lại vạch xuất phát">
+                  <button onclick="resetF1RacePositions()" class="bg-slate-900/90 hover:bg-slate-800 backdrop-blur-md px-2.5 md:px-3 py-1.5 rounded-xl shadow-sm border border-white/20 text-xs font-bold text-slate-200 flex items-center gap-1 transition hover:text-rose-400 shrink-0" title="Đặt lại vạch xuất phát">
                     <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-400"></i> <span class="hidden sm:inline">Đặt lại</span>
                   </button>
                 </div>
@@ -1764,7 +1764,7 @@
                 <canvas id="f1-race-canvas" class="w-full h-full block"></canvas>
 
                 <!-- Bảng Dẫn Đầu F1 (Live Leaderboard) nằm trong lòng sân nội đồng (Infield), KHÔNG CHE KHUẤT xe hay đường đua -->
-                <div id="f1-leaderboard" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 bg-slate-950/85 backdrop-blur-md px-3.5 py-2 rounded-2xl shadow-2xl border border-rose-500/40 text-white text-[11px] w-[260px] hidden transition-all pointer-events-auto">
+                <div id="f1-leaderboard" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 bg-slate-950/85 backdrop-blur-md px-3.5 py-2.5 rounded-2xl shadow-2xl border border-rose-500/40 text-white text-[11px] w-[275px] md:w-[290px] hidden transition-all pointer-events-auto">
                   <div class="font-black text-rose-400 uppercase text-[9px] tracking-wider mb-1 flex items-center justify-between">
                     <span class="flex items-center gap-1">🏁 Top Dẫn Đầu F1</span>
                     <div class="flex items-center gap-1.5">
@@ -1792,6 +1792,7 @@
             </div>
           </div>
         </div>
+      </div>
       </section>
 
       <!-- TAB TUYÊN DƯƠNG -->
@@ -10242,9 +10243,11 @@
           const startXPos = pt.x + pt.nx * laneRatio * (circuit.roadW * 0.44);
           const startYPos = pt.y + pt.ny * laneRatio * (circuit.roadW * 0.44);
 
+          const shortName = (typeof getShortName === 'function') ? getShortName(s) : s.name;
           return {
             id: s.id,
-            name: s.name,
+            name: shortName,
+            fullName: s.name,
             avatar: s.avatar,
             code: s.code || '',
             theme: teamTheme,
@@ -10591,7 +10594,7 @@
           car.angle = finishPt.angle;
 
           const statusEl = document.getElementById('f1-race-status');
-          if (statusEl) statusEl.innerText = '🏁 ' + car.name + ' CHIẾN THẮNG!';
+          if (statusEl) statusEl.innerText = '🏁 ' + (car.fullName || car.name) + ' CHIẾN THẮNG!';
 
           F1Audio.playFinishFanfare();
           confetti({ particleCount: 260, spread: 110, origin: { y: 0.6 } });
@@ -10651,16 +10654,33 @@
       }
 
       const top4 = sorted.slice(0, 4);
-      topListEl.innerHTML = top4.map((c, i) => `
-        <div class="flex items-center justify-between gap-1.5 py-0.5 px-1.5 rounded ${i === 0 ? 'bg-rose-500/20 text-rose-300 font-black' : 'text-slate-300 font-bold'}">
-          <div class="flex items-center gap-1.5 truncate">
-            <span class="text-[9px] px-1 py-0.2 rounded font-mono ${i === 0 ? 'bg-amber-400 text-slate-950 font-black' : 'bg-slate-800 text-slate-400'}">P${i + 1}</span>
-            <span class="w-2 h-2 rounded-full shrink-0" style="background-color: ${c.color}"></span>
-            <span class="truncate max-w-[130px]">${c.name}</span>
-          </div>
-          <span class="text-[9px] font-mono opacity-70">${i === 0 ? 'LEADER' : '+' + Math.max(0, (sorted[0].dist - c.dist) * 0.08).toFixed(1) + 'm'}</span>
-        </div>
-      `).join('');
+      topListEl.innerHTML = top4.map((c, i) => {
+        const isLeader = (i === 0);
+        if (isLeader) {
+          return `
+            <div class="flex items-center justify-between gap-1.5 py-1.5 px-2 rounded-xl bg-gradient-to-r from-amber-500/25 via-rose-500/20 to-transparent border border-amber-400/40 text-white shadow-sm mb-1">
+              <div class="flex items-center gap-2 truncate min-w-0">
+                <span class="text-[10px] px-1.5 py-0.5 rounded-md font-mono bg-amber-400 text-slate-950 font-black shadow-xs shrink-0">P1</span>
+                <span class="w-3 h-3 rounded-full shrink-0 ring-2 ring-amber-400/60 shadow-xs" style="background-color: ${c.color}"></span>
+                <span class="truncate text-xs md:text-[13px] font-black tracking-tight text-amber-200" title="${c.fullName}">${c.fullName}</span>
+              </div>
+              <span class="text-[9px] font-mono font-black text-amber-300 bg-amber-400/20 px-1.5 py-0.5 rounded shrink-0">LEADER</span>
+            </div>
+          `;
+        } else {
+          const gapMeters = Math.max(0, (sorted[0].dist - c.dist) * 0.08).toFixed(1);
+          return `
+            <div class="flex items-center justify-between gap-1.5 py-0.5 px-2 rounded-lg text-slate-300 font-bold hover:bg-white/5 transition">
+              <div class="flex items-center gap-1.5 truncate min-w-0">
+                <span class="text-[9px] px-1 py-0.2 rounded font-mono bg-slate-800 text-slate-400 font-bold shrink-0">P${i + 1}</span>
+                <span class="w-2 h-2 rounded-full shrink-0" style="background-color: ${c.color}"></span>
+                <span class="truncate text-[10.5px] text-slate-200" title="${c.fullName}">${c.fullName}</span>
+              </div>
+              <span class="text-[9px] font-mono text-slate-400 opacity-80 shrink-0">+${gapMeters}m</span>
+            </div>
+          `;
+        }
+      }).join('');
     }
 
     function toggleF1LeaderboardCollapse(e) {
@@ -10684,10 +10704,10 @@
       if (!lb) return;
       if (f1ViewMode === 'cockpit') {
         // Trong chế độ buồng lái 3D: đặt góc trên trái
-        lb.className = "absolute top-3 left-3 z-20 bg-slate-950/85 backdrop-blur-md px-3.5 py-2 rounded-2xl shadow-2xl border border-rose-500/40 text-white text-[11px] w-[240px] transition-all pointer-events-auto";
+        lb.className = "absolute top-3 left-3 z-20 bg-slate-950/85 backdrop-blur-md px-3.5 py-2.5 rounded-2xl shadow-2xl border border-rose-500/40 text-white text-[11px] w-[260px] md:w-[280px] transition-all pointer-events-auto";
       } else {
         // Trong chế độ Toàn cảnh 2D: đặt chính giữa nội đồng sân đua (Infield) - không che bất kỳ khúc cua hay xe nào!
-        lb.className = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 bg-slate-950/85 backdrop-blur-md px-3.5 py-2 rounded-2xl shadow-2xl border border-rose-500/40 text-white text-[11px] w-[260px] transition-all pointer-events-auto";
+        lb.className = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 bg-slate-950/85 backdrop-blur-md px-3.5 py-2.5 rounded-2xl shadow-2xl border border-rose-500/40 text-white text-[11px] w-[275px] md:w-[290px] transition-all pointer-events-auto";
       }
     }
 
@@ -12306,6 +12326,13 @@
         else praiseBtn.classList.add('hidden');
       }
 
+      // HỖ TRỢ TOÀN MÀN HÌNH: Nếu đang ở chế độ Fullscreen máy chiếu/TV, đưa modal vào bên trong fullscreen element
+      const fsEl = document.fullscreenElement || document.webkitFullscreenElement;
+      const resModal = document.getElementById('result-modal');
+      if (fsEl && resModal && resModal.parentElement !== fsEl) {
+        fsEl.appendChild(resModal);
+      }
+
       openModalUi('result-modal', 'result-content');
       lucide.createIcons();
 
@@ -12374,6 +12401,14 @@
         initF1Race(true);
       }
       closeModalUi('result-modal', 'result-content'); 
+
+      // Hoàn trả modal về lại body sau khi đóng
+      setTimeout(() => {
+        const resModal = document.getElementById('result-modal');
+        if (resModal && resModal.parentElement !== document.body) {
+          document.body.appendChild(resModal);
+        }
+      }, 320);
     }
     function resetWheel() { 
       hiddenWheelIds = []; 
