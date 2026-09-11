@@ -4297,6 +4297,24 @@
         const obScreen = document.getElementById('onboarding-screen');
         let loaded = false;
 
+        // KIỂM TRA ĐĂNG XUẤT RÕ RÀNG TRƯỚC TIÊN:
+        // Nếu người dùng đã chủ động bấm "Đăng xuất" (userLoggedOut === 'true'),
+        // DỪNG NGAY LẬP TỨC và mở màn hình Đăng nhập. TUYỆT ĐỐI KHÔNG TỰ ĐỘNG PHỤC HỒI HOẶC TỰ ĐĂNG NHẬP LẠI!
+        const isExplicitLogout = localStorage.getItem('userLoggedOut') === 'true';
+        if (isExplicitLogout) {
+            localStorage.removeItem('currentUser');
+            authScreen.classList.remove('hidden');
+            authScreen.classList.add('flex');
+            if (obScreen) { obScreen.classList.add('hidden'); obScreen.classList.remove('flex'); }
+            const authId = document.getElementById('auth-id');
+            const authPass = document.getElementById('auth-pass');
+            if (authId) authId.value = '';
+            if (authPass) authPass.value = '';
+            const errorMsg = document.getElementById('auth-error');
+            if (errorMsg) errorMsg.classList.add('hidden');
+            return;
+        }
+
         // 0. Phục hồi tài khoản nếu currentUser bị trống, rỗng hoặc bị đè bởi template admin
         let savedUserStr = localStorage.getItem('currentUser');
         if (savedUserStr) {
@@ -4333,27 +4351,12 @@
             if (backupTeacher) {
                 savedUserStr = backupTeacher;
                 localStorage.setItem('currentUser', backupTeacher);
-                localStorage.removeItem('userLoggedOut');
             }
         }
 
-        if (!savedUserStr && !isExplicitLogout) {
+        if (!savedUserStr) {
             savedUserStr = JSON.stringify({ id: 'thaytuan', className: '12A17', role: 'teacher' });
             localStorage.setItem('currentUser', savedUserStr);
-        }
-
-        // Chỉ dừng lại và hiển thị Màn hình Đăng nhập nếu người dùng đã CHỦ ĐỘNG bấm Đăng xuất
-        if (isExplicitLogout) {
-            authScreen.classList.remove('hidden');
-            authScreen.classList.add('flex');
-            if (obScreen) { obScreen.classList.add('hidden'); obScreen.classList.remove('flex'); }
-            const authId = document.getElementById('auth-id');
-            const authPass = document.getElementById('auth-pass');
-            if (authId) authId.value = '';
-            if (authPass) authPass.value = '';
-            const errorMsg = document.getElementById('auth-error');
-            if (errorMsg) errorMsg.classList.add('hidden');
-            return;
         }
 
         // 1. Try to load from Supabase for the active logged-in user
@@ -5202,6 +5205,11 @@
         localStorage.removeItem('currentStudent'); 
         localStorage.removeItem('currentTeacherId'); 
         
+        currentUser = null;
+        currentUserRole = 'teacher';
+        currentStudent = null;
+        currentTeacherId = '';
+
         setTimeout(() => {
             location.reload(); 
         }, 500);
