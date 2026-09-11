@@ -1661,75 +1661,117 @@
             <!-- ĐƯỜNG ĐUA XE F1 QUANH CO -->
             <div id="f1-race-container" class="hidden flex flex-col relative w-full h-[460px] md:h-[540px] bg-slate-950 border border-slate-700 rounded-3xl overflow-hidden shadow-inner select-none transition-all">
               <!-- Thanh điều khiển đường đua F1 (Tách riêng trên cùng, KHÔNG CHE KHUẤT đường đua và vạch đích) -->
-              <div class="shrink-0 px-3 py-2 bg-slate-900/95 border-b border-slate-800/80 z-30 flex items-center justify-between gap-2 overflow-x-auto no-scrollbar">
-                <div class="flex items-center gap-2 bg-slate-950/80 backdrop-blur-md px-2.5 py-1.5 rounded-xl shadow-sm border border-white/10 text-white shrink-0 min-w-0">
+              <div class="shrink-0 px-2.5 sm:px-3 py-1.5 sm:py-2 bg-slate-900/95 border-b border-slate-800/80 z-40 flex items-center justify-between gap-1.5 sm:gap-2 flex-nowrap overflow-visible relative">
+                <div class="flex items-center gap-1.5 sm:gap-2 bg-slate-950/80 backdrop-blur-md px-2.5 py-1.5 rounded-xl shadow-sm border border-white/10 text-white min-w-0 max-w-[180px] sm:max-w-xs md:max-w-md">
                   <span class="text-xs font-black text-rose-500 flex items-center gap-1 shrink-0"><span class="text-base animate-pulse">🏎️</span> <span class="hidden md:inline">GIẢI ĐUA F1</span></span>
                   <span class="h-3.5 w-[1px] bg-slate-700 shrink-0"></span>
-                  <span id="f1-race-status" class="text-[11px] font-bold text-slate-300 truncate max-w-[200px] sm:max-w-[280px] md:max-w-[360px]">Sẵn sàng xuất phát</span>
+                  <span id="f1-race-status" class="text-[11px] font-bold text-slate-300 truncate">Sẵn sàng xuất phát</span>
                 </div>
                 
-                <div class="flex items-center gap-1.5 md:gap-2 shrink-0">
+                <div class="flex items-center gap-1 sm:gap-1.5 md:gap-2 shrink-0">
                   <!-- Nút chuyển cảnh chặng đua F1 -->
                   <div class="relative" id="f1-scene-dropdown-wrapper">
-                    <button id="btn-f1-scene" onclick="toggleF1SceneMenu(event)" class="bg-slate-900/90 hover:bg-slate-800 backdrop-blur-md px-2.5 md:px-3 py-1.5 rounded-xl shadow-sm border border-amber-400/40 text-xs font-bold text-amber-300 flex items-center gap-1.5 transition hover:scale-105 active:scale-95 shrink-0" title="Đổi cảnh đường đua F1 (Phím C)">
+                    <button type="button" id="btn-f1-scene" onclick="toggleF1SceneMenu(event)" class="bg-slate-900/90 hover:bg-slate-800 backdrop-blur-md px-2.5 md:px-3 py-1.5 rounded-xl shadow-sm border border-amber-400/40 text-xs font-bold text-amber-300 flex items-center gap-1.5 transition hover:scale-105 active:scale-95 shrink-0" title="Đổi cảnh đường đua F1 (Phím C)">
                       <span id="f1-scene-icon">🌴</span>
                       <span id="f1-scene-name" class="hidden sm:inline">Monaco GP</span>
                       <span class="text-[9px] text-amber-400/80">▼</span>
                     </button>
                     <!-- Dropdown danh sách cảnh -->
-                    <div id="f1-scene-dropdown" class="hidden absolute right-0 mt-2 w-64 bg-slate-950/95 backdrop-blur-xl border border-amber-400/30 rounded-2xl shadow-2xl p-1.5 z-50 text-white text-xs space-y-1">
+                    <div id="f1-scene-dropdown" class="hidden absolute right-0 top-full mt-2 w-72 max-w-[90vw] max-h-[75vh] overflow-y-auto bg-slate-950/98 backdrop-blur-2xl border border-amber-400/40 rounded-2xl shadow-2xl p-2 z-50 text-white text-xs space-y-1">
                       <div class="px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-amber-400/90 border-b border-white/10 flex items-center justify-between">
                         <span>Chặng Đua F1 Quanh Co</span>
                         <span class="text-[9px] font-mono text-slate-400 font-normal">Phím C đổi</span>
                       </div>
-                      <button onclick="selectF1Scene('monaco')" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
-                        <span class="text-base">🌴</span>
-                        <div class="flex-1">
-                          <div class="font-bold text-slate-200 group-hover:text-amber-300 flex items-center justify-between">Monaco GP <span class="text-[9px] text-emerald-400 font-normal">12 khúc quanh co</span></div>
-                          <div class="text-[10px] text-slate-400">Ven biển Monte Carlo, cua tay áo & bể bơi</div>
+                      <button type="button" onclick="selectF1Scene('monaco', event)" data-scene="monaco" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
+                        <span class="text-base shrink-0">🌴</span>
+                        <div class="flex-1 min-w-0">
+                          <div class="font-bold text-slate-200 group-hover:text-amber-300 flex items-center justify-between">
+                            <span>Monaco GP</span>
+                            <span class="flex items-center gap-1">
+                              <span class="text-[9px] text-emerald-400 font-normal">12 khúc quanh co</span>
+                              <span class="f1-scene-check hidden text-amber-400 font-bold">✓</span>
+                            </span>
+                          </div>
+                          <div class="text-[10px] text-slate-400 truncate">Ven biển Monte Carlo, cua tay áo & bể bơi</div>
                         </div>
                       </button>
-                      <button onclick="selectF1Scene('singapore')" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
-                        <span class="text-base">🌃</span>
-                        <div class="flex-1">
-                          <div class="font-bold text-slate-200 group-hover:text-amber-300 flex items-center justify-between">Singapore Đêm <span class="text-[9px] text-cyan-400 font-normal">14 góc cua</span></div>
-                          <div class="text-[10px] text-slate-400">Marina Bay & góc cua đô thị rực sáng neon</div>
+                      <button type="button" onclick="selectF1Scene('singapore', event)" data-scene="singapore" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
+                        <span class="text-base shrink-0">🌃</span>
+                        <div class="flex-1 min-w-0">
+                          <div class="font-bold text-slate-200 group-hover:text-amber-300 flex items-center justify-between">
+                            <span>Singapore Đêm</span>
+                            <span class="flex items-center gap-1">
+                              <span class="text-[9px] text-cyan-400 font-normal">14 góc cua</span>
+                              <span class="f1-scene-check hidden text-amber-400 font-bold">✓</span>
+                            </span>
+                          </div>
+                          <div class="text-[10px] text-slate-400 truncate">Marina Bay & góc cua đô thị rực sáng neon</div>
                         </div>
                       </button>
-                      <button onclick="selectF1Scene('bahrain')" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
-                        <span class="text-base">🏜️</span>
-                        <div class="flex-1">
-                          <div class="font-bold text-slate-200 group-hover:text-amber-300 flex items-center justify-between">Bahrain Sa Mạc <span class="text-[9px] text-amber-400 font-normal">10 khúc cua</span></div>
-                          <div class="text-[10px] text-slate-400">Hoàng hôn, đụn cát óng ả & cua kỹ thuật Sakhir</div>
+                      <button type="button" onclick="selectF1Scene('bahrain', event)" data-scene="bahrain" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
+                        <span class="text-base shrink-0">🏜️</span>
+                        <div class="flex-1 min-w-0">
+                          <div class="font-bold text-slate-200 group-hover:text-amber-300 flex items-center justify-between">
+                            <span>Bahrain Sa Mạc</span>
+                            <span class="flex items-center gap-1">
+                              <span class="text-[9px] text-amber-400 font-normal">10 khúc cua</span>
+                              <span class="f1-scene-check hidden text-amber-400 font-bold">✓</span>
+                            </span>
+                          </div>
+                          <div class="text-[10px] text-slate-400 truncate">Hoàng hôn, đụn cát óng ả & cua kỹ thuật Sakhir</div>
                         </div>
                       </button>
-                      <button onclick="selectF1Scene('silverstone')" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
-                        <span class="text-base">🌧️</span>
-                        <div class="flex-1">
-                          <div class="font-bold text-slate-200 group-hover:text-amber-300 flex items-center justify-between">Silverstone Mưa <span class="text-[9px] text-sky-400 font-normal">Esses liên hoàn</span></div>
-                          <div class="text-[10px] text-slate-400">Mưa bão, bụi nước & khúc cua Maggotts-Becketts</div>
+                      <button type="button" onclick="selectF1Scene('silverstone', event)" data-scene="silverstone" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
+                        <span class="text-base shrink-0">🌧️</span>
+                        <div class="flex-1 min-w-0">
+                          <div class="font-bold text-slate-200 group-hover:text-amber-300 flex items-center justify-between">
+                            <span>Silverstone Mưa</span>
+                            <span class="flex items-center gap-1">
+                              <span class="text-[9px] text-sky-400 font-normal">Esses liên hoàn</span>
+                              <span class="f1-scene-check hidden text-amber-400 font-bold">✓</span>
+                            </span>
+                          </div>
+                          <div class="text-[10px] text-slate-400 truncate">Mưa bão, bụi nước & khúc cua Maggotts-Becketts</div>
                         </div>
                       </button>
-                      <button onclick="selectF1Scene('straight')" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
-                        <span class="text-base">🚀</span>
-                        <div class="flex-1">
-                          <div class="font-bold text-slate-200 group-hover:text-amber-300 flex items-center justify-between">Đua Đường Thẳng <span class="text-[9px] text-emerald-400 font-normal">Speedway Oval</span></div>
-                          <div class="text-[10px] text-slate-400">Đại lộ Monza thẳng tắp & chicanes tốc độ cao</div>
+                      <button type="button" onclick="selectF1Scene('straight', event)" data-scene="straight" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
+                        <span class="text-base shrink-0">🚀</span>
+                        <div class="flex-1 min-w-0">
+                          <div class="font-bold text-slate-200 group-hover:text-amber-300 flex items-center justify-between">
+                            <span>Đua Đường Thẳng</span>
+                            <span class="flex items-center gap-1">
+                              <span class="text-[9px] text-emerald-400 font-normal">Speedway Oval</span>
+                              <span class="f1-scene-check hidden text-amber-400 font-bold">✓</span>
+                            </span>
+                          </div>
+                          <div class="text-[10px] text-slate-400 truncate">Đại lộ Monza thẳng tắp & chicanes tốc độ cao</div>
                         </div>
                       </button>
-                      <button onclick="selectF1Scene('cyberpunk')" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
-                        <span class="text-base">⚡</span>
-                        <div class="flex-1">
-                          <div class="font-bold text-slate-200 group-hover:text-amber-300 flex items-center justify-between">Tokyo Cyberpunk <span class="text-[9px] text-fuchsia-400 font-normal">14 góc laser</span></div>
-                          <div class="text-[10px] text-slate-400">Lưới laser synthwave & cua zíc-zắc 2099</div>
+                      <button type="button" onclick="selectF1Scene('cyberpunk', event)" data-scene="cyberpunk" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
+                        <span class="text-base shrink-0">⚡</span>
+                        <div class="flex-1 min-w-0">
+                          <div class="font-bold text-slate-200 group-hover:text-amber-300 flex items-center justify-between">
+                            <span>Tokyo Cyberpunk</span>
+                            <span class="flex items-center gap-1">
+                              <span class="text-[9px] text-fuchsia-400 font-normal">14 góc laser</span>
+                              <span class="f1-scene-check hidden text-amber-400 font-bold">✓</span>
+                            </span>
+                          </div>
+                          <div class="text-[10px] text-slate-400 truncate">Lưới laser synthwave & cua zíc-zắc 2099</div>
                         </div>
                       </button>
                       <div class="border-t border-white/10 pt-1">
-                        <button onclick="selectF1Scene('random')" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-amber-500/20 transition group">
-                          <span class="text-base">🎲</span>
-                          <div class="flex-1">
-                            <div class="font-bold text-amber-300 flex items-center justify-between">Tự Đổi Cảnh Ngẫu Nhiên <span class="text-[9px] text-amber-400 font-mono">Auto</span></div>
-                            <div class="text-[10px] text-slate-300">Tự chọn chặng đua mới mỗi lần xuất phát</div>
+                        <button type="button" onclick="selectF1Scene('random', event)" data-scene="random" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-amber-500/20 transition group">
+                          <span class="text-base shrink-0">🎲</span>
+                          <div class="flex-1 min-w-0">
+                            <div class="font-bold text-amber-300 flex items-center justify-between">
+                              <span>Tự Đổi Cảnh Ngẫu Nhiên</span>
+                              <span class="flex items-center gap-1">
+                                <span class="text-[9px] text-amber-400 font-mono">Auto</span>
+                                <span class="f1-scene-check hidden text-amber-400 font-bold">✓</span>
+                              </span>
+                            </div>
+                            <div class="text-[10px] text-slate-300 truncate">Tự chọn chặng đua mới mỗi lần xuất phát</div>
                           </div>
                         </button>
                       </div>
@@ -9991,10 +10033,40 @@
     let currentF1SceneKey = 'monaco';
     let isF1RandomScene = false;
 
-    function toggleF1SceneMenu(e) {
-      if (e) e.stopPropagation();
+    function updateF1SceneMenuHighlight() {
       const menu = document.getElementById('f1-scene-dropdown');
-      if (menu) menu.classList.toggle('hidden');
+      if (!menu) return;
+      const buttons = menu.querySelectorAll('button[data-scene]');
+      buttons.forEach(btn => {
+        const sc = btn.getAttribute('data-scene');
+        const isActive = isF1RandomScene ? (sc === 'random') : (sc === currentF1SceneKey);
+        const checkEl = btn.querySelector('.f1-scene-check');
+        if (isActive) {
+          btn.classList.add('bg-amber-500/20', 'border', 'border-amber-400/60');
+          btn.classList.remove('hover:bg-white/10');
+          if (checkEl) checkEl.classList.remove('hidden');
+        } else {
+          btn.classList.remove('bg-amber-500/20', 'border', 'border-amber-400/60');
+          btn.classList.add('hover:bg-white/10');
+          if (checkEl) checkEl.classList.add('hidden');
+        }
+      });
+    }
+
+    function toggleF1SceneMenu(e) {
+      if (e) {
+        e.stopPropagation();
+        e.preventDefault();
+      }
+      const menu = document.getElementById('f1-scene-dropdown');
+      if (!menu) return;
+      const isOpening = menu.classList.contains('hidden');
+      if (isOpening) {
+        menu.classList.remove('hidden');
+        updateF1SceneMenuHighlight();
+      } else {
+        menu.classList.add('hidden');
+      }
     }
 
     document.addEventListener('click', (e) => {
@@ -10005,7 +10077,11 @@
       }
     });
 
-    function selectF1Scene(sceneKey) {
+    function selectF1Scene(sceneKey, e) {
+      if (e) {
+        e.stopPropagation();
+        e.preventDefault();
+      }
       const menu = document.getElementById('f1-scene-dropdown');
       if (menu) menu.classList.add('hidden');
 
@@ -10035,24 +10111,31 @@
         localStorage.setItem('f1_scene', isRandom ? 'random' : sceneKey);
       } catch(e) {}
 
+      f1CurrentCircuit = null; // Xóa cache circuit để tính toán lại tọa độ đường đua mới
+
       const scene = F1_SCENES[sceneKey];
       const iconEl = document.getElementById('f1-scene-icon');
       const nameEl = document.getElementById('f1-scene-name');
       if (iconEl) iconEl.innerText = isRandom ? '🎲' : scene.icon;
       if (nameEl) nameEl.innerText = isRandom ? 'Ngẫu nhiên' : scene.name;
 
+      const carCount = (f1CarList && f1CarList.length > 0) ? f1CarList.length : students.filter(s => !hiddenWheelIds.includes(s.id)).length;
       const statusEl = document.getElementById('f1-race-status');
       if (statusEl && !f1RaceRunning) {
         const lapDesc = f1TargetLaps > 1 ? ` - ${f1TargetLaps} Vòng` : '';
         const modeDesc = (scene.id === 'straight') ? 'Đường thẳng' : 'Nhiều quanh co';
-        statusEl.innerText = `${scene.icon} ${scene.name} (${f1CarList.length} xe - ${modeDesc}${lapDesc})`;
+        statusEl.innerText = `${scene.icon} ${scene.name} (${carCount} xe - ${modeDesc}${lapDesc})`;
       }
 
-      if (!f1RaceRunning) {
+      if (!f1CarList || f1CarList.length === 0) {
+        initF1Race(true);
+      } else if (!f1RaceRunning) {
         resetF1RacePositions(true);
       } else {
         renderF1RaceCanvas(performance.now());
       }
+
+      updateF1SceneMenuHighlight();
     }
 
     // =========================================================================
@@ -10327,6 +10410,13 @@
       }
       const canvas = document.getElementById('f1-race-canvas');
       if (!canvas) return;
+      if (canvas.width <= 0 || canvas.height <= 0) {
+        resizeF1Canvas();
+      }
+      if (!f1CarList || f1CarList.length === 0) {
+        initF1Race(true);
+        return;
+      }
       const w = canvas.width;
       const h = canvas.height;
       const circuit = getF1ClosedCircuit(w, h, currentF1SceneKey);
