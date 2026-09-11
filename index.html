@@ -1762,6 +1762,32 @@
                           <div class="text-[10px] text-slate-400 truncate">Monte Carlo, cua tay áo Loews & ven vịnh du thuyền</div>
                         </div>
                       </button>
+                      <button type="button" onclick="selectF1Scene('redbullring', event)" data-scene="redbullring" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
+                        <span class="text-base shrink-0">🇦🇹</span>
+                        <div class="flex-1 min-w-0">
+                          <div class="font-bold text-slate-200 group-hover:text-amber-300 flex items-center justify-between">
+                            <span>Red Bull Ring Áo</span>
+                            <span class="flex items-center gap-1">
+                              <span class="text-[9px] text-red-400 font-normal">Spielberg</span>
+                              <span class="f1-scene-check hidden text-amber-400 font-bold">✓</span>
+                            </span>
+                          </div>
+                          <div class="text-[10px] text-slate-400 truncate">Dốc đồi Spielberg, góc cua Niki Lauda, Rauch & Rindt</div>
+                        </div>
+                      </button>
+                      <button type="button" onclick="selectF1Scene('catalunya', event)" data-scene="catalunya" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
+                        <span class="text-base shrink-0">🇪🇸</span>
+                        <div class="flex-1 min-w-0">
+                          <div class="font-bold text-slate-200 group-hover:text-amber-300 flex items-center justify-between">
+                            <span>Catalunya Barcelona</span>
+                            <span class="flex items-center gap-1">
+                              <span class="text-[9px] text-amber-400 font-normal">16 khúc cua</span>
+                              <span class="f1-scene-check hidden text-amber-400 font-bold">✓</span>
+                            </span>
+                          </div>
+                          <div class="text-[10px] text-slate-400 truncate">Dốc Repsol, Campsa, La Caixa & Tam mã rực lửa</div>
+                        </div>
+                      </button>
                       <button type="button" onclick="selectF1Scene('bahrain', event)" data-scene="bahrain" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
                         <span class="text-base shrink-0">🏜️</span>
                         <div class="flex-1 min-w-0">
@@ -1846,23 +1872,11 @@
                 <!-- Canvas đường đua F1 -->
                 <canvas id="f1-race-canvas" class="w-full h-full block"></canvas>
 
-                <!-- Bảng Dẫn Đầu F1 (Live Leaderboard) có thể kéo thả di chuyển tự do hoặc chuyển góc tránh che đường đua, tên học sinh hiển thị đầy đủ -->
-                <div id="f1-leaderboard" class="absolute z-20 bg-slate-950/90 backdrop-blur-md px-3.5 py-2.5 rounded-2xl shadow-2xl border border-rose-500/40 text-white text-[11px] w-[330px] sm:w-[370px] md:w-[415px] max-w-[94vw] hidden transition-all pointer-events-auto select-none">
-                  <div id="f1-leaderboard-header" class="font-black text-rose-400 uppercase text-[9px] tracking-wider mb-1.5 flex items-center justify-between cursor-grab active:cursor-grabbing pb-1.5 border-b border-white/10" title="Nhấn giữ vào đây để kéo thả di chuyển vị trí bất kỳ">
-                    <span class="flex items-center gap-1.5">
-                      <span class="text-xs">🏁</span>
-                      <span>Top Dẫn Đầu F1</span>
-                      <span class="text-[8px] text-slate-400 lowercase font-normal hidden sm:inline">(kéo để dời)</span>
-                    </span>
-                    <div class="flex items-center gap-1.5">
-                      <span id="f1-leaderboard-lap" class="bg-rose-500/30 text-rose-300 px-1.5 py-0.5 rounded text-[8px] font-mono">VÒNG 1/1</span>
-                      <button type="button" onclick="cycleF1LeaderboardPos(event)" id="btn-f1-lb-pos" class="hover:bg-white/15 px-1.5 py-0.5 rounded text-[9.5px] text-amber-300 font-bold flex items-center gap-0.5 transition" title="Đổi vị trí bảng xếp hạng (Tránh che đường đua)">
-                        <span>📍</span> <span id="f1-lb-pos-text" class="text-[8.5px]">Tự động</span>
-                      </button>
-                      <button type="button" onclick="toggleF1LeaderboardCollapse(event)" id="btn-f1-lb-toggle" class="hover:bg-white/15 px-1.5 py-0.5 rounded text-[10px] text-slate-300 hover:text-white transition" title="Thu gọn / Mở rộng">➖</button>
-                    </div>
-                  </div>
-                  <div id="f1-top-list" class="space-y-1"></div>
+                <!-- Banner Vinh Danh Học Sinh Về Nhất F1 (Chỉ hiện khi cán đích) -->
+                <div id="f1-winner-banner" class="hidden absolute top-4 left-1/2 -translate-x-1/2 z-30 bg-gradient-to-r from-amber-500/95 via-rose-600/95 to-amber-500/95 text-white px-5 sm:px-7 py-2 sm:py-2.5 rounded-full shadow-2xl border-2 border-amber-300 flex items-center gap-2.5 sm:gap-3 backdrop-blur-md animate-bounce pointer-events-none max-w-[92vw]">
+                  <span class="text-xl sm:text-2xl shrink-0">🏆</span>
+                  <span id="f1-winner-banner-name" class="font-black text-xs sm:text-sm md:text-base tracking-wide uppercase drop-shadow-md text-amber-100 truncate">... VỀ NHẤT!</span>
+                  <span class="text-xl sm:text-2xl shrink-0">🏁</span>
                 </div>
 
                 <!-- Dàn 5 đèn đỏ F1 xuất phát -->
@@ -11035,6 +11049,140 @@
           { x: 575, y: 535 }
         ]
       },
+      redbullring: {
+        id: 'redbullring',
+        name: 'Red Bull Ring Áo',
+        icon: '🇦🇹',
+        subtitle: 'Dốc đồi Spielberg, góc cua Niki Lauda, Rauch & Rindt',
+        kerb1: '#dc2626',
+        kerb2: '#ffffff',
+        roadEdge: '#1e40af',
+        dashColor: 'rgba(255, 255, 255, 0.75)',
+        banner: 'AUSTRIAN GP • RED BULL RING SPIELBERG 🇦🇹',
+        roadW: 94,
+        waypoints: [
+          { x: 500, y: 640 }, // Vạch Start / Finish đáy
+          { x: 300, y: 640 },
+          { x: 190, y: 640 },
+          // T1: Cua 90 độ Niki Lauda dốc lên đồi
+          { x: 140, y: 615 },
+          { x: 125, y: 560 },
+          { x: 120, y: 490 },
+          // Sector 1: Dốc thẳng lên đỉnh núi
+          { x: 105, y: 390 },
+          { x: 80,  y: 270 },
+          { x: 50,  y: 150 },
+          // T2/T3: Cua gắt nhọn trên đỉnh đồi (Remus)
+          { x: 25,  y: 85 },
+          { x: 30,  y: 50 },
+          { x: 65,  y: 45 },
+          { x: 110, y: 60 },
+          // Dốc xuống hướng về Rauch (T4)
+          { x: 230, y: 95 },
+          { x: 380, y: 145 },
+          { x: 530, y: 195 },
+          { x: 680, y: 240 },
+          { x: 790, y: 275 },
+          // T4: Khúc cua Rauch ôm gập xuống sang trái
+          { x: 840, y: 305 },
+          { x: 845, y: 350 },
+          { x: 795, y: 380 },
+          { x: 700, y: 385 },
+          // T5 & T6: Chuỗi cua uốn lượn vùng Infield
+          { x: 570, y: 345 },
+          { x: 440, y: 300 },
+          { x: 330, y: 265 },
+          { x: 255, y: 285 },
+          { x: 240, y: 355 },
+          { x: 285, y: 435 },
+          // T7 & T8: Cua S
+          { x: 355, y: 485 },
+          { x: 430, y: 465 },
+          { x: 500, y: 430 },
+          { x: 580, y: 435 },
+          // Đoạn dốc xuống T9
+          { x: 710, y: 480 },
+          { x: 830, y: 525 },
+          { x: 915, y: 565 },
+          // T9 & T10: Khúc cua Rindt ôm cua về vạch xuất phát
+          { x: 955, y: 610 },
+          { x: 950, y: 660 },
+          { x: 890, y: 670 },
+          { x: 780, y: 655 },
+          { x: 630, y: 640 }
+        ]
+      },
+      catalunya: {
+        id: 'catalunya',
+        name: 'Catalunya Barcelona',
+        icon: '🇪🇸',
+        subtitle: '16 khúc cua kỹ thuật cao, dốc Repsol, Campsa & La Caixa',
+        kerb1: '#dc2626',
+        kerb2: '#facc15',
+        roadEdge: '#e11d48',
+        dashColor: 'rgba(254, 240, 138, 0.75)',
+        banner: 'SPANISH GP • CIRCUIT DE BARCELONA-CATALUNYA 🇪🇸',
+        roadW: 94,
+        waypoints: [
+          { x: 500, y: 580 }, // Vạch Start / Finish đáy
+          { x: 340, y: 580 },
+          { x: 200, y: 580 },
+          // T1 & T2: Elf chicane
+          { x: 120, y: 570 },
+          { x: 85,  y: 520 },
+          { x: 95,  y: 460 },
+          { x: 145, y: 430 },
+          // T3: Renault curve (ôm cua dài ngoằng hướng lên trên)
+          { x: 250, y: 430 },
+          { x: 360, y: 395 },
+          { x: 440, y: 335 },
+          { x: 460, y: 255 },
+          // T4: Repsol curve (cua tròn sang phải trên đỉnh)
+          { x: 425, y: 185 },
+          { x: 350, y: 155 },
+          { x: 250, y: 155 },
+          { x: 155, y: 175 },
+          // T5: Seat hairpin (cua tay áo góc trái giữa)
+          { x: 90,  y: 215 },
+          { x: 55,  y: 265 },
+          { x: 85,  y: 315 },
+          { x: 150, y: 325 },
+          // T6: Chạy ngang sang phải
+          { x: 260, y: 325 },
+          { x: 370, y: 325 },
+          // T7 & T8: Cua S dốc lên T9
+          { x: 430, y: 315 },
+          { x: 450, y: 265 },
+          { x: 480, y: 205 },
+          { x: 535, y: 155 },
+          // T9: Campsa curve (đỉnh dốc giữa)
+          { x: 595, y: 125 },
+          { x: 655, y: 130 },
+          { x: 705, y: 160 },
+          // Đoạn thẳng dài DRS Back Straight dốc xuống góc phải
+          { x: 775, y: 220 },
+          { x: 845, y: 285 },
+          { x: 910, y: 350 },
+          { x: 955, y: 405 },
+          // T10: La Caixa hairpin
+          { x: 970, y: 455 },
+          { x: 940, y: 490 },
+          { x: 885, y: 475 },
+          // T11 & T12: Banc Sabadell ôm lên góc trên phải
+          { x: 865, y: 405 },
+          { x: 855, y: 335 },
+          { x: 875, y: 265 },
+          { x: 925, y: 245 },
+          { x: 975, y: 270 },
+          // T13, T14-T15 Chicane & T16 New Holland ôm cua ra vạch đích
+          { x: 995, y: 345 },
+          { x: 985, y: 435 },
+          { x: 995, y: 495 },
+          { x: 970, y: 550 },
+          { x: 900, y: 580 },
+          { x: 750, y: 580 }
+        ]
+      },
       bahrain: {
         id: 'bahrain',
         name: 'Bahrain Sa Mạc',
@@ -11550,11 +11698,8 @@
       const gantry = document.getElementById('f1-gantry-overlay');
       if (gantry) gantry.classList.add('hidden');
 
-      const leaderboard = document.getElementById('f1-leaderboard');
-      if (leaderboard) leaderboard.classList.add('hidden');
-
-      if (typeof initF1LeaderboardDraggable === 'function') initF1LeaderboardDraggable();
-      if (typeof updateF1LeaderboardPosition === 'function') updateF1LeaderboardPosition();
+      const winBanner = document.getElementById('f1-winner-banner');
+      if (winBanner) winBanner.classList.add('hidden');
 
       renderF1RaceCanvas(performance.now());
     }
@@ -11640,10 +11785,20 @@
       const gantry = document.getElementById('f1-gantry-overlay');
       if (gantry) gantry.classList.add('hidden');
 
-      const leaderboard = document.getElementById('f1-leaderboard');
-      if (leaderboard) leaderboard.classList.add('hidden');
+      const winBanner = document.getElementById('f1-winner-banner');
+      if (winBanner) winBanner.classList.add('hidden');
 
       if (render) renderF1RaceCanvas(performance.now());
+    }
+
+    function shuffleF1StartingGrid() {
+      if (!f1CarList || f1CarList.length <= 1) return;
+      for (let i = f1CarList.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const temp = f1CarList[i];
+        f1CarList[i] = f1CarList[j];
+        f1CarList[j] = temp;
+      }
     }
 
     function startF1Race(winnerStudent, durationMs, callback) {
@@ -11660,16 +11815,30 @@
       if (!f1CarList || f1CarList.length === 0) initF1Race(true);
       if (f1CarList.length === 0) return;
 
-      f1WinnerTarget = winnerStudent;
-      f1TargetDuration = durationMs || 7000;
-      f1FinishCallback = callback;
+      // XÁC SUẤT CÁC XE VỀ ĐÍCH ĐẦU TIÊN LÀ NHƯ NHAU 100%:
+      // 1. Xáo trộn ngẫu nhiên vị trí xuất phát (Grid Shuffle) để mọi xe đều luân phiên các hàng
+      shuffleF1StartingGrid();
 
-      // Đặt tất cả xe về cùng vạch xuất phát
+      // 2. Đặt tất cả xe vào ô xuất phát 4 làn
       resetF1RacePositions(false);
       f1RevealX = 99999;
 
+      // 3. Chọn ngẫu nhiên đồng đều tuyệt đối 1 xe trong danh sách f1CarList (xác suất 1/N cho mỗi xe)
+      const luckyIndex = Math.floor(Math.random() * f1CarList.length);
+      const chosenCar = f1CarList[luckyIndex];
+      const actualWinnerStudent = (students && students.find(s => s.id === chosenCar.id)) || {
+        id: chosenCar.id,
+        name: chosenCar.fullName || chosenCar.name,
+        avatar: chosenCar.avatar,
+        code: chosenCar.code
+      };
+
+      f1WinnerTarget = actualWinnerStudent;
+      f1TargetDuration = durationMs || 7000;
+      f1FinishCallback = callback;
+
       f1CarList.forEach(car => {
-        car.isWinner = (car.id === winnerStudent.id);
+        car.isWinner = (car.id === chosenCar.id);
       });
 
       f1RaceState = 'countdown';
@@ -11884,8 +12053,17 @@
             code: p1Car.code
           };
 
+          const winnerDisplayName = p1Car.fullName || p1Car.name;
           const statusEl = document.getElementById('f1-race-status');
-          if (statusEl) statusEl.innerText = '🏁 ' + (p1Car.fullName || p1Car.name) + ' VỀ NHẤT ĐƯỢC GỌI TÊN!';
+          if (statusEl) statusEl.innerText = '🏆 ' + winnerDisplayName + ' VỀ NHẤT!';
+
+          // Hiển thị Banner Vinh Danh Học Sinh Về Nhất rực rỡ
+          const winBanner = document.getElementById('f1-winner-banner');
+          const winBannerName = document.getElementById('f1-winner-banner-name');
+          if (winBanner && winBannerName) {
+            winBannerName.innerText = winnerDisplayName + ' VỀ NHẤT!';
+            winBanner.classList.remove('hidden');
+          }
 
           F1Audio.playFinishFanfare();
           confetti({ particleCount: 260, spread: 110, origin: { y: 0.6 } });
@@ -13427,8 +13605,8 @@
           ctx.translate(boxX, boxY);
           ctx.rotate(gPt.angle);
           ctx.strokeStyle = 'rgba(255, 255, 255, 0.32)';
-          ctx.lineWidth = 1.2;
-          ctx.strokeRect(-11, -7.5, 22, 15);
+          ctx.lineWidth = 1.3;
+          ctx.strokeRect(-14, -10, 28, 20);
           ctx.restore();
         });
       }
@@ -13484,7 +13662,7 @@
       ctx.save();
       ctx.translate(car.x, car.y);
       ctx.rotate(car.angle);
-      ctx.scale(1.02, 1.02);
+      ctx.scale(1.22, 1.22);
 
       // ĐÈN PHA XE F1 CHIẾU SÁNG TRONG ĐÊM (Singapore Night GP)
       if (scene && scene.id === 'singapore') {
@@ -13651,32 +13829,32 @@
 
       const badgeText = car.name;
       const isWinnerFinished = (car.isWinner && f1RaceState === 'finished');
-      ctx.font = isWinnerFinished ? '900 14px system-ui, -apple-system, sans-serif' : 'bold 12.5px system-ui, -apple-system, sans-serif';
+      ctx.font = isWinnerFinished ? '900 16px system-ui, -apple-system, sans-serif' : 'bold 14px system-ui, -apple-system, sans-serif';
       const textMetrics = ctx.measureText(badgeText);
-      const badgeW = Math.max(textMetrics.width + 22, 54);
-      const badgeH = 22;
+      const badgeW = Math.max(textMetrics.width + 26, 62);
+      const badgeH = 26;
       const badgeX = car.x - badgeW / 2;
-      const badgeY = car.y - 33;
+      const badgeY = car.y - 38;
 
       if (isWinnerFinished) {
-        ctx.fillStyle = 'rgba(239, 68, 68, 0.95)';
+        ctx.fillStyle = 'rgba(239, 68, 68, 0.96)';
         ctx.strokeStyle = '#facc15';
-        ctx.lineWidth = 2.8;
+        ctx.lineWidth = 3;
       } else {
-        ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.65)';
-        ctx.lineWidth = 1.2;
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.94)';
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
+        ctx.lineWidth = 1.4;
       }
 
       ctx.beginPath();
-      ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 11);
+      ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 13);
       ctx.fill();
       ctx.stroke();
 
       ctx.fillStyle = '#ffffff';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(badgeText, badgeX + badgeW / 2, badgeY + badgeH / 2);
+      ctx.fillText(badgeText, badgeX + badgeW / 2, badgeY + badgeH / 2 + 0.5);
 
       ctx.restore();
     }
