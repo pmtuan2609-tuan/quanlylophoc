@@ -1847,7 +1847,7 @@
                 <canvas id="f1-race-canvas" class="w-full h-full block"></canvas>
 
                 <!-- Bảng Dẫn Đầu F1 (Live Leaderboard) có thể kéo thả di chuyển tự do hoặc chuyển góc tránh che đường đua, tên học sinh hiển thị đầy đủ -->
-                <div id="f1-leaderboard" class="absolute z-20 bg-slate-950/90 backdrop-blur-md px-3.5 py-2.5 rounded-2xl shadow-2xl border border-rose-500/40 text-white text-[11px] w-[310px] sm:w-[350px] md:w-[390px] max-w-[92vw] hidden transition-all pointer-events-auto select-none">
+                <div id="f1-leaderboard" class="absolute z-20 bg-slate-950/90 backdrop-blur-md px-3.5 py-2.5 rounded-2xl shadow-2xl border border-rose-500/40 text-white text-[11px] w-[330px] sm:w-[370px] md:w-[415px] max-w-[94vw] hidden transition-all pointer-events-auto select-none">
                   <div id="f1-leaderboard-header" class="font-black text-rose-400 uppercase text-[9px] tracking-wider mb-1.5 flex items-center justify-between cursor-grab active:cursor-grabbing pb-1.5 border-b border-white/10" title="Nhấn giữ vào đây để kéo thả di chuyển vị trí bất kỳ">
                     <span class="flex items-center gap-1.5">
                       <span class="text-xs">🏁</span>
@@ -3463,7 +3463,7 @@
       <div class="my-5">
         <div class="w-24 h-24 mx-auto rounded-full bg-theme-light border-4 border-white shadow-xl flex items-center justify-center text-5xl relative overflow-hidden" id="winner-avatar">👦</div>
         <div class="flex items-center justify-center gap-2 mt-3">
-          <h2 id="winner-name" class="text-2xl md:text-3xl font-black text-slate-800 tracking-tight">...</h2>
+          <h2 id="winner-name" class="text-2xl sm:text-3xl md:text-4xl font-black text-slate-800 tracking-tight">...</h2>
           <button type="button" onclick="speakCurrentWinner()" class="p-1.5 rounded-full bg-amber-100 hover:bg-amber-200 text-amber-800 transition active:scale-95 shadow-xs shrink-0" title="Phát lại giọng đọc tên học sinh">
             <span class="text-base">🔊</span>
           </button>
@@ -10747,7 +10747,7 @@
         roadEdge: '#38bdf8',
         dashColor: 'rgba(56, 189, 248, 0.75)',
         banner: 'SINGAPORE GRAND PRIX 🇸🇬',
-        roadW: 76,
+        roadW: 94,
         waypoints: [
           { x: 820, y: 560 }, // Start / Finish line dọc F1 Pit Building
           { x: 825, y: 440 },
@@ -10812,7 +10812,7 @@
         roadEdge: '#e2e8f0',
         dashColor: 'rgba(255, 255, 255, 0.65)',
         banner: 'BRITISH GRAND PRIX • SILVERSTONE 🇬🇧',
-        roadW: 76,
+        roadW: 94,
         waypoints: [
           { x: 240, y: 480 }, // Start line
           { x: 310, y: 460 },
@@ -10861,7 +10861,7 @@
         roadEdge: '#facc15',
         dashColor: 'rgba(254, 240, 138, 0.75)',
         banner: 'BELGIAN GP • CIRCUIT DE SPA 🇧🇪',
-        roadW: 76,
+        roadW: 94,
         waypoints: [
           { x: 250, y: 350 }, // Start line
           { x: 340, y: 360 },
@@ -10909,7 +10909,7 @@
         roadEdge: '#ef4444',
         dashColor: 'rgba(254, 240, 138, 0.75)',
         banner: 'SHANGHAI INTERNATIONAL CIRCUIT 🇨🇳',
-        roadW: 76,
+        roadW: 94,
         waypoints: [
           { x: 220, y: 520 }, // Start line
           { x: 220, y: 380 },
@@ -10955,7 +10955,7 @@
         roadEdge: '#f43f5e',
         dashColor: 'rgba(255, 255, 255, 0.7)',
         banner: 'QATAR GRAND PRIX • LUSAIL 🇶🇦',
-        roadW: 76,
+        roadW: 94,
         waypoints: [
           { x: 180, y: 520 }, // Start line
           { x: 450, y: 520 },
@@ -10999,7 +10999,7 @@
         roadEdge: '#64748b',
         dashColor: 'rgba(255, 255, 255, 0.6)',
         banner: 'GRAND PRIX DE MONACO 🇲🇨',
-        roadW: 76,
+        roadW: 94,
         waypoints: [
           { x: 630, y: 540 }, // Start line
           { x: 730, y: 540 },
@@ -11045,6 +11045,7 @@
         roadEdge: '#78350f',
         dashColor: 'rgba(254, 240, 138, 0.6)',
         banner: 'BAHRAIN SAKHIR GRAND PRIX 🏜️',
+        roadW: 94,
         topCurve: (u) => Math.sin(u * Math.PI * 5.5) * 0.75 - Math.sin(u * Math.PI * 2.5) * 0.38 + Math.cos(u * Math.PI * 8.5) * 0.22,
         botCurve: (u) => -Math.sin(u * Math.PI * 6.0) * 0.72 + Math.cos(u * Math.PI * 3.0) * 0.38 - Math.sin(u * Math.PI * 9.0) * 0.20,
         curve: (p) => Math.sin(p * Math.PI * 9.5) * 0.48 + Math.cos(p * Math.PI * 4.5 + 0.3) * 0.36 + Math.sin(p * Math.PI * 2.0) * 0.2
@@ -11059,6 +11060,7 @@
         roadEdge: '#3b82f6',
         dashColor: 'rgba(255, 255, 255, 0.75)',
         banner: 'MONZA SUPER SPEEDWAY OVAL 🚀',
+        roadW: 94,
         topCurve: (u) => Math.sin(u * Math.PI * 4.0) * 0.38,
         botCurve: (u) => -Math.sin(u * Math.PI * 4.0) * 0.38,
         curve: (p) => 0
@@ -11073,6 +11075,7 @@
         roadEdge: '#a855f7',
         dashColor: 'rgba(236, 72, 153, 0.75)',
         banner: 'TOKYO 2099 CYBER SPEEDWAY ⚡',
+        roadW: 94,
         topCurve: (u) => Math.sin(u * Math.PI * 9.0) * 0.70 + Math.cos(u * Math.PI * 4.5) * 0.38 - Math.sin(u * Math.PI * 13.5) * 0.22,
         botCurve: (u) => -Math.sin(u * Math.PI * 8.5) * 0.68 - Math.cos(u * Math.PI * 4.0) * 0.38 + Math.cos(u * Math.PI * 12.5) * 0.20,
         curve: (p) => Math.sin(p * Math.PI * 12.0) * 0.40 + Math.sin(p * Math.PI * 6.0) * 0.40 + Math.cos(p * Math.PI * 3.0) * 0.22
@@ -11210,13 +11213,13 @@
         const wpW = maxX - minX || 1;
         const wpH = maxY - minY || 1;
 
-        // Bề rộng mặt đường nới rộng để vẽ đủ 4 làn đường xe chạy thoải mái
-        const roadW = scene.roadW || Math.max(68, Math.min(84, Math.min(w, h) * 0.125));
+        // Bề rộng mặt đường nới rộng hơn để 4 làn xe chạy to rõ, thoáng đãng
+        const roadW = scene.roadW || Math.max(84, Math.min(104, Math.min(w, h) * 0.14));
 
-        // Lề an toàn để đường đua không bị chạm viền canvas
-        const marginX = Math.max(36, w * 0.04) + roadW * 0.5;
-        const marginTop = Math.max(34, h * 0.06) + roadW * 0.5;
-        const marginBot = Math.max(34, h * 0.06) + roadW * 0.5;
+        // Lề an toàn để đường đua chiếm trọn không gian canvas đẹp mắt
+        const marginX = Math.max(26, w * 0.03) + roadW * 0.5;
+        const marginTop = Math.max(24, h * 0.045) + roadW * 0.5;
+        const marginBot = Math.max(24, h * 0.045) + roadW * 0.5;
         const availW = Math.max(100, w - marginX * 2);
         const availH = Math.max(100, h - marginTop - marginBot);
 
@@ -11322,8 +11325,8 @@
       }
 
       // NẾU LÀ CHẶNG ĐUA HÌNH BẦU DỤC / OVAL TRUYỀN THỐNG (FALLBACK)
-      const roadW = Math.max(68, Math.min(84, h * 0.16));
-      const margin = Math.max(30, Math.min(48, w * 0.038));
+      const roadW = Math.max(84, Math.min(104, h * 0.19));
+      const margin = Math.max(26, Math.min(42, w * 0.032));
       const topY = margin + roadW * 0.5 + 16;
       const botY = h - margin - roadW * 0.5 - 16;
       const midY = (topY + botY) / 2;
@@ -11964,7 +11967,7 @@
       lb.style.right = '';
       lb.style.transform = '';
 
-      const baseClasses = "absolute z-20 bg-slate-950/90 backdrop-blur-md px-3.5 py-2.5 rounded-2xl shadow-2xl border border-rose-500/40 text-white text-[11px] w-[310px] sm:w-[350px] md:w-[390px] max-w-[92vw] transition-all pointer-events-auto select-none";
+      const baseClasses = "absolute z-20 bg-slate-950/90 backdrop-blur-md px-3.5 py-2.5 rounded-2xl shadow-2xl border border-rose-500/40 text-white text-[11px] w-[330px] sm:w-[370px] md:w-[415px] max-w-[94vw] transition-all pointer-events-auto select-none";
 
       if (f1ViewMode === 'cockpit') {
         lb.className = `${baseClasses} top-3 left-3`;
@@ -12121,9 +12124,9 @@
           return `
             <div class="flex items-center justify-between gap-2 py-1.5 px-2.5 rounded-xl ${boxStyle} text-white mb-1 transition-all">
               <div class="flex items-center gap-2 min-w-0 flex-1">
-                <span class="text-[10px] px-1.5 py-0.5 rounded-md font-mono ${isFinished ? 'bg-amber-300 text-slate-950 font-black shadow-md' : 'bg-amber-400 text-slate-950 font-black shadow-xs'} shrink-0">P1</span>
-                <span class="w-3.5 h-3.5 rounded-full shrink-0 ring-2 ring-amber-400/60 shadow-xs" style="background-color: ${c.color}"></span>
-                <span class="text-xs sm:text-[13.5px] font-black tracking-tight ${isFinished ? 'text-amber-300 drop-shadow-sm font-black' : 'text-amber-200'} break-words leading-tight flex-1" title="${displayName}">${displayName}</span>
+                <span class="text-[10.5px] px-1.5 py-0.5 rounded-md font-mono ${isFinished ? 'bg-amber-300 text-slate-950 font-black shadow-md' : 'bg-amber-400 text-slate-950 font-black shadow-xs'} shrink-0">P1</span>
+                <span class="w-4 h-4 rounded-full shrink-0 ring-2 ring-amber-400/70 shadow-xs" style="background-color: ${c.color}"></span>
+                <span class="text-sm sm:text-base md:text-[15.5px] font-black tracking-tight ${isFinished ? 'text-amber-300 drop-shadow-sm' : 'text-amber-200'} break-words leading-tight flex-1" title="${displayName}">${displayName}</span>
               </div>
               <span class="${badgeClass}">${badgeText}</span>
             </div>
@@ -12131,13 +12134,13 @@
         } else {
           const gapMeters = Math.max(0, (sorted[0].dist - c.dist) * 0.08).toFixed(1);
           return `
-            <div class="flex items-center justify-between gap-2 py-1 px-2 rounded-lg text-slate-300 font-bold hover:bg-white/5 transition">
+            <div class="flex items-center justify-between gap-2 py-1.5 px-2.5 rounded-lg text-slate-200 font-bold hover:bg-white/5 transition">
               <div class="flex items-center gap-2 min-w-0 flex-1">
-                <span class="text-[9px] px-1 py-0.5 rounded font-mono bg-slate-800 text-slate-400 font-bold shrink-0">P${i + 1}</span>
-                <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${c.color}"></span>
-                <span class="text-[11px] sm:text-[12px] text-slate-200 font-semibold break-words leading-tight flex-1" title="${displayName}">${displayName}</span>
+                <span class="text-[9.5px] px-1.5 py-0.5 rounded font-mono bg-slate-800 text-slate-400 font-bold shrink-0">P${i + 1}</span>
+                <span class="w-3 h-3 rounded-full shrink-0" style="background-color: ${c.color}"></span>
+                <span class="text-xs sm:text-[13px] md:text-[13.5px] text-slate-100 font-bold break-words leading-tight flex-1" title="${displayName}">${displayName}</span>
               </div>
-              <span class="text-[9px] font-mono text-slate-400 opacity-80 shrink-0 self-center">+${gapMeters}m</span>
+              <span class="text-[10px] font-mono text-slate-400 opacity-90 shrink-0 self-center">+${gapMeters}m</span>
             </div>
           `;
         }
@@ -13481,7 +13484,7 @@
       ctx.save();
       ctx.translate(car.x, car.y);
       ctx.rotate(car.angle);
-      ctx.scale(0.82, 0.82);
+      ctx.scale(1.02, 1.02);
 
       // ĐÈN PHA XE F1 CHIẾU SÁNG TRONG ĐÊM (Singapore Night GP)
       if (scene && scene.id === 'singapore') {
@@ -13647,25 +13650,26 @@
       ctx.save();
 
       const badgeText = car.name;
-      ctx.font = 'bold 11px system-ui, -apple-system, sans-serif';
+      const isWinnerFinished = (car.isWinner && f1RaceState === 'finished');
+      ctx.font = isWinnerFinished ? '900 14px system-ui, -apple-system, sans-serif' : 'bold 12.5px system-ui, -apple-system, sans-serif';
       const textMetrics = ctx.measureText(badgeText);
-      const badgeW = Math.max(textMetrics.width + 18, 48);
-      const badgeH = 20;
+      const badgeW = Math.max(textMetrics.width + 22, 54);
+      const badgeH = 22;
       const badgeX = car.x - badgeW / 2;
-      const badgeY = car.y - 28;
+      const badgeY = car.y - 33;
 
-      if (car.isWinner && f1RaceState === 'finished') {
+      if (isWinnerFinished) {
         ctx.fillStyle = 'rgba(239, 68, 68, 0.95)';
         ctx.strokeStyle = '#facc15';
-        ctx.lineWidth = 2.5;
+        ctx.lineWidth = 2.8;
       } else {
-        ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.55)';
-        ctx.lineWidth = 1;
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.65)';
+        ctx.lineWidth = 1.2;
       }
 
       ctx.beginPath();
-      ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 10);
+      ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 11);
       ctx.fill();
       ctx.stroke();
 
