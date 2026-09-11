@@ -3974,31 +3974,56 @@
     // --- Auth & Config ---
     async function checkAuth() {
         const authScreen = document.getElementById('auth-screen');
+        const obScreen = document.getElementById('onboarding-screen');
         let loaded = false;
 
-        // 0. Kiểm tra nếu người dùng đã bấm Đăng xuất hoặc chưa có phiên đăng nhập
-        const isExplicitLogout = localStorage.getItem('userLoggedOut') === 'true';
+        // 0. Phục hồi tài khoản nếu currentUser bị trống, rỗng hoặc bị đè bởi template admin
         let savedUserStr = localStorage.getItem('currentUser');
-
-        // Tự động dọn dẹp nếu trình duyệt còn lưu cache tài khoản lớp khác (ví dụ: cohakhtn / 6A4)
         if (savedUserStr) {
             try {
-                const checkSaved = JSON.parse(savedUserStr);
-                if (checkSaved && (checkSaved.id === 'cohakhtn' || checkSaved.className === '6A4')) {
-                    console.warn("Phát hiện tài khoản khác lớp trong cache, yêu cầu đăng nhập lại");
-                    localStorage.removeItem('currentUser');
-                    localStorage.removeItem('currentTeacherId');
-                    localStorage.removeItem('currentUserRole');
-                    localStorage.removeItem('currentStudent');
-                    savedUserStr = null;
+                const u = JSON.parse(savedUserStr);
+                if (!u || !u.className || u.id === 'admin') {
+                    // Thử tìm lại tài khoản giáo viên đã lưu trước đó trong localStorage
+                    const backupTeacher = localStorage.getItem('user_thaytuan') || localStorage.getItem('user_cohakhtn');
+                    if (backupTeacher) {
+                        savedUserStr = backupTeacher;
+                        localStorage.setItem('currentUser', backupTeacher);
+                    } else {
+                        // Quét các key user_* trong localStorage
+                        for (let i = 0; i < localStorage.length; i++) {
+                            const k = localStorage.key(i);
+                            if (k && k.startsWith('user_') && k !== 'user_admin') {
+                                const val = localStorage.getItem(k);
+                                try {
+                                    const parsed = JSON.parse(val);
+                                    if (parsed && parsed.className) {
+                                        savedUserStr = val;
+                                        localStorage.setItem('currentUser', val);
+                                        break;
+                                    }
+                                } catch(e) {}
+                            }
+                        }
+                    }
                 }
             } catch(e) {}
+        } else {
+            // Nếu savedUserStr chưa có nhưng trong localStorage có user_thaytuan hoặc user khác:
+            const backupTeacher = localStorage.getItem('user_thaytuan') || localStorage.getItem('user_cohakhtn');
+            if (backupTeacher) {
+                savedUserStr = backupTeacher;
+                localStorage.setItem('currentUser', backupTeacher);
+                localStorage.removeItem('userLoggedOut');
+            }
         }
+
+        const isExplicitLogout = localStorage.getItem('userLoggedOut') === 'true';
 
         // Nếu đã bấm Đăng xuất hoặc chưa đăng nhập: Dừng lại và hiển thị Màn hình Đăng nhập
         if (isExplicitLogout || !savedUserStr) {
             authScreen.classList.remove('hidden');
             authScreen.classList.add('flex');
+            if (obScreen) { obScreen.classList.add('hidden'); obScreen.classList.remove('flex'); }
             const authId = document.getElementById('auth-id');
             const authPass = document.getElementById('auth-pass');
             if (authId) authId.value = '';
@@ -4042,6 +4067,7 @@
                     localStorage.setItem('currentUser', JSON.stringify(currentUser));
                     localStorage.setItem('user_' + targetId, JSON.stringify(currentUser));
                     localStorage.setItem('students_' + targetId, JSON.stringify(students));
+                    localStorage.setItem('students', JSON.stringify(students));
                     localStorage.setItem('seating_' + targetId, JSON.stringify(seatingCharts));
                     localStorage.setItem('timetables_' + targetId, JSON.stringify(timetables));
                     localStorage.setItem('teacherTimetable_' + targetId, JSON.stringify(teacherTimetable));
@@ -4057,14 +4083,14 @@
             }
         }
 
-        // 2. Fallback to Local Server API
+        // 2. Fallback to Local Server API (chỉ nạp khi có dữ liệu lớp học thật, không nạp template rỗng)
         if (!loaded) {
             try {
                 const res = await fetch('/api/data?t=' + Date.now());
                 if (res.ok) {
                     const backendData = await res.json();
                     const userObj = backendData.currentUser || backendData.user;
-                    if (userObj && userObj.id !== 'cohakhtn' && userObj.className !== '6A4') {
+                    if (userObj && userObj.className && userObj.className.trim() !== '' && userObj.id !== 'admin') {
                         currentUser = userObj;
                         if (!currentUser.id) currentUser.id = 'thaytuan';
                         students = backendData.students || [];
@@ -4081,14 +4107,14 @@
             }
         }
 
-        // 3. Fallback to static data.json
+        // 3. Fallback to static data.json (chỉ nạp khi có dữ liệu lớp học thật)
         if (!loaded) {
             try {
                 const res = await fetch('./data.json');
                 if (res.ok) {
                     const backendData = await res.json();
                     const userObj = backendData.currentUser || backendData.user;
-                    if (userObj && userObj.id !== 'cohakhtn' && userObj.className !== '6A4') {
+                    if (userObj && userObj.className && userObj.className.trim() !== '' && userObj.id !== 'admin') {
                         currentUser = userObj;
                         if (!currentUser.id) currentUser.id = 'thaytuan';
                         students = backendData.students || [];
@@ -4105,7 +4131,7 @@
             }
         }
 
-        // Nếu chưa nạp được (hoặc vừa dọn dẹp cache), tự động kết nối Supabase nạp dữ liệu Thầy Tuấn (12A17)
+        // Nếu chưa nạp được, tự động kết nối Supabase nạp dữ liệu Thầy Tuấn (12A17)
         if (!loaded && isSupabaseConnected) {
             try {
                 const targetId = 'thaytuan';
@@ -4132,6 +4158,7 @@
                     localStorage.setItem('currentUser', JSON.stringify(currentUser));
                     localStorage.setItem('user_' + targetId, JSON.stringify(currentUser));
                     localStorage.setItem('students_' + targetId, JSON.stringify(students));
+                    localStorage.setItem('students', JSON.stringify(students));
                     localStorage.setItem('seating_' + targetId, JSON.stringify(seatingCharts));
                     localStorage.setItem('timetables_' + targetId, JSON.stringify(timetables));
                     localStorage.setItem('teacherTimetable_' + targetId, JSON.stringify(teacherTimetable));
@@ -4147,7 +4174,7 @@
         if (loaded) {
             const targetId = currentTeacherId || (currentUser ? currentUser.id : 'thaytuan');
             if (targetId) {
-                const localSavedStudents = localStorage.getItem('students_' + targetId) || localStorage.getItem('students');
+                const localSavedStudents = localStorage.getItem('students_' + targetId) || localStorage.getItem('students') || localStorage.getItem('students_thaytuan');
                 if (localSavedStudents && (!students || students.length === 0)) {
                     try {
                         const parsedLocal = JSON.parse(localSavedStudents);
@@ -4156,7 +4183,7 @@
                         }
                     } catch(e) {}
                 }
-                const localSavedSeating = localStorage.getItem('seating_' + targetId);
+                const localSavedSeating = localStorage.getItem('seating_' + targetId) || localStorage.getItem('seating_thaytuan');
                 if (localSavedSeating && (!seatingCharts || seatingCharts.length === 0)) {
                     try {
                         const parsedSeating = JSON.parse(localSavedSeating);
@@ -4170,10 +4197,18 @@
             authScreen.classList.add('hidden');
             authScreen.classList.remove('flex');
             if (!currentUser.className) {
-                const obScreen = document.getElementById('onboarding-screen');
-                obScreen.classList.remove('hidden');
-                obScreen.classList.add('flex');
+                const cachedUser = localStorage.getItem('user_' + targetId) || localStorage.getItem('user_thaytuan');
+                if (cachedUser) {
+                    try {
+                        const parsed = JSON.parse(cachedUser);
+                        if (parsed && parsed.className) currentUser = parsed;
+                    } catch(e) {}
+                }
+            }
+            if (!currentUser.className) {
+                if (obScreen) { obScreen.classList.remove('hidden'); obScreen.classList.add('flex'); }
             } else {
+                if (obScreen) { obScreen.classList.add('hidden'); obScreen.classList.remove('flex'); }
                 applyTheme(currentUser.theme || 'emerald'); 
                 document.getElementById('set-teacher').value = currentUser.teacherName || ''; 
                 document.getElementById('set-class').value = currentUser.className || ''; 
@@ -4188,16 +4223,26 @@
                 checkAdminSection();
             }
         } else {
-            const savedUser = localStorage.getItem('currentUser');
+            let savedUser = localStorage.getItem('currentUser');
             if (savedUser) {
                 currentUser = JSON.parse(savedUser);
+                if (!currentUser.className) {
+                    const backupTeacher = localStorage.getItem('user_thaytuan') || localStorage.getItem('user_cohakhtn');
+                    if (backupTeacher) {
+                        try {
+                            const parsed = JSON.parse(backupTeacher);
+                            if (parsed && parsed.className) currentUser = parsed;
+                        } catch(e) {}
+                    }
+                }
                 authScreen.classList.add('hidden');
                 authScreen.classList.remove('flex');
                 if (!currentUser.className) {
-                    const obScreen = document.getElementById('onboarding-screen');
-                    obScreen.classList.remove('hidden');
-                    obScreen.classList.add('flex');
-                } else loadUserData();
+                    if (obScreen) { obScreen.classList.remove('hidden'); obScreen.classList.add('flex'); }
+                } else {
+                    if (obScreen) { obScreen.classList.add('hidden'); obScreen.classList.remove('flex'); }
+                    loadUserData();
+                }
             } else {
                 authScreen.classList.remove('hidden');
                 authScreen.classList.add('flex');
