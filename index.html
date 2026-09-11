@@ -1663,7 +1663,7 @@
               <!-- Thanh điều khiển đường đua F1 -->
               <div class="absolute top-3 left-3 right-3 z-30 flex flex-wrap items-center justify-between gap-2 pointer-events-auto">
                 <div class="flex items-center gap-2 bg-slate-900/90 backdrop-blur-md px-3 py-1.5 rounded-2xl shadow-sm border border-white/20 text-white">
-                  <span class="text-xs font-black text-rose-500 flex items-center gap-1.5"><span class="text-base animate-pulse">🏎️</span> ĐUA XE F1 QUANH CO</span>
+                  <span class="text-xs font-black text-rose-500 flex items-center gap-1.5"><span class="text-base animate-pulse">🏎️</span> GIẢI ĐUA F1 GRAND PRIX</span>
                   <span class="h-3.5 w-[1px] bg-slate-700"></span>
                   <span id="f1-race-status" class="text-[11px] font-bold text-slate-300">Sẵn sàng xuất phát</span>
                 </div>
@@ -1710,6 +1710,13 @@
                           <div class="text-[10px] text-slate-400">Mưa bão, vệt nước & Cua Esses dồn dập</div>
                         </div>
                       </button>
+                      <button onclick="selectF1Scene('straight')" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
+                        <span class="text-base">🚀</span>
+                        <div class="flex-1">
+                          <div class="font-bold text-slate-200 group-hover:text-amber-300 flex items-center justify-between">Đua Đường Thẳng <span class="text-[9px] text-emerald-400 font-normal">Sprint Drag</span></div>
+                          <div class="text-[10px] text-slate-400">Đại lộ Monza thẳng tắp, bứt phá max tốc độ</div>
+                        </div>
+                      </button>
                       <button onclick="selectF1Scene('cyberpunk')" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
                         <span class="text-base">⚡</span>
                         <div class="flex-1">
@@ -1728,8 +1735,16 @@
                       </div>
                     </div>
                   </div>
+                  <!-- Nút chọn số vòng đua khép kín (Laps Selector: 1 vòng, 2 vòng, 3 vòng, 5 vòng) -->
+                  <button id="btn-f1-laps" onclick="cycleF1TargetLaps()" class="bg-slate-900/90 hover:bg-slate-800 backdrop-blur-md px-2.5 md:px-3 py-1.5 rounded-xl shadow-sm border border-emerald-400/40 text-xs font-bold text-emerald-300 flex items-center gap-1.5 transition hover:scale-105 active:scale-95" title="Chọn số vòng đua khép kín (Phím L: 1 vòng, 2 vòng, 3 vòng...)">
+                    <span id="f1-laps-icon">🔄</span> <span id="f1-laps-text">1 Vòng</span>
+                  </button>
                   <button onclick="if(!f1RaceRunning) startSpin();" class="bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-700 hover:to-red-700 text-white px-3 py-1.5 rounded-xl shadow-sm text-xs font-black flex items-center gap-1.5 transition hover:scale-105 active:scale-95" title="Bấm vào đây hoặc nhấn phím Space trên bàn phím để chạy đua">
                     <kbd class="px-1.5 py-0.5 bg-black/30 rounded text-[10px] font-mono text-white">Space</kbd> <span>Đua ngay</span>
+                  </button>
+                  <!-- Nút chuyển đổi Góc nhìn Buồng lái F1 trực diện / Toàn cảnh -->
+                  <button id="btn-f1-view" onclick="toggleF1ViewMode()" class="bg-slate-900/90 hover:bg-slate-800 backdrop-blur-md px-2.5 md:px-3 py-1.5 rounded-xl shadow-sm border border-cyan-400/40 text-xs font-bold text-cyan-300 flex items-center gap-1.5 transition hover:scale-105 active:scale-95" title="Đổi góc nhìn Buồng Lái / Toàn Cảnh (Phím V)">
+                    <span id="f1-view-icon">🕹️</span> <span class="hidden sm:inline" id="f1-view-text">Buồng lái 3D</span>
                   </button>
                   <button id="btn-f1-sound" onclick="toggleF1Sound()" class="bg-slate-900/90 hover:bg-slate-800 backdrop-blur-md px-2.5 md:px-3 py-1.5 rounded-xl shadow-sm border border-white/20 text-xs font-bold text-slate-200 flex items-center gap-1 transition" title="Bật/Tắt âm thanh">
                     <span id="f1-sound-icon">🔊</span> <span class="hidden sm:inline" id="f1-sound-text">Âm thanh</span>
@@ -1745,8 +1760,9 @@
 
               <!-- Bảng Dẫn Đầu F1 (Live Leaderboard) -->
               <div id="f1-leaderboard" class="absolute bottom-3 left-3 z-30 bg-black/85 backdrop-blur-md px-3.5 py-2 rounded-2xl shadow-xl border border-rose-500/40 text-white text-[11px] max-w-[260px] hidden transition-all">
-                <div class="font-black text-rose-400 uppercase text-[9px] tracking-wider mb-1 flex items-center gap-1">
-                  <span>🏁 Top Dẫn Đầu F1</span>
+                <div class="font-black text-rose-400 uppercase text-[9px] tracking-wider mb-1 flex items-center justify-between">
+                  <span class="flex items-center gap-1">🏁 Top Dẫn Đầu F1</span>
+                  <span id="f1-leaderboard-lap" class="bg-rose-500/30 text-rose-300 px-1.5 py-0.2 rounded text-[8px] font-mono">VÒNG 1/1</span>
                 </div>
                 <div id="f1-top-list" class="space-y-0.5"></div>
               </div>
@@ -8810,6 +8826,24 @@
         }
       }
 
+      // Phím V: Đổi góc nhìn Buồng lái (Cockpit View) / Toàn cảnh 2D
+      if ((e.key === 'v' || e.key === 'V') && (isF1Mode || isFullscreen)) {
+        if (typeof toggleF1ViewMode === 'function') {
+          e.preventDefault();
+          toggleF1ViewMode();
+          return;
+        }
+      }
+
+      // Phím L: Đổi số vòng đua khép kín (1 vòng, 2 vòng, 3 vòng, 5 vòng)
+      if ((e.key === 'l' || e.key === 'L') && (isF1Mode || isFullscreen)) {
+        if (typeof cycleF1TargetLaps === 'function') {
+          e.preventDefault();
+          cycleF1TargetLaps();
+          return;
+        }
+      }
+
       if (e.code === 'Space' || e.key === ' ') {
         if ((isWheelTab && (isDuckMode || isF1Mode)) || isFullscreen) {
           e.preventDefault();
@@ -9797,9 +9831,65 @@
     let f1SkidMarks = [];
     let f1WaterSpray = [];
     let f1RevealX = 0; // Tọa độ mở đường đua chạy đến đâu hiển thị tới đó
+    let f1ViewMode = 'cockpit'; // 'cockpit' (Góc nhìn trực diện buồng lái 3D) | 'overview' (Góc nhìn toàn cảnh 2D)
+    let f1SteeringSmooth = 0; // Độ xoay mượt mà của vô-lăng F1 theo góc cua
+    let f1TargetLaps = 1; // Số vòng đua khép kín: 1, 2, 3, 5 vòng
+    const F1_LAP_OPTIONS = [1, 2, 3, 5];
+
+    function cycleF1TargetLaps() {
+      const curIdx = F1_LAP_OPTIONS.indexOf(f1TargetLaps);
+      const nextIdx = (curIdx + 1) % F1_LAP_OPTIONS.length;
+      f1TargetLaps = F1_LAP_OPTIONS[nextIdx];
+      try {
+        localStorage.setItem('f1_target_laps', String(f1TargetLaps));
+      } catch(e) {}
+      updateF1LapsButtonUI();
+      if (!f1RaceRunning) {
+        resetF1RacePositions(true);
+      }
+    }
+
+    function updateF1LapsButtonUI() {
+      const textEl = document.getElementById('f1-laps-text');
+      const btnEl = document.getElementById('btn-f1-laps');
+      if (textEl) textEl.innerText = `${f1TargetLaps} Vòng`;
+      if (btnEl) {
+        btnEl.title = `Đua khép kín ${f1TargetLaps} vòng (Bấm hoặc nhấn phím L để đổi 1, 2, 3, 5 vòng)`;
+      }
+    }
+
+    function toggleF1ViewMode() {
+      f1ViewMode = (f1ViewMode === 'cockpit') ? 'overview' : 'cockpit';
+      try {
+        localStorage.setItem('f1_view_mode', f1ViewMode);
+      } catch(e) {}
+      updateF1ViewButtonUI();
+      renderF1RaceCanvas(performance.now());
+    }
+
+    function updateF1ViewButtonUI() {
+      const iconEl = document.getElementById('f1-view-icon');
+      const textEl = document.getElementById('f1-view-text');
+      const btnEl = document.getElementById('btn-f1-view');
+      if (f1ViewMode === 'cockpit') {
+        if (iconEl) iconEl.innerText = '🕹️';
+        if (textEl) textEl.innerText = 'Buồng lái 3D';
+        if (btnEl) {
+          btnEl.title = 'Đang ở Buồng Lái 3D (Bấm để đổi sang Toàn Cảnh, Phím V)';
+          btnEl.className = btnEl.className.replace(/border-[\w-]+\/40/, 'border-cyan-400/40').replace(/text-[\w-]+/, 'text-cyan-300');
+        }
+      } else {
+        if (iconEl) iconEl.innerText = '📺';
+        if (textEl) textEl.innerText = 'Toàn cảnh 2D';
+        if (btnEl) {
+          btnEl.title = 'Đang ở Toàn Cảnh 2D (Bấm để đổi sang Buồng Lái 3D, Phím V)';
+          btnEl.className = btnEl.className.replace(/border-[\w-]+\/40/, 'border-emerald-400/40').replace(/text-[\w-]+/, 'text-emerald-300');
+        }
+      }
+    }
 
     // ==========================================
-    // 5 CHẶNG ĐUA F1 & CẢNH QUANH CO (10 - 12 KHÚC CUA LIÊN HOÀN)
+    // CÁC CHẶNG ĐUA F1 & CẢNH QUAN (BAO GỒM CẢ ĐƯỜNG THẲNG SPRINT DRAG & QUANH CO)
     // ==========================================
     const F1_SCENES = {
       monaco: {
@@ -9814,6 +9904,19 @@
         banner: 'GRAND PRIX DE MONACO 🇲🇨',
         // 10 khúc quanh co uốn lượn liên hoàn với khúc cua tay áo Fairmont Hairpin & Chicane
         curve: (p) => Math.sin(p * Math.PI * 10.0) * 0.44 + Math.sin(p * Math.PI * 5.0 + 0.8) * 0.38 - Math.cos(p * Math.PI * 2.2) * 0.22
+      },
+      straight: {
+        id: 'straight',
+        name: 'Đua Đường Thẳng',
+        icon: '🚀',
+        subtitle: 'Đại lộ Monza thẳng tắp & Bứt tốc Max Speed',
+        kerb1: '#10b981',
+        kerb2: '#ffffff',
+        roadEdge: '#3b82f6',
+        dashColor: 'rgba(255, 255, 255, 0.75)',
+        banner: 'MONZA STRAIGHT SPEED SPRINT 🚀',
+        // Đua đường thẳng hoàn toàn, không quanh co (curve = 0)
+        curve: (p) => 0
       },
       singapore: {
         id: 'singapore',
@@ -9924,7 +10027,9 @@
 
       const statusEl = document.getElementById('f1-race-status');
       if (statusEl && !f1RaceRunning) {
-        statusEl.innerText = `${scene.icon} ${scene.name} (${f1CarList.length} xe - Nhiều quanh co)`;
+        const lapDesc = f1TargetLaps > 1 ? ` - ${f1TargetLaps} Vòng` : '';
+        const modeDesc = (scene.id === 'straight') ? 'Đường thẳng' : 'Nhiều quanh co';
+        statusEl.innerText = `${scene.icon} ${scene.name} (${f1CarList.length} xe - ${modeDesc}${lapDesc})`;
       }
 
       if (!f1RaceRunning) {
@@ -9990,7 +10095,17 @@
           currentF1SceneKey = saved;
           isF1RandomScene = false;
         }
+        const savedView = localStorage.getItem('f1_view_mode');
+        if (savedView === 'overview' || savedView === 'cockpit') {
+          f1ViewMode = savedView;
+        }
+        const savedLaps = parseInt(localStorage.getItem('f1_target_laps'), 10);
+        if (savedLaps && F1_LAP_OPTIONS.includes(savedLaps)) {
+          f1TargetLaps = savedLaps;
+        }
       } catch(e) {}
+      updateF1ViewButtonUI();
+      updateF1LapsButtonUI();
 
       const scene = F1_SCENES[currentF1SceneKey] || F1_SCENES.monaco;
       const iconEl = document.getElementById('f1-scene-icon');
@@ -10236,43 +10351,88 @@
       if (!canvas) return;
       const h = canvas.height;
       const elapsed = Math.max(0, now - f1RaceStartTime);
-      const progress = Math.min(1.0, elapsed / f1TargetDuration);
+      const totalProgress = Math.min(1.0, elapsed / f1TargetDuration);
+
+      const totalLaps = f1TargetLaps || 1;
+      const rawLap = totalProgress * totalLaps;
+      const currentLapNum = Math.min(totalLaps, Math.floor(rawLap) + 1);
+      const isFinalLap = (currentLapNum >= totalLaps);
+
+      // Cập nhật trạng thái vòng đua hiển thị trên thanh trạng thái
+      const statusEl = document.getElementById('f1-race-status');
+      if (statusEl && f1RaceRunning) {
+        const lapTitle = totalLaps > 1 ? `[VÒNG ${currentLapNum}/${totalLaps}${isFinalLap ? ' - CHUNG KẾT' : ''}] ` : '';
+        const scene = F1_SCENES[currentF1SceneKey] || F1_SCENES.monaco;
+        statusEl.innerText = `${scene.icon} ${lapTitle}TRANH ĐUA GAY CẤN!`;
+      }
 
       const totalDist = (f1FinishX - 16) - (f1StartX - 28);
-      const targetWinnerX = (f1StartX - 28) + totalDist * Math.pow(progress, 0.92);
+      const minX = f1StartX - 28;
+      const maxX = f1FinishX - 16;
+
+      // Cập nhật góc vô-lăng buồng lái mượt mà theo độ cong hiện tại của xe dẫn đầu
+      const leaderCar = f1CarList.find(c => c.isWinner) || f1CarList[0];
+      if (leaderCar) {
+        const currentSlope = getF1TrackSlope(leaderCar.x, h);
+        f1SteeringSmooth += (currentSlope * 1.8 - f1SteeringSmooth) * 0.16;
+      }
 
       // Cập nhật đường đua mở ra dần (chạy đến đâu hiển thị tới đó)
       const leadCarX = Math.max(...f1CarList.map(c => c.x));
-      const targetRevealX = (progress >= 0.86) ? canvas.width : Math.max(f1StartX + 100, leadCarX + 155);
+      const targetRevealX = (isFinalLap && totalProgress >= 0.86) ? canvas.width : Math.max(f1StartX + 100, leadCarX + 155);
       f1RevealX += (targetRevealX - f1RevealX) * 0.28;
       if (f1RevealX > canvas.width) f1RevealX = canvas.width;
 
       // Âm thanh rít lốp ngẫu nhiên ở các khúc cua gắt
-      if (now > f1NextScreechTime && progress < 0.9) {
+      if (now > f1NextScreechTime && totalProgress < 0.95) {
         F1Audio.playTireScreech();
         f1NextScreechTime = now + 1400 + Math.random() * 1800;
       }
 
       f1CarList.forEach(car => {
         let desiredX;
-        if (car.isWinner) {
-          desiredX = targetWinnerX;
-        } else {
-          // Các xe khác tranh chấp dẫn đầu lúc đầu/giữa đường đua
-          const wavePhase = Math.sin(progress * Math.PI * 3.0 + car.wobbleOffset);
-          let leadOffset = 0;
-          if (progress < 0.3) {
-            leadOffset = wavePhase * 30;
-          } else if (progress < 0.68) {
-            leadOffset = wavePhase * 20 - 15;
+        if (totalLaps === 1) {
+          // 1 Vòng đua tiêu chuẩn
+          if (car.isWinner) {
+            desiredX = minX + totalDist * Math.pow(totalProgress, 0.92);
           } else {
-            // Sau 68% chặng đua, xe chiến thắng bứt phá dẫn đầu tuyệt đối để cán đích đầu tiên
-            leadOffset = -35 - (progress - 0.68) * 160;
+            const wavePhase = Math.sin(totalProgress * Math.PI * 3.0 + car.wobbleOffset);
+            let leadOffset = 0;
+            if (totalProgress < 0.3) {
+              leadOffset = wavePhase * 30;
+            } else if (totalProgress < 0.68) {
+              leadOffset = wavePhase * 20 - 15;
+            } else {
+              leadOffset = -35 - (totalProgress - 0.68) * 160;
+            }
+            desiredX = minX + totalDist * (totalProgress * 0.90 * car.speedVariation) + leadOffset;
           }
-          desiredX = (f1StartX - 28) + totalDist * (progress * 0.90 * car.speedVariation) + leadOffset;
+        } else {
+          // Nhiều vòng đua khép kín: Từng vòng uốn lượn quay lại vạch xuất phát
+          const lapFrac = rawLap % 1.0;
+          if (isFinalLap) {
+            // Vòng cuối cùng: Xe winner bứt phá cán đích dứt khoát
+            const finalProgress = (rawLap - (totalLaps - 1));
+            if (car.isWinner) {
+              desiredX = minX + totalDist * Math.pow(finalProgress, 0.92);
+            } else {
+              const leadOffset = -35 - (finalProgress * 150);
+              desiredX = minX + totalDist * (finalProgress * 0.88 * car.speedVariation) + leadOffset;
+            }
+          } else {
+            // Các vòng trung gian: Đua nhau qua vạch xuất phát lặp lại mượt mà
+            const wavePhase = Math.sin(rawLap * Math.PI * 2.0 + car.wobbleOffset);
+            const leadOffset = car.isWinner ? wavePhase * 15 : (wavePhase * 25 * car.speedVariation);
+            desiredX = minX + totalDist * lapFrac + leadOffset;
+          }
         }
 
-        car.x += (desiredX - car.x) * 0.20;
+        // Xử lý chuyển vòng mượt mà (Loop boundary wrapping khi sang vòng mới)
+        if (totalLaps > 1 && !isFinalLap && desiredX < car.x - 300) {
+          car.x = minX;
+        } else {
+          car.x += (desiredX - car.x) * 0.22;
+        }
 
         // Bám theo tâm đường cong uốn lượn
         const trackCenterY = getF1TrackCenterY(car.x, h);
@@ -10311,9 +10471,9 @@
         }
 
         // =========================================================================
-        // ĐIỀU KIỆN VỀ ĐÍCH: KHI CÓ XE CHẠM VẠCH ĐÍCH ĐẦU TIÊN -> GỌI TÊN NGAY LẬP TỨC!
+        // ĐIỀU KIỆN VỀ ĐÍCH: KHI CÓ XE CHẠM VẠCH ĐÍCH Ở VÒNG CUỐI CÙNG -> GỌI TÊN NGAY!
         // =========================================================================
-        if (car.isWinner && car.x >= f1FinishX - 18) {
+        if (car.isWinner && isFinalLap && car.x >= f1FinishX - 18) {
           f1RaceRunning = false;
           f1RaceState = 'finished';
           f1RevealX = canvas.width; // Mở toàn bộ đường đua ngay lập tức
@@ -10370,6 +10530,15 @@
     function updateF1Leaderboard() {
       const topListEl = document.getElementById('f1-top-list');
       if (!topListEl || f1CarList.length === 0) return;
+
+      const lapBadge = document.getElementById('f1-leaderboard-lap');
+      if (lapBadge) {
+        const totalLaps = f1TargetLaps || 1;
+        const elapsed = (f1RaceStartTime && f1RaceState === 'racing') ? Math.max(0, performance.now() - f1RaceStartTime) : 0;
+        const totalProgress = f1TargetDuration ? Math.min(1.0, elapsed / f1TargetDuration) : 0;
+        const currentLapNum = Math.min(totalLaps, Math.floor(totalProgress * totalLaps) + 1);
+        lapBadge.innerText = (totalLaps > 1) ? `VÒNG ${currentLapNum}/${totalLaps}` : '1 VÒNG';
+      }
 
       const sorted = [...f1CarList].sort((a, b) => b.x - a.x);
       const top4 = sorted.slice(0, 4);
@@ -10737,7 +10906,480 @@
         ctx.moveTo(0, laserY);
         ctx.lineTo(w, laserY);
         ctx.stroke();
+      } else if (scene.id === 'straight') {
+        // MONZA STRAIGHT SPEED SPRINT: Bầu trời trong xanh, khán đài đại lộ tốc độ cao & vạch kẻ đường thẳng
+        const skyGrad = ctx.createLinearGradient(0, 0, 0, h);
+        skyGrad.addColorStop(0, '#0284c7');
+        skyGrad.addColorStop(0.35, '#38bdf8');
+        skyGrad.addColorStop(0.5, '#bae6fd');
+        skyGrad.addColorStop(1, '#15803d');
+        ctx.fillStyle = skyGrad;
+        ctx.fillRect(0, 0, w, h);
+
+        // Đồi xanh và rừng cây công viên Hoàng gia Monza xa xa
+        ctx.fillStyle = '#166534';
+        ctx.beginPath();
+        ctx.ellipse(w * 0.25, h * 0.28, w * 0.35, 25, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(w * 0.75, h * 0.27, w * 0.38, 28, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Khán đài tốc độ cao (Grandstands) dọc đường thẳng
+        const grandstandW = 120;
+        for (let gx = w * 0.12; gx < w * 0.9; gx += 220) {
+          ctx.fillStyle = '#cbd5e1';
+          ctx.fillRect(gx, h * 0.18, grandstandW, 35);
+          // Mái che đỏ trắng thể thao
+          ctx.fillStyle = '#ef4444';
+          ctx.beginPath();
+          ctx.moveTo(gx - 8, h * 0.18);
+          ctx.lineTo(gx + grandstandW + 8, h * 0.18);
+          ctx.lineTo(gx + grandstandW + 3, h * 0.13);
+          ctx.lineTo(gx - 3, h * 0.13);
+          ctx.closePath();
+          ctx.fill();
+          // Hàng ghế khán giả
+          for (let r = 0; r < 3; r++) {
+            ctx.fillStyle = (r % 2 === 0) ? '#3b82f6' : '#f59e0b';
+            ctx.fillRect(gx + 6, h * 0.20 + r * 9, grandstandW - 12, 4);
+          }
+        }
+
+        // Bảng báo tốc độ điện tử (Speed Trap Display)
+        const speedTrapX = w * 0.52;
+        ctx.fillStyle = '#0f172a';
+        ctx.roundRect(speedTrapX - 45, h * 0.08, 90, 24, 4);
+        ctx.fill();
+        ctx.strokeStyle = '#10b981';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        ctx.fillStyle = '#34d399';
+        ctx.font = 'bold 10px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('SPEED TRAP 350+ KM/H', speedTrapX, h * 0.125);
       }
+    }
+
+    // ==========================================
+    // CHẾ ĐỘ BUỒNG LÁI TRỰC DIỆN F1 (FIRST-PERSON COCKPIT 3D VIEW)
+    // ==========================================
+    function renderF1CockpitView(ctx, w, h, now, scene) {
+      const elapsed = (f1RaceStartTime && f1RaceState === 'racing') ? Math.max(0, now - f1RaceStartTime) : 0;
+      const totalProgress = f1TargetDuration ? Math.min(1.0, elapsed / f1TargetDuration) : 0;
+      const totalLaps = f1TargetLaps || 1;
+      const rawLap = totalProgress * totalLaps;
+      const currentLapNum = Math.min(totalLaps, Math.floor(rawLap) + 1);
+      const isFinalLap = (currentLapNum >= totalLaps);
+      const lapFrac = (totalLaps === 1) ? totalProgress : (rawLap % 1.0);
+
+      // Tốc độ km/h mô phỏng thực tế F1
+      let speedKmh = 0;
+      let rpmVal = 0;
+      let gearNum = 'N';
+      if (f1RaceState === 'racing') {
+        const baseSpeed = (scene.id === 'straight') ? 348 : 315;
+        speedKmh = Math.min(baseSpeed, Math.round(180 + Math.pow(Math.min(1.0, elapsed / 1500), 0.5) * (baseSpeed - 180) + Math.sin(now * 0.02) * 6));
+        rpmVal = Math.min(15000, 10500 + Math.round((speedKmh / baseSpeed) * 4200) + Math.round(Math.sin(now * 0.03) * 200));
+        gearNum = (speedKmh < 100) ? '3' : (speedKmh < 180 ? '5' : (speedKmh < 260 ? '7' : '8'));
+      } else if (f1RaceState === 'finished') {
+        speedKmh = 0;
+        rpmVal = 4200;
+        gearNum = '1';
+      }
+
+      // Độ cong đường đua theo hàm curve của chặng
+      const horizonY = h * 0.44;
+      const curveFactor = (typeof scene.curve === 'function') ? scene.curve(lapFrac) : 0;
+      const roadCurveOffset = (scene.id === 'straight') ? 0 : (curveFactor * w * 0.35);
+
+      // Rung lắc buồng lái khi tăng tốc và ôm cua
+      const shakeY = (f1RaceState === 'racing') ? (Math.sin(now * 0.08) * 1.8 + Math.cos(now * 0.13) * 1.2) : 0;
+      const shakeX = (f1RaceState === 'racing') ? (Math.sin(now * 0.06) * 1.2) : 0;
+
+      ctx.save();
+      ctx.translate(shakeX, shakeY);
+
+      // 1. BẦU TRỜI & ĐƯỜNG CHÂN TRỜI (HORIZON SKY)
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, horizonY);
+      if (scene.id === 'cyberpunk') {
+        skyGrad.addColorStop(0, '#18052e');
+        skyGrad.addColorStop(0.6, '#3b0764');
+        skyGrad.addColorStop(1, '#831843');
+      } else if (scene.id === 'bahrain') {
+        skyGrad.addColorStop(0, '#3b0764');
+        skyGrad.addColorStop(0.5, '#ea580c');
+        skyGrad.addColorStop(1, '#fbbf24');
+      } else if (scene.id === 'silverstone') {
+        skyGrad.addColorStop(0, '#0f172a');
+        skyGrad.addColorStop(0.7, '#334155');
+        skyGrad.addColorStop(1, '#475569');
+      } else {
+        skyGrad.addColorStop(0, '#0284c7');
+        skyGrad.addColorStop(0.6, '#38bdf8');
+        skyGrad.addColorStop(1, '#bae6fd');
+      }
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, w, horizonY + 2);
+
+      // Đồi xa xôi và công trình chân trời
+      ctx.fillStyle = (scene.id === 'cyberpunk') ? '#2e1065' : (scene.id === 'bahrain' ? '#b45309' : (scene.id === 'silverstone' ? '#14532d' : '#166534'));
+      ctx.beginPath();
+      ctx.moveTo(0, horizonY);
+      ctx.quadraticCurveTo(w * 0.25, horizonY - 26, w * 0.5, horizonY - 8);
+      ctx.quadraticCurveTo(w * 0.75, horizonY + 6, w, horizonY - 18);
+      ctx.lineTo(w, horizonY + 2);
+      ctx.lineTo(0, horizonY + 2);
+      ctx.closePath();
+      ctx.fill();
+
+      // Mưa rơi trước kính chắn gió (Silverstone)
+      if (scene.id === 'silverstone') {
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.lineWidth = 1.2;
+        for (let i = 0; i < 35; i++) {
+          const rx = (i * 37 + now * 1.8) % w;
+          const ry = (i * 29 + now * 2.6) % h;
+          ctx.beginPath();
+          ctx.moveTo(rx, ry);
+          ctx.lineTo(rx - 8, ry + 22);
+          ctx.stroke();
+        }
+      }
+
+      // 2. MẶT CỎ / ĐẤT 2 BÊN ĐƯỜNG ĐUA (TERRAIN)
+      const groundGrad = ctx.createLinearGradient(0, horizonY, 0, h);
+      if (scene.id === 'cyberpunk') {
+        groundGrad.addColorStop(0, '#09090b');
+        groundGrad.addColorStop(1, '#18181b');
+      } else if (scene.id === 'bahrain') {
+        groundGrad.addColorStop(0, '#92400e');
+        groundGrad.addColorStop(1, '#78350f');
+      } else {
+        groundGrad.addColorStop(0, '#15803d');
+        groundGrad.addColorStop(1, '#166534');
+      }
+      ctx.fillStyle = groundGrad;
+      ctx.fillRect(0, horizonY, w, h - horizonY);
+
+      // 3. CHIẾU ĐƯỜNG ĐUA PHỐI CẢNH 3D (PERSPECTIVE 3D ROAD)
+      const numSegments = 60;
+      const roadBottomW = w * 0.94;
+      const roadTopW = Math.max(22, w * 0.05);
+      const camCenterX = w * 0.5;
+
+      const speedOffset = (f1RaceState === 'racing') ? ((now * 0.025) % 1.0) : 0;
+
+      for (let i = numSegments; i >= 1; i--) {
+        const p1 = (i - 1 + speedOffset) / numSegments;
+        const p2 = (i + speedOffset) / numSegments;
+        if (p1 > 1.0 || p2 > 1.0) continue;
+
+        // Phối cảnh phi tuyến (Non-linear depth scaling)
+        const y1 = horizonY + Math.pow(p1, 2.4) * (h - horizonY);
+        const y2 = horizonY + Math.pow(p2, 2.4) * (h - horizonY);
+
+        const w1 = roadTopW + Math.pow(p1, 2.0) * (roadBottomW - roadTopW);
+        const w2 = roadTopW + Math.pow(p2, 2.0) * (roadBottomW - roadTopW);
+
+        // Độ cong theo chiều sâu
+        const cx1 = camCenterX + roadCurveOffset * Math.pow(1.0 - p1, 1.8);
+        const cx2 = camCenterX + roadCurveOffset * Math.pow(1.0 - p2, 1.8);
+
+        const kerbW1 = Math.max(3, w1 * 0.08);
+        const kerbW2 = Math.max(3, w2 * 0.08);
+
+        const isAlt = ((i + Math.floor(now * 0.015)) % 2 === 0);
+
+        // Kerb lề trái
+        ctx.fillStyle = isAlt ? scene.kerb1 : scene.kerb2;
+        ctx.beginPath();
+        ctx.moveTo(cx1 - w1 * 0.5 - kerbW1, y1);
+        ctx.lineTo(cx2 - w2 * 0.5 - kerbW2, y2);
+        ctx.lineTo(cx2 - w2 * 0.5, y2);
+        ctx.lineTo(cx1 - w1 * 0.5, y1);
+        ctx.closePath();
+        ctx.fill();
+
+        // Kerb lề phải
+        ctx.beginPath();
+        ctx.moveTo(cx1 + w1 * 0.5, y1);
+        ctx.lineTo(cx2 + w2 * 0.5, y2);
+        ctx.lineTo(cx2 + w2 * 0.5 + kerbW2, y2);
+        ctx.lineTo(cx1 + w1 * 0.5 + kerbW1, y1);
+        ctx.closePath();
+        ctx.fill();
+
+        // Mặt đường nhựa Asphalt
+        ctx.fillStyle = isAlt ? '#1e293b' : '#0f172a';
+        ctx.beginPath();
+        ctx.moveTo(cx1 - w1 * 0.5, y1);
+        ctx.lineTo(cx2 - w2 * 0.5, y2);
+        ctx.lineTo(cx2 + w2 * 0.5, y2);
+        ctx.lineTo(cx1 + w1 * 0.5, y1);
+        ctx.closePath();
+        ctx.fill();
+
+        // Vạch đứt tim đường trắng
+        if (isAlt) {
+          const dashW1 = Math.max(2, w1 * 0.02);
+          const dashW2 = Math.max(2, w2 * 0.02);
+          ctx.fillStyle = scene.dashColor || 'rgba(255, 255, 255, 0.7)';
+          ctx.beginPath();
+          ctx.moveTo(cx1 - dashW1 * 0.5, y1);
+          ctx.lineTo(cx2 - dashW2 * 0.5, y2);
+          ctx.lineTo(cx2 + dashW2 * 0.5, y2);
+          ctx.lineTo(cx1 + dashW1 * 0.5, y1);
+          ctx.closePath();
+          ctx.fill();
+        }
+
+        // Vạch đích hoàn thành chặng (Checkered Finish Line) khi xe tới vạch cuối
+        if (isFinalLap && totalProgress >= 0.94 && i === 12) {
+          const chkW = (cx2 + w2 * 0.5) - (cx2 - w2 * 0.5);
+          const sqCount = 10;
+          const sqSize = chkW / sqCount;
+          for (let sq = 0; sq < sqCount; sq++) {
+            ctx.fillStyle = (sq % 2 === 0) ? '#ffffff' : '#000000';
+            ctx.fillRect(cx2 - w2 * 0.5 + sq * sqSize, y2 - 4, sqSize, 6);
+          }
+        }
+      }
+
+      // 4. VẼ CÁC XE ĐỐI THỦ PHÍA TRƯỚC (COMPETITOR CARS IN 3D PERSPECTIVE)
+      const leadX = Math.max(...f1CarList.map(c => c.x));
+      const myDist = f1CarList.find(c => c.isWinner)?.x || leadX;
+
+      const competitorCars = f1CarList.map(c => {
+        const deltaX = c.x - (myDist - 120);
+        return {
+          car: c,
+          deltaX: deltaX,
+          depth: Math.max(0.12, Math.min(1.0, 1.0 - (deltaX / 950)))
+        };
+      }).filter(item => item.deltaX > -80 && item.deltaX < 950)
+        .sort((a, b) => b.depth - a.depth);
+
+      competitorCars.forEach(item => {
+        const c = item.car;
+        const depth = item.depth;
+        const p = Math.max(0.08, Math.min(0.92, 1.0 - depth));
+        const cy = horizonY + Math.pow(p, 2.2) * (h - horizonY);
+        const roadWAtY = roadTopW + Math.pow(p, 2.0) * (roadBottomW - roadTopW);
+        const roadCenterAtY = camCenterX + roadCurveOffset * Math.pow(1.0 - p, 1.8);
+        const cx = roadCenterAtY + c.laneRatio * (roadWAtY * 0.38);
+
+        const carScale = Math.max(0.2, Math.min(1.4, Math.pow(p, 1.6) * 1.6));
+        const carW = 60 * carScale;
+        const carH = 26 * carScale;
+
+        // Bóng xe in trên mặt đường
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+        ctx.beginPath();
+        ctx.ellipse(cx, cy + carH * 0.45, carW * 0.6, carH * 0.22, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Thân xe đối thủ nhìn từ đằng sau (Rear View)
+        ctx.save();
+        ctx.translate(cx, cy);
+
+        // Đèn chớp cảnh báo mưa/phanh sau xe (F1 Rain LED)
+        const ledBlink = (Math.floor(now * 0.008) % 2 === 0);
+        ctx.fillStyle = ledBlink ? '#ef4444' : '#7f1d1d';
+        ctx.fillRect(-carW * 0.08, carH * 0.1, carW * 0.16, carH * 0.14);
+
+        // Lốp sau 2 bên
+        ctx.fillStyle = '#0f172a';
+        ctx.roundRect(-carW * 0.52, -carH * 0.2, carW * 0.2, carH * 0.7, 3 * carScale);
+        ctx.fill();
+        ctx.roundRect(carW * 0.32, -carH * 0.2, carW * 0.2, carH * 0.7, 3 * carScale);
+        ctx.fill();
+
+        // Thân sau & Khuếch tán gió (Diffuser)
+        ctx.fillStyle = c.color;
+        ctx.beginPath();
+        ctx.moveTo(-carW * 0.32, carH * 0.35);
+        ctx.lineTo(-carW * 0.28, -carH * 0.25);
+        ctx.lineTo(carW * 0.28, -carH * 0.25);
+        ctx.lineTo(carW * 0.32, carH * 0.35);
+        ctx.closePath();
+        ctx.fill();
+
+        // Cánh gió sau (Rear Wing & DRS)
+        ctx.fillStyle = c.secondaryColor || '#ffffff';
+        ctx.fillRect(-carW * 0.42, -carH * 0.55, carW * 0.84, carH * 0.22);
+
+        // Bảng tên học sinh phía trên xe
+        const badgeW = Math.max(38 * carScale, 40);
+        const badgeH = Math.max(14 * carScale, 15);
+        ctx.fillStyle = (c.isWinner && f1RaceState === 'finished') ? 'rgba(239, 68, 68, 0.95)' : 'rgba(15, 23, 42, 0.85)';
+        ctx.strokeStyle = c.isWinner ? '#facc15' : 'rgba(255, 255, 255, 0.4)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(-badgeW * 0.5, -carH * 0.65 - badgeH, badgeW, badgeH, 4);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = `bold ${Math.max(9, Math.round(11 * carScale))}px system-ui, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(c.name, 0, -carH * 0.65 - badgeH * 0.5);
+
+        ctx.restore();
+      });
+
+      // 5. NỘI THẤT BUỒNG LÁI XE F1 (COCKPIT CHASSIS & HALO & STEERING WHEEL)
+      const steerAngle = f1SteeringSmooth * 0.45;
+      const cockpitBaseY = h;
+
+      // Khung buồng lái Carbon Fiber 2 bên sườn
+      ctx.fillStyle = '#0a0d14';
+      ctx.beginPath();
+      ctx.moveTo(0, h);
+      ctx.lineTo(0, h * 0.58);
+      ctx.quadraticCurveTo(w * 0.18, h * 0.68, w * 0.24, h);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(w, h);
+      ctx.lineTo(w, h * 0.58);
+      ctx.quadraticCurveTo(w * 0.82, h * 0.68, w * 0.76, h);
+      ctx.closePath();
+      ctx.fill();
+
+      // Mũi xe F1 kéo dài ra đằng trước (Nosecone)
+      ctx.fillStyle = '#1e293b';
+      ctx.beginPath();
+      ctx.moveTo(w * 0.45, h * 0.64);
+      ctx.lineTo(w * 0.55, h * 0.64);
+      ctx.lineTo(w * 0.58, h * 0.85);
+      ctx.lineTo(w * 0.42, h * 0.85);
+      ctx.closePath();
+      ctx.fill();
+
+      // Trụ bảo vệ Halo Titanium chính giữa (Center Halo Pillar)
+      ctx.fillStyle = '#1e293b';
+      ctx.beginPath();
+      ctx.moveTo(w * 0.49, h * 0.2);
+      ctx.lineTo(w * 0.51, h * 0.2);
+      ctx.lineTo(w * 0.515, h * 0.62);
+      ctx.lineTo(w * 0.485, h * 0.62);
+      ctx.closePath();
+      ctx.fill();
+
+      // Vòng Halo trên nóc
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 14;
+      ctx.beginPath();
+      ctx.moveTo(w * 0.15, h * 0.15);
+      ctx.quadraticCurveTo(w * 0.5, h * 0.26, w * 0.85, h * 0.15);
+      ctx.stroke();
+
+      // ==========================================
+      // VÔ-LĂNG F1 MULTI-FUNCTION (STEERING WHEEL WITH TELEMETRY)
+      // ==========================================
+      const wheelCX = w * 0.5;
+      const wheelCY = h * 0.84;
+      const wheelW = Math.min(340, w * 0.48);
+      const wheelH = wheelW * 0.62;
+
+      ctx.save();
+      ctx.translate(wheelCX, wheelCY);
+      ctx.rotate(steerAngle);
+
+      // Thân chính vô-lăng carbon fiber đen nhám
+      ctx.fillStyle = '#0f172a';
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.roundRect(-wheelW * 0.5, -wheelH * 0.5, wheelW, wheelH, 20);
+      ctx.fill();
+      ctx.stroke();
+
+      // Tay nắm bọc da Alcantara 2 bên
+      ctx.fillStyle = '#1e293b';
+      ctx.beginPath();
+      ctx.roundRect(-wheelW * 0.5 - 12, -wheelH * 0.4, 18, wheelH * 0.8, 8);
+      ctx.roundRect(wheelW * 0.5 - 6, -wheelH * 0.4, 18, wheelH * 0.8, 8);
+      ctx.fill();
+
+      // Cụm đèn Shift Lights đổi số F1 (LED RPM Meter: Xanh lá -> Đỏ -> Tím)
+      const numLeds = 15;
+      const ledBarW = wheelW * 0.65;
+      const ledSize = ledBarW / (numLeds * 1.35);
+      const activeLedCount = (f1RaceState === 'racing') ? Math.min(numLeds, Math.round((rpmVal / 15000) * numLeds)) : 2;
+
+      for (let li = 0; li < numLeds; li++) {
+        const lx = -ledBarW * 0.5 + li * (ledBarW / (numLeds - 1));
+        const ly = -wheelH * 0.36;
+        let ledColor = '#1e293b';
+        if (li < activeLedCount) {
+          if (li < 5) ledColor = '#22c55e'; // Green
+          else if (li < 10) ledColor = '#ef4444'; // Red
+          else ledColor = '#a855f7'; // Purple Max RPM
+        }
+        ctx.fillStyle = ledColor;
+        ctx.beginPath();
+        ctx.arc(lx, ly, ledSize * 0.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // MÀN HÌNH ĐIỆN TỬ LCD F1 TELEMETRY DISPLAY
+      const screenW = wheelW * 0.54;
+      const screenH = wheelH * 0.46;
+      ctx.fillStyle = '#020617';
+      ctx.strokeStyle = '#06b6d4';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(-screenW * 0.5, -screenH * 0.28, screenW, screenH, 8);
+      ctx.fill();
+      ctx.stroke();
+
+      // Hiển thị Số (Gear) to ở trung tâm
+      ctx.fillStyle = '#ffffff';
+      ctx.font = `900 ${Math.round(screenH * 0.42)}px monospace`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(gearNum, 0, -screenH * 0.04);
+
+      // Hiển thị Tốc độ (Speed km/h) góc trái
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = `bold ${Math.round(screenH * 0.22)}px monospace`;
+      ctx.textAlign = 'left';
+      ctx.fillText(`${speedKmh}`, -screenW * 0.44, -screenH * 0.05);
+      ctx.font = `bold ${Math.round(screenH * 0.13)}px sans-serif`;
+      ctx.fillText('KM/H', -screenW * 0.44, screenH * 0.12);
+
+      // Hiển thị Vòng đua (LAP) góc phải
+      ctx.fillStyle = isFinalLap ? '#ef4444' : '#fbbf24';
+      ctx.font = `bold ${Math.round(screenH * 0.20)}px monospace`;
+      ctx.textAlign = 'right';
+      ctx.fillText(`LAP`, screenW * 0.44, -screenH * 0.08);
+      ctx.fillText(`${currentLapNum}/${totalLaps}`, screenW * 0.44, screenH * 0.1);
+
+      // Nút DRS / Bật tăng tốc trên vô-lăng
+      ctx.fillStyle = '#10b981';
+      ctx.beginPath();
+      ctx.arc(-wheelW * 0.35, wheelH * 0.18, 9, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#0f172a';
+      ctx.font = 'bold 8px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('DRS', -wheelW * 0.35, wheelH * 0.18);
+
+      // Nút Radio
+      ctx.fillStyle = '#3b82f6';
+      ctx.beginPath();
+      ctx.arc(wheelW * 0.35, wheelH * 0.18, 9, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText('RAD', wheelW * 0.35, wheelH * 0.18);
+
+      ctx.restore();
+      ctx.restore();
     }
 
     function renderF1RaceCanvas(now) {
@@ -10751,6 +11393,13 @@
 
       const scene = F1_SCENES[currentF1SceneKey] || F1_SCENES.monaco;
 
+      // NẾU ĐANG Ở CHẾ ĐỘ BUỒNG LÁI TRỰC DIỆN (FIRST-PERSON COCKPIT 3D)
+      if (f1ViewMode === 'cockpit') {
+        renderF1CockpitView(ctx, w, h, now, scene);
+        return;
+      }
+
+      // CHẾ ĐỘ TOÀN CẢNH 2D (OVERVIEW VIEW)
       // 1. VẼ BỐI CẢNH ĐỒ HỌA CHẶNG ĐUA F1 (SCENERY & SKY)
       renderF1Scenery(ctx, w, h, scene, now);
 
@@ -10975,6 +11624,7 @@
         else if (scene.id === 'cyberpunk') fogSolid = '#09090b';
         else if (scene.id === 'bahrain') fogSolid = '#451a03';
         else if (scene.id === 'silverstone') fogSolid = '#0f172a';
+        else if (scene.id === 'straight') fogSolid = '#14532d';
 
         fogGrad.addColorStop(0, 'rgba(0, 0, 0, 0)');
         fogGrad.addColorStop(0.5, fogSolid);
@@ -11359,7 +12009,8 @@
       // If f1 mode, run Formula 1 Grand Prix simulation
       if (mode === 'f1') {
         const durationSec = parseInt(document.getElementById('spin-duration').value || 3);
-        const raceDuration = Math.max(4000, durationSec * 1300);
+        const lapMultiplier = (f1TargetLaps > 1) ? (1 + (f1TargetLaps - 1) * 0.75) : 1;
+        const raceDuration = Math.max(4000, Math.round(durationSec * 1300 * lapMultiplier));
         btn.innerHTML = "🏎️ ĐANG ĐUA F1...";
         startF1Race(selected, raceDuration, () => {
           currentWinner = selected;
