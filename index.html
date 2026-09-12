@@ -1921,25 +1921,90 @@
                         <span class="text-[9px] font-mono text-emerald-300 font-normal">Phím C đổi</span>
                       </div>
                       <button type="button" onclick="selectHorseScene('turf', event)" data-scene="turf" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
-                        <span class="text-base shrink-0">🌿</span>
+                        <span class="text-base shrink-0">🇬🇧</span>
                         <div class="flex-1 min-w-0">
                           <div class="font-bold text-emerald-100 group-hover:text-amber-300 flex items-center justify-between">
-                            <span>Royal Ascot (Đường Cỏ)</span>
+                            <span>Royal Ascot (Anh Quốc)</span>
                             <span class="flex items-center gap-1">
-                              <span class="text-[9px] text-emerald-400 font-normal">Turf Track</span>
+                              <span class="text-[9px] text-emerald-400 font-normal">Tam giác tròn</span>
                               <span class="horse-scene-check hidden text-amber-400 font-bold">✓</span>
                             </span>
                           </div>
-                          <div class="text-[10px] text-emerald-300/80 truncate">Thảm cỏ xanh mướt, hàng rào trắng Ascot & cờ hoa</div>
+                          <div class="text-[10px] text-emerald-300/80 truncate">Thảm cỏ Berkshire, khúc cua Swinley & hàng rào trắng</div>
+                        </div>
+                      </button>
+                      <button type="button" onclick="selectHorseScene('longchamp', event)" data-scene="longchamp" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
+                        <span class="text-base shrink-0">🇫🇷</span>
+                        <div class="flex-1 min-w-0">
+                          <div class="font-bold text-emerald-100 group-hover:text-amber-300 flex items-center justify-between">
+                            <span>Paris Longchamp (Pháp)</span>
+                            <span class="flex items-center gap-1">
+                              <span class="text-[9px] text-cyan-400 font-normal">Cua quả lê</span>
+                              <span class="horse-scene-check hidden text-amber-400 font-bold">✓</span>
+                            </span>
+                          </div>
+                          <div class="text-[10px] text-emerald-300/80 truncate">Trường đua Arc de Triomphe, dốc đồi & khúc cua Moulin</div>
+                        </div>
+                      </button>
+                      <button type="button" onclick="selectHorseScene('tokyo', event)" data-scene="tokyo" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
+                        <span class="text-base shrink-0">🇯🇵</span>
+                        <div class="flex-1 min-w-0">
+                          <div class="font-bold text-emerald-100 group-hover:text-amber-300 flex items-center justify-between">
+                            <span>Tokyo Fuchu (Nhật Bản)</span>
+                            <span class="flex items-center gap-1">
+                              <span class="text-[9px] text-rose-400 font-normal">Chữ D hồ nước</span>
+                              <span class="horse-scene-check hidden text-amber-400 font-bold">✓</span>
+                            </span>
+                          </div>
+                          <div class="text-[10px] text-emerald-300/80 truncate">Japan Cup Fuchu, dốc đồi Oki & đoạn thẳng dài 525m</div>
+                        </div>
+                      </button>
+                      <button type="button" onclick="selectHorseScene('meydan', event)" data-scene="meydan" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
+                        <span class="text-base shrink-0">🇦🇪</span>
+                        <div class="flex-1 min-w-0">
+                          <div class="font-bold text-emerald-100 group-hover:text-amber-300 flex items-center justify-between">
+                            <span>Meydan Dubai (Hoàng Gia)</span>
+                            <span class="flex items-center gap-1">
+                              <span class="text-[9px] text-amber-400 font-normal">Đại lộ 1 dặm</span>
+                              <span class="horse-scene-check hidden text-amber-400 font-bold">✓</span>
+                            </span>
+                          </div>
+                          <div class="text-[10px] text-emerald-300/80 truncate">Trường đua sa mạc 1.5 tỷ USD, rào vàng & đèn pha rực rỡ</div>
+                        </div>
+                      </button>
+                      <button type="button" onclick="selectHorseScene('happyvalley', event)" data-scene="happyvalley" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
+                        <span class="text-base shrink-0">🇭🇰</span>
+                        <div class="flex-1 min-w-0">
+                          <div class="font-bold text-emerald-100 group-hover:text-amber-300 flex items-center justify-between">
+                            <span>Happy Valley (Hồng Kông)</span>
+                            <span class="flex items-center gap-1">
+                              <span class="text-[9px] text-sky-400 font-normal">Quanh co hẹp</span>
+                              <span class="horse-scene-check hidden text-amber-400 font-bold">✓</span>
+                            </span>
+                          </div>
+                          <div class="text-[10px] text-emerald-300/80 truncate">Đua đêm giữa rừng cao ốc rực rỡ & góc cua liên hoàn</div>
+                        </div>
+                      </button>
+                      <button type="button" onclick="selectHorseScene('clover', event)" data-scene="clover" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
+                        <span class="text-base shrink-0">☘️</span>
+                        <div class="flex-1 min-w-0">
+                          <div class="font-bold text-emerald-100 group-hover:text-amber-300 flex items-center justify-between">
+                            <span>Cỏ May Mắn Clover (Ireland)</span>
+                            <span class="flex items-center gap-1">
+                              <span class="text-[9px] text-lime-400 font-normal">3 vòng cánh hoa</span>
+                              <span class="horse-scene-check hidden text-amber-400 font-bold">✓</span>
+                            </span>
+                          </div>
+                          <div class="text-[10px] text-emerald-300/80 truncate">3 vòng lượn hoa cỏ uốn lượn quanh co kỳ thú</div>
                         </div>
                       </button>
                       <button type="button" onclick="selectHorseScene('dirt', event)" data-scene="dirt" class="w-full text-left px-2.5 py-1.5 rounded-xl flex items-center gap-2 hover:bg-white/10 transition group">
-                        <span class="text-base shrink-0">🏜️</span>
+                        <span class="text-base shrink-0">🇺🇸</span>
                         <div class="flex-1 min-w-0">
                           <div class="font-bold text-emerald-100 group-hover:text-amber-300 flex items-center justify-between">
                             <span>Churchill Downs (Đất Nện)</span>
                             <span class="flex items-center gap-1">
-                              <span class="text-[9px] text-amber-400 font-normal">Dirt Track</span>
+                              <span class="text-[9px] text-amber-400 font-normal">Kentucky Derby</span>
                               <span class="horse-scene-check hidden text-amber-400 font-bold">✓</span>
                             </span>
                           </div>
@@ -1952,11 +2017,11 @@
                           <div class="font-bold text-emerald-100 group-hover:text-amber-300 flex items-center justify-between">
                             <span>Sunset Meadow (Hoàng Hôn)</span>
                             <span class="flex items-center gap-1">
-                              <span class="text-[9px] text-rose-300 font-normal">Twilight</span>
+                              <span class="text-[9px] text-rose-300 font-normal">Vòng số 8</span>
                               <span class="horse-scene-check hidden text-amber-400 font-bold">✓</span>
                             </span>
                           </div>
-                          <div class="text-[10px] text-emerald-300/80 truncate">Bầu trời hoàng hôn tím hồng lãng mạn & đèn lồng</div>
+                          <div class="text-[10px] text-emerald-300/80 truncate">Trường đua số 8 khép kín dưới ánh hoàng hôn tím hồng</div>
                         </div>
                       </button>
                       <div class="border-t border-white/10 pt-1">
@@ -2009,16 +2074,11 @@
                 <!-- Canvas trường đua ngựa -->
                 <canvas id="horse-race-canvas" class="w-full h-full block"></canvas>
 
-                <!-- Bảng Dẫn Đầu Thời Gian Thực (Live Leaderboard) trong lòng sân nội đồng -->
-                <div id="horse-leaderboard" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 bg-slate-950/85 backdrop-blur-md px-3.5 py-2.5 rounded-2xl shadow-2xl border border-amber-500/40 text-white text-[11px] w-[275px] md:w-[290px] hidden transition-all pointer-events-auto">
-                  <div class="font-black text-amber-400 uppercase text-[9px] tracking-wider mb-1 flex items-center justify-between">
-                    <span class="flex items-center gap-1">🏆 Top Ngựa Dẫn Đầu</span>
-                    <div class="flex items-center gap-1.5">
-                      <span id="horse-leaderboard-lap" class="bg-amber-500/30 text-amber-300 px-1.5 py-0.2 rounded text-[8px] font-mono">VÒNG 1/1</span>
-                      <button type="button" onclick="toggleHorseLeaderboardCollapse(event)" id="btn-horse-lb-toggle" class="hover:bg-white/10 px-1 rounded text-[10px] text-slate-400 hover:text-white transition" title="Thu gọn / Mở rộng">➖</button>
-                    </div>
-                  </div>
-                  <div id="horse-top-list" class="space-y-0.5"></div>
+                <!-- Banner Vinh Danh Chiến Mã Về Nhất (Chỉ hiện khi cán đích) -->
+                <div id="horse-winner-banner" class="hidden absolute top-4 left-1/2 -translate-x-1/2 z-30 bg-gradient-to-r from-amber-500/95 via-emerald-600/95 to-amber-500/95 text-white px-5 sm:px-7 py-2 sm:py-2.5 rounded-full shadow-2xl border-2 border-amber-300 flex items-center gap-2.5 sm:gap-3 backdrop-blur-md animate-bounce pointer-events-none max-w-[92vw]">
+                  <span class="text-xl sm:text-2xl shrink-0">🏆</span>
+                  <span id="horse-winner-banner-name" class="font-black text-xs sm:text-sm md:text-base tracking-wide uppercase drop-shadow-md text-amber-100 truncate">... VỀ NHẤT!</span>
+                  <span class="text-xl sm:text-2xl shrink-0">🐎</span>
                 </div>
 
                 <!-- Cổng Chuồng Xuất Phát (Starting Gate Overlay) -->
@@ -14021,8 +14081,8 @@
     const HORSE_SCENES = {
       turf: {
         id: 'turf',
-        name: 'Royal Ascot (Đường Cỏ)',
-        icon: '🌿',
+        name: 'Royal Ascot (Anh Quốc)',
+        icon: '🇬🇧',
         type: 'grass',
         trackColor: '#15803d',
         trackStripe: '#16a34a',
@@ -14031,12 +14091,207 @@
         railPostColor: '#e2e8f0',
         skyTop: '#0284c7',
         skyBot: '#bae6fd',
-        banner: 'ROYAL ASCOT DERBY 🌿'
+        banner: 'ROYAL ASCOT DERBY • BERKSHIRE 🇬🇧',
+        roadW: 88,
+        waypoints: [
+          { x: 320, y: 530 }, // Vạch đích đoạn thẳng đáy
+          { x: 520, y: 530 },
+          { x: 740, y: 530 },
+          { x: 880, y: 485 },
+          { x: 940, y: 390 },
+          { x: 900, y: 280 },
+          { x: 790, y: 210 },
+          { x: 620, y: 155 },
+          { x: 450, y: 125 }, // Cua dốc đỉnh Swinley Bottom
+          { x: 310, y: 145 },
+          { x: 180, y: 210 },
+          { x: 105, y: 305 },
+          { x: 95,  y: 415 },
+          { x: 165, y: 495 }
+        ]
+      },
+      longchamp: {
+        id: 'longchamp',
+        name: 'Paris Longchamp (Pháp)',
+        icon: '🇫🇷',
+        type: 'grass',
+        trackColor: '#166534',
+        trackStripe: '#15803d',
+        infieldColor: '#064e3b',
+        railColor: '#ffffff',
+        railPostColor: '#cbd5e1',
+        skyTop: '#1e3a8a',
+        skyBot: '#93c5fd',
+        banner: 'PRIX DE L\'ARC DE TRIOMPHE • PARIS LONGCHAMP 🇫🇷',
+        roadW: 88,
+        waypoints: [
+          { x: 350, y: 550 }, // Vạch đích đoạn thẳng dài 530m
+          { x: 580, y: 550 },
+          { x: 810, y: 540 },
+          { x: 925, y: 470 },
+          { x: 945, y: 360 },
+          { x: 870, y: 260 },
+          { x: 780, y: 225 },
+          // Cua dốc đồi hình quả lê La Grande Piste vươn lên
+          { x: 740, y: 145 },
+          { x: 655, y: 75 },
+          { x: 515, y: 65 },
+          { x: 395, y: 105 },
+          { x: 335, y: 175 },
+          { x: 315, y: 255 },
+          // Dốc xuống Moulin
+          { x: 225, y: 280 },
+          { x: 125, y: 340 },
+          { x: 85,  y: 430 },
+          { x: 135, y: 520 },
+          { x: 235, y: 550 }
+        ]
+      },
+      tokyo: {
+        id: 'tokyo',
+        name: 'Tokyo Fuchu (Nhật Bản)',
+        icon: '🇯🇵',
+        type: 'grass',
+        trackColor: '#047857',
+        trackStripe: '#059669',
+        infieldColor: '#064e3b',
+        railColor: '#ffffff',
+        railPostColor: '#f1f5f9',
+        skyTop: '#0e7490',
+        skyBot: '#cffafe',
+        banner: 'JAPAN CUP • TOKYO FUCHU RACECOURSE 🇯🇵',
+        roadW: 88,
+        waypoints: [
+          { x: 320, y: 540 }, // Vạch đích đoạn thẳng
+          { x: 560, y: 540 },
+          { x: 770, y: 540 },
+          { x: 905, y: 490 },
+          { x: 945, y: 395 },
+          { x: 900, y: 295 },
+          { x: 805, y: 235 },
+          { x: 705, y: 225 },
+          { x: 635, y: 185 }, // Vòng quanh hồ nước trung tâm
+          { x: 545, y: 135 },
+          { x: 415, y: 115 },
+          { x: 275, y: 135 },
+          { x: 155, y: 195 },
+          { x: 90,  y: 305 },
+          { x: 95,  y: 430 },
+          { x: 165, y: 510 }
+        ]
+      },
+      meydan: {
+        id: 'meydan',
+        name: 'Meydan Dubai (Hoàng Gia)',
+        icon: '🇦🇪',
+        type: 'grass',
+        trackColor: '#0f766e',
+        trackStripe: '#14b8a6',
+        infieldColor: '#134e4a',
+        railColor: '#facc15', // Rào mạ vàng kim hoàng gia
+        railPostColor: '#ca8a04',
+        skyTop: '#1e1b4b',
+        skyBot: '#f59e0b',
+        banner: 'DUBAI WORLD CUP • MEYDAN RACECOURSE 🇦🇪',
+        roadW: 88,
+        waypoints: [
+          { x: 300, y: 530 },
+          { x: 550, y: 530 },
+          { x: 790, y: 530 },
+          { x: 915, y: 470 },
+          { x: 945, y: 365 },
+          { x: 890, y: 265 },
+          { x: 755, y: 195 },
+          { x: 575, y: 185 },
+          { x: 475, y: 145 },
+          { x: 355, y: 125 },
+          { x: 215, y: 145 },
+          { x: 115, y: 215 },
+          { x: 75,  y: 325 },
+          { x: 105, y: 440 },
+          { x: 185, y: 510 }
+        ]
+      },
+      happyvalley: {
+        id: 'happyvalley',
+        name: 'Happy Valley (Hồng Kông)',
+        icon: '🇭🇰',
+        type: 'grass',
+        trackColor: '#065f46',
+        trackStripe: '#047857',
+        infieldColor: '#022c22',
+        railColor: '#ffffff',
+        railPostColor: '#38bdf8',
+        skyTop: '#0f172a',
+        skyBot: '#3b82f6',
+        banner: 'HAPPY VALLEY NIGHT RACE • HONG KONG 🇭🇰',
+        roadW: 88,
+        waypoints: [
+          { x: 350, y: 550 },
+          { x: 620, y: 550 },
+          { x: 845, y: 520 },
+          { x: 925, y: 440 },
+          { x: 915, y: 315 },
+          { x: 840, y: 235 },
+          { x: 720, y: 205 },
+          { x: 575, y: 245 }, // Cua hẹp giữa các tháp cao ốc
+          { x: 445, y: 225 },
+          { x: 335, y: 155 },
+          { x: 215, y: 135 },
+          { x: 105, y: 195 },
+          { x: 75,  y: 325 },
+          { x: 110, y: 460 },
+          { x: 205, y: 535 }
+        ]
+      },
+      clover: {
+        id: 'clover',
+        name: 'Cỏ May Mắn Clover (Ireland)',
+        icon: '☘️',
+        type: 'grass',
+        trackColor: '#15803d',
+        trackStripe: '#22c55e',
+        infieldColor: '#14532d',
+        railColor: '#ffffff',
+        railPostColor: '#86efac',
+        skyTop: '#0284c7',
+        skyBot: '#dcfce7',
+        banner: 'IRISH DERBY • CLOVER MEADOW ☘️',
+        roadW: 88,
+        waypoints: [
+          { x: 490, y: 540 }, // Vạch đích đoạn thẳng đáy
+          { x: 310, y: 540 },
+          { x: 170, y: 505 },
+          // Cánh hoa 1 bên trái
+          { x: 95,  y: 405 },
+          { x: 85,  y: 285 },
+          { x: 145, y: 185 },
+          { x: 265, y: 175 },
+          { x: 355, y: 255 },
+          // Thắt eo trung tâm
+          { x: 425, y: 325 },
+          // Cánh hoa 2 ở đỉnh giữa
+          { x: 425, y: 215 },
+          { x: 465, y: 115 },
+          { x: 565, y: 85 },
+          { x: 665, y: 115 },
+          { x: 695, y: 215 },
+          // Thắt eo trung tâm
+          { x: 635, y: 325 },
+          // Cánh hoa 3 bên phải
+          { x: 715, y: 255 },
+          { x: 805, y: 175 },
+          { x: 915, y: 195 },
+          { x: 955, y: 305 },
+          { x: 935, y: 425 },
+          { x: 855, y: 515 },
+          { x: 705, y: 540 }
+        ]
       },
       dirt: {
         id: 'dirt',
         name: 'Churchill Downs (Đất Nện)',
-        icon: '🏜️',
+        icon: '🇺🇸',
         type: 'dirt',
         trackColor: '#b45309',
         trackStripe: '#92400e',
@@ -14045,7 +14300,23 @@
         railPostColor: '#78350f',
         skyTop: '#0369a1',
         skyBot: '#fde68a',
-        banner: 'CHURCHILL DOWNS DERBY 🏜️'
+        banner: 'KENTUCKY DERBY • CHURCHILL DOWNS 🇺🇸',
+        roadW: 88,
+        waypoints: [
+          { x: 300, y: 530 },
+          { x: 550, y: 530 },
+          { x: 785, y: 530 },
+          { x: 915, y: 465 },
+          { x: 940, y: 355 },
+          { x: 890, y: 250 },
+          { x: 765, y: 185 },
+          { x: 520, y: 165 },
+          { x: 315, y: 175 },
+          { x: 155, y: 215 },
+          { x: 85,  y: 310 },
+          { x: 90,  y: 430 },
+          { x: 170, y: 505 }
+        ]
       },
       sunset: {
         id: 'sunset',
@@ -14059,7 +14330,26 @@
         railPostColor: '#f43f5e',
         skyTop: '#4c1d95',
         skyBot: '#f43f5e',
-        banner: 'SUNSET MEADOW DERBY 🌸'
+        banner: 'SUNSET MEADOW DERBY • FIGURE 8 🌸',
+        roadW: 88,
+        waypoints: [
+          { x: 500, y: 340 }, // Eo số 8 trung tâm
+          { x: 625, y: 220 },
+          { x: 765, y: 150 },
+          { x: 895, y: 180 },
+          { x: 935, y: 290 },
+          { x: 895, y: 410 },
+          { x: 775, y: 470 },
+          { x: 635, y: 430 },
+          { x: 500, y: 340 }, // Băng qua eo số 8
+          { x: 365, y: 250 },
+          { x: 225, y: 180 },
+          { x: 105, y: 200 },
+          { x: 65,  y: 310 },
+          { x: 95,  y: 420 },
+          { x: 215, y: 490 },
+          { x: 355, y: 440 }
+        ]
       }
     };
 
@@ -14246,6 +14536,119 @@
         return horseCurrentCircuit;
       }
 
+      const scene = HORSE_SCENES[sceneKey] || HORSE_SCENES.turf;
+
+      // NẾU CÓ ĐỊNH NGHĨA WAYPOINTS THÌ DÙNG CATMULL-ROM SPLINE ĐƯỜNG ĐUA THỰC TẾ
+      if (scene.waypoints && scene.waypoints.length >= 4) {
+        let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+        for (const p of scene.waypoints) {
+          if (p.x < minX) minX = p.x;
+          if (p.x > maxX) maxX = p.x;
+          if (p.y < minY) minY = p.y;
+          if (p.y > maxY) maxY = p.y;
+        }
+        const wpW = maxX - minX || 1;
+        const wpH = maxY - minY || 1;
+
+        const roadW = scene.roadW || Math.max(76, Math.min(94, Math.min(w, h) * 0.16));
+        const marginX = Math.max(26, w * 0.03) + roadW * 0.5;
+        const marginTop = Math.max(24, h * 0.045) + roadW * 0.5;
+        const marginBot = Math.max(24, h * 0.045) + roadW * 0.5;
+        const availW = Math.max(100, w - marginX * 2);
+        const availH = Math.max(100, h - marginTop - marginBot);
+
+        const scale = Math.min(availW / wpW, availH / wpH);
+        const cx = (minX + maxX) * 0.5;
+        const cy = (minY + maxY) * 0.5;
+        const targetCenterX = w * 0.5;
+        const targetCenterY = marginTop + availH * 0.5;
+
+        const pts = scene.waypoints.map(p => ({
+          x: targetCenterX + (p.x - cx) * scale,
+          y: targetCenterY + (p.y - cy) * scale
+        }));
+
+        const N_WP = pts.length;
+        const SAMPLES_PER_SEG = Math.max(14, Math.floor(480 / N_WP));
+        const raw = [];
+
+        for (let i = 0; i < N_WP; i++) {
+          const p0 = pts[(i - 1 + N_WP) % N_WP];
+          const p1 = pts[i];
+          const p2 = pts[(i + 1) % N_WP];
+          const p3 = pts[(i + 2) % N_WP];
+
+          for (let j = 0; j < SAMPLES_PER_SEG; j++) {
+            const t = j / SAMPLES_PER_SEG;
+            const t2 = t * t;
+            const t3 = t2 * t;
+
+            const x = 0.5 * (
+              (2 * p1.x) +
+              (-p0.x + p2.x) * t +
+              (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2 +
+              (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t3
+            );
+            const y = 0.5 * (
+              (2 * p1.y) +
+              (-p0.y + p2.y) * t +
+              (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * t2 +
+              (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t3
+            );
+            raw.push({ x, y });
+          }
+        }
+
+        const K = raw.length;
+        const cumDist = new Float64Array(K + 1);
+        cumDist[0] = 0;
+        for (let i = 0; i < K; i++) {
+          const p1 = raw[i];
+          const p2 = raw[(i + 1) % K];
+          cumDist[i + 1] = cumDist[i] + Math.hypot(p2.x - p1.x, p2.y - p1.y);
+        }
+        const totalLength = cumDist[K];
+
+        function sampleDist(dist) {
+          let s = (dist % totalLength) / totalLength;
+          if (s < 0) s += 1.0;
+          const targetD = s * totalLength;
+          let low = 0, high = K;
+          while (low < high) {
+            const mid = (low + high) >> 1;
+            if (cumDist[mid] < targetD) low = mid + 1;
+            else high = mid;
+          }
+          const idx = Math.max(0, low - 1);
+          const d0 = cumDist[idx];
+          const d1 = cumDist[idx + 1];
+          const t = (d1 > d0) ? (targetD - d0) / (d1 - d0) : 0;
+          const p1 = raw[idx % K];
+          const p2 = raw[(idx + 1) % K];
+          const x = p1.x + (p2.x - p1.x) * t;
+          const y = p1.y + (p2.y - p1.y) * t;
+          const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x);
+          const nx = -Math.sin(angle);
+          const ny = Math.cos(angle);
+          return { x, y, angle, nx, ny };
+        }
+
+        horseCurrentCircuit = {
+          w,
+          h,
+          sceneKey,
+          raw,
+          cumDist,
+          totalLength,
+          roadW,
+          sampleDist,
+          startPt: sampleDist(0),
+          isSpline: true
+        };
+
+        return horseCurrentCircuit;
+      }
+
       const roadW = Math.max(54, Math.min(70, h * 0.15));
       const margin = Math.max(32, Math.min(50, w * 0.04));
       const topY = margin + roadW * 0.5 + 16;
@@ -14393,13 +14796,14 @@
       const circuit = getHorseClosedCircuit(w, h, currentHorseSceneKey);
 
       if (resetPositions || !horseCarList || horseCarList.length !== count) {
+        const laneOffsets = [-0.75, -0.25, 0.25, 0.75];
         horseCarList = visibleStudents.map((s, idx) => {
-          const row = Math.floor(idx / 2);
-          const side = (idx % 2 === 0) ? -1 : 1;
-          const laneRatio = (count <= 1) ? 0 : side * 0.40;
+          const row = Math.floor(idx / 4);
+          const laneIndex = idx % 4;
+          const laneRatio = (count <= 1) ? 0 : laneOffsets[laneIndex];
           const coat = HORSE_COATS[idx % HORSE_COATS.length];
           const silk = HORSE_SILKS[idx % HORSE_SILKS.length];
-          const startDist = -24 - row * 24;
+          const startDist = -26 - row * 26;
           const pt = circuit.sampleDist(startDist);
 
           const shortName = (typeof getShortName === 'function') ? getShortName(s) : s.name;
@@ -14444,8 +14848,8 @@
       const gate = document.getElementById('horse-gate-overlay');
       if (gate) gate.classList.add('hidden');
 
-      const leaderboard = document.getElementById('horse-leaderboard');
-      if (leaderboard) leaderboard.classList.add('hidden');
+      const winBanner = document.getElementById('horse-winner-banner');
+      if (winBanner) winBanner.classList.add('hidden');
 
       renderHorseRaceCanvas(performance.now());
     }
@@ -14470,12 +14874,13 @@
         if (!horseRaceRunning && horseCarList && horseCarList.length > 0) {
           const circuit = getHorseClosedCircuit(newW, newH, currentHorseSceneKey);
           const count = horseCarList.length;
+          const laneOffsets = [-0.75, -0.25, 0.25, 0.75];
           horseCarList.forEach((horse, idx) => {
-            const row = Math.floor(idx / 2);
-            const side = (idx % 2 === 0) ? -1 : 1;
-            horse.laneRatio = (count <= 1) ? 0 : side * 0.40;
+            const row = Math.floor(idx / 4);
+            const laneIndex = idx % 4;
+            horse.laneRatio = (count <= 1) ? 0 : laneOffsets[laneIndex];
             horse.targetLaneRatio = horse.laneRatio;
-            horse.startDist = -24 - row * 24;
+            horse.startDist = -26 - row * 26;
             horse.dist = horse.startDist;
             horse.prevDist = horse.startDist;
             const pt = circuit.sampleDist(horse.dist);
@@ -14506,13 +14911,14 @@
       const h = canvas.height || 500;
       const circuit = getHorseClosedCircuit(w, h, currentHorseSceneKey);
       const count = horseCarList.length;
+      const laneOffsets = [-0.75, -0.25, 0.25, 0.75];
 
       horseCarList.forEach((horse, idx) => {
-        const row = Math.floor(idx / 2);
-        const side = (idx % 2 === 0) ? -1 : 1;
-        horse.laneRatio = (count <= 1) ? 0 : side * 0.40;
+        const row = Math.floor(idx / 4);
+        const laneIndex = idx % 4;
+        horse.laneRatio = (count <= 1) ? 0 : laneOffsets[laneIndex];
         horse.targetLaneRatio = horse.laneRatio;
-        horse.startDist = -24 - row * 24;
+        horse.startDist = -26 - row * 26;
         horse.dist = horse.startDist;
         horse.prevDist = horse.startDist;
         const pt = circuit.sampleDist(horse.dist);
@@ -14538,10 +14944,20 @@
       const gate = document.getElementById('horse-gate-overlay');
       if (gate) gate.classList.add('hidden');
 
-      const leaderboard = document.getElementById('horse-leaderboard');
-      if (leaderboard) leaderboard.classList.add('hidden');
+      const winBanner = document.getElementById('horse-winner-banner');
+      if (winBanner) winBanner.classList.add('hidden');
 
       if (render) renderHorseRaceCanvas(performance.now());
+    }
+
+    function shuffleHorseStartingGrid() {
+      if (!horseCarList || horseCarList.length <= 1) return;
+      for (let i = horseCarList.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const temp = horseCarList[i];
+        horseCarList[i] = horseCarList[j];
+        horseCarList[j] = temp;
+      }
     }
 
     function startHorseRace(winnerStudent, durationMs, callback) {
@@ -14550,21 +14966,34 @@
       if (isHorseRandomScene) {
         const keys = Object.keys(HORSE_SCENES);
         const otherKeys = keys.filter(k => k !== currentHorseSceneKey);
-        const nextKey = otherKeys[Math.floor(Math.random() * keys.length)] || keys[0];
+        const nextKey = otherKeys[Math.floor(Math.random() * otherKeys.length)] || keys[0];
         applyHorseScene(nextKey, true);
       }
 
       if (!horseCarList || horseCarList.length === 0) initHorseRace(true);
       if (horseCarList.length === 0) return;
 
-      horseWinnerTarget = winnerStudent;
+      // XÁC SUẤT CÁC CHIẾN MÃ VỀ ĐÍCH LÀ NHƯ NHAU 100%:
+      // 1. Xáo trộn cổng xuất phát ngẫu nhiên
+      shuffleHorseStartingGrid();
+      resetHorseRacePositions(false);
+
+      // 2. Chọn ngẫu nhiên đồng đều 1 chiến mã (xác suất 1/N)
+      const luckyIndex = Math.floor(Math.random() * horseCarList.length);
+      const chosenHorse = horseCarList[luckyIndex];
+      const actualWinnerStudent = (students && students.find(s => s.id === chosenHorse.id)) || {
+        id: chosenHorse.id,
+        name: chosenHorse.fullName || chosenHorse.name,
+        avatar: chosenHorse.avatar,
+        code: chosenHorse.code
+      };
+
+      horseWinnerTarget = actualWinnerStudent;
       horseTargetDuration = durationMs || 7000;
       horseFinishCallback = callback;
 
-      resetHorseRacePositions(false);
-
       horseCarList.forEach(horse => {
-        horse.isWinner = (horse.id === winnerStudent.id);
+        horse.isWinner = (horse.id === chosenHorse.id);
       });
 
       // Hiệu ứng mở chuồng xuất phát (Starting Gate Call to the Post)
@@ -14627,9 +15056,6 @@
         horse.speed = horse.baseSpeed * 0.7;
         horse.stamina = 85 + Math.random() * 30;
       });
-
-      const lb = document.getElementById('horse-leaderboard');
-      if (lb) lb.classList.remove('hidden');
 
       horseRaceAnimId = requestAnimationFrame(runHorseRaceLoop);
     }
@@ -14769,17 +15195,39 @@
         horseRaceRunning = false;
         horseRaceState = 'finished';
 
+        const winnerHorse = horseCarList.find(h => h.isWinner) || sorted[0];
+        const winnerStudent = (students && students.find(s => s.id === (winnerHorse ? winnerHorse.id : null))) || horseWinnerTarget || {
+          id: winnerHorse ? winnerHorse.id : '',
+          name: winnerHorse ? (winnerHorse.fullName || winnerHorse.name) : 'Chiến mã',
+          avatar: winnerHorse ? winnerHorse.avatar : '👦',
+          code: winnerHorse ? (winnerHorse.code || '') : ''
+        };
+
+        const winnerDisplayName = winnerStudent.fullName || winnerStudent.name;
+        const statusEl = document.getElementById('horse-race-status');
+        if (statusEl) statusEl.innerText = '🏆 ' + winnerDisplayName + ' VỀ NHẤT!';
+
+        // Hiển thị Banner Vinh Danh Chiến Mã Về Nhất
+        const winBanner = document.getElementById('horse-winner-banner');
+        const winBannerName = document.getElementById('horse-winner-banner-name');
+        if (winBanner && winBannerName) {
+          winBannerName.innerText = winnerDisplayName + ' VỀ NHẤT!';
+          winBanner.classList.remove('hidden');
+        }
+
         HorseAudio.playFinishFanfare();
         HorseAudio.playNeigh();
 
         if (typeof confetti === 'function') {
-          confetti({ particleCount: 160, spread: 80, origin: { y: 0.6 } });
+          confetti({ particleCount: 220, spread: 100, origin: { y: 0.6 } });
         }
+
+        renderHorseRaceCanvas(now);
 
         if (typeof horseFinishCallback === 'function') {
           const cb = horseFinishCallback;
           horseFinishCallback = null;
-          cb();
+          cb(winnerStudent);
         }
         return;
       }
@@ -14853,18 +15301,23 @@
       ctx.fillStyle = scene.trackColor;
       ctx.fill();
 
-      // Các sọc cỏ cắt manicured turf hoặc cát đầm
-      ctx.strokeStyle = scene.trackStripe;
-      ctx.lineWidth = 4;
-      ctx.setLineDash([16, 24]);
-      ctx.beginPath();
-      for (let i = 0; i < K; i++) {
-        const pt = circuit.sampleDist(circuit.cumDist[i]);
-        if (i === 0) ctx.moveTo(pt.x, pt.y);
-        else ctx.lineTo(pt.x, pt.y);
-      }
-      ctx.closePath();
-      ctx.stroke();
+      // Các đường nét đứt phân chia 4 làn chạy rõ nét (4 Lanes)
+      const horseLaneDivs = [-0.5, 0.0, 0.5];
+      horseLaneDivs.forEach(ratio => {
+        ctx.strokeStyle = (scene.type === 'dirt') ? 'rgba(254, 240, 138, 0.35)' : 'rgba(255, 255, 255, 0.32)';
+        ctx.lineWidth = 1.4;
+        ctx.setLineDash([12, 16]);
+        ctx.beginPath();
+        for (let i = 0; i < K; i++) {
+          const pt = circuit.sampleDist(circuit.cumDist[i]);
+          const lx = pt.x + pt.nx * (ratio * halfRoad);
+          const ly = pt.y + pt.ny * (ratio * halfRoad);
+          if (i === 0) ctx.moveTo(lx, ly);
+          else ctx.lineTo(lx, ly);
+        }
+        ctx.closePath();
+        ctx.stroke();
+      });
       ctx.setLineDash([]);
 
       // 4. Hàng rào trắng đặc trưng của trường đua ngựa (White Running Rails)
@@ -14996,6 +15449,7 @@
       ctx.save();
       ctx.translate(horse.x, horse.y);
       ctx.rotate(horse.angle);
+      ctx.scale(1.22, 1.22);
 
       // Nhịp phi nước đại (Gallop Phase) dựa trên quãng đường chạy
       const phase = (horse.dist * 0.20) + horse.phaseOffset;
@@ -15156,45 +15610,58 @@
       // Quay ngược góc lại để thẻ tên luôn nằm ngang hoàn hảo, dễ đọc 100%
       ctx.rotate(-horse.angle);
 
-      const badgeText = horse.shortName;
-      ctx.font = isLeader ? 'bold 11px sans-serif' : 'bold 10px sans-serif';
+      const badgeText = horse.fullName || horse.shortName;
+      const isWinnerFinished = (horse.isWinner && horseRaceState === 'finished');
+      ctx.font = (isWinnerFinished || isLeader) ? '900 15px system-ui, -apple-system, sans-serif' : 'bold 13.5px system-ui, -apple-system, sans-serif';
       const textMetrics = ctx.measureText(badgeText);
-      const badgeW = Math.max(textMetrics.width + 24, 52);
-      const badgeH = 20;
+      const badgeW = Math.max(textMetrics.width + 26, 60);
+      const badgeH = 26;
       const badgeX = -badgeW / 2;
-      const badgeY = -34;
+      const badgeY = -42;
 
-      // Hào quang dẫn đầu nếu là ngựa P1
-      if (isLeader) {
+      // Hào quang dẫn đầu nếu là ngựa P1 hoặc cán đích
+      if (isWinnerFinished) {
+        ctx.save();
+        ctx.shadowColor = '#facc15';
+        ctx.shadowBlur = 14;
+        ctx.fillStyle = 'rgba(239, 68, 68, 0.96)';
+        ctx.beginPath();
+        ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 13);
+        ctx.fill();
+        ctx.restore();
+
+        ctx.strokeStyle = '#facc15';
+        ctx.lineWidth = 2.8;
+      } else if (isLeader) {
         ctx.save();
         ctx.shadowColor = '#f59e0b';
         ctx.shadowBlur = 12;
         ctx.fillStyle = 'rgba(245, 158, 11, 0.95)';
         ctx.beginPath();
-        ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 10);
+        ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 13);
         ctx.fill();
         ctx.restore();
 
         ctx.fillStyle = '#78350f';
         ctx.strokeStyle = '#fef08a';
-        ctx.lineWidth = 1.8;
+        ctx.lineWidth = 2;
       } else {
-        ctx.fillStyle = 'rgba(15, 23, 42, 0.90)';
-        ctx.strokeStyle = horse.silkColor;
-        ctx.lineWidth = 1.5;
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.94)';
+        ctx.strokeStyle = horse.silkColor || 'rgba(255, 255, 255, 0.75)';
+        ctx.lineWidth = 1.6;
       }
 
       ctx.beginPath();
-      ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 10);
+      ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 13);
       ctx.fill();
       ctx.stroke();
 
       // Chữ trên thẻ tên
-      ctx.fillStyle = isLeader ? '#ffffff' : '#f8fafc';
+      ctx.fillStyle = '#ffffff';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      const icon = isLeader ? '👑 ' : `[#${horse.number}] `;
-      ctx.fillText(icon + badgeText, 0, badgeY + badgeH / 2);
+      const icon = isWinnerFinished ? '🏆 ' : (isLeader ? '👑 ' : '');
+      ctx.fillText(icon + badgeText, 0, badgeY + badgeH / 2 + 0.5);
 
       ctx.restore();
     }
@@ -15404,10 +15871,11 @@
         const lapMultiplier = (horseTargetLaps > 1) ? (1 + (horseTargetLaps - 1) * 0.75) : 1;
         const raceDuration = Math.max(4000, Math.round(durationSec * 1300 * lapMultiplier));
         btn.innerHTML = "🐎 ĐANG ĐUA NGỰA...";
-        startHorseRace(selected, raceDuration, () => {
-          currentWinner = selected;
+        startHorseRace(selected, raceDuration, (actualWinner) => {
+          const winner = actualWinner || selected;
+          currentWinner = winner;
           // Vừa chạm vạch đích là lập tức gọi tên luôn, không chờ thêm
-          showWinnerResult(selected, btn);
+          showWinnerResult(winner, btn);
         });
         return;
       }
