@@ -4130,6 +4130,51 @@
             try { localStorage.setItem('backup_students', JSON.stringify(students)); } catch(e) {}
         }
 
+        // 6. Phục hồi Điểm danh (Attendance)
+        const currentAttDays = (attendanceData && typeof attendanceData === 'object') ? Object.keys(attendanceData).length : 0;
+        if (currentAttDays === 0) {
+            let bestAttendance = null;
+            let maxAttDays = 0;
+            const attKeysToCheck = [
+                'attendance_' + tId, 'attendance_thaytuan', 'attendance_cohakhtn', 
+                'attendance_admin', 'backup_attendance', 'attendance_backup', 'attendance'
+            ];
+            for (let i = 0; i < localStorage.length; i++) {
+                const k = localStorage.key(i);
+                if (k && (k.startsWith('attendance_') || k.includes('attendance') || k.includes('backup_attendance'))) {
+                    if (!attKeysToCheck.includes(k)) attKeysToCheck.push(k);
+                }
+            }
+            for (const k of attKeysToCheck) {
+                try {
+                    const raw = localStorage.getItem(k);
+                    if (!raw) continue;
+                    const parsed = JSON.parse(raw);
+                    if (parsed && typeof parsed === 'object') {
+                        const days = Object.keys(parsed).length;
+                        if (days > maxAttDays) {
+                            maxAttDays = days;
+                            bestAttendance = parsed;
+                        }
+                    }
+                } catch(e) {}
+            }
+            if (bestAttendance && maxAttDays > 0) {
+                console.log(`[AutoRecover] Khôi phục ${maxAttDays} ngày điểm danh từ bộ nhớ`);
+                attendanceData = bestAttendance;
+                try {
+                    localStorage.setItem('attendance_' + tId, JSON.stringify(attendanceData));
+                    localStorage.setItem('backup_attendance', JSON.stringify(attendanceData));
+                    localStorage.setItem('attendance', JSON.stringify(attendanceData));
+                } catch(e) {}
+            }
+        } else {
+            try {
+                localStorage.setItem('backup_attendance', JSON.stringify(attendanceData));
+                localStorage.setItem('attendance', JSON.stringify(attendanceData));
+            } catch(e) {}
+        }
+
         // Cập nhật ảnh bìa UI
         if (currentUser && currentUser.cover) {
             const coverEl = document.getElementById('cover-photo');
@@ -4211,6 +4256,19 @@
             if (cachedCover) currentUser.cover = cachedCover;
         }
 
+        // Bảo toàn Điểm danh:
+        if (!attendanceData || typeof attendanceData !== 'object' || Object.keys(attendanceData).length === 0) {
+            const cachedAtt = localStorage.getItem('attendance_' + targetId) || localStorage.getItem('backup_attendance') || localStorage.getItem('attendance');
+            if (cachedAtt) {
+                try {
+                    const parsedAtt = JSON.parse(cachedAtt);
+                    if (parsedAtt && Object.keys(parsedAtt).length > 0) {
+                        attendanceData = parsedAtt;
+                    }
+                } catch(e) {}
+            }
+        }
+
         try {
             if (students && students.length > 0) {
                 localStorage.setItem('students_' + targetId, JSON.stringify(students));
@@ -4257,6 +4315,12 @@
             }
 
             localStorage.setItem('attendance_' + targetId, JSON.stringify(attendanceData));
+            localStorage.setItem('backup_attendance', JSON.stringify(attendanceData));
+            localStorage.setItem('attendance', JSON.stringify(attendanceData));
+            if (currentUser.id && currentUser.id !== targetId) {
+                localStorage.setItem('attendance_' + currentUser.id, JSON.stringify(attendanceData));
+            }
+
             localStorage.setItem('announcements_' + targetId, JSON.stringify(announcements));
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
             localStorage.setItem('user_' + targetId, JSON.stringify(currentUser));
@@ -4560,7 +4624,9 @@
                         seatingCharts = backendData.seatingCharts || [];
                         timetables = backendData.timetables || [];
                         teacherTimetable = backendData.teacherTimetable || { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} };
-                        attendanceData = backendData.attendanceData || {};
+                        if (backendData.attendanceData && Object.keys(backendData.attendanceData).length > 0) {
+                            attendanceData = backendData.attendanceData;
+                        }
                         announcements = backendData.announcements || [];
                         loaded = true;
                     }
@@ -4584,7 +4650,9 @@
                         seatingCharts = backendData.seatingCharts || [];
                         timetables = backendData.timetables || [];
                         teacherTimetable = backendData.teacherTimetable || { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} };
-                        attendanceData = backendData.attendanceData || {};
+                        if (backendData.attendanceData && Object.keys(backendData.attendanceData).length > 0) {
+                            attendanceData = backendData.attendanceData;
+                        }
                         announcements = backendData.announcements || [];
                         loaded = true;
                     }
@@ -5437,8 +5505,16 @@
             if (savedTimetables && countTimetableLessons(timetables) === 0) { try { timetables = JSON.parse(savedTimetables); } catch(e) {} }
             const savedTkb = localStorage.getItem('teacherTimetable_' + targetTeacherId);
             if (savedTkb && countTeacherLessons(teacherTimetable) === 0) { try { teacherTimetable = JSON.parse(savedTkb); } catch(e) {} }
-            const savedAttendance = localStorage.getItem('attendance_' + targetTeacherId);
-            if (savedAttendance) { try { attendanceData = JSON.parse(savedAttendance); } catch(e) {} }
+            const savedAttendance = localStorage.getItem('attendance_' + targetTeacherId) || 
+                                    localStorage.getItem('attendance_' + currentUser.id) || 
+                                    localStorage.getItem('backup_attendance') || 
+                                    localStorage.getItem('attendance');
+            if (savedAttendance) { 
+                try { 
+                    const p = JSON.parse(savedAttendance); 
+                    if (p && Object.keys(p).length > 0) attendanceData = p; 
+                } catch(e) {} 
+            }
             const savedAnnouncements = localStorage.getItem('announcements_' + targetTeacherId) || localStorage.getItem('announcements_' + currentUser.id);
             if (savedAnnouncements) { try { announcements = JSON.parse(savedAnnouncements); } catch(e) {} }
         }
@@ -5673,6 +5749,12 @@
                 }
             }
             handleModeChange();
+        }
+        if(tabId === 'tab-attendance') {
+            const tId = currentTeacherId || (currentUser ? currentUser.id : null) || 'thaytuan';
+            autoRecoverClassData(tId);
+            initAttendance();
+            loadAttendance();
         }
         closeSidebar();
     }
@@ -7276,13 +7358,76 @@
     }
 
     // --- ATTENDANCE ---
-    function initAttendance() { const today = new Date(); const yyyy = today.getFullYear(); const mm = String(today.getMonth() + 1).padStart(2, '0'); const dd = String(today.getDate()).padStart(2, '0'); document.getElementById('attendance-date').value = `${yyyy}-${mm}-${dd}`; const saved = localStorage.getItem('attendance_' + currentUser.id); if(saved) attendanceData = JSON.parse(saved); else attendanceData = {}; }
+    function initAttendance() {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        const dateInput = document.getElementById('attendance-date');
+        if (dateInput && !dateInput.value) {
+            dateInput.value = `${yyyy}-${mm}-${dd}`;
+        }
+        
+        const targetId = (currentUserRole === 'gvbm' || currentUserRole === 'student') && currentTeacherId 
+                         ? currentTeacherId 
+                         : ((currentUser && currentUser.id) || 'thaytuan');
+
+        // Khôi phục dữ liệu điểm danh nếu RAM đang rỗng
+        if (!attendanceData || typeof attendanceData !== 'object' || Object.keys(attendanceData).length === 0) {
+            const keysToCheck = [
+                'attendance_' + targetId, 
+                'attendance_' + ((currentUser && currentUser.id) || ''),
+                'backup_attendance', 
+                'attendance_backup', 
+                'attendance', 
+                'attendance_thaytuan', 
+                'attendance_cohakhtn'
+            ];
+            for (let i = 0; i < localStorage.length; i++) {
+                const k = localStorage.key(i);
+                if (k && (k.startsWith('attendance_') || k.includes('attendance') || k.includes('backup_attendance'))) {
+                    if (!keysToCheck.includes(k)) keysToCheck.push(k);
+                }
+            }
+            for (const k of keysToCheck) {
+                if (!k) continue;
+                try {
+                    const raw = localStorage.getItem(k);
+                    if (!raw) continue;
+                    const parsed = JSON.parse(raw);
+                    if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
+                        attendanceData = parsed;
+                        break;
+                    }
+                } catch(e) {}
+            }
+        }
+        if (!attendanceData || typeof attendanceData !== 'object') attendanceData = {};
+        loadAttendance();
+    }
+
     function loadAttendance() {
         const isStudent = (currentUserRole === 'student');
         const controlBar = document.getElementById('attendance-control-bar');
         const gridContainer = document.getElementById('attendance-grid-container');
         const studentContainer = document.getElementById('student-attendance-container');
         
+        const targetId = (currentUserRole === 'gvbm' || currentUserRole === 'student') && currentTeacherId 
+                         ? currentTeacherId 
+                         : ((currentUser && currentUser.id) || 'thaytuan');
+
+        // Đảm bảo có dữ liệu điểm danh
+        if (!attendanceData || typeof attendanceData !== 'object' || Object.keys(attendanceData).length === 0) {
+            const cached = localStorage.getItem('attendance_' + targetId) || localStorage.getItem('backup_attendance') || localStorage.getItem('attendance');
+            if (cached) {
+                try {
+                    const parsed = JSON.parse(cached);
+                    if (parsed && typeof parsed === 'object') attendanceData = parsed;
+                } catch(e) {}
+            }
+        }
+        if (!attendanceData || typeof attendanceData !== 'object') attendanceData = {};
+
         if (isStudent) {
             if (controlBar) controlBar.classList.add('hidden');
             if (gridContainer) gridContainer.classList.add('hidden');
@@ -7348,10 +7493,124 @@
         if (gridContainer) gridContainer.classList.remove('hidden');
         if (studentContainer) studentContainer.classList.add('hidden');
 
-        const dateStr = document.getElementById('attendance-date').value; if(!dateStr) return; const dailyData = attendanceData[dateStr] || {}; const tbody = document.getElementById('attendance-tbody'); if(students.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400 font-medium">Danh sách trống. Vui lòng thêm học sinh.</td></tr>`; return; } tbody.innerHTML = students.map((s, index) => { const status = dailyData[s.id] || 'present'; return `<tr class="hover:bg-slate-50 transition border-b border-slate-50 group"><td class="p-3 md:p-4 font-bold text-slate-400 text-center">${index + 1}</td><td class="p-3 md:p-4 min-w-[200px]"><div class="flex items-center gap-3"><div class="w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden bg-slate-100 flex items-center justify-center text-xl shadow-sm border border-slate-200">${getAvatarHtml(s.avatar)}</div><div><div class="font-bold text-slate-800 text-sm md:text-base line-clamp-1">${s.name}</div><div class="text-[9px] text-slate-400 font-mono font-bold mt-0.5">ID: ${s.code || '...'}</div></div></div></td><td class="p-3 md:p-4 text-center"><label class="cursor-pointer inline-block"><input type="radio" id="att_${s.id}_p" name="att_${s.id}" value="present" ${status === 'present' ? 'checked' : ''} class="peer sr-only"><div class="w-8 h-8 md:w-10 md:h-10 mx-auto rounded-xl flex items-center justify-center bg-slate-100 text-slate-300 peer-checked:bg-emerald-500 peer-checked:text-white transition-all hover:scale-110 shadow-sm"><i data-lucide="check" class="w-4 h-4 md:w-5 md:h-5"></i></div></label></td><td class="p-3 md:p-4 text-center"><label class="cursor-pointer inline-block"><input type="radio" id="att_${s.id}_l" name="att_${s.id}" value="late" ${status === 'late' ? 'checked' : ''} class="peer sr-only"><div class="w-8 h-8 md:w-10 md:h-10 mx-auto rounded-xl flex items-center justify-center bg-slate-100 text-slate-300 peer-checked:bg-amber-500 peer-checked:text-white transition-all hover:scale-110 shadow-sm"><span class="font-black text-sm md:text-base">T</span></div></label></td><td class="p-3 md:p-4 text-center"><label class="cursor-pointer inline-block"><input type="radio" id="att_${s.id}_e" name="att_${s.id}" value="excused" ${status === 'excused' ? 'checked' : ''} class="peer sr-only"><div class="w-8 h-8 md:w-10 md:h-10 mx-auto rounded-xl flex items-center justify-center bg-slate-100 text-slate-300 peer-checked:bg-blue-500 peer-checked:text-white transition-all hover:scale-110 shadow-sm"><span class="font-black text-sm md:text-base">P</span></div></label></td><td class="p-3 md:p-4 text-center"><label class="cursor-pointer inline-block"><input type="radio" id="att_${s.id}_u" name="att_${s.id}" value="unexcused" ${status === 'unexcused' ? 'checked' : ''} class="peer sr-only"><div class="w-8 h-8 md:w-10 md:h-10 mx-auto rounded-xl flex items-center justify-center bg-slate-100 text-slate-300 peer-checked:bg-rose-500 peer-checked:text-white transition-all hover:scale-110 shadow-sm"><span class="font-black text-sm md:text-base">K</span></div></label></td></tr>`; }).join(''); lucide.createIcons();
+        const dateInput = document.getElementById('attendance-date');
+        if (dateInput && !dateInput.value) {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            dateInput.value = `${yyyy}-${mm}-${dd}`;
+        }
+        const dateStr = dateInput ? dateInput.value : '';
+        if (!dateStr) return;
+
+        const dailyData = attendanceData[dateStr] || {};
+        const tbody = document.getElementById('attendance-tbody');
+        if (students.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400 font-medium">Danh sách trống. Vui lòng thêm học sinh.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = students.map((s, index) => {
+            const status = dailyData[s.id] || 'present';
+            return `<tr class="hover:bg-slate-50 transition border-b border-slate-50 group">
+                <td class="p-3 md:p-4 font-bold text-slate-400 text-center">${index + 1}</td>
+                <td class="p-3 md:p-4 min-w-[200px]">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden bg-slate-100 flex items-center justify-center text-xl shadow-sm border border-slate-200">${getAvatarHtml(s.avatar)}</div>
+                        <div>
+                            <div class="font-bold text-slate-800 text-sm md:text-base line-clamp-1">${s.name}</div>
+                            <div class="text-[9px] text-slate-400 font-mono font-bold mt-0.5">ID: ${s.code || '...'}</div>
+                        </div>
+                    </div>
+                </td>
+                <td class="p-3 md:p-4 text-center">
+                    <label class="cursor-pointer inline-block">
+                        <input type="radio" id="att_${s.id}_p" name="att_${s.id}" value="present" ${status === 'present' ? 'checked' : ''} class="peer sr-only">
+                        <div class="w-8 h-8 md:w-10 md:h-10 mx-auto rounded-xl flex items-center justify-center bg-slate-100 text-slate-300 peer-checked:bg-emerald-500 peer-checked:text-white transition-all hover:scale-110 shadow-sm">
+                            <i data-lucide="check" class="w-4 h-4 md:w-5 md:h-5"></i>
+                        </div>
+                    </label>
+                </td>
+                <td class="p-3 md:p-4 text-center">
+                    <label class="cursor-pointer inline-block">
+                        <input type="radio" id="att_${s.id}_l" name="att_${s.id}" value="late" ${status === 'late' ? 'checked' : ''} class="peer sr-only">
+                        <div class="w-8 h-8 md:w-10 md:h-10 mx-auto rounded-xl flex items-center justify-center bg-slate-100 text-slate-300 peer-checked:bg-amber-500 peer-checked:text-white transition-all hover:scale-110 shadow-sm">
+                            <span class="font-black text-sm md:text-base">T</span>
+                        </div>
+                    </label>
+                </td>
+                <td class="p-3 md:p-4 text-center">
+                    <label class="cursor-pointer inline-block">
+                        <input type="radio" id="att_${s.id}_e" name="att_${s.id}" value="excused" ${status === 'excused' ? 'checked' : ''} class="peer sr-only">
+                        <div class="w-8 h-8 md:w-10 md:h-10 mx-auto rounded-xl flex items-center justify-center bg-slate-100 text-slate-300 peer-checked:bg-blue-500 peer-checked:text-white transition-all hover:scale-110 shadow-sm">
+                            <span class="font-black text-sm md:text-base">P</span>
+                        </div>
+                    </label>
+                </td>
+                <td class="p-3 md:p-4 text-center">
+                    <label class="cursor-pointer inline-block">
+                        <input type="radio" id="att_${s.id}_u" name="att_${s.id}" value="unexcused" ${status === 'unexcused' ? 'checked' : ''} class="peer sr-only">
+                        <div class="w-8 h-8 md:w-10 md:h-10 mx-auto rounded-xl flex items-center justify-center bg-slate-100 text-slate-300 peer-checked:bg-rose-500 peer-checked:text-white transition-all hover:scale-110 shadow-sm">
+                            <span class="font-black text-sm md:text-base">K</span>
+                        </div>
+                    </label>
+                </td>
+            </tr>`;
+        }).join('');
+        if (window.lucide) lucide.createIcons();
     }
-    function checkAllAttendance(val) { if(students.length === 0) return; students.forEach(s => { const radios = document.getElementsByName(`att_${s.id}`); for(let r of radios) { if(r.value === val) r.checked = true; } }); }
-    function saveAttendance() { if(students.length === 0) return showModal('warning', 'Trống', 'Chưa có học sinh nào để điểm danh.'); const dateStr = document.getElementById('attendance-date').value; if(!dateStr) return showModal('warning', 'Lỗi', 'Vui lòng chọn ngày.'); let dailyData = {}; students.forEach(s => { const radios = document.getElementsByName(`att_${s.id}`); for(let r of radios) { if(r.checked) { dailyData[s.id] = r.value; break; } } }); attendanceData[dateStr] = dailyData; saveAppData(); showModal('success', 'Thành công', `Đã lưu điểm danh ngày ${dateStr.split('-').reverse().join('/')}`); }
+
+    function checkAllAttendance(val) {
+        if (students.length === 0) return;
+        students.forEach(s => {
+            const radios = document.getElementsByName(`att_${s.id}`);
+            for (let r of radios) {
+                if (r.value === val) r.checked = true;
+            }
+        });
+    }
+
+    function saveAttendance() {
+        if (students.length === 0) return showModal('warning', 'Trống', 'Chưa có học sinh nào để điểm danh.');
+        const dateInput = document.getElementById('attendance-date');
+        const dateStr = dateInput ? dateInput.value : '';
+        if (!dateStr) return showModal('warning', 'Lỗi', 'Vui lòng chọn ngày điểm danh.');
+
+        let dailyData = {};
+        students.forEach(s => {
+            const radios = document.getElementsByName(`att_${s.id}`);
+            for (let r of radios) {
+                if (r.checked) {
+                    dailyData[s.id] = r.value;
+                    break;
+                }
+            }
+        });
+
+        if (!attendanceData || typeof attendanceData !== 'object') attendanceData = {};
+        attendanceData[dateStr] = dailyData;
+
+        const targetId = (currentUserRole === 'gvbm' || currentUserRole === 'student') && currentTeacherId 
+                         ? currentTeacherId 
+                         : ((currentUser && currentUser.id) || 'thaytuan');
+
+        // Lưu đa tầng LocalStorage tức thì
+        try {
+            localStorage.setItem('attendance_' + targetId, JSON.stringify(attendanceData));
+            localStorage.setItem('backup_attendance', JSON.stringify(attendanceData));
+            localStorage.setItem('attendance', JSON.stringify(attendanceData));
+            if (currentUser && currentUser.id && currentUser.id !== targetId) {
+                localStorage.setItem('attendance_' + currentUser.id, JSON.stringify(attendanceData));
+            }
+        } catch(e) {
+            console.error("Save attendance localStorage error:", e);
+        }
+
+        saveAppData();
+        if (typeof renderOverview === 'function') renderOverview();
+        showModal('success', 'Thành công', `Đã lưu điểm danh ngày ${dateStr.split('-').reverse().join('/')}`);
+    }
     function openMonthlyAttendance() { const today = new Date(); const yyyy = today.getFullYear(); const mm = String(today.getMonth() + 1).padStart(2, '0'); document.getElementById('report-month').value = `${yyyy}-${mm}`; generateMonthlyReport(); openModalUi('monthly-attendance-modal', 'monthly-attendance-content'); }
     function generateMonthlyReport() { const monthStr = document.getElementById('report-month').value; if(!monthStr) return; const [yyyy, mm] = monthStr.split('-'); const daysInMonth = new Date(yyyy, mm, 0).getDate(); let html = '<table class="w-full text-center text-sm border-collapse table-sticky"><thead class="bg-slate-50 border-b border-slate-200 shadow-sm"><tr><th class="p-3 text-left whitespace-nowrap font-black text-slate-600 min-w-[180px]">Học sinh</th>'; for(let d=1; d<=daysInMonth; d++) { html += `<th class="border-r border-slate-100 p-2 w-8 text-[10px] text-slate-500">${d}</th>`; } html += '</tr></thead><tbody class="divide-y divide-slate-100">'; students.forEach(s => { html += `<tr><td class="p-3 text-left font-bold text-xs text-slate-800 whitespace-nowrap min-w-[180px]" title="${s.name}">${s.name}</td>`; for(let d=1; d<=daysInMonth; d++) { const dateKey = `${yyyy}-${mm}-${String(d).padStart(2, '0')}`; const dailyRecord = attendanceData[dateKey] || {}; const status = dailyRecord[s.id]; let cellClass = "border-r border-slate-100 p-1 text-[10px] font-black "; let text = ""; if(status === 'present') { cellClass += "bg-emerald-100/50 text-emerald-600"; text = ""; } else if(status === 'excused') { cellClass += "bg-blue-50 text-blue-600"; text = "P"; } else if(status === 'unexcused') { cellClass += "bg-rose-50 text-rose-600"; text = "K"; } else if(status === 'late') { cellClass += "bg-amber-50 text-amber-600"; text = "T"; } html += `<td class="${cellClass}">${text}</td>`; } html += '</tr>'; }); html += '</tbody></table>'; document.getElementById('monthly-report-container').innerHTML = html; }
 
@@ -8993,8 +9252,10 @@
         const badgeEl = document.getElementById('overview-parent-hotline-badge');
         if (!listEl) return;
         
-        const todayStr = new Date().toISOString().split('T')[0];
-        const dailyAtt = attendanceData[todayStr] || {};
+        const nowD = new Date();
+        const localDateStr = `${nowD.getFullYear()}-${String(nowD.getMonth() + 1).padStart(2, '0')}-${String(nowD.getDate()).padStart(2, '0')}`;
+        const utcDateStr = nowD.toISOString().split('T')[0];
+        const dailyAtt = attendanceData[localDateStr] || attendanceData[utcDateStr] || {};
         
         const urgentStudents = [];
         for (const [studentId, status] of Object.entries(dailyAtt)) {
@@ -9319,8 +9580,10 @@
           seatedCount = Object.values(chart.layout).filter(studentId => students.some(s => String(s.id) === String(studentId))).length;
       }
       
-      const todayStr = new Date().toISOString().split('T')[0];
-      const dailyAtt = attendanceData[todayStr];
+      const nowD = new Date();
+      const localDateStr = `${nowD.getFullYear()}-${String(nowD.getMonth() + 1).padStart(2, '0')}-${String(nowD.getDate()).padStart(2, '0')}`;
+      const utcDateStr = nowD.toISOString().split('T')[0];
+      const dailyAtt = attendanceData[localDateStr] || attendanceData[utcDateStr];
       let attendanceText = "Chưa điểm danh";
       if (dailyAtt && Object.keys(dailyAtt).length > 0) {
           const present = Object.values(dailyAtt).filter(v => v === 'present').length;
@@ -15047,79 +15310,71 @@
       const totalCircuitLength = circuit.totalLength;
       const totalRaceDist = totalCircuitLength * horseTargetLaps;
 
-      const durationSec = horseTargetDuration / 1000;
-      const avgSpeed = totalRaceDist / durationSec;
-
       horseCarList.forEach(horse => {
-        const variance = (Math.random() - 0.5) * 0.16;
-        horse.baseSpeed = avgSpeed * (1 + variance);
-        horse.speed = horse.baseSpeed * 0.7;
-        horse.stamina = 85 + Math.random() * 30;
+        horse.speedVariation = 0.94 + Math.random() * 0.10;
+        horse.wobbleOffset = Math.random() * Math.PI * 2;
+        horse.wobbleAmp = 0.8 + Math.random() * 0.8;
       });
 
       horseRaceAnimId = requestAnimationFrame(runHorseRaceLoop);
     }
 
     function runHorseRaceLoop(now) {
-      if (!horseRaceRunning) return;
+      if (!horseRaceRunning || horseRaceState !== 'racing') return;
       const canvas = document.getElementById('horse-race-canvas');
       if (!canvas) return;
       const w = canvas.width;
       const h = canvas.height;
       const circuit = getHorseClosedCircuit(w, h, currentHorseSceneKey);
       const totalCircuitLength = circuit.totalLength;
-      const totalRaceDist = totalCircuitLength * horseTargetLaps;
+      const totalLaps = horseTargetLaps || 1;
+      const D_finish = totalCircuitLength * totalLaps;
 
-      const elapsed = now - horseRaceStartTime;
-      const progress = Math.min(1.0, elapsed / horseTargetDuration);
+      const elapsed = Math.max(0, now - horseRaceStartTime);
+      const totalProgress = Math.min(1.0, elapsed / horseTargetDuration);
 
       // Tiếng vó ngựa phi theo nhịp
       if (now >= horseNextHoofTime) {
         HorseAudio.playHoofStep();
-        const cadence = Math.max(70, 150 - progress * 60);
+        const cadence = Math.max(70, 150 - totalProgress * 60);
         horseNextHoofTime = now + cadence;
       }
 
       let winnerHasFinished = false;
 
-      horseCarList.forEach((horse, idx) => {
-        horse.prevDist = horse.dist;
-
-        if (progress < 0.25) {
-          // Giai đoạn xuất phát tăng tốc
-          const accel = Math.min(1.0, progress / 0.20);
-          horse.speed = horse.baseSpeed * (0.6 + accel * 0.4);
-        } else if (progress < 0.75) {
-          // Giữa cuộc đua: ngựa luân phiên bứt phá
-          const wave = Math.sin(progress * Math.PI * 6 + idx * 1.3);
-          horse.speed = horse.baseSpeed * (0.95 + wave * 0.12);
-        } else {
-          // Khúc cua cuối & giai đoạn nước rút về đích (Home Stretch Sprint)
-          const sprintT = (progress - 0.75) / 0.25;
-          if (horse.isWinner) {
-            // Ngựa chiến thắng bứt tốc mạnh mẽ vượt lên đầu
-            const surge = 1.0 + sprintT * 0.55;
-            horse.speed = horse.baseSpeed * surge;
+      horseCarList.forEach(horse => {
+        let desiredDist;
+        if (horse.isWinner) {
+          // Ngựa chiến thắng: 65% đầu bám đuổi so kè gay cấn, từ 65% trở đi phi nước đại vượt lên
+          let targetProgressFactor;
+          if (totalProgress < 0.65) {
+            targetProgressFactor = totalProgress * 0.97 + Math.sin(totalProgress * Math.PI * 4.0 + (horse.number || 1)) * 0.016;
           } else {
-            const tire = Math.max(0.75, 1.0 - sprintT * 0.22);
-            horse.speed = horse.baseSpeed * tire;
+            const sprintFactor = (totalProgress - 0.65) / 0.35;
+            targetProgressFactor = 0.65 * 0.97 + (1.0 - 0.65 * 0.97) * Math.pow(sprintFactor, 0.82);
           }
+          desiredDist = horse.startDist + (D_finish - horse.startDist) * targetProgressFactor;
+        } else {
+          // Các ngựa khác tranh đua so kè ở phía sau
+          const baseDist = horse.startDist + (D_finish - horse.startDist) * totalProgress * (horse.speedVariation || 0.98);
+          const wave = Math.sin(totalProgress * Math.PI * 3.0 * totalLaps + (horse.number || 1) * 1.3);
+          let offset = wave * 22;
+          if (totalProgress > 0.65) {
+            // Khi ngựa về nhất nước rút, các ngựa sau tụt dần
+            const f = (1.0 - totalProgress) / 0.35;
+            offset = -36 * (1.0 - f) + wave * 10 * f;
+          }
+          desiredDist = Math.min(D_finish - 26, baseDist + offset);
         }
 
-        const dt = 0.016;
-        horse.dist += horse.speed * dt;
-
-        // Chuyển làn nhẹ nhàng tự nhiên
-        if (Math.random() < 0.02) {
-          const side = (idx % 2 === 0) ? -1 : 1;
-          horse.targetLaneRatio = side * (0.15 + Math.random() * 0.32);
-        }
-        horse.laneRatio += (horse.targetLaneRatio - horse.laneRatio) * 0.04;
+        // Tịnh tiến vị trí liên tục trên vòng đua khép kín không bao giờ giật lùi
+        horse.dist += (desiredDist - horse.dist) * 0.22;
 
         // Vị trí trên đường đua
         const pt = circuit.sampleDist(horse.dist);
-        horse.x = pt.x + pt.nx * horse.laneRatio * (circuit.roadW * 0.44);
-        horse.y = pt.y + pt.ny * horse.laneRatio * (circuit.roadW * 0.44);
+        const wobble = Math.sin(now * 0.005 + (horse.number || 1)) * Math.min(horse.wobbleAmp || 1.0, 1.2);
+        horse.x = pt.x + pt.nx * (horse.laneRatio * (circuit.roadW * 0.44) + wobble);
+        horse.y = pt.y + pt.ny * (horse.laneRatio * (circuit.roadW * 0.44) + wobble);
         horse.angle = pt.angle;
 
         // Bụi đất / cỏ văng theo vó ngựa
@@ -15135,11 +15390,11 @@
           });
         }
 
-        // Kiểm tra cán đích
-        if (horse.dist >= totalRaceDist) {
-          if (horse.isWinner) {
-            winnerHasFinished = true;
-          }
+        // =========================================================================
+        // ĐIỀU KIỆN VỀ ĐÍCH: CON NGỰA VỀ NHẤT CHẠM VẠCH ĐÍCH (HẾT TOÀN BỘ ĐƯỜNG ĐUA)
+        // =========================================================================
+        if (horse.isWinner && (horse.dist >= D_finish - 8 || totalProgress >= 0.999)) {
+          winnerHasFinished = true;
         }
       });
 
@@ -15156,54 +15411,48 @@
       // Xếp hạng thời gian thực
       const sorted = [...horseCarList].sort((a, b) => b.dist - a.dist);
       const leader = sorted[0];
-      const curLap = Math.min(horseTargetLaps, Math.floor(Math.max(0, leader.dist) / totalCircuitLength) + 1);
+      const curLap = Math.min(totalLaps, Math.floor(Math.max(0, leader.dist) / totalCircuitLength) + 1);
 
-      // Cập nhật Leaderboard
+      // Cập nhật Leaderboard nếu có
       const lapBadge = document.getElementById('horse-leaderboard-lap');
       if (lapBadge) {
-        lapBadge.innerText = `VÒNG ${curLap}/${horseTargetLaps}`;
-      }
-      const topListEl = document.getElementById('horse-top-list');
-      if (topListEl) {
-        topListEl.innerHTML = sorted.slice(0, 5).map((h, rank) => {
-          const isP1 = (rank === 0);
-          const bg = isP1 
-            ? 'bg-gradient-to-r from-amber-500/25 via-emerald-500/20 to-transparent border border-amber-400/40 text-amber-200' 
-            : 'bg-white/5 border border-white/10 text-slate-300';
-          const p1Badge = isP1 ? `<span class="bg-amber-400 text-slate-950 font-black text-[9px] px-1 py-0.2 rounded font-mono shadow-xs animate-pulse">P1 TOP</span>` : '';
-          const p1NameClass = isP1 ? 'text-xs md:text-[13px] font-black text-amber-300' : 'text-[11px] font-bold text-slate-200';
-          return `
-            <div class="flex items-center justify-between px-2 py-1 rounded-lg ${bg} transition-all">
-              <div class="flex items-center gap-1.5 min-w-0">
-                <span class="font-mono font-black ${isP1 ? 'text-amber-400 text-sm' : 'text-slate-400 text-xs'} w-4 text-center">#${rank + 1}</span>
-                <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background:${h.silkColor};"></span>
-                <span class="${p1NameClass} truncate max-w-[145px] sm:max-w-[170px]" title="${h.fullName}">${h.fullName}</span>
-              </div>
-              <div class="flex items-center gap-1 shrink-0">
-                ${p1Badge}
-                <span class="text-[10px] font-mono font-semibold ${isP1 ? 'text-emerald-300' : 'text-slate-400'}">Đua #${h.number}</span>
-              </div>
-            </div>
-          `;
-        }).join('');
+        lapBadge.innerText = `VÒNG ${curLap}/${totalLaps}`;
       }
 
       renderHorseRaceCanvas(now);
 
-      // Khi người thắng cán đích
-      if (winnerHasFinished || progress >= 1.0) {
+      // Khi con ngựa về nhất thực sự cán đích
+      if (winnerHasFinished) {
         horseRaceRunning = false;
         horseRaceState = 'finished';
 
-        const winnerHorse = horseCarList.find(h => h.isWinner) || sorted[0];
-        const winnerStudent = (students && students.find(s => s.id === (winnerHorse ? winnerHorse.id : null))) || horseWinnerTarget || {
-          id: winnerHorse ? winnerHorse.id : '',
-          name: winnerHorse ? (winnerHorse.fullName || winnerHorse.name) : 'Chiến mã',
-          avatar: winnerHorse ? winnerHorse.avatar : '👦',
-          code: winnerHorse ? (winnerHorse.code || '') : ''
+        if (horseRaceAnimId) {
+          cancelAnimationFrame(horseRaceAnimId);
+          horseRaceAnimId = null;
+        }
+
+        // Đặt con ngựa chiến thắng đúng ngay trên vạch đích
+        const winnerHorse = horseCarList.find(h => h.isWinner) || horseCarList[0];
+        winnerHorse.dist = D_finish;
+        const finishPt = circuit.sampleDist(D_finish);
+        winnerHorse.x = finishPt.x + finishPt.nx * (winnerHorse.laneRatio * (circuit.roadW * 0.44));
+        winnerHorse.y = finishPt.y + finishPt.ny * (winnerHorse.laneRatio * (circuit.roadW * 0.44));
+        winnerHorse.angle = finishPt.angle;
+
+        // XÁC ĐỊNH CHÍNH XÁC CON NGỰA VỀ NHẤT -> GỌI TÊN ĐÚNG HỌC SINH ĐÓ!
+        const finalSorted = [...horseCarList].sort((a, b) => b.dist - a.dist);
+        const p1Horse = finalSorted[0] || winnerHorse;
+
+        const actualWinnerStudent = (students && students.find(s => s.id === p1Horse.id)) || {
+          id: p1Horse.id,
+          name: p1Horse.fullName || p1Horse.name,
+          avatar: p1Horse.avatar,
+          code: p1Horse.code
         };
 
-        const winnerDisplayName = winnerStudent.fullName || winnerStudent.name;
+        horseWinnerTarget = actualWinnerStudent;
+        const winnerDisplayName = actualWinnerStudent.fullName || actualWinnerStudent.name;
+
         const statusEl = document.getElementById('horse-race-status');
         if (statusEl) statusEl.innerText = '🏆 ' + winnerDisplayName + ' VỀ NHẤT!';
 
@@ -15224,11 +15473,14 @@
 
         renderHorseRaceCanvas(now);
 
-        if (typeof horseFinishCallback === 'function') {
-          const cb = horseFinishCallback;
-          horseFinishCallback = null;
-          cb(winnerStudent);
-        }
+        // Sau khi ngựa đã cán đích rõ ràng, chờ 500ms cho mọi người nhìn thấy ngựa chạm vạch đích rồi mới bật popup kết quả!
+        setTimeout(() => {
+          if (typeof horseFinishCallback === 'function') {
+            const cb = horseFinishCallback;
+            horseFinishCallback = null;
+            cb(actualWinnerStudent);
+          }
+        }, 500);
         return;
       }
 
@@ -15869,12 +16121,12 @@
       if (mode === 'horse') {
         const durationSec = parseInt(document.getElementById('spin-duration').value || 3);
         const lapMultiplier = (horseTargetLaps > 1) ? (1 + (horseTargetLaps - 1) * 0.75) : 1;
-        const raceDuration = Math.max(4000, Math.round(durationSec * 1300 * lapMultiplier));
+        const raceDuration = Math.max(6500, Math.round(durationSec * 1800 * lapMultiplier));
         btn.innerHTML = "🐎 ĐANG ĐUA NGỰA...";
         startHorseRace(selected, raceDuration, (actualWinner) => {
           const winner = actualWinner || selected;
           currentWinner = winner;
-          // Vừa chạm vạch đích là lập tức gọi tên luôn, không chờ thêm
+          // Con ngựa về nhất thực sự cán vạch đích -> Gọi tên người đó
           showWinnerResult(winner, btn);
         });
         return;
