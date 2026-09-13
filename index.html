@@ -4205,45 +4205,45 @@
             }
         }
 
-        // Bảo toàn Sơ đồ chỗ ngồi:
+        // Bảo toàn Sơ đồ chỗ ngồi (chỉ khôi phục khi RAM rỗng hoàn toàn để tránh ghi đè dữ liệu rác, không can thiệp khi giáo viên chủ động gỡ/đổi chỗ HS):
         let chartsToSave = seatingCharts;
         const ramSeated = countSeatedStudents(seatingCharts);
         const cachedRawSeating = localStorage.getItem('seating_' + targetId) || localStorage.getItem('backup_seating');
-        if (cachedRawSeating) {
+        if (cachedRawSeating && (currentUserRole !== 'teacher' || (!seatingCharts || seatingCharts.length === 0 || ramSeated === 0))) {
             try {
                 const cachedSeating = JSON.parse(cachedRawSeating);
                 const cachedSeated = countSeatedStudents(cachedSeating);
-                if (cachedSeated > ramSeated) {
+                if (ramSeated === 0 && cachedSeated > 0) {
                     chartsToSave = cachedSeating;
                     seatingCharts = cachedSeating;
                 }
             } catch(e) {}
         }
 
-        // Bảo toàn Thời khóa biểu học sinh:
+        // Bảo toàn Thời khóa biểu học sinh (chỉ khôi phục khi RAM rỗng):
         let timetablesToSave = timetables;
         const ramLessons = countTimetableLessons(timetables);
         const cachedRawTimetables = localStorage.getItem('timetables_' + targetId) || localStorage.getItem('backup_timetables');
-        if (cachedRawTimetables) {
+        if (cachedRawTimetables && (currentUserRole !== 'teacher' || (!timetables || timetables.length === 0 || ramLessons === 0))) {
             try {
                 const cachedTkb = JSON.parse(cachedRawTimetables);
                 const cachedLessons = countTimetableLessons(cachedTkb);
-                if (cachedLessons > ramLessons) {
+                if (ramLessons === 0 && cachedLessons > 0) {
                     timetablesToSave = cachedTkb;
                     timetables = cachedTkb;
                 }
             } catch(e) {}
         }
 
-        // Bảo toàn Thời khóa biểu giáo viên:
+        // Bảo toàn Thời khóa biểu giáo viên (chỉ khôi phục khi RAM rỗng):
         let teacherTkbToSave = teacherTimetable;
         const ramTLessons = countTeacherLessons(teacherTimetable);
         const cachedRawTeacherTkb = localStorage.getItem('teacherTimetable_' + targetId) || localStorage.getItem('backup_teacherTimetable');
-        if (cachedRawTeacherTkb) {
+        if (cachedRawTeacherTkb && (currentUserRole !== 'teacher' || (!teacherTimetable || ramTLessons === 0))) {
             try {
                 const cachedTT = JSON.parse(cachedRawTeacherTkb);
                 const cachedTLessons = countTeacherLessons(cachedTT);
-                if (cachedTLessons > ramTLessons) {
+                if (ramTLessons === 0 && cachedTLessons > 0) {
                     teacherTkbToSave = cachedTT;
                     teacherTimetable = cachedTT;
                 }
@@ -8269,11 +8269,11 @@
     
     function applyActiveSeatingChart() {
         if (seatingCharts.length === 0) return;
-        const chart = seatingCharts.find(c => c.id === currentChartId);
+        const chart = seatingCharts.find(c => String(c.id) === String(currentChartId));
         if (!chart) return showModal('warning', 'Chưa chọn sơ đồ', 'Vui lòng chọn sơ đồ cần áp dụng!');
 
         seatingCharts.forEach(c => {
-            c.isApplied = (c.id === currentChartId);
+            c.isApplied = (String(c.id) === String(currentChartId));
         });
 
         if (currentUser) {
@@ -8413,8 +8413,8 @@
         const btnRename = document.getElementById('btn-rename-chart');
         if(btnRename) btnRename.classList.toggle('hidden', !isTeacher);
 
-        const chart = seatingCharts.find(c => c.id === currentChartId);
-        const isAppliedCurrent = chart && (chart.isApplied || (currentUser && currentUser.activeSeatingChartId === chart.id));
+        const chart = seatingCharts.find(c => String(c.id) === String(currentChartId));
+        const isAppliedCurrent = chart && (chart.isApplied || (currentUser && String(currentUser.activeSeatingChartId) === String(chart.id)));
         const btnApply = document.getElementById('btn-apply-chart');
         if (btnApply) {
             if (!isTeacher) {
@@ -8468,7 +8468,7 @@
         });
     }
     function renameSeatingChart() {
-        const chart = seatingCharts.find(c => c.id === currentChartId);
+        const chart = seatingCharts.find(c => String(c.id) === String(currentChartId));
         if (!chart) return;
         showPrompt('Đổi tên Sơ Đồ Lớp', 'Nhập tên mới cho sơ đồ lớp này:', chart.name, (newName) => {
             const trimmedName = newName ? newName.trim() : '';
@@ -8483,7 +8483,7 @@
             showModal('success', 'Thành công', `Đã đổi tên sơ đồ lớp thành "${trimmedName}"`);
         });
     }
-    function deleteCurrentChart() { if(seatingCharts.length <= 1) return showModal('error', 'Không thể xóa', 'Bắt buộc phải có ít nhất 1 sơ đồ!'); showModal('confirm', 'Xác nhận xóa', 'Xóa sơ đồ lớp này?', () => { seatingCharts = seatingCharts.filter(c => c.id !== currentChartId); currentChartId = seatingCharts[0].id; saveSeatingToStorage(); renderChartSelect(); applyChartLayout(); }); }
+    function deleteCurrentChart() { if(seatingCharts.length <= 1) return showModal('error', 'Không thể xóa', 'Bắt buộc phải có ít nhất 1 sơ đồ!'); showModal('confirm', 'Xác nhận xóa', 'Xóa sơ đồ lớp này?', () => { seatingCharts = seatingCharts.filter(c => String(c.id) !== String(currentChartId)); currentChartId = seatingCharts[0].id; saveSeatingToStorage(); renderChartSelect(); applyChartLayout(); }); }
     function saveSeatingToStorage() { saveAppData(); }
     
     function applyChartLayout() {
@@ -8679,18 +8679,25 @@
     function downloadCanvasImage(canvas, filename) {
         return new Promise((resolve, reject) => {
             try {
+                // Làm sạch tên file, loại bỏ ký tự cấm trên hệ điều hành và trình duyệt (/ \ ? % * : | " < >)
+                const safeFilename = (filename || 'image.png')
+                    .replace(/[/\\?%*:|"<>]/g, '-')
+                    .replace(/\s+/g, '_');
+
                 if (canvas.toBlob) {
                     canvas.toBlob((blob) => {
                         if (!blob) {
                             try {
                                 const dataUrl = canvas.toDataURL('image/png');
                                 const a = document.createElement('a');
-                                a.download = filename;
+                                a.download = safeFilename;
                                 a.href = dataUrl;
                                 document.body.appendChild(a);
                                 a.click();
-                                document.body.removeChild(a);
-                                resolve(true);
+                                setTimeout(() => {
+                                    if (a.parentNode) document.body.removeChild(a);
+                                    resolve(true);
+                                }, 300);
                             } catch (e) {
                                 reject(e);
                             }
@@ -8698,7 +8705,7 @@
                         }
                         const url = URL.createObjectURL(blob);
                         const a = document.createElement('a');
-                        a.download = filename;
+                        a.download = safeFilename;
                         a.href = url;
                         document.body.appendChild(a);
                         a.click();
@@ -8711,12 +8718,14 @@
                 } else {
                     const dataUrl = canvas.toDataURL('image/png');
                     const a = document.createElement('a');
-                    a.download = filename;
+                    a.download = safeFilename;
                     a.href = dataUrl;
                     document.body.appendChild(a);
                     a.click();
-                    document.body.removeChild(a);
-                    resolve(true);
+                    setTimeout(() => {
+                        if (a.parentNode) document.body.removeChild(a);
+                        resolve(true);
+                    }, 300);
                 }
             } catch (err) {
                 reject(err);
@@ -8733,21 +8742,27 @@
         showModal('info', 'Đang xử lý...', `Hệ thống đang xuất ${titleText} thành hình ảnh sắc nét. Vui lòng đợi trong giây lát...`);
         
         try {
-            const isReady = await ensureHtml2CanvasReady();
+            const isReady = await Promise.race([
+                ensureHtml2CanvasReady(),
+                new Promise(r => setTimeout(() => r(false), 5000))
+            ]);
             if (!isReady || typeof html2canvas === 'undefined') {
                 closeModalUi('custom-modal', 'custom-modal-content');
                 return showModal('error', 'Lỗi thư viện', 'Không thể nạp thư viện html2canvas. Vui lòng kiểm tra kết nối mạng!');
             }
 
             if (document.fonts && document.fonts.ready) {
-                await document.fonts.ready;
+                await Promise.race([
+                    document.fonts.ready,
+                    new Promise(r => setTimeout(r, 1000))
+                ]);
             }
 
-            // Tạo vùng clone độc lập (Off-screen Container) để chụp toàn diện, không bị cắt xén khi màn hình nhỏ
+            // Tạo vùng clone độc lập đặt tại góc trên cùng ẩn sau body để html2canvas chụp đúng tọa độ (0, 0), không bị lệch do left âm
             const clone = area.cloneNode(true);
             clone.id = 'timetable-export-clone';
             clone.style.position = 'fixed';
-            clone.style.left = '-9999px';
+            clone.style.left = '0';
             clone.style.top = '0';
             clone.style.width = '1120px';
             clone.style.minWidth = '1120px';
@@ -8764,16 +8779,21 @@
             document.body.appendChild(clone);
             await new Promise(r => setTimeout(r, 150));
 
-            const canvas = await html2canvas(clone, {
-                scale: 2.5,
-                useCORS: true,
-                backgroundColor: '#ffffff',
-                logging: false,
-                width: 1120,
-                windowWidth: 1120,
-                scrollX: 0,
-                scrollY: 0
-            });
+            const canvas = await Promise.race([
+                html2canvas(clone, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    width: 1120,
+                    windowWidth: 1120,
+                    scrollX: 0,
+                    scrollY: 0,
+                    x: 0,
+                    y: 0
+                }),
+                new Promise((_, reject) => setTimeout(() => reject(new Error('Quá thời gian xử lý ảnh (Timeout)')), 15000))
+            ]);
 
             if (clone.parentNode) clone.parentNode.removeChild(clone);
 
@@ -8784,7 +8804,7 @@
             } else {
                 const className = currentUser ? (currentUser.className || 'Lop').replace(/\s+/g, '_') : 'Lop';
                 const currentTkb = timetables.find(x => x.id === currentTimetableId);
-                const tkbName = currentTkb ? currentTkb.name.replace(/\s+/g, '_') : 'TKB';
+                const tkbName = currentTkb ? currentTkb.name.replace(/[/\\?%*:|"<>]/g, '-').replace(/\s+/g, '_') : 'TKB';
                 filename = `TKB_Lop_${className}_${tkbName}.png`;
             }
 
@@ -8810,21 +8830,27 @@
       showModal('info', 'Đang xử lý...', 'Hệ thống đang xuất sơ đồ thành ảnh chất lượng cao. Vui lòng đợi trong giây lát...');
 
       try {
-        const isReady = await ensureHtml2CanvasReady();
+        const isReady = await Promise.race([
+            ensureHtml2CanvasReady(),
+            new Promise(r => setTimeout(() => r(false), 5000))
+        ]);
         if (!isReady || typeof html2canvas === 'undefined') {
             closeModalUi('custom-modal', 'custom-modal-content');
             return showModal('error', 'Lỗi thư viện', 'Không thể nạp thư viện html2canvas. Vui lòng kiểm tra kết nối mạng!');
         }
 
         if (document.fonts && document.fonts.ready) {
-            await document.fonts.ready;
+            await Promise.race([
+                document.fonts.ready,
+                new Promise(r => setTimeout(r, 1000))
+            ]);
         }
 
-        // Tạo vùng clone độc lập cho sơ đồ lớp
+        // Tạo vùng clone độc lập cho sơ đồ lớp đặt tại tọa độ (0, 0) ẩn sau body
         const clone = area.cloneNode(true);
         clone.id = 'seating-export-clone';
         clone.style.position = 'fixed';
-        clone.style.left = '-9999px';
+        clone.style.left = '0';
         clone.style.top = '0';
         clone.style.width = '1120px';
         clone.style.minWidth = '1120px';
@@ -8838,22 +8864,27 @@
         document.body.appendChild(clone);
         await new Promise(r => setTimeout(r, 150));
 
-        const canvas = await html2canvas(clone, {
-          scale: 2.5,
-          useCORS: true,
-          backgroundColor: '#ffffff',
-          logging: false,
-          width: 1120,
-          windowWidth: 1120,
-          scrollX: 0,
-          scrollY: 0
-        });
+        const canvas = await Promise.race([
+          html2canvas(clone, {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: '#ffffff',
+            logging: false,
+            width: 1120,
+            windowWidth: 1120,
+            scrollX: 0,
+            scrollY: 0,
+            x: 0,
+            y: 0
+          }),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Quá thời gian xử lý ảnh (Timeout)')), 15000))
+        ]);
 
         if (clone.parentNode) clone.parentNode.removeChild(clone);
 
-        const chart = seatingCharts.find(c => c.id === currentChartId);
-        const chartName = chart ? chart.name.replace(/\s+/g, '_') : 'So_do_lop';
-        const className = currentUser ? currentUser.className.replace(/\s+/g, '_') : 'Class';
+        const chart = seatingCharts.find(c => String(c.id) === String(currentChartId)) || seatingCharts[0];
+        const chartName = chart ? chart.name.replace(/[/\\?%*:|"<>]/g, '-').replace(/\s+/g, '_') : 'So_do_lop';
+        const className = currentUser ? currentUser.className.replace(/[/\\?%*:|"<>]/g, '-').replace(/\s+/g, '_') : 'Class';
         const filename = `So_do_cho_ngoi_${className}_${chartName}.png`;
 
         closeModalUi('custom-modal', 'custom-modal-content');
@@ -8874,7 +8905,7 @@
     function handleSeatClick(seatId) {
       if (currentUserRole === 'student') return;
       if (currentUserRole === 'gvbm') {
-          const chart = seatingCharts.find(c => c.id === currentChartId);
+          const chart = seatingCharts.find(c => String(c.id) === String(currentChartId)) || seatingCharts[0];
           if (chart && chart.layout && chart.layout[seatId]) {
               const studentId = chart.layout[seatId];
               openGvbmViolationModal(studentId);
@@ -8885,14 +8916,18 @@
       }
       if(students.length === 0) return showModal('warning', 'Danh sách trống', 'Cần thêm học sinh trước khi xếp chỗ!');
       if(seatingCharts.length === 0) initSeatingCharts();
-      selectedSeatId = seatId; const chart = seatingCharts.find(c => c.id === currentChartId); 
-      document.getElementById('search-student-seat').value = ''; const btnRemove = document.getElementById('btn-remove-seat');
-      if(chart && chart.layout[seatId]) btnRemove.classList.remove('hidden'); else btnRemove.classList.add('hidden'); 
-      renderStudentPickerList(); openModalUi('pick-student-modal', 'pick-student-content');
+      selectedSeatId = seatId; 
+      const chart = seatingCharts.find(c => String(c.id) === String(currentChartId)) || seatingCharts[0]; 
+      document.getElementById('search-student-seat').value = ''; 
+      const btnRemove = document.getElementById('btn-remove-seat');
+      if(chart && chart.layout && chart.layout[seatId]) btnRemove.classList.remove('hidden'); else btnRemove.classList.add('hidden'); 
+      renderStudentPickerList(); 
+      openModalUi('pick-student-modal', 'pick-student-content');
     }
     
     function renderStudentPickerList(filterText = '') {
-      const chart = seatingCharts.find(c => c.id === currentChartId); const layout = chart ? chart.layout : {};
+      const chart = seatingCharts.find(c => String(c.id) === String(currentChartId)) || seatingCharts[0]; 
+      const layout = chart ? (chart.layout || {}) : {};
       const listContainer = document.getElementById('picker-list');
       let filtered = students; 
       if(filterText) { const txt = removeAccents(filterText.toLowerCase()); filtered = students.filter(s => removeAccents(s.name.toLowerCase()).includes(txt) || (s.code && s.code.toLowerCase().includes(filterText.toLowerCase()))); }
@@ -8905,8 +8940,8 @@
     }
     
     function filterPickerList() { renderStudentPickerList(document.getElementById('search-student-seat').value); }
-    function removeStudentFromCurrentSeat() { const chart = seatingCharts.find(c => c.id === currentChartId); if(chart) delete chart.layout[selectedSeatId]; saveSeatingToStorage(); applyChartLayout(); closeModalUi('pick-student-modal', 'pick-student-content'); }
-    function assignStudentToSeat(studentId) { const chart = seatingCharts.find(c => c.id === currentChartId); if(chart) { for (const [key, val] of Object.entries(chart.layout)) { if(String(val) === String(studentId)) delete chart.layout[key]; } chart.layout[selectedSeatId] = String(studentId); saveSeatingToStorage(); applyChartLayout(); } closeModalUi('pick-student-modal', 'pick-student-content'); }
+    function removeStudentFromCurrentSeat() { const chart = seatingCharts.find(c => String(c.id) === String(currentChartId)) || seatingCharts[0]; if(chart && chart.layout) delete chart.layout[selectedSeatId]; saveSeatingToStorage(); applyChartLayout(); closeModalUi('pick-student-modal', 'pick-student-content'); }
+    function assignStudentToSeat(studentId) { const chart = seatingCharts.find(c => String(c.id) === String(currentChartId)) || seatingCharts[0]; if(chart) { if(!chart.layout) chart.layout = {}; for (const [key, val] of Object.entries(chart.layout)) { if(String(val) === String(studentId)) delete chart.layout[key]; } chart.layout[selectedSeatId] = String(studentId); saveSeatingToStorage(); applyChartLayout(); } closeModalUi('pick-student-modal', 'pick-student-content'); }
 
     // --- Renders Main ---
     function renderPraiseGrid() {
