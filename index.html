@@ -8659,92 +8659,216 @@
       lucide.createIcons();
     }
 
-        function exportTimetableImage() {
+    async function ensureHtml2CanvasReady() {
+        if (typeof html2canvas !== 'undefined') return true;
+        return new Promise((resolve) => {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+            script.onload = () => resolve(true);
+            script.onerror = () => {
+                const fallback = document.createElement('script');
+                fallback.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+                fallback.onload = () => resolve(true);
+                fallback.onerror = () => resolve(false);
+                document.head.appendChild(fallback);
+            };
+            document.head.appendChild(script);
+        });
+    }
+
+    function downloadCanvasImage(canvas, filename) {
+        return new Promise((resolve, reject) => {
+            try {
+                if (canvas.toBlob) {
+                    canvas.toBlob((blob) => {
+                        if (!blob) {
+                            try {
+                                const dataUrl = canvas.toDataURL('image/png');
+                                const a = document.createElement('a');
+                                a.download = filename;
+                                a.href = dataUrl;
+                                document.body.appendChild(a);
+                                a.click();
+                                document.body.removeChild(a);
+                                resolve(true);
+                            } catch (e) {
+                                reject(e);
+                            }
+                            return;
+                        }
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.download = filename;
+                        a.href = url;
+                        document.body.appendChild(a);
+                        a.click();
+                        setTimeout(() => {
+                            if (a.parentNode) document.body.removeChild(a);
+                            URL.revokeObjectURL(url);
+                        }, 2500);
+                        resolve(true);
+                    }, 'image/png');
+                } else {
+                    const dataUrl = canvas.toDataURL('image/png');
+                    const a = document.createElement('a');
+                    a.download = filename;
+                    a.href = dataUrl;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    resolve(true);
+                }
+            } catch (err) {
+                reject(err);
+            }
+        });
+    }
+
+    async function exportTimetableImage() {
         const area = document.getElementById('timetable-capture-area');
         if (!area) return showModal('error', 'Lỗi', 'Không tìm thấy bảng Thời khóa biểu để xuất!');
         
         const isTeacher = (currentTimetableViewMode === 'teacher');
         const titleText = isTeacher ? 'TKB Giáo viên' : 'TKB Lớp';
-        showModal('info', 'Đang xử lý...', `Hệ thống đang xuất ${titleText} thành ảnh sắc nét chuẩn 4K. Vui lòng đợi trong giây lát...`);
+        showModal('info', 'Đang xử lý...', `Hệ thống đang xuất ${titleText} thành hình ảnh sắc nét. Vui lòng đợi trong giây lát...`);
         
-        html2canvas(area, {
-            scale: 4,
-            useCORS: true,
-            backgroundColor: '#ffffff',
-            logging: false
-        }).then(canvas => {
-            closeModalUi('custom-modal', 'custom-modal-content');
-            try {
-                let filename = '';
-                if (isTeacher) {
-                    const teacherName = currentUser ? (currentUser.teacherName || 'GiaoVien').replace(/\s+/g, '_') : 'GiaoVien';
-                    filename = `TKB_GV_${teacherName}_4K.png`;
-                } else {
-                    const className = currentUser ? (currentUser.className || 'Class').replace(/\s+/g, '_') : 'Class';
-                    const currentTkb = timetables.find(x => x.id === currentTimetableId);
-                    const tkbName = currentTkb ? currentTkb.name.replace(/\s+/g, '_') : 'TKB';
-                    filename = `TKB_Lop_${className}_${tkbName}_4K.png`;
-                }
-                
-                const link = document.createElement('a');
-                link.download = filename;
-                link.href = canvas.toDataURL('image/png');
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                setTimeout(() => {
-                    showModal('success', 'Thành công', `Đã xuất và tải ảnh ${titleText} 4K thành công!`);
-                }, 350);
-            } catch (err) {
-                showModal('error', 'Lỗi', 'Không thể tạo file ảnh: ' + err.message);
+        try {
+            const isReady = await ensureHtml2CanvasReady();
+            if (!isReady || typeof html2canvas === 'undefined') {
+                closeModalUi('custom-modal', 'custom-modal-content');
+                return showModal('error', 'Lỗi thư viện', 'Không thể nạp thư viện html2canvas. Vui lòng kiểm tra kết nối mạng!');
             }
-        }).catch(err => {
+
+            if (document.fonts && document.fonts.ready) {
+                await document.fonts.ready;
+            }
+
+            // Tạo vùng clone độc lập (Off-screen Container) để chụp toàn diện, không bị cắt xén khi màn hình nhỏ
+            const clone = area.cloneNode(true);
+            clone.id = 'timetable-export-clone';
+            clone.style.position = 'fixed';
+            clone.style.left = '-9999px';
+            clone.style.top = '0';
+            clone.style.width = '1120px';
+            clone.style.minWidth = '1120px';
+            clone.style.maxWidth = '1120px';
+            clone.style.boxSizing = 'border-box';
+            clone.style.background = '#ffffff';
+            clone.style.padding = '24px';
+            clone.style.borderRadius = '16px';
+            clone.style.zIndex = '-9999';
+
+            // Xóa các nút hover Sửa trong ô TKB của bản clone để ảnh xuất sạch đẹp chuyên nghiệp
+            clone.querySelectorAll('.group-hover\\:opacity-100, .group .absolute').forEach(el => el.remove());
+
+            document.body.appendChild(clone);
+            await new Promise(r => setTimeout(r, 150));
+
+            const canvas = await html2canvas(clone, {
+                scale: 2.5,
+                useCORS: true,
+                backgroundColor: '#ffffff',
+                logging: false,
+                width: 1120,
+                windowWidth: 1120,
+                scrollX: 0,
+                scrollY: 0
+            });
+
+            if (clone.parentNode) clone.parentNode.removeChild(clone);
+
+            let filename = '';
+            if (isTeacher) {
+                const teacherName = currentUser ? (currentUser.teacherName || 'GiaoVien').replace(/\s+/g, '_') : 'GiaoVien';
+                filename = `TKB_GV_${teacherName}.png`;
+            } else {
+                const className = currentUser ? (currentUser.className || 'Lop').replace(/\s+/g, '_') : 'Lop';
+                const currentTkb = timetables.find(x => x.id === currentTimetableId);
+                const tkbName = currentTkb ? currentTkb.name.replace(/\s+/g, '_') : 'TKB';
+                filename = `TKB_Lop_${className}_${tkbName}.png`;
+            }
+
             closeModalUi('custom-modal', 'custom-modal-content');
-            showModal('error', 'Lỗi xuất ảnh', 'Có lỗi xảy ra khi dựng ảnh: ' + err.message);
-        });
+
+            await downloadCanvasImage(canvas, filename);
+
+            setTimeout(() => {
+                showModal('success', 'Thành công', `Đã xuất và tải ảnh ${titleText} về máy thành công!`);
+            }, 300);
+        } catch (err) {
+            const existingClone = document.getElementById('timetable-export-clone');
+            if (existingClone && existingClone.parentNode) existingClone.parentNode.removeChild(existingClone);
+            closeModalUi('custom-modal', 'custom-modal-content');
+            showModal('error', 'Lỗi xuất ảnh', 'Có lỗi xảy ra khi tạo ảnh: ' + (err.message || err));
+        }
     }
 
-    function exportSeatingChartImage() {
+    async function exportSeatingChartImage() {
       const area = document.getElementById('seating-chart-capture-area');
       if (!area) return showModal('error', 'Lỗi', 'Không tìm thấy vùng sơ đồ chỗ ngồi để xuất!');
       
-      showModal('info', 'Đang xử lý...', 'Hệ thống đang xuất sơ đồ thành ảnh chất lượng cao 4K. Vui lòng đợi trong giây lát...');
-      
-      // Use html2canvas to capture the element
-      // scale: 4 for high-definition 4K image quality
-      html2canvas(area, {
-        scale: 4,
-        useCORS: true,
-        backgroundColor: '#ffffff',
-        logging: false
-      }).then(canvas => {
-        closeModalUi('custom-modal', 'custom-modal-content');
-        
-        // Convert canvas to image and trigger download
-        try {
-          const chart = seatingCharts.find(c => c.id === currentChartId);
-          const chartName = chart ? chart.name.replace(/\s+/g, '_') : 'So_do_lop';
-          const className = currentUser ? currentUser.className.replace(/\s+/g, '_') : 'Class';
-          const filename = `So_do_cho_ngoi_${className}_${chartName}.png`;
-          
-          const link = document.createElement('a');
-          link.download = filename;
-          link.href = canvas.toDataURL('image/png');
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          
-          setTimeout(() => {
-            showModal('success', 'Thành công', 'Đã xuất và tải ảnh sơ đồ 4K thành công!');
-          }, 350);
-        } catch (err) {
-          showModal('error', 'Lỗi', 'Không thể tạo file ảnh. Lỗi: ' + err.message);
+      showModal('info', 'Đang xử lý...', 'Hệ thống đang xuất sơ đồ thành ảnh chất lượng cao. Vui lòng đợi trong giây lát...');
+
+      try {
+        const isReady = await ensureHtml2CanvasReady();
+        if (!isReady || typeof html2canvas === 'undefined') {
+            closeModalUi('custom-modal', 'custom-modal-content');
+            return showModal('error', 'Lỗi thư viện', 'Không thể nạp thư viện html2canvas. Vui lòng kiểm tra kết nối mạng!');
         }
-      }).catch(err => {
+
+        if (document.fonts && document.fonts.ready) {
+            await document.fonts.ready;
+        }
+
+        // Tạo vùng clone độc lập cho sơ đồ lớp
+        const clone = area.cloneNode(true);
+        clone.id = 'seating-export-clone';
+        clone.style.position = 'fixed';
+        clone.style.left = '-9999px';
+        clone.style.top = '0';
+        clone.style.width = '1120px';
+        clone.style.minWidth = '1120px';
+        clone.style.maxWidth = '1120px';
+        clone.style.boxSizing = 'border-box';
+        clone.style.background = '#ffffff';
+        clone.style.padding = '24px';
+        clone.style.borderRadius = '16px';
+        clone.style.zIndex = '-9999';
+
+        document.body.appendChild(clone);
+        await new Promise(r => setTimeout(r, 150));
+
+        const canvas = await html2canvas(clone, {
+          scale: 2.5,
+          useCORS: true,
+          backgroundColor: '#ffffff',
+          logging: false,
+          width: 1120,
+          windowWidth: 1120,
+          scrollX: 0,
+          scrollY: 0
+        });
+
+        if (clone.parentNode) clone.parentNode.removeChild(clone);
+
+        const chart = seatingCharts.find(c => c.id === currentChartId);
+        const chartName = chart ? chart.name.replace(/\s+/g, '_') : 'So_do_lop';
+        const className = currentUser ? currentUser.className.replace(/\s+/g, '_') : 'Class';
+        const filename = `So_do_cho_ngoi_${className}_${chartName}.png`;
+
         closeModalUi('custom-modal', 'custom-modal-content');
-        showModal('error', 'Lỗi xuất ảnh', 'Có lỗi xảy ra trong quá trình dựng ảnh: ' + err.message);
-      });
+
+        await downloadCanvasImage(canvas, filename);
+
+        setTimeout(() => {
+          showModal('success', 'Thành công', 'Đã xuất và tải ảnh sơ đồ chỗ ngồi về máy thành công!');
+        }, 300);
+      } catch (err) {
+        const existingClone = document.getElementById('seating-export-clone');
+        if (existingClone && existingClone.parentNode) existingClone.parentNode.removeChild(existingClone);
+        closeModalUi('custom-modal', 'custom-modal-content');
+        showModal('error', 'Lỗi xuất ảnh', 'Có lỗi xảy ra trong quá trình dựng ảnh: ' + (err.message || err));
+      }
     }
     
     function handleSeatClick(seatId) {
