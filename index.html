@@ -19338,6 +19338,138 @@
         }
     }
 
+    let currentWeeklyModalData = {
+        list: [],
+        metricKey: '',
+        metricTitle: '',
+        filteredList: []
+    };
+
+    function filterWeeklyModalList() {
+        const input = document.getElementById('weekly-modal-search');
+        const query = (input ? input.value : '').trim().toLowerCase();
+        const normQuery = removeAccents(query);
+        if (!normQuery) {
+            currentWeeklyModalData.filteredList = currentWeeklyModalData.list;
+        } else {
+            currentWeeklyModalData.filteredList = currentWeeklyModalData.list.filter(item => {
+                const name = removeAccents((item.studentName || '').toLowerCase());
+                const code = String(item.studentCode || '').toLowerCase();
+                const reason = removeAccents((item.reason || '').toLowerCase());
+                const subject = removeAccents((item.subject || '').toLowerCase());
+                const author = removeAccents((item.author || '').toLowerCase());
+                return name.includes(normQuery) || code.includes(normQuery) || reason.includes(normQuery) || subject.includes(normQuery) || author.includes(normQuery);
+            });
+        }
+        renderWeeklyModalList();
+    }
+
+    function renderWeeklyModalList() {
+        const container = document.getElementById('weekly-modal-list-container');
+        if (!container) return;
+
+        const list = currentWeeklyModalData.filteredList || [];
+        const isPositive = (currentWeeklyModalData.metricKey === 'goodScores' || currentWeeklyModalData.metricKey === 'praised');
+
+        // Cập nhật số lượng
+        const countNumEl = document.getElementById('weekly-modal-count-num');
+        if (countNumEl) countNumEl.innerText = list.length;
+
+        // Cập nhật thống kê footer
+        const footerSummaryEl = document.getElementById('weekly-modal-footer-summary');
+        if (footerSummaryEl) {
+            const totalPoints = list.reduce((sum, item) => sum + (Number(item.points) || 0), 0);
+            if (isPositive) {
+                footerSummaryEl.innerHTML = `Tổng cộng: <span class="font-black text-emerald-600">+${totalPoints} điểm/sao thưởng</span> (${list.length} trường hợp)`;
+            } else {
+                footerSummaryEl.innerHTML = `Tổng cộng: <span class="font-black text-rose-600">-${totalPoints} điểm vi phạm</span> (${list.length} trường hợp)`;
+            }
+        }
+
+        if (list.length === 0) {
+            container.innerHTML = `
+                <div class="py-10 text-center text-slate-400 space-y-2">
+                    <div class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto text-lg font-bold">
+                        <i data-lucide="search-x" class="w-5 h-5"></i>
+                    </div>
+                    <div class="font-bold text-xs md:text-sm text-slate-600">Không tìm thấy trường hợp phù hợp</div>
+                    <p class="text-[11px] text-slate-400">Hãy thử nhập từ khóa tìm kiếm khác.</p>
+                </div>
+            `;
+            lucide.createIcons();
+            return;
+        }
+
+        container.innerHTML = `
+            <div class="space-y-2">
+                ${list.map((item, idx) => {
+                    let subjectBadge = '';
+                    if (item.subject) {
+                        if (item.subject === 'Điểm danh đầu giờ') {
+                            subjectBadge = 'Điểm danh đầu giờ';
+                        } else if (item.period && item.period !== '-' && item.period !== 'Đầu giờ') {
+                            subjectBadge = `${item.subject} • T${item.period}`;
+                        } else {
+                            subjectBadge = item.subject;
+                        }
+                    }
+
+                    return `
+                        <div class="p-2.5 md:py-2 md:px-3.5 bg-white border border-slate-200/90 rounded-2xl hover:border-indigo-300 hover:shadow-xs transition flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                            <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                                <span class="w-6 h-6 rounded-lg bg-slate-100 text-slate-400 font-black text-[11px] flex items-center justify-center shrink-0">
+                                    ${idx + 1}
+                                </span>
+                                <div class="w-8 h-8 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center text-xs overflow-hidden shrink-0 shadow-2xs">
+                                    ${getAvatarHtml(item.avatar)}
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <!-- Dòng 1: Tên học sinh + Mã HS + Tag môn/tiết + Ngày -->
+                                    <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                                        <span class="font-black text-xs md:text-sm text-slate-800">${item.studentName}</span>
+                                        <span class="text-[10px] font-mono font-bold text-slate-400 bg-slate-100 px-1.5 py-0.2 rounded">${item.studentCode}</span>
+                                        ${subjectBadge ? `
+                                            <span class="text-[10px] font-bold text-slate-600 bg-slate-50 border border-slate-200 px-1.5 py-0.2 rounded flex items-center gap-1">
+                                                <i data-lucide="book-open" class="w-2.5 h-2.5 text-slate-400"></i>
+                                                <span>${subjectBadge}</span>
+                                            </span>
+                                        ` : ''}
+                                        <span class="text-[11px] text-slate-400 font-medium flex items-center gap-1 ml-auto sm:ml-0">
+                                            <i data-lucide="clock" class="w-3 h-3 text-slate-400"></i>
+                                            <span>${item.date}</span>
+                                        </span>
+                                    </div>
+
+                                    <!-- Dòng 2: Nội dung ghi nhận + Người ghi -->
+                                    <div class="flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-0.5 text-xs">
+                                        <div class="font-bold ${isPositive ? 'text-emerald-700' : 'text-rose-700'} flex items-center gap-1.5">
+                                            <i data-lucide="${isPositive ? 'award' : 'alert-circle'}" class="w-3.5 h-3.5 shrink-0"></i>
+                                            <span>${item.reason}</span>
+                                        </div>
+                                        <span class="text-[11px] text-slate-400 font-medium flex items-center gap-1">
+                                            <i data-lucide="user-check" class="w-3 h-3 text-slate-400"></i>
+                                            <span>Ghi nhận: <b class="text-slate-600 font-bold">${item.author || 'GV'}</b></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Điểm số bên phải -->
+                            <div class="shrink-0 flex items-center justify-end self-end sm:self-center pl-1">
+                                <div class="px-2.5 py-1 rounded-xl ${isPositive ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200'} font-black text-xs flex items-center gap-1 whitespace-nowrap shadow-2xs">
+                                    <i data-lucide="${isPositive ? 'arrow-up-right' : 'arrow-down-right'}" class="w-3.5 h-3.5"></i>
+                                    <span>${isPositive ? `+${item.points}` : `-${item.points}`} điểm</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+
+        lucide.createIcons();
+    }
+
     function openWeeklyDetailsModal(weekIndex, metricKey, metricTitle) {
         const statObj = (currentWeeklyAggregations[weekIndex] && currentWeeklyAggregations[weekIndex][metricKey]) || { count: 0, list: [] };
         const weeks = getWeeksOfMonth(currentPlanYear, currentPlanMonth);
@@ -19346,7 +19478,8 @@
         const titleEl = document.getElementById('weekly-modal-title');
         const subEl = document.getElementById('weekly-modal-subtitle');
         const badgeEl = document.getElementById('weekly-modal-badge');
-        const container = document.getElementById('weekly-modal-list-container');
+        const searchInput = document.getElementById('weekly-modal-search');
+        const searchWrapper = document.getElementById('weekly-modal-search-wrapper');
 
         if (titleEl) titleEl.innerText = `${metricTitle} - ${currentWeek.name}`;
         if (subEl) subEl.innerText = `Khoảng thời gian: ${currentWeek.label} (Tháng ${currentPlanMonth}/${currentPlanYear}) • Tổng số: ${statObj.count} trường hợp`;
@@ -19361,65 +19494,37 @@
             }
         }
 
-        if (!container) return;
+        if (searchInput) searchInput.value = '';
 
         if (!statObj.list || statObj.list.length === 0) {
-            container.innerHTML = `
-                <div class="py-12 text-center text-slate-400 space-y-2">
-                    <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-300 flex items-center justify-center mx-auto text-xl font-bold">✓</div>
-                    <div class="font-bold text-sm text-slate-600">Không có dữ liệu trong tuần này</div>
-                    <p class="text-xs text-slate-400">Không ghi nhận học sinh nào cho chỉ số "${metricTitle}".</p>
-                </div>
-            `;
+            if (searchWrapper) searchWrapper.classList.add('hidden');
+            const container = document.getElementById('weekly-modal-list-container');
+            if (container) {
+                container.innerHTML = `
+                    <div class="py-12 text-center text-slate-400 space-y-2">
+                        <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-300 flex items-center justify-center mx-auto text-xl font-bold">✓</div>
+                        <div class="font-bold text-sm text-slate-600">Không có dữ liệu trong tuần này</div>
+                        <p class="text-xs text-slate-400">Không ghi nhận học sinh nào cho chỉ số "${metricTitle}".</p>
+                    </div>
+                `;
+            }
+            const footerSummaryEl = document.getElementById('weekly-modal-footer-summary');
+            if (footerSummaryEl) footerSummaryEl.innerHTML = '';
             openModalUi('weekly-violation-details-modal', 'weekly-violation-details-content');
             return;
         }
 
-        container.innerHTML = `
-            <div class="border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
-                <table class="w-full text-left border-collapse text-xs">
-                    <thead>
-                        <tr class="bg-slate-50 border-b border-slate-200 text-slate-700 font-black">
-                            <th class="p-3 text-center w-12">STT</th>
-                            <th class="p-3">Học sinh</th>
-                            <th class="p-3">Thời gian</th>
-                            <th class="p-3">Môn / Tiết</th>
-                            <th class="p-3">Nội dung ghi nhận</th>
-                            <th class="p-3 text-center w-16">Điểm</th>
-                            <th class="p-3">Người ghi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100">
-                        ${statObj.list.map((item, idx) => `
-                            <tr class="hover:bg-slate-50 transition">
-                                <td class="p-3 text-center font-bold text-slate-400">${idx + 1}</td>
-                                <td class="p-3 font-black text-slate-800 whitespace-nowrap">
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-xs overflow-hidden border border-slate-200 shrink-0">
-                                            ${getAvatarHtml(item.avatar)}
-                                        </div>
-                                        <div>
-                                            <div>${item.studentName}</div>
-                                            <div class="text-[9px] font-mono font-bold text-slate-400">${item.studentCode}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="p-3 font-medium text-slate-600 whitespace-nowrap">${item.date}</td>
-                                <td class="p-3 font-bold text-slate-700 whitespace-nowrap">${item.subject} ${item.period !== '-' ? `(T${item.period})` : ''}</td>
-                                <td class="p-3 font-medium text-slate-800 leading-snug">${item.reason}</td>
-                                <td class="p-3 text-center font-black ${metricKey === 'goodScores' || metricKey === 'praised' ? 'text-emerald-600' : 'text-rose-600'}">
-                                    ${metricKey === 'goodScores' || metricKey === 'praised' ? `+${item.points}` : `-${item.points}`}
-                                </td>
-                                <td class="p-3 text-slate-500 font-bold text-[11px] whitespace-nowrap">${item.author}</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            </div>
-        `;
+        if (searchWrapper) searchWrapper.classList.remove('hidden');
 
+        currentWeeklyModalData = {
+            list: statObj.list || [],
+            metricKey: metricKey,
+            metricTitle: metricTitle,
+            filteredList: statObj.list || []
+        };
+
+        renderWeeklyModalList();
         openModalUi('weekly-violation-details-modal', 'weekly-violation-details-content');
-        lucide.createIcons();
     }
 
 
@@ -20349,8 +20454,8 @@
 
   <!-- MODAL XEM CHI TIẾT DANH SÁCH VI PHẠM / KHEN THƯỞNG THEO TUẦN -->
   <div id="weekly-violation-details-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[800] p-4 opacity-0 transition-opacity duration-300">
-    <div class="bg-white rounded-[2rem] p-6 md:p-8 w-full max-w-3xl shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col border border-white/20 max-h-[85vh]" id="weekly-violation-details-content">
-      <div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100 shrink-0">
+    <div class="bg-white rounded-[2rem] p-5 md:p-7 w-full max-w-4xl shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col border border-white/20 max-h-[88vh]" id="weekly-violation-details-content">
+      <div class="flex justify-between items-start mb-3 pb-3 border-b border-slate-100 shrink-0">
         <div>
           <div class="flex items-center gap-2">
             <span id="weekly-modal-badge" class="px-2.5 py-0.5 rounded-full text-xs font-black bg-rose-100 text-rose-700">Vi Phạm</span>
@@ -20361,12 +20466,26 @@
         <button onclick="closeModalUi('weekly-violation-details-modal', 'weekly-violation-details-content')" class="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 p-2 rounded-full transition"><i data-lucide="x" class="w-4 h-4"></i></button>
       </div>
 
-      <!-- Danh Sách Học Sinh -->
-      <div class="overflow-y-auto custom-scrollbar flex-1 pr-1" id="weekly-modal-list-container">
-        <!-- Dynamic list / table generated via javascript -->
+      <!-- Thanh tìm kiếm & đếm số lượng -->
+      <div class="flex items-center justify-between gap-3 mb-3 shrink-0" id="weekly-modal-search-wrapper">
+        <div class="relative flex-1">
+          <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+          <input type="text" id="weekly-modal-search" placeholder="Tìm nhanh học sinh, môn, nội dung..." oninput="filterWeeklyModalList()" class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium outline-none focus:border-indigo-500 focus:bg-white transition">
+        </div>
+        <div id="weekly-modal-quick-count" class="text-xs font-bold text-slate-500 bg-slate-50 px-3 py-2 rounded-xl border border-slate-200/80 whitespace-nowrap">
+          Tổng: <b id="weekly-modal-count-num" class="text-slate-700 font-black">0</b> trường hợp
+        </div>
       </div>
 
-      <div class="pt-4 mt-2 border-t border-slate-100 flex justify-end shrink-0">
+      <!-- Danh Sách Học Sinh (1 - 2 dòng gọn gàng) -->
+      <div class="overflow-y-auto custom-scrollbar flex-1 pr-1" id="weekly-modal-list-container">
+        <!-- Dynamic list / cards generated via javascript -->
+      </div>
+
+      <div class="pt-3 mt-2 border-t border-slate-100 flex items-center justify-between shrink-0">
+        <div id="weekly-modal-footer-summary" class="text-xs font-bold text-slate-500">
+          <!-- Total summary -->
+        </div>
         <button onclick="closeModalUi('weekly-violation-details-modal', 'weekly-violation-details-content')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-6 py-2.5 rounded-xl transition text-xs">Đóng</button>
       </div>
     </div>
