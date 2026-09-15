@@ -4419,6 +4419,9 @@
                 .then(() => {
                     console.log("Data synced to Supabase successfully for teacher:", targetId);
                     updateSaveTime(true);
+                    if (targetId === 'thaytuan') {
+                        callSupabaseRest('UPSERT', 'admin', payload).catch(() => {});
+                    }
                 })
                 .catch(err => {
                     console.error("Supabase sync error:", err);
@@ -4601,13 +4604,14 @@
                 const savedUser = JSON.parse(savedUserStr);
                 const savedTeacherId = localStorage.getItem('currentTeacherId');
                 let targetId = savedTeacherId || savedUser.id || 'thaytuan';
+                if (targetId === 'admin') targetId = 'thaytuan';
 
                 const row = await callSupabaseRest('GET', targetId);
                 if (row && row.data) {
                     const cloudData = row.data;
                     currentUser = cloudData.currentUser || cloudData.user || {};
                     if (!currentUser.id) currentUser.id = targetId;
-                    if (savedTeacherId) currentTeacherId = savedTeacherId;
+                    if (savedTeacherId) currentTeacherId = (savedTeacherId === 'admin') ? 'thaytuan' : savedTeacherId;
                     
                     const cloudStudents = cloudData.students || [];
                     const cloudCharts = cloudData.seatingCharts || [];
@@ -4874,6 +4878,7 @@
                 renderAll(); 
                 initSeatingCharts();
                 checkAdminSection();
+                syncClassData(false);
             }
         } else {
             let savedUser = localStorage.getItem('currentUser');
@@ -4894,7 +4899,7 @@
                     if (obScreen) { obScreen.classList.remove('hidden'); obScreen.classList.add('flex'); }
                 } else {
                     if (obScreen) { obScreen.classList.add('hidden'); obScreen.classList.remove('flex'); }
-                    loadUserData();
+                    loadUserData().then(() => syncClassData(false));
                 }
             } else {
                 authScreen.classList.remove('hidden');
@@ -5016,6 +5021,14 @@
                     });
                     if (res.ok) {
                         const rows = await res.json();
+                        // Ưu tiên bản ghi của giáo viên thực tế (thaytuan) lên trước admin
+                        rows.sort((a, b) => {
+                            if (a.id === 'admin') return 1;
+                            if (b.id === 'admin') return -1;
+                            if (a.id === 'thaytuan') return -1;
+                            if (b.id === 'thaytuan') return 1;
+                            return 0;
+                        });
                         // 2a. Cloud GVBM Authentication Check
                         for (const r of rows) {
                             const classroomData = r.data || {};
@@ -5044,8 +5057,9 @@
 
                             if (isEnabled && isMatchUser) {
                                 if (isMatchPass) {
+                                    const realTeacherId = (r.id === 'admin') ? 'thaytuan' : r.id;
                                     currentUser = cUser;
-                                    currentUser.id = r.id;
+                                    currentUser.id = realTeacherId;
                                     students = classroomData.students || [];
                                     let cCharts = classroomData.seatingCharts || [];
                                     if (cCharts.length > 1) {
@@ -5065,17 +5079,21 @@
                                     
                                     currentUserRole = 'gvbm';
                                     currentStudent = null;
-                                    currentTeacherId = r.id;
+                                    currentTeacherId = realTeacherId;
                                     
                                     localStorage.setItem('currentUserRole', 'gvbm');
-                                    localStorage.setItem('currentTeacherId', r.id);
+                                    localStorage.setItem('currentTeacherId', realTeacherId);
                                     localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                                    localStorage.setItem('students_' + r.id, JSON.stringify(students));
-                                    localStorage.setItem('seating_' + r.id, JSON.stringify(seatingCharts));
-                                    localStorage.setItem('timetables_' + r.id, JSON.stringify(timetables));
-                                    localStorage.setItem('teacherTimetable_' + r.id, JSON.stringify(teacherTimetable));
-                                    localStorage.setItem('attendance_' + r.id, JSON.stringify(attendanceData));
-                                    localStorage.setItem('announcements_' + r.id, JSON.stringify(announcements));
+                                    localStorage.setItem('students_' + realTeacherId, JSON.stringify(students));
+                                    localStorage.setItem('seating_' + realTeacherId, JSON.stringify(seatingCharts));
+                                    localStorage.setItem('timetables_' + realTeacherId, JSON.stringify(timetables));
+                                    localStorage.setItem('teacherTimetable_' + realTeacherId, JSON.stringify(teacherTimetable));
+                                    localStorage.setItem('attendance_' + realTeacherId, JSON.stringify(attendanceData));
+                                    localStorage.setItem('announcements_' + realTeacherId, JSON.stringify(announcements));
+                                    if (currentUser.cover) {
+                                        try { localStorage.setItem('cover_' + realTeacherId, currentUser.cover); } catch(e) {}
+                                        try { localStorage.setItem('cover_photo', currentUser.cover); } catch(e) {}
+                                    }
                                     localStorage.removeItem('currentStudent');
                                     
                                     loginSuccess(currentUser);
@@ -5105,20 +5123,27 @@
                                     attendanceData = classroomData.attendanceData || {};
                                     announcements = classroomData.announcements || [];
                                     
+                                    const realTeacherId = (r.id === 'admin') ? 'thaytuan' : r.id;
                                     currentUserRole = 'student';
                                     currentStudent = student;
-                                    currentTeacherId = r.id;
+                                    currentTeacherId = realTeacherId;
                                     
                                     localStorage.setItem('currentUserRole', 'student');
                                     localStorage.setItem('currentStudent', JSON.stringify(student));
-                                    localStorage.setItem('currentTeacherId', r.id);
+                                    localStorage.setItem('currentTeacherId', realTeacherId);
                                     localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                                    localStorage.setItem('students_' + r.id, JSON.stringify(students));
-                                    localStorage.setItem('seating_' + r.id, JSON.stringify(seatingCharts));
-                                    localStorage.setItem('timetables_' + r.id, JSON.stringify(timetables));
-                                    localStorage.setItem('teacherTimetable_' + r.id, JSON.stringify(teacherTimetable));
-                                    localStorage.setItem('attendance_' + r.id, JSON.stringify(attendanceData));
-                                    localStorage.setItem('announcements_' + r.id, JSON.stringify(announcements));
+                                    localStorage.setItem('user_' + realTeacherId, JSON.stringify(currentUser));
+                                    localStorage.setItem('students_' + realTeacherId, JSON.stringify(students));
+                                    localStorage.setItem('seating_' + realTeacherId, JSON.stringify(seatingCharts));
+                                    localStorage.setItem('timetables_' + realTeacherId, JSON.stringify(timetables));
+                                    localStorage.setItem('teacherTimetable_' + realTeacherId, JSON.stringify(teacherTimetable));
+                                    localStorage.setItem('attendance_' + realTeacherId, JSON.stringify(attendanceData));
+                                    localStorage.setItem('announcements_' + realTeacherId, JSON.stringify(announcements));
+                                    if (currentUser.cover) {
+                                        try { localStorage.setItem('cover_' + realTeacherId, currentUser.cover); } catch(e) {}
+                                        try { localStorage.setItem('cover_photo', currentUser.cover); } catch(e) {}
+                                        try { localStorage.setItem('backup_cover', currentUser.cover); } catch(e) {}
+                                    }
                                     
                                     const payload = {
                                         currentUser: currentUser,
@@ -5129,7 +5154,7 @@
                                         attendanceData: attendanceData,
                                         announcements: announcements
                                     };
-                                    callSupabaseRest('UPSERT', r.id, payload)
+                                    callSupabaseRest('UPSERT', realTeacherId, payload)
                                         .then(() => console.log("Cloud student login count updated successfully"))
                                         .catch(err => console.error("Supabase sync error:", err));
 
@@ -5378,8 +5403,9 @@
                         if (expectedPass === pass) {
                             serverStudent.loginCount = (serverStudent.loginCount || 0) + 1;
                             currentUser = bUser;
-                            currentUser.id = bTeacherId;
-                            currentTeacherId = bTeacherId;
+                            const realTeacherId = (bTeacherId === 'admin') ? 'thaytuan' : (bTeacherId || 'thaytuan');
+                            currentUser.id = realTeacherId;
+                            currentTeacherId = realTeacherId;
                             currentUserRole = 'student';
                             currentStudent = serverStudent;
                             students = bStudents;
@@ -5391,14 +5417,14 @@
 
                             localStorage.setItem('currentUserRole', 'student');
                             localStorage.setItem('currentStudent', JSON.stringify(serverStudent));
-                            localStorage.setItem('currentTeacherId', bTeacherId);
+                            localStorage.setItem('currentTeacherId', realTeacherId);
                             localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                            localStorage.setItem('user_' + bTeacherId, JSON.stringify(currentUser));
-                            localStorage.setItem('students_' + bTeacherId, JSON.stringify(students));
-                            localStorage.setItem('timetables_' + bTeacherId, JSON.stringify(timetables));
-                            localStorage.setItem('seating_' + bTeacherId, JSON.stringify(seatingCharts));
+                            localStorage.setItem('user_' + realTeacherId, JSON.stringify(currentUser));
+                            localStorage.setItem('students_' + realTeacherId, JSON.stringify(students));
+                            localStorage.setItem('timetables_' + realTeacherId, JSON.stringify(timetables));
+                            localStorage.setItem('seating_' + realTeacherId, JSON.stringify(seatingCharts));
                             if (currentUser.cover) {
-                                try { localStorage.setItem('cover_' + bTeacherId, currentUser.cover); } catch(e) {}
+                                try { localStorage.setItem('cover_' + realTeacherId, currentUser.cover); } catch(e) {}
                                 try { localStorage.setItem('cover_photo', currentUser.cover); } catch(e) {}
                             }
 
@@ -5542,7 +5568,7 @@
             loginSuccess(newUser);
         }
     }
-    function loginSuccess(user) { 
+    async function loginSuccess(user) { 
         currentUser = user; 
         localStorage.removeItem('userLoggedOut'); 
         localStorage.setItem('currentUser', JSON.stringify(currentUser)); 
@@ -5553,7 +5579,10 @@
             const obScreen = document.getElementById('onboarding-screen'); 
             obScreen.classList.remove('hidden'); 
             obScreen.classList.add('flex'); 
-        } else loadUserData(); 
+        } else {
+            await loadUserData();
+            await syncClassData(false);
+        }
     }
     function logout() { 
         // 1. Create a full-screen overlay for the fade-out/dimming transition
@@ -8590,13 +8619,17 @@
         if (iconTimetable) iconTimetable.classList.add('animate-spin');
         if (iconChart) iconChart.classList.add('animate-spin');
 
-        const targetId = currentTeacherId || (currentUser && currentUser.id ? currentUser.id : 'thaytuan');
+        let targetId = currentTeacherId || (currentUser && currentUser.id ? currentUser.id : 'thaytuan');
+        if (targetId === 'admin') targetId = 'thaytuan';
         let fetchedData = null;
 
         // 1. Thử nạp từ Supabase nếu có kết nối
         if (isSupabaseConnected) {
             try {
-                const row = await callSupabaseRest('GET', targetId);
+                let row = await callSupabaseRest('GET', targetId);
+                if ((!row || !row.data) && targetId !== 'thaytuan') {
+                    row = await callSupabaseRest('GET', 'thaytuan');
+                }
                 if (row && row.data) {
                     fetchedData = row.data;
                 }
@@ -17176,7 +17209,12 @@
 
     function restoreRoleState() {
         currentUserRole = localStorage.getItem('currentUserRole') || 'teacher';
-        currentTeacherId = localStorage.getItem('currentTeacherId') || '';
+        let savedTId = localStorage.getItem('currentTeacherId') || '';
+        if (savedTId === 'admin') {
+            savedTId = 'thaytuan';
+            try { localStorage.setItem('currentTeacherId', 'thaytuan'); } catch(e) {}
+        }
+        currentTeacherId = savedTId;
         const savedStudent = localStorage.getItem('currentStudent');
         if (savedStudent) {
             try {
