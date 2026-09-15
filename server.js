@@ -20,8 +20,11 @@ if (!fs.existsSync(DATA_FILE)) {
 }
 
 const server = http.createServer((req, res) => {
+    const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+    const pathname = parsedUrl.pathname;
+
     // API endpoint for data retrieval
-    if (req.method === 'GET' && req.url === '/api/data') {
+    if (req.method === 'GET' && pathname === '/api/data') {
         fs.readFile(DATA_FILE, 'utf8', (err, data) => {
             if (err) {
                 res.writeHead(500, { 
@@ -41,7 +44,7 @@ const server = http.createServer((req, res) => {
         });
     } 
     // API endpoint for data persistence
-    else if (req.method === 'POST' && req.url === '/api/data') {
+    else if (req.method === 'POST' && pathname === '/api/data') {
         let body = '';
         req.on('data', chunk => {
             body += chunk.toString();
