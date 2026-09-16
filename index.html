@@ -1041,8 +1041,8 @@
             </div>
 
             <!-- Bảng TKB -->
-            <table class="w-full text-center border-collapse min-w-[700px] h-full">
-                <thead>
+            <table id="timetable-table" class="w-full text-center border-collapse min-w-[700px] h-full">
+                <thead id="timetable-thead">
                     <tr>
                         <th class="border border-slate-200 p-3 bg-slate-50 text-slate-400 font-black uppercase tracking-wider text-[10px] md:text-xs">Tiết \ Thứ</th>
                         <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 2</th>
@@ -6389,93 +6389,80 @@
         const tId = currentTeacherId || (currentUser && currentUser.id ? currentUser.id : 'thaytuan');
         autoRecoverClassData(tId);
 
-        if (!timetables || timetables.length === 0) {
-            const saved = localStorage.getItem('timetables_' + tId) || localStorage.getItem('timetables_thaytuan') || localStorage.getItem('backup_timetables'); 
-            if (saved) {
-                try {
-                    const parsed = JSON.parse(saved);
-                    if (Array.isArray(parsed) && parsed.length > 0) timetables = parsed;
-                } catch(e) {}
-            }
-        }
         if (!timetables || timetables.length === 0) { 
-            timetables = [{ id: 'tkb_' + Date.now(), name: 'TKB Lần 1', data: {} }]; 
-            // Không gọi saveTimetables() khi mảng trắng để tránh ghi đè dữ liệu
+            timetables = [ 
+                { id: 'default', name: 'TKB Học kỳ 1', data: {} } 
+            ]; 
         } 
-        if (!teacherTimetable || !teacherTimetable.id || Object.keys(teacherTimetable.data || {}).length === 0) {
-            const savedTeacher = localStorage.getItem('teacherTimetable_' + tId) || localStorage.getItem('teacherTimetable_thaytuan') || localStorage.getItem('backup_teacherTimetable');
-            if (savedTeacher) {
-                try {
-                    const parsedTeacher = JSON.parse(savedTeacher);
-                    if (parsedTeacher && typeof parsedTeacher === 'object') teacherTimetable = parsedTeacher;
-                } catch(e) {}
-            }
+        if (!teacherTimetable) {
+            teacherTimetable = { id: 'teacher_default', name: 'TKB Giảng dạy GV', data: {} };
         }
-        if (!teacherTimetable || !teacherTimetable.id) {
-            teacherTimetable = { id: 'teacher_tkb', name: 'TKB Giáo viên', data: {} };
-        }
-
-        // Ưu tiên chọn TKB đang áp dụng hoặc TKB đã có dữ liệu
-        const tkbWithData = timetables.find(t => t.data && Object.keys(t.data).length > 0);
-        const activeId = currentUser && currentUser.activeTimetableId;
-        currentTimetableId = (activeId && timetables.some(t => t.id === activeId)) 
-                             ? activeId 
-                             : (tkbWithData ? tkbWithData.id : (timetables[0] ? timetables[0].id : null));
-        if (currentUserRole === 'student' && activeId && timetables.some(t => t.id === activeId)) {
-            currentTimetableId = activeId;
-        }
-
+        
+        let targetId = currentUser && currentUser.activeTimetableId ? currentUser.activeTimetableId : null;
+        if (targetId && timetables.some(t => t.id === targetId)) {
+            currentTimetableId = targetId;
+        } else if (!currentTimetableId || !timetables.some(t => t.id === currentTimetableId)) { 
+            currentTimetableId = timetables[0].id; 
+        } 
         renderTimetableSelect(); 
         applyTimetable(); 
-    }
-    function saveTimetables() { saveAppData(); }
+    } 
+
+    function saveTimetables() { 
+        saveAppData(); 
+    } 
+
     function renderTimetableSelect() { 
         const sel = document.getElementById('timetable-select'); 
-        const activeId = currentUser.activeTimetableId || (timetables[0] ? timetables[0].id : null);
+        if(!sel) return; 
         sel.innerHTML = timetables.map(t => {
-            const isUsed = t.id === activeId ? ' (Đang dùng)' : '';
-            return `<option value="${t.id}">${t.name}${isUsed}</option>`;
+            const isActive = currentUser && currentUser.activeTimetableId === t.id;
+            const activeBadge = isActive ? ' ⭐ (Đang áp dụng)' : '';
+            return `<option value="${t.id}" ${t.id === currentTimetableId ? 'selected' : ''}>${t.name}${activeBadge}</option>`;
         }).join(''); 
-        sel.value = currentTimetableId; 
-    }
-    function changeTimetable() { currentTimetableId = document.getElementById('timetable-select').value; applyTimetable(); }
-    function addTimetable() {
-        const defaultName = `TKB Lần ${timetables.length + 1}`;
-        showPrompt('Thêm Thời Khóa Biểu', 'Nhập tên cho thời khóa biểu mới:', defaultName, (name) => {
-            const trimmedName = name ? name.trim() : '';
-            if (!trimmedName) {
-                showModal('error', 'Lỗi', 'Tên thời khóa biểu không được để trống!');
-                return;
-            }
-            const newTkb = { id: 'tkb_' + Date.now(), name: trimmedName, data: {} };
-            timetables.push(newTkb);
-            saveTimetables();
-            currentTimetableId = newTkb.id;
-            renderTimetableSelect();
-            applyTimetable();
-            showModal('success', 'Thành công', `Đã thêm thời khóa biểu "${trimmedName}"`);
-        });
-    }
-    function renameTimetable() {
-        const t = timetables.find(x => x.id === currentTimetableId);
-        if (!t) return;
-        showPrompt('Đổi tên Thời Khóa Biểu', 'Nhập tên mới cho thời khóa biểu này:', t.name, (newName) => {
-            const trimmedName = newName ? newName.trim() : '';
-            if (!trimmedName) {
-                showModal('error', 'Lỗi', 'Tên thời khóa biểu không được để trống!');
-                return;
-            }
-            t.name = trimmedName;
-            saveTimetables();
-            renderTimetableSelect();
-            applyTimetable();
-            renderOverview();
-            showModal('success', 'Thành công', `Đã đổi tên thời khóa biểu thành "${trimmedName}"`);
-        });
-    }
+    } 
+
+    function changeTimetable() { 
+        const sel = document.getElementById('timetable-select'); 
+        if(!sel) return; 
+        currentTimetableId = sel.value; 
+        applyTimetable(); 
+    } 
+
+    function addTimetable() { 
+        showModal('prompt', 'Thêm Thời Khóa Biểu', 'Nhập tên Thời Khóa Biểu mới:', '', (name) => { 
+            if(name && name.trim()) { 
+                const newId = 'tkb_' + Date.now(); 
+                timetables.push({ id: newId, name: name.trim(), data: {} }); 
+                currentTimetableId = newId; 
+                saveTimetables(); 
+                renderTimetableSelect(); 
+                applyTimetable(); 
+                showModal('success', 'Thành công', `Đã tạo Thời Khóa Biểu "${name}"!`); 
+            } 
+        }); 
+    } 
+
+    function renameTimetable() { 
+        const current = timetables.find(t => t.id === currentTimetableId); 
+        if(!current) return; 
+        showModal('prompt', 'Đổi tên Thời Khóa Biểu', 'Nhập tên mới:', current.name, (name) => { 
+            if(name && name.trim()) { 
+                current.name = name.trim(); 
+                saveTimetables(); 
+                renderTimetableSelect(); 
+                showModal('success', 'Thành công', 'Đã đổi tên Thời Khóa Biểu!'); 
+            } 
+        }); 
+    } 
+
     function deleteTimetable() { 
-        if(timetables.length <= 1) return showModal('error', 'Không thể xóa', 'Phải có ít nhất 1 TKB!'); 
-        showModal('confirm', 'Xóa TKB', 'Bạn có chắc chắn muốn xóa thời khóa biểu này?', () => { 
+        if(timetables.length <= 1) { 
+            showModal('error', 'Lỗi', 'Không thể xóa Thời Khóa Biểu duy nhất!'); 
+            return; 
+        } 
+        const current = timetables.find(t => t.id === currentTimetableId); 
+        showModal('confirm', 'Xác nhận xóa', `Bạn có chắc muốn xóa TKB "${current.name}"?`, () => { 
             const deletedId = currentTimetableId;
             timetables = timetables.filter(t => t.id !== currentTimetableId); 
             currentTimetableId = timetables[0].id; 
@@ -6529,7 +6516,8 @@
 
     function applyTimetable() { 
         let t;
-        if (currentTimetableViewMode === 'teacher') {
+        const isTeacherTkb = (currentTimetableViewMode === 'teacher');
+        if (isTeacherTkb) {
             t = teacherTimetable;
         } else {
             const activeId = currentUser && currentUser.activeTimetableId;
@@ -6545,12 +6533,12 @@
         const isStudent = (currentUserRole === 'student'); 
         const allowedTkbRoles = ["lớp trưởng", "lớp phó học tập"];
         let canEditTkb = !isStudent || (isStudent && currentStudent && currentStudent.role && allowedTkbRoles.includes(currentStudent.role.toLowerCase().trim()));
-        if (currentTimetableViewMode === 'teacher') {
+        if (isTeacherTkb) {
             canEditTkb = (currentUserRole === 'teacher');
         }
         
         // Render stats for Teacher Timetable
-        if (currentTimetableViewMode === 'teacher') {
+        if (isTeacherTkb) {
             const statsEl = document.getElementById('teacher-tkb-stats');
             if (statsEl) {
                 const counts = getTeacherClassCounts();
@@ -6565,6 +6553,55 @@
             }
         }
         
+        // Điều chỉnh kích thước khung và bảng theo chế độ
+        const captureArea = document.getElementById('timetable-capture-area');
+        const tableEl = document.getElementById('timetable-table');
+        const thead = document.getElementById('timetable-thead');
+
+        if (captureArea) {
+            if (isTeacherTkb) {
+                captureArea.classList.remove('min-w-[850px]');
+                captureArea.classList.add('max-w-[760px]', 'mx-auto');
+            } else {
+                captureArea.classList.add('min-w-[850px]');
+                captureArea.classList.remove('max-w-[760px]', 'mx-auto');
+            }
+        }
+
+        if (tableEl) {
+            if (isTeacherTkb) {
+                tableEl.classList.remove('min-w-[700px]');
+                tableEl.classList.add('table-fixed', 'w-full');
+            } else {
+                tableEl.classList.add('min-w-[700px]');
+                tableEl.classList.remove('table-fixed');
+            }
+        }
+
+        if (thead) {
+            if (isTeacherTkb) {
+                thead.innerHTML = `<tr>
+                    <th class="border border-slate-200 py-2 px-1 bg-slate-50 text-slate-500 font-black uppercase tracking-wider text-[11px] w-16">Tiết</th>
+                    <th class="border border-slate-200 py-2 px-1 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 2</th>
+                    <th class="border border-slate-200 py-2 px-1 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 3</th>
+                    <th class="border border-slate-200 py-2 px-1 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 4</th>
+                    <th class="border border-slate-200 py-2 px-1 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 5</th>
+                    <th class="border border-slate-200 py-2 px-1 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 6</th>
+                    <th class="border border-slate-200 py-2 px-1 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 7</th>
+                </tr>`;
+            } else {
+                thead.innerHTML = `<tr>
+                    <th class="border border-slate-200 p-3 bg-slate-50 text-slate-400 font-black uppercase tracking-wider text-[10px] md:text-xs w-24">Tiết \\ Thứ</th>
+                    <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 2</th>
+                    <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 3</th>
+                    <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 4</th>
+                    <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 5</th>
+                    <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 6</th>
+                    <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 7</th>
+                </tr>`;
+            }
+        }
+
         const periodTimes = {
             1: "07:00 - 07:45",
             2: "07:45 - 08:30",
@@ -6583,21 +6620,30 @@
         let html = ''; 
         for(let period = 1; period <= maxPeriods; period++) { 
             if (period === 6) {
-                const sessionTitle = (currentTimetableViewMode === 'teacher') ? 'Dạy Thêm' : 'Buổi Chiều';
-                const sessionIcon = (currentTimetableViewMode === 'teacher') ? 'book-open' : 'sun';
+                const sessionTitle = isTeacherTkb ? 'Dạy Thêm (Buổi Chiều)' : 'Buổi Chiều';
+                const sessionIcon = isTeacherTkb ? 'book-open' : 'sun';
+                const divPy = isTeacherTkb ? 'py-1.5 text-xs' : 'py-2.5 text-xs md:text-sm';
                 html += `<tr>
-                    <td colspan="7" class="bg-indigo-50/70 text-indigo-800 font-black text-xs md:text-sm py-2.5 uppercase tracking-widest text-center border border-slate-200">
-                        <div class="flex items-center justify-center gap-1.5"><i data-lucide="${sessionIcon}" class="w-4 h-4 text-indigo-600"></i> ${sessionTitle}</div>
+                    <td colspan="7" class="bg-indigo-50/80 text-indigo-800 font-black ${divPy} uppercase tracking-widest text-center border border-slate-200">
+                        <div class="flex items-center justify-center gap-1.5"><i data-lucide="${sessionIcon}" class="w-3.5 h-3.5 text-indigo-600"></i> ${sessionTitle}</div>
                     </td>
                 </tr>`;
             }
             
-            const periodLabel = period <= 5 ? `Tiết ${period}` : (currentTimetableViewMode === 'teacher' ? `Tiết ${period - 5} (Dạy thêm)` : `Tiết ${period - 5} (Chiều)`);
+            const periodLabel = period <= 5 
+                ? `Tiết ${period}` 
+                : (isTeacherTkb ? `Tiết ${period - 5}` : `Tiết ${period - 5} (Chiều)`);
+            const col1Class = isTeacherTkb 
+                ? 'border border-slate-200 py-1.5 px-1 font-black bg-slate-50 w-16 text-center' 
+                : 'border border-slate-200 p-2 font-black bg-slate-50 w-24 text-center';
+            const timeHtml = isTeacherTkb 
+                ? '' 
+                : `<div class="text-[9px] text-slate-400 font-bold mt-0.5 whitespace-nowrap">${periodTimes[period]}</div>`;
             
             html += `<tr>
-                <td class="border border-slate-200 p-2 font-black bg-slate-50 w-24 text-center">
-                    <div class="text-slate-500 font-extrabold text-[10px] md:text-xs tracking-widest uppercase">${periodLabel}</div>
-                    <div class="text-[9px] text-slate-400 font-bold mt-0.5 whitespace-nowrap">${periodTimes[period]}</div>
+                <td class="${col1Class}">
+                    <div class="text-slate-600 font-extrabold text-[10px] md:text-[11px] tracking-wider uppercase">${periodLabel}</div>
+                    ${timeHtml}
                 </td>`; 
             for(let day = 2; day <= 7; day++) { 
                 const key = `d${day}_p${period}`; 
@@ -6605,7 +6651,7 @@
                 
                 let subject = '';
                 let teacher = '';
-                if (currentTimetableViewMode === 'teacher') {
+                if (isTeacherTkb) {
                     subject = val;
                     teacher = '';
                 } else {
@@ -6620,28 +6666,51 @@
                 }
                 
                 const colorClass = subject ? getPastelColorClass(subject) : 'bg-white text-slate-700 border-slate-100';
-                const subtext = currentTimetableViewMode === 'teacher' ? '' : (teacher || (subject ? 'Chưa phân công' : ''));
                 
-                if (!canEditTkb) {
-                    html += `
-                    <td class="border border-slate-100 p-2 ${colorClass} text-center">
-                      <div class="flex flex-col justify-center min-h-[52px]">
-                        <span class="font-extrabold text-xs md:text-sm">${subject || '...'}</span>
-                        <span class="font-medium text-[9px] md:text-xs mt-0.5 ${subject ? 'text-slate-500/80' : 'text-slate-400'}">${subtext}</span>
-                      </div>
-                    </td>`;
+                if (isTeacherTkb) {
+                    const cellMinH = 'min-h-[38px]';
+                    if (!canEditTkb) {
+                        html += `
+                        <td class="border border-slate-200/80 p-1 ${colorClass} text-center">
+                          <div class="flex flex-col items-center justify-center ${cellMinH}">
+                            <span class="font-black text-xs md:text-sm tracking-wide ${subject ? '' : 'text-slate-300 font-normal'}">${subject || '—'}</span>
+                          </div>
+                        </td>`;
+                    } else {
+                        html += `
+                        <td onclick="openPeriodModal('${key}', ${day}, ${period})" class="border border-slate-200/80 p-1 ${colorClass} hover:opacity-90 transition-all cursor-pointer group">
+                          <div class="flex flex-col items-center justify-center ${cellMinH} relative">
+                            <span class="font-black text-xs md:text-sm tracking-wide ${subject ? 'group-hover:text-theme' : 'text-slate-300 font-normal'} transition-colors">${subject || '—'}</span>
+                            <div class="absolute inset-0 border-2 border-dashed border-slate-300 rounded-lg opacity-0 group-hover:opacity-100 transition duration-150 flex items-center justify-center bg-slate-50/95 gap-1">
+                              <i data-lucide="edit-3" class="w-3 h-3 text-theme"></i>
+                              <span class="text-[8px] font-black text-theme uppercase tracking-wider">Sửa</span>
+                            </div>
+                          </div>
+                        </td>`;
+                    }
                 } else {
-                    html += `
-                    <td onclick="openPeriodModal('${key}', ${day}, ${period})" class="border border-slate-100 p-2 ${colorClass} hover:opacity-90 transition-all cursor-pointer group">
-                      <div class="flex flex-col justify-center min-h-[52px] relative">
-                        <span class="font-extrabold text-xs md:text-sm group-hover:text-theme transition-colors">${subject || '...'}</span>
-                        <span class="font-medium text-[9px] md:text-xs mt-0.5 ${subject ? 'text-slate-500/80' : 'text-slate-400'}">${subtext}</span>
-                        <div class="absolute inset-0 border-2 border-dashed border-slate-300 rounded-xl opacity-0 group-hover:opacity-100 transition duration-200 flex items-center justify-center bg-slate-50/95 gap-1">
-                          <i data-lucide="edit-3" class="w-3.5 h-3.5 text-theme"></i>
-                          <span class="text-[9px] font-black text-theme uppercase tracking-wider">Sửa</span>
-                        </div>
-                      </div>
-                    </td>`;
+                    const subtext = teacher || (subject ? 'Chưa phân công' : '');
+                    if (!canEditTkb) {
+                        html += `
+                        <td class="border border-slate-100 p-2 ${colorClass} text-center">
+                          <div class="flex flex-col justify-center min-h-[52px]">
+                            <span class="font-extrabold text-xs md:text-sm">${subject || '...'}</span>
+                            <span class="font-medium text-[9px] md:text-xs mt-0.5 ${subject ? 'text-slate-500/80' : 'text-slate-400'}">${subtext}</span>
+                          </div>
+                        </td>`;
+                    } else {
+                        html += `
+                        <td onclick="openPeriodModal('${key}', ${day}, ${period})" class="border border-slate-100 p-2 ${colorClass} hover:opacity-90 transition-all cursor-pointer group">
+                          <div class="flex flex-col justify-center min-h-[52px] relative">
+                            <span class="font-extrabold text-xs md:text-sm group-hover:text-theme transition-colors">${subject || '...'}</span>
+                            <span class="font-medium text-[9px] md:text-xs mt-0.5 ${subject ? 'text-slate-500/80' : 'text-slate-400'}">${subtext}</span>
+                            <div class="absolute inset-0 border-2 border-dashed border-slate-300 rounded-xl opacity-0 group-hover:opacity-100 transition duration-200 flex items-center justify-center bg-slate-50/95 gap-1">
+                              <i data-lucide="edit-3" class="w-3.5 h-3.5 text-theme"></i>
+                              <span class="text-[9px] font-black text-theme uppercase tracking-wider">Sửa</span>
+                            </div>
+                          </div>
+                        </td>`;
+                    }
                 }
             } 
             html += `</tr>`; 
@@ -6654,7 +6723,7 @@
         const capTeacher = document.getElementById('timetable-capture-teacher');
         const capFooter = document.getElementById('timetable-capture-footer-left');
         
-        if (currentTimetableViewMode === 'teacher') {
+        if (isTeacherTkb) {
             if (capTitle) capTitle.innerText = "THỜI KHÓA BIỂU GIẢNG DẠY";
             if (capSubtitle) capSubtitle.innerText = `Giáo viên: ${currentUser.teacherName || 'Chưa cập nhật'} | Năm học: ${currentUser.year || ''}`;
             if (capTeacher) capTeacher.innerText = "Lớp phụ trách: 12A17, 12A12, 12A32 (4 tiết/lớp)";
@@ -9213,18 +9282,20 @@
                 ]);
             }
 
+            const exportWidth = isTeacher ? 760 : 1120;
+
             // Tạo vùng clone độc lập đặt tại góc trên cùng ẩn sau body để html2canvas chụp đúng tọa độ (0, 0), không bị lệch do left âm
             const clone = area.cloneNode(true);
             clone.id = 'timetable-export-clone';
             clone.style.position = 'fixed';
             clone.style.left = '0';
             clone.style.top = '0';
-            clone.style.width = '1120px';
-            clone.style.minWidth = '1120px';
-            clone.style.maxWidth = '1120px';
+            clone.style.width = `${exportWidth}px`;
+            clone.style.minWidth = `${exportWidth}px`;
+            clone.style.maxWidth = `${exportWidth}px`;
             clone.style.boxSizing = 'border-box';
             clone.style.background = '#ffffff';
-            clone.style.padding = '24px';
+            clone.style.padding = isTeacher ? '18px' : '24px';
             clone.style.borderRadius = '16px';
             clone.style.zIndex = '-9999';
 
@@ -9240,8 +9311,8 @@
                     useCORS: true,
                     backgroundColor: '#ffffff',
                     logging: false,
-                    width: 1120,
-                    windowWidth: 1120,
+                    width: exportWidth,
+                    windowWidth: exportWidth,
                     scrollX: 0,
                     scrollY: 0,
                     x: 0,
