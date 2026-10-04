@@ -3790,23 +3790,27 @@
             } catch(e) {}
         }
 
-        // 2. Cross-tab sync via window storage event
+        // 2. Cross-tab sync via window storage event (chủ yếu cập nhật cho học sinh)
         window.addEventListener('storage', (e) => {
             if (!e.key) return;
-            const tId = currentTeacherId || (currentUser ? currentUser.id : 'thaytuan');
-            if (e.key === 'cover_' + tId || e.key === 'cover_photo' || e.key === 'timetables_' + tId || e.key === 'user_' + tId || e.key === 'currentUser' || e.key === 'seating_' + tId) {
-                syncClassData(false);
+            if (currentUserRole === 'student') {
+                const tId = currentTeacherId || (currentUser ? currentUser.id : 'thaytuan');
+                if (e.key === 'cover_' + tId || e.key === 'cover_photo' || e.key === 'timetables_' + tId || e.key === 'user_' + tId || e.key === 'currentUser' || e.key === 'seating_' + tId) {
+                    syncClassData(false);
+                }
             }
         });
 
-        // 3. Sync on page focus / tab visibility change
+        // 3. Sync on page focus / tab visibility change (dành cho học sinh xem dữ liệu mới nhất, không gián đoạn giáo viên khi đang sửa)
         document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible') {
+            if (document.visibilityState === 'visible' && currentUserRole === 'student') {
                 syncClassData(false);
             }
         });
         window.addEventListener('focus', () => {
-            syncClassData(false);
+            if (currentUserRole === 'student') {
+                syncClassData(false);
+            }
         });
 
         // 4. Periodic auto-sync for student clients
@@ -6400,11 +6404,14 @@
             teacherTimetable = { id: 'teacher_default', name: 'TKB Giảng dạy GV', data: {} };
         }
         
-        let targetId = currentUser && currentUser.activeTimetableId ? currentUser.activeTimetableId : null;
-        if (targetId && timetables.some(t => t.id === targetId)) {
-            currentTimetableId = targetId;
-        } else if (!currentTimetableId || !timetables.some(t => t.id === currentTimetableId)) { 
-            currentTimetableId = timetables[0].id; 
+        // Giữ nguyên TKB người dùng đang chọn hoặc đang chỉnh sửa
+        if (!currentTimetableId || !timetables.some(t => t.id === currentTimetableId)) {
+            let activeId = currentUser && currentUser.activeTimetableId ? currentUser.activeTimetableId : null;
+            if (activeId && timetables.some(t => t.id === activeId)) {
+                currentTimetableId = activeId;
+            } else if (timetables.length > 0) { 
+                currentTimetableId = timetables[0].id; 
+            } 
         } 
         renderTimetableSelect(); 
         applyTimetable(); 
@@ -8781,9 +8788,11 @@
             if (remoteUser.slogan) currentUser.slogan = remoteUser.slogan;
             if (remoteUser.theme) currentUser.theme = remoteUser.theme;
 
-            // Thời khóa biểu lớp
+            // Thời khóa biểu lớp: Bảo toàn các TKB vừa tạo cục bộ tránh bị sync đè mất
             if (Array.isArray(fetchedData.timetables) && fetchedData.timetables.length > 0) {
-                timetables = fetchedData.timetables;
+                const remoteTkbList = fetchedData.timetables;
+                const localOnly = timetables.filter(lt => !remoteTkbList.some(rt => rt.id === lt.id));
+                timetables = [...remoteTkbList, ...localOnly];
                 try {
                     localStorage.setItem('timetables_' + targetId, JSON.stringify(timetables));
                     localStorage.setItem('backup_timetables', JSON.stringify(timetables));
@@ -8873,11 +8882,21 @@
             if (tCover) tCover.style.backgroundImage = `url('${currentUser.cover}')`;
         }
 
+        const preSyncTkbId = currentTimetableId;
+        const preSyncChartId = currentChartId;
+
         initTimetables();
+        if (preSyncTkbId && timetables.some(t => t.id === preSyncTkbId)) {
+            currentTimetableId = preSyncTkbId;
+        }
         updateUI();
         renderOverview();
         applyTimetable();
         initSeatingCharts();
+        if (preSyncChartId && seatingCharts.some(c => String(c.id) === String(preSyncChartId))) {
+            currentChartId = preSyncChartId;
+            applyChartLayout();
+        }
         configureSidebarForRole();
 
         if (iconTimetable) iconTimetable.classList.remove('animate-spin');
