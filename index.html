@@ -52,8 +52,24 @@
       animation: loading-bar-progress 1.5s infinite linear;
     }
     
-    .table-sticky th:first-child, .table-sticky td:first-child { position: sticky; left: 0; background-color: white; z-index: 10; border-right: 2px solid #f1f5f9; }
-    .table-sticky th:first-child { z-index: 20; background-color: #f8fafc; }
+    .table-sticky th:first-child, .table-sticky td:first-child { 
+      position: sticky; 
+      left: 0; 
+      background-color: #f8fafc !important; 
+      z-index: 20; 
+      border-right: 2px solid #cbd5e1; 
+      box-shadow: 2px 0 6px -2px rgba(0,0,0,0.08); 
+    }
+    .table-sticky th:first-child { 
+      z-index: 30; 
+      background-color: #f1f5f9 !important; 
+    }
+    .cell-day-highlight {
+      outline: 3px solid #10b981 !important;
+      outline-offset: -2px;
+      background-color: #ecfdf5 !important;
+      transition: all 0.4s ease;
+    }
     
     .student-card {
       transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -1027,8 +1043,31 @@
               <button id="btn-export-timetable" onclick="exportTimetableImage()" class="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white font-black px-4 py-2.5 rounded-xl text-xs md:text-sm transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg hover:scale-[1.02] whitespace-nowrap" title="Xuất ảnh Thời khóa biểu sắc nét 4K"><i data-lucide="image-down" class="w-4 h-4"></i> Xuất ảnh 4K</button>
             </div>
         </div>
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex-1 p-4 md:p-6 overflow-x-auto custom-scrollbar">
-          <div id="timetable-capture-area" class="min-w-[850px] p-5 md:p-6 bg-white rounded-2xl border border-slate-100 relative">
+        <!-- THANH ĐIỀU HƯỚNG TKB THEO NGÀY (TỐI ƯU CHO MOBILE & IPHONE 15) -->
+        <div class="flex items-center justify-between gap-2 overflow-x-auto pb-1 custom-scrollbar shrink-0">
+          <div class="flex items-center gap-1 bg-slate-100/90 p-1 rounded-2xl border border-slate-200/60 shrink-0">
+            <button onclick="setTimetableDayFilter('all')" id="btn-tkb-day-all" class="tkb-day-pill px-3 py-1.5 rounded-xl text-xs font-black transition-all bg-white text-theme shadow-xs whitespace-nowrap">Toàn tuần</button>
+            <button onclick="setTimetableDayFilter(2)" id="btn-tkb-day-2" class="tkb-day-pill px-2.5 py-1.5 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 transition-all whitespace-nowrap">Thứ 2</button>
+            <button onclick="setTimetableDayFilter(3)" id="btn-tkb-day-3" class="tkb-day-pill px-2.5 py-1.5 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 transition-all whitespace-nowrap">Thứ 3</button>
+            <button onclick="setTimetableDayFilter(4)" id="btn-tkb-day-4" class="tkb-day-pill px-2.5 py-1.5 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 transition-all whitespace-nowrap">Thứ 4</button>
+            <button onclick="setTimetableDayFilter(5)" id="btn-tkb-day-5" class="tkb-day-pill px-2.5 py-1.5 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 transition-all whitespace-nowrap">Thứ 5</button>
+            <button onclick="setTimetableDayFilter(6)" id="btn-tkb-day-6" class="tkb-day-pill px-2.5 py-1.5 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 transition-all whitespace-nowrap">Thứ 6</button>
+            <button onclick="setTimetableDayFilter(7)" id="btn-tkb-day-7" class="tkb-day-pill px-2.5 py-1.5 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 transition-all whitespace-nowrap flex items-center gap-1">
+              Thứ 7 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            </button>
+          </div>
+          <!-- Nút trượt nhanh đến Thứ 7 khi xem Toàn tuần trên điện thoại -->
+          <button onclick="scrollToTimetableDay(7)" id="btn-quick-scroll-day-7" class="text-xs font-extrabold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 shrink-0 whitespace-nowrap shadow-2xs" title="Cuộn nhanh bảng đến Thứ 7">
+            <span>Đến Thứ 7</span> <i data-lucide="chevrons-right" class="w-3.5 h-3.5 text-emerald-600"></i>
+          </button>
+        </div>
+
+        <div id="timetable-scroll-wrapper" class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex-1 p-3 md:p-6 overflow-x-auto custom-scrollbar">
+          <!-- GIAO DIỆN XEM TỪNG NGÀY CHO MOBILE (IPHONE 15) -->
+          <div id="timetable-day-view" class="hidden space-y-3 max-w-lg mx-auto"></div>
+
+          <!-- BẢNG TOÀN TUẦN -->
+          <div id="timetable-capture-area" class="w-full min-w-[560px] md:min-w-[850px] p-3 md:p-6 bg-white rounded-2xl border border-slate-100 relative">
             <!-- Header trên ảnh xuất -->
             <div class="mb-4 pb-3 border-b-2 border-slate-100 flex justify-between items-end">
               <div>
@@ -1042,16 +1081,16 @@
             </div>
 
             <!-- Bảng TKB -->
-            <table id="timetable-table" class="w-full text-center border-collapse min-w-[700px] h-full">
+            <table id="timetable-table" class="w-full text-center border-collapse table-sticky min-w-[540px] md:min-w-[700px] h-full">
                 <thead id="timetable-thead">
                     <tr>
-                        <th id="timetable-th-col1" class="border border-slate-200 p-3 bg-slate-50 text-slate-400 font-black uppercase tracking-wider text-[10px] md:text-xs">Tiết \ Thứ</th>
-                        <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 2</th>
-                        <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 3</th>
-                        <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 4</th>
-                        <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 5</th>
-                        <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 6</th>
-                        <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 7</th>
+                        <th id="timetable-th-col1" class="border border-slate-200 py-2 px-1 md:p-3 bg-slate-50 text-slate-400 font-black uppercase tracking-wider text-[10px] md:text-xs w-16 md:w-24">Tiết \ Thứ</th>
+                        <th class="border border-slate-200 py-2 px-1 md:p-3 bg-slate-50 text-theme font-black uppercase text-[11px] md:text-sm">Thứ 2</th>
+                        <th class="border border-slate-200 py-2 px-1 md:p-3 bg-slate-50 text-theme font-black uppercase text-[11px] md:text-sm">Thứ 3</th>
+                        <th class="border border-slate-200 py-2 px-1 md:p-3 bg-slate-50 text-theme font-black uppercase text-[11px] md:text-sm">Thứ 4</th>
+                        <th class="border border-slate-200 py-2 px-1 md:p-3 bg-slate-50 text-theme font-black uppercase text-[11px] md:text-sm">Thứ 5</th>
+                        <th class="border border-slate-200 py-2 px-1 md:p-3 bg-slate-50 text-theme font-black uppercase text-[11px] md:text-sm">Thứ 6</th>
+                        <th id="th-day-7" class="border border-slate-200 py-2 px-1 md:p-3 bg-slate-50 text-theme font-black uppercase text-[11px] md:text-sm">Thứ 7</th>
                     </tr>
                 </thead>
                 <tbody id="timetable-tbody"></tbody>
@@ -6823,51 +6862,50 @@
             }
         }
         
-        // Điều chỉnh kích thước khung và bảng theo chế độ
+        // Điều chỉnh kích thước khung và bảng theo chế độ (Tối ưu iPhone 15 & Mobile)
         const captureArea = document.getElementById('timetable-capture-area');
         const tableEl = document.getElementById('timetable-table');
         const thead = document.getElementById('timetable-thead');
 
         if (captureArea) {
+            captureArea.classList.remove('min-w-[850px]', 'md:min-w-[850px]', 'max-w-[760px]', 'mx-auto');
             if (isTeacherTkb) {
-                captureArea.classList.remove('min-w-[850px]');
-                captureArea.classList.add('max-w-[760px]', 'mx-auto');
+                captureArea.classList.add('w-full', 'min-w-[540px]', 'md:max-w-[760px]', 'md:mx-auto');
             } else {
-                captureArea.classList.add('min-w-[850px]');
-                captureArea.classList.remove('max-w-[760px]', 'mx-auto');
+                captureArea.classList.add('w-full', 'min-w-[540px]', 'md:min-w-[850px]');
             }
         }
 
         if (tableEl) {
+            tableEl.classList.add('table-sticky');
+            tableEl.classList.remove('min-w-[700px]', 'table-fixed');
             if (isTeacherTkb) {
-                tableEl.classList.remove('min-w-[700px]');
-                tableEl.classList.add('table-fixed', 'w-full');
+                tableEl.classList.add('min-w-[540px]', 'w-full');
             } else {
-                tableEl.classList.add('min-w-[700px]');
-                tableEl.classList.remove('table-fixed');
+                tableEl.classList.add('min-w-[540px]', 'md:min-w-[700px]', 'w-full');
             }
         }
 
         if (thead) {
             if (isTeacherTkb) {
                 thead.innerHTML = `<tr>
-                    <th class="border border-slate-200 py-2.5 px-2 bg-slate-50 text-slate-500 font-black uppercase tracking-wider text-[11px] md:text-xs w-[25%] min-w-[150px]">Giờ / Tiết</th>
-                    <th class="border border-slate-200 py-2 px-1 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm w-[12.5%]">Thứ 2</th>
-                    <th class="border border-slate-200 py-2 px-1 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm w-[12.5%]">Thứ 3</th>
-                    <th class="border border-slate-200 py-2 px-1 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm w-[12.5%]">Thứ 4</th>
-                    <th class="border border-slate-200 py-2 px-1 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm w-[12.5%]">Thứ 5</th>
-                    <th class="border border-slate-200 py-2 px-1 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm w-[12.5%]">Thứ 6</th>
-                    <th class="border border-slate-200 py-2 px-1 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm w-[12.5%]">Thứ 7</th>
+                    <th class="border border-slate-200 py-2 px-1 md:py-2.5 md:px-2 bg-slate-50 text-slate-500 font-black uppercase tracking-wider text-[10px] md:text-xs w-[18%] md:w-[25%] min-w-[75px] md:min-w-[150px]">Giờ / Tiết</th>
+                    <th class="border border-slate-200 py-1.5 px-0.5 md:py-2 md:px-1 bg-slate-50 text-theme font-black uppercase text-[11px] md:text-sm w-[13.6%]">Thứ 2</th>
+                    <th class="border border-slate-200 py-1.5 px-0.5 md:py-2 md:px-1 bg-slate-50 text-theme font-black uppercase text-[11px] md:text-sm w-[13.6%]">Thứ 3</th>
+                    <th class="border border-slate-200 py-1.5 px-0.5 md:py-2 md:px-1 bg-slate-50 text-theme font-black uppercase text-[11px] md:text-sm w-[13.6%]">Thứ 4</th>
+                    <th class="border border-slate-200 py-1.5 px-0.5 md:py-2 md:px-1 bg-slate-50 text-theme font-black uppercase text-[11px] md:text-sm w-[13.6%]">Thứ 5</th>
+                    <th class="border border-slate-200 py-1.5 px-0.5 md:py-2 md:px-1 bg-slate-50 text-theme font-black uppercase text-[11px] md:text-sm w-[13.6%]">Thứ 6</th>
+                    <th id="th-day-7" class="border border-slate-200 py-1.5 px-0.5 md:py-2 md:px-1 bg-emerald-50 text-emerald-800 font-black uppercase text-[11px] md:text-sm w-[13.6%] cursor-pointer hover:bg-emerald-100 transition-colors" onclick="setTimetableDayFilter(7)" title="Bấm để xem chi tiết Thứ 7">Thứ 7</th>
                 </tr>`;
             } else {
                 thead.innerHTML = `<tr>
-                    <th class="border border-slate-200 p-3 bg-slate-50 text-slate-400 font-black uppercase tracking-wider text-[10px] md:text-xs w-24">Tiết \\ Thứ</th>
-                    <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 2</th>
-                    <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 3</th>
-                    <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 4</th>
-                    <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 5</th>
-                    <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 6</th>
-                    <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 7</th>
+                    <th id="timetable-th-col1" class="border border-slate-200 py-2 px-1 md:p-3 bg-slate-50 text-slate-400 font-black uppercase tracking-wider text-[10px] md:text-xs w-16 md:w-24">Tiết \\ Thứ</th>
+                    <th class="border border-slate-200 py-2 px-1 md:p-3 bg-slate-50 text-theme font-black uppercase text-[11px] md:text-sm">Thứ 2</th>
+                    <th class="border border-slate-200 py-2 px-1 md:p-3 bg-slate-50 text-theme font-black uppercase text-[11px] md:text-sm">Thứ 3</th>
+                    <th class="border border-slate-200 py-2 px-1 md:p-3 bg-slate-50 text-theme font-black uppercase text-[11px] md:text-sm">Thứ 4</th>
+                    <th class="border border-slate-200 py-2 px-1 md:p-3 bg-slate-50 text-theme font-black uppercase text-[11px] md:text-sm">Thứ 5</th>
+                    <th class="border border-slate-200 py-2 px-1 md:p-3 bg-slate-50 text-theme font-black uppercase text-[11px] md:text-sm">Thứ 6</th>
+                    <th id="th-day-7" class="border border-slate-200 py-2 px-1 md:p-3 bg-emerald-50 text-emerald-800 font-black uppercase text-[11px] md:text-sm cursor-pointer hover:bg-emerald-100 transition-colors" onclick="setTimetableDayFilter(7)" title="Bấm để xem chi tiết Thứ 7">Thứ 7</th>
                 </tr>`;
             }
         }
@@ -6893,30 +6931,30 @@
             let col1Html = '';
             let col1Class = '';
             if (isTeacherTkb) {
-                col1Class = 'border border-slate-200 py-1.5 px-2 font-black bg-slate-50 w-[25%] min-w-[150px] text-center';
+                col1Class = 'border border-slate-200 py-1 px-1 md:py-1.5 md:px-2 font-black bg-slate-50 w-[18%] md:w-[25%] min-w-[75px] md:min-w-[150px] text-center';
                 const rawTime = periodTimes[period] || '';
                 const compactTime = formatCompactPeriodTime(rawTime);
                 if (period <= 5) {
                     col1Html = `
-                    <div ${canEditTkb ? `onclick="editPeriodTime(${period})" class="cursor-pointer group py-0.5 px-1 rounded-lg hover:bg-slate-100 transition-all"` : ''} title="${canEditTkb ? 'Bấm để đổi giờ tiết này' : ''}">
-                        <div class="text-slate-600 font-extrabold text-[10px] md:text-[11px] tracking-wider uppercase ${canEditTkb ? 'group-hover:text-theme' : ''}">Tiết ${period}</div>
-                        ${canEditTkb ? `<div class="text-[8px] text-slate-400 group-hover:text-theme font-medium opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">${compactTime}</div>` : ''}
+                    <div ${canEditTkb ? `onclick="editPeriodTime(${period})" class="cursor-pointer group py-0.5 px-0.5 md:px-1 rounded-lg hover:bg-slate-100 transition-all"` : ''} title="${canEditTkb ? 'Bấm để đổi giờ tiết này' : ''}">
+                        <div class="text-slate-600 font-extrabold text-[9px] md:text-[11px] tracking-wider uppercase ${canEditTkb ? 'group-hover:text-theme' : ''}">Tiết ${period}</div>
+                        ${canEditTkb ? `<div class="text-[7.5px] md:text-[8px] text-slate-400 group-hover:text-theme font-medium opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">${compactTime}</div>` : ''}
                     </div>`;
                 } else {
                     col1Html = `
-                    <div ${canEditTkb ? `onclick="editPeriodTime(${period})" class="cursor-pointer group py-0.5 px-1 rounded-lg hover:bg-indigo-50/90 transition-all"` : ''} title="${canEditTkb ? 'Bấm để đổi giờ ca học này' : ''}">
-                        <div class="text-indigo-950 font-black text-xs md:text-sm tracking-tight ${canEditTkb ? 'group-hover:text-indigo-600' : ''} whitespace-nowrap">${compactTime}</div>
-                        <div class="text-[9px] text-slate-400 font-bold mt-0.5 flex items-center justify-center gap-0.5">
+                    <div ${canEditTkb ? `onclick="editPeriodTime(${period})" class="cursor-pointer group py-0.5 px-0.5 md:px-1 rounded-lg hover:bg-indigo-50/90 transition-all"` : ''} title="${canEditTkb ? 'Bấm để đổi giờ ca học này' : ''}">
+                        <div class="text-indigo-950 font-black text-[10px] md:text-sm tracking-tight ${canEditTkb ? 'group-hover:text-indigo-600' : ''} whitespace-nowrap">${compactTime}</div>
+                        <div class="text-[8px] md:text-[9px] text-slate-400 font-bold mt-0.5 flex items-center justify-center gap-0.5">
                             <span>Ca ${period - 5}</span>
-                            ${canEditTkb ? '<i data-lucide="edit-2" class="w-2.5 h-2.5 opacity-0 group-hover:opacity-100 text-indigo-500 transition-opacity"></i>' : ''}
+                            ${canEditTkb ? '<i data-lucide="edit-2" class="w-2 md:w-2.5 h-2 md:h-2.5 opacity-0 group-hover:opacity-100 text-indigo-500 transition-opacity"></i>' : ''}
                         </div>
                     </div>`;
                 }
             } else {
-                col1Class = 'border border-slate-200 p-2 font-black bg-slate-50 w-24 text-center';
+                col1Class = 'border border-slate-200 py-1.5 px-1 md:p-2 font-black bg-slate-50 w-16 md:w-24 text-center shrink-0';
                 col1Html = `
-                    <div class="text-slate-600 font-extrabold text-[10px] md:text-[11px] tracking-wider uppercase">Tiết ${period}</div>
-                    <div class="text-[9px] text-slate-400 font-bold mt-0.5 whitespace-nowrap">${periodTimes[period]}</div>
+                    <div class="text-slate-600 font-extrabold text-[9.5px] md:text-[11px] tracking-wider uppercase">Tiết ${period}</div>
+                    <div class="text-[8px] md:text-[9px] text-slate-400 font-bold mt-0.5 whitespace-nowrap">${periodTimes[period]}</div>
                 `;
             }
             
@@ -6944,22 +6982,24 @@
                     }
                 }
                 
-                const colorClass = subject ? getPastelColorClass(subject) : 'bg-white text-slate-700 border-slate-100';
+                const isDay7 = (day === 7);
+                const colorClass = subject ? getPastelColorClass(subject) : (isDay7 ? 'bg-emerald-50/25 text-slate-700 border-emerald-100/60' : 'bg-white text-slate-700 border-slate-100');
+                const dayClass = `cell-day-${day}`;
                 
                 if (isTeacherTkb) {
-                    const cellMinH = 'min-h-[38px]';
+                    const cellMinH = 'min-h-[34px] md:min-h-[38px]';
                     if (!canEditTkb) {
                         html += `
-                        <td class="border border-slate-200/80 p-1 w-[12.5%] ${colorClass} text-center">
+                        <td class="border border-slate-200/80 p-0.5 md:p-1 w-[13.6%] ${colorClass} ${dayClass} text-center transition-all">
                           <div class="flex flex-col items-center justify-center ${cellMinH}">
-                            <span class="font-black text-xs md:text-sm tracking-wide ${subject ? '' : 'text-slate-300 font-normal'}">${subject || '—'}</span>
+                            <span class="font-black text-[11px] md:text-sm tracking-wide ${subject ? '' : 'text-slate-300 font-normal'}">${subject || '—'}</span>
                           </div>
                         </td>`;
                     } else {
                         html += `
-                        <td onclick="openPeriodModal('${key}', ${day}, ${period})" class="border border-slate-200/80 p-1 w-[12.5%] ${colorClass} hover:opacity-90 transition-all cursor-pointer group">
+                        <td onclick="openPeriodModal('${key}', ${day}, ${period})" class="border border-slate-200/80 p-0.5 md:p-1 w-[13.6%] ${colorClass} ${dayClass} hover:opacity-90 transition-all cursor-pointer group">
                           <div class="flex flex-col items-center justify-center ${cellMinH} relative">
-                            <span class="font-black text-xs md:text-sm tracking-wide ${subject ? 'group-hover:text-theme' : 'text-slate-300 font-normal'} transition-colors">${subject || '—'}</span>
+                            <span class="font-black text-[11px] md:text-sm tracking-wide ${subject ? 'group-hover:text-theme' : 'text-slate-300 font-normal'} transition-colors">${subject || '—'}</span>
                             <div class="absolute inset-0 border-2 border-dashed border-slate-300 rounded-lg opacity-0 group-hover:opacity-100 transition duration-150 flex items-center justify-center bg-slate-50/95 gap-1">
                               <i data-lucide="edit-3" class="w-3 h-3 text-theme"></i>
                               <span class="text-[8px] font-black text-theme uppercase tracking-wider">Sửa</span>
@@ -6968,21 +7008,22 @@
                         </td>`;
                     }
                 } else {
+                    const cellMinH = 'min-h-[44px] md:min-h-[52px]';
                     const subtext = teacher || (subject ? 'Chưa phân công' : '');
                     if (!canEditTkb) {
                         html += `
-                        <td class="border border-slate-100 p-2 ${colorClass} text-center">
-                          <div class="flex flex-col justify-center min-h-[52px]">
-                            <span class="font-extrabold text-xs md:text-sm">${subject || '...'}</span>
-                            <span class="font-medium text-[9px] md:text-xs mt-0.5 ${subject ? 'text-slate-500/80' : 'text-slate-400'}">${subtext}</span>
+                        <td class="border border-slate-100 py-1 px-0.5 md:p-2 ${colorClass} ${dayClass} text-center transition-all">
+                          <div class="flex flex-col justify-center ${cellMinH}">
+                            <span class="font-extrabold text-[11px] md:text-sm">${subject || '...'}</span>
+                            <span class="font-medium text-[8px] md:text-xs mt-0.5 ${subject ? 'text-slate-500/80' : 'text-slate-400'}">${subtext}</span>
                           </div>
                         </td>`;
                     } else {
                         html += `
-                        <td onclick="openPeriodModal('${key}', ${day}, ${period})" class="border border-slate-100 p-2 ${colorClass} hover:opacity-90 transition-all cursor-pointer group">
-                          <div class="flex flex-col justify-center min-h-[52px] relative">
-                            <span class="font-extrabold text-xs md:text-sm group-hover:text-theme transition-colors">${subject || '...'}</span>
-                            <span class="font-medium text-[9px] md:text-xs mt-0.5 ${subject ? 'text-slate-500/80' : 'text-slate-400'}">${subtext}</span>
+                        <td onclick="openPeriodModal('${key}', ${day}, ${period})" class="border border-slate-100 py-1 px-0.5 md:p-2 ${colorClass} ${dayClass} hover:opacity-90 transition-all cursor-pointer group">
+                          <div class="flex flex-col justify-center ${cellMinH} relative">
+                            <span class="font-extrabold text-[11px] md:text-sm group-hover:text-theme transition-colors">${subject || '...'}</span>
+                            <span class="font-medium text-[8px] md:text-xs mt-0.5 ${subject ? 'text-slate-500/80' : 'text-slate-400'}">${subtext}</span>
                             <div class="absolute inset-0 border-2 border-dashed border-slate-300 rounded-xl opacity-0 group-hover:opacity-100 transition duration-200 flex items-center justify-center bg-slate-50/95 gap-1">
                               <i data-lucide="edit-3" class="w-3.5 h-3.5 text-theme"></i>
                               <span class="text-[9px] font-black text-theme uppercase tracking-wider">Sửa</span>
@@ -7016,6 +7057,205 @@
             if (capFooter) capFooter.innerText = "Buổi Sáng: Tiết 1 (07:00 - 07:45) đến Tiết 5 (10:25 - 11:10)";
         }
 
+        // Cập nhật giao diện xem từng ngày trên Mobile nếu đang kích hoạt
+        if (typeof currentTimetableDayFilter !== 'undefined' && currentTimetableDayFilter !== 'all') {
+            renderTimetableMobileDayView(currentTimetableDayFilter);
+        }
+
+        // Đánh dấu ngày hôm nay trên thanh chọn ngày
+        const todayDay = new Date().getDay() + 1; // 1 = CN, 7 = T7
+        const btnDay7 = document.getElementById('btn-tkb-day-7');
+        if (btnDay7 && todayDay === 7) {
+            btnDay7.innerHTML = `Thứ 7 <span class="text-[9px] bg-emerald-600 text-white px-1 py-0.2 rounded font-black">Hôm nay</span>`;
+        }
+
+        lucide.createIcons();
+    }
+
+    let currentTimetableDayFilter = 'all';
+
+    function setTimetableDayFilter(day) {
+        currentTimetableDayFilter = day;
+
+        // Cập nhật trạng thái các nút ngày
+        document.querySelectorAll('.tkb-day-pill').forEach(btn => {
+            btn.classList.remove('bg-white', 'text-theme', 'shadow-xs', 'font-black');
+            btn.classList.add('text-slate-600', 'font-bold');
+        });
+        const activeBtn = document.getElementById(`btn-tkb-day-${day}`);
+        if (activeBtn) {
+            activeBtn.classList.remove('text-slate-600', 'font-bold');
+            activeBtn.classList.add('bg-white', 'text-theme', 'shadow-xs', 'font-black');
+        }
+
+        const dayViewEl = document.getElementById('timetable-day-view');
+        const captureArea = document.getElementById('timetable-capture-area');
+
+        if (day === 'all') {
+            if (dayViewEl) dayViewEl.classList.add('hidden');
+            if (captureArea) captureArea.classList.remove('hidden');
+        } else {
+            if (captureArea) captureArea.classList.add('hidden');
+            if (dayViewEl) {
+                dayViewEl.classList.remove('hidden');
+                renderTimetableMobileDayView(day);
+            }
+        }
+    }
+
+    function scrollToTimetableDay(day) {
+        if (currentTimetableDayFilter !== 'all') {
+            setTimetableDayFilter('all');
+        }
+        setTimeout(() => {
+            const wrapper = document.getElementById('timetable-scroll-wrapper');
+            if (wrapper) {
+                if (day === 7) {
+                    wrapper.scrollTo({ left: wrapper.scrollWidth, behavior: 'smooth' });
+                } else if (day === 2) {
+                    wrapper.scrollTo({ left: 0, behavior: 'smooth' });
+                } else {
+                    const th = document.getElementById(`th-day-${day}`);
+                    if (th) {
+                        wrapper.scrollTo({ left: th.offsetLeft - 40, behavior: 'smooth' });
+                    }
+                }
+            }
+            highlightDayColumn(day);
+        }, 60);
+    }
+
+    function highlightDayColumn(day) {
+        document.querySelectorAll('.cell-day-highlight').forEach(el => el.classList.remove('cell-day-highlight'));
+        document.querySelectorAll(`.cell-day-${day}`).forEach(el => {
+            el.classList.add('cell-day-highlight');
+        });
+        const th = document.getElementById(`th-day-${day}`);
+        if (th) th.classList.add('cell-day-highlight');
+        setTimeout(() => {
+            document.querySelectorAll('.cell-day-highlight').forEach(el => el.classList.remove('cell-day-highlight'));
+        }, 2200);
+    }
+
+    function renderTimetableMobileDayView(dayNum) {
+        const container = document.getElementById('timetable-day-view');
+        if (!container) return;
+        
+        const dayNames = { 2: "Thứ Hai", 3: "Thứ Ba", 4: "Thứ Tư", 5: "Thứ Năm", 6: "Thứ Sáu", 7: "Thứ Bảy" };
+        const isTeacherTkb = (currentTimetableViewMode === 'teacher');
+        let t;
+        if (isTeacherTkb) {
+            t = teacherTimetable;
+        } else {
+            const activeId = currentUser && currentUser.activeTimetableId;
+            t = timetables.find(x => x.id === currentTimetableId) || (activeId ? timetables.find(x => x.id === activeId) : null) || timetables[0];
+        }
+        if (!t) return;
+        
+        const isStudent = (currentUserRole === 'student'); 
+        const allowedTkbRoles = ["lớp trưởng", "lớp phó học tập"];
+        let canEditTkb = !isStudent || (isStudent && currentStudent && currentStudent.role && allowedTkbRoles.includes(currentStudent.role.toLowerCase().trim()));
+        if (isTeacherTkb) {
+            canEditTkb = (currentUserRole === 'teacher');
+        }
+        
+        const periodTimes = getTeacherPeriodTimes();
+        const maxPeriods = (currentTimetableViewMode === 'class') ? 5 : 9;
+        const dayName = dayNames[dayNum] || `Thứ ${dayNum}`;
+        const isToday = (dayNum === (new Date().getDay() + 1));
+        
+        let html = `
+        <div class="bg-gradient-to-r from-emerald-50 via-teal-50 to-blue-50 p-4 rounded-2xl border border-emerald-200/70 flex items-center justify-between shadow-xs">
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full ${dayNum === 7 ? 'bg-emerald-500' : 'bg-theme'} animate-pulse"></span>
+                    <h4 class="font-black text-slate-800 text-base md:text-lg">${dayName}</h4>
+                    ${dayNum === 7 ? '<span class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Thứ 7</span>' : ''}
+                    ${isToday ? '<span class="bg-blue-100 text-blue-800 text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Hôm nay</span>' : ''}
+                </div>
+                <p class="text-[11px] font-bold text-slate-500 mt-0.5">${isTeacherTkb ? 'Lịch giảng dạy chi tiết' : 'Thời khóa biểu buổi sáng'}</p>
+            </div>
+            <button onclick="setTimetableDayFilter('all')" class="text-xs font-bold text-slate-700 bg-white hover:bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200 transition shadow-2xs flex items-center gap-1.5">
+                <i data-lucide="layout-grid" class="w-3.5 h-3.5 text-theme"></i> <span>Xem bảng</span>
+            </button>
+        </div>
+        <div class="space-y-2 mt-3">
+        `;
+        
+        for (let period = 1; period <= maxPeriods; period++) {
+            if (period === 6) {
+                const sessionTitle = isTeacherTkb ? 'Dạy Thêm (Buổi Chiều)' : 'Buổi Chiều';
+                html += `
+                <div class="bg-indigo-50 text-indigo-800 font-black py-2 px-3 rounded-xl uppercase tracking-wider text-xs text-center border border-indigo-100 mt-3 flex items-center justify-center gap-1.5">
+                    <i data-lucide="book-open" class="w-3.5 h-3.5 text-indigo-600"></i> ${sessionTitle}
+                </div>`;
+            }
+            
+            const key = `d${dayNum}_p${period}`;
+            const val = (t.data && t.data[key]) || '';
+            let subject = '';
+            let teacher = '';
+            
+            if (isTeacherTkb) {
+                subject = val;
+            } else {
+                if (val.includes('|')) {
+                    const parts = val.split('|');
+                    subject = parts[0] || '';
+                    teacher = parts[1] || (subject ? getSubjectTeacher(subject) : '');
+                } else {
+                    subject = val;
+                    teacher = val ? getSubjectTeacher(val) : '';
+                }
+            }
+            
+            const isFree = !subject || subject === 'Nghỉ';
+            const colorClass = subject && !isFree ? getPastelColorClass(subject) : 'bg-slate-50/80 text-slate-600 border-slate-100';
+            const rawTime = periodTimes[period] || '';
+            const timeDisplay = rawTime ? rawTime : (period <= 5 ? `Tiết ${period}` : `Ca ${period - 5}`);
+            
+            const cardClick = canEditTkb ? `onclick="openPeriodModal('${key}', ${dayNum}, ${period})"` : '';
+            const cardCursor = canEditTkb ? 'cursor-pointer hover:scale-[1.01] active:scale-[0.99]' : '';
+            
+            html += `
+            <div ${cardClick} class="p-3.5 rounded-2xl border transition-all ${colorClass} ${cardCursor} flex items-center justify-between shadow-2xs group relative">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 rounded-xl bg-white/95 border border-slate-200/70 flex flex-col items-center justify-center shrink-0 shadow-2xs">
+                        <span class="text-[9px] font-black text-slate-400 uppercase">Tiết</span>
+                        <span class="text-sm font-black text-theme leading-none">${period}</span>
+                    </div>
+                    <div class="min-w-0">
+                        <div class="font-black text-sm md:text-base text-slate-800 truncate">
+                            ${isFree ? '<span class="text-slate-400 font-medium italic">Nghỉ tiết</span>' : subject}
+                        </div>
+                        <div class="text-[11px] font-bold text-slate-500 truncate flex items-center gap-1 mt-0.5">
+                            ${isFree ? '—' : `<i data-lucide="user" class="w-3 h-3 text-slate-400"></i> ${teacher || 'Chưa phân công'}`}
+                        </div>
+                    </div>
+                </div>
+                <div class="text-right shrink-0 pl-2">
+                    <span class="text-[11px] font-extrabold text-slate-600 font-mono bg-white/90 px-2 py-1 rounded-lg border border-slate-100 shadow-2xs">${timeDisplay}</span>
+                    ${canEditTkb ? '<div class="text-[9px] font-bold text-theme uppercase tracking-wider mt-1 opacity-80 group-hover:opacity-100 flex items-center justify-end gap-0.5"><i data-lucide="edit-2" class="w-2.5 h-2.5"></i> Sửa</div>' : ''}
+                </div>
+            </div>`;
+        }
+        
+        html += `
+        </div>
+        <div class="flex items-center justify-between gap-2 pt-3 border-t border-slate-100 text-xs font-bold mt-2">
+            <button onclick="setTimetableDayFilter(${dayNum > 2 ? dayNum - 1 : 7})" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center gap-1 shadow-2xs">
+                <i data-lucide="chevron-left" class="w-4 h-4"></i> ${dayNames[dayNum > 2 ? dayNum - 1 : 7]}
+            </button>
+            <button onclick="setTimetableDayFilter('all')" class="px-3 py-2 rounded-xl text-theme font-black hover:underline">
+                Xem toàn tuần
+            </button>
+            <button onclick="setTimetableDayFilter(${dayNum < 7 ? dayNum + 1 : 2})" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center gap-1 shadow-2xs">
+                ${dayNames[dayNum < 7 ? dayNum + 1 : 2]} <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </button>
+        </div>
+        `;
+        
+        container.innerHTML = html;
         lucide.createIcons();
     }
     
@@ -9617,6 +9857,8 @@
 
             // Tạo vùng clone độc lập đặt tại góc trên cùng ẩn sau body để html2canvas chụp đúng tọa độ (0, 0), không bị lệch do left âm
             const clone = area.cloneNode(true);
+            clone.classList.remove('hidden');
+            clone.style.display = 'block';
             clone.id = 'timetable-export-clone';
             clone.style.position = 'fixed';
             clone.style.left = '0';
@@ -10664,9 +10906,9 @@
       if (morningList) {
           const activeId = currentUser && currentUser.activeTimetableId;
           const activeTkb = (activeId ? timetables.find(x => x.id === activeId) : null) || timetables.find(x => x.id === currentTimetableId) || timetables[0];
-          let dayNum = new Date().getDay() + 1; // 1 = Sunday, 2 = Monday, ...
-          if (dayNum === 1 || dayNum === 7) {
-              dayNum = 2; // Default to Monday if Sunday
+          let dayNum = new Date().getDay() + 1; // 1 = Sunday, 2 = Monday, ..., 7 = Saturday
+          if (dayNum === 1) {
+              dayNum = 2; // Nếu là Chủ Nhật thì mặc định xem TKB Thứ Hai
           }
           
           const dayNames = { 2: "Thứ Hai", 3: "Thứ Ba", 4: "Thứ Tư", 5: "Thứ Năm", 6: "Thứ Sáu", 7: "Thứ Bảy" };
