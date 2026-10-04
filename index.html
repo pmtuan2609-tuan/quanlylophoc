@@ -1067,7 +1067,7 @@
           <div id="timetable-day-view" class="hidden space-y-3 max-w-lg mx-auto"></div>
 
           <!-- BẢNG TOÀN TUẦN -->
-          <div id="timetable-capture-area" class="w-full max-w-[720px] mx-auto p-2 sm:p-4 md:p-5 bg-white rounded-2xl border border-slate-100 relative">
+          <div id="timetable-capture-area" class="min-w-[850px] p-4 md:p-6 bg-white rounded-2xl border border-slate-100 relative">
             <!-- Header trên ảnh xuất -->
             <div class="mb-3 pb-2.5 border-b-2 border-slate-100 flex justify-between items-end">
               <div>
@@ -1081,16 +1081,16 @@
             </div>
 
             <!-- Bảng TKB -->
-            <table id="timetable-table" class="w-full text-center border-collapse table-sticky table-fixed h-full">
+            <table id="timetable-table" class="w-full text-center border-collapse table-sticky min-w-[700px] h-full">
                 <thead id="timetable-thead">
                     <tr>
-                        <th id="timetable-th-col1" class="border border-slate-200 py-1.5 px-0.5 md:py-2.5 bg-slate-50 text-slate-400 font-black uppercase tracking-wider text-[8.5px] md:text-xs w-[8%] min-w-[28px] md:min-w-[48px]">Tiết</th>
-                        <th class="border border-slate-200 py-1.5 px-0.5 md:py-2.5 bg-slate-50 text-theme font-black uppercase text-[10px] md:text-xs w-[15.3%]">Thứ 2</th>
-                        <th class="border border-slate-200 py-1.5 px-0.5 md:py-2.5 bg-slate-50 text-theme font-black uppercase text-[10px] md:text-xs w-[15.3%]">Thứ 3</th>
-                        <th class="border border-slate-200 py-1.5 px-0.5 md:py-2.5 bg-slate-50 text-theme font-black uppercase text-[10px] md:text-xs w-[15.3%]">Thứ 4</th>
-                        <th class="border border-slate-200 py-1.5 px-0.5 md:py-2.5 bg-slate-50 text-theme font-black uppercase text-[10px] md:text-xs w-[15.3%]">Thứ 5</th>
-                        <th class="border border-slate-200 py-1.5 px-0.5 md:py-2.5 bg-slate-50 text-theme font-black uppercase text-[10px] md:text-xs w-[15.3%]">Thứ 6</th>
-                        <th id="th-day-7" class="border border-slate-200 py-1.5 px-0.5 md:py-2.5 bg-slate-50 text-theme font-black uppercase text-[10px] md:text-xs w-[15.3%]">Thứ 7</th>
+                        <th id="timetable-th-col1" class="border border-slate-200 p-3 bg-slate-50 text-slate-400 font-black uppercase tracking-wider text-[10px] md:text-xs w-24">Tiết \ Thứ</th>
+                        <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 2</th>
+                        <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 3</th>
+                        <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 4</th>
+                        <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 5</th>
+                        <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 6</th>
+                        <th id="th-day-7" class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 7</th>
                     </tr>
                 </thead>
                 <tbody id="timetable-tbody"></tbody>
@@ -6862,19 +6862,33 @@
             }
         }
         
-        // Điều chỉnh kích thước khung và bảng theo chế độ (Tối ưu iPhone 15 & Mobile - Các ô Thứ thu gọn vừa vặn)
+        // Điều chỉnh kích thước khung và bảng theo chế độ
         const captureArea = document.getElementById('timetable-capture-area');
         const tableEl = document.getElementById('timetable-table');
         const thead = document.getElementById('timetable-thead');
 
         if (captureArea) {
-            captureArea.classList.remove('min-w-[850px]', 'md:min-w-[850px]', 'min-w-[540px]', 'min-w-[560px]');
-            captureArea.classList.add('w-full', 'max-w-[720px]', 'mx-auto');
+            if (isTeacherTkb) {
+                // TKB Giáo Viên: Tối ưu trên iPhone 15 & Mobile, vừa vặn không tràn
+                captureArea.classList.remove('min-w-[850px]', 'md:min-w-[850px]');
+                captureArea.classList.add('w-full', 'max-w-[720px]', 'mx-auto');
+            } else {
+                // TKB Lớp: Giữ nguyên bố cục rộng rãi chuẩn ban đầu
+                captureArea.classList.remove('w-full', 'max-w-[720px]', 'mx-auto');
+                captureArea.classList.add('min-w-[850px]');
+            }
         }
 
         if (tableEl) {
-            tableEl.classList.add('table-sticky', 'table-fixed', 'w-full');
-            tableEl.classList.remove('min-w-[700px]', 'min-w-[480px]', 'min-w-[540px]', 'md:min-w-[700px]');
+            if (isTeacherTkb) {
+                // TKB Giáo Viên: Cố định tỷ lệ cột table-fixed, cột 1 nhỏ và 6 cột thứ bằng nhau
+                tableEl.classList.remove('min-w-[700px]');
+                tableEl.classList.add('table-sticky', 'table-fixed', 'w-full');
+            } else {
+                // TKB Lớp: Giữ nguyên thiết kế ban đầu không table-fixed
+                tableEl.classList.remove('table-fixed');
+                tableEl.classList.add('table-sticky', 'min-w-[700px]', 'w-full');
+            }
         }
 
         if (thead) {
@@ -6890,13 +6904,13 @@
                 </tr>`;
             } else {
                 thead.innerHTML = `<tr>
-                    <th id="timetable-th-col1" class="border border-slate-200 py-1.5 px-0.5 md:py-2.5 bg-slate-50 text-slate-400 font-black uppercase tracking-wider text-[8.5px] md:text-xs w-[8%] min-w-[28px] md:min-w-[48px]">Tiết</th>
-                    <th class="border border-slate-200 py-1.5 px-0.5 md:py-2.5 bg-slate-50 text-theme font-black uppercase text-[10px] md:text-xs w-[15.3%]">Thứ 2</th>
-                    <th class="border border-slate-200 py-1.5 px-0.5 md:py-2.5 bg-slate-50 text-theme font-black uppercase text-[10px] md:text-xs w-[15.3%]">Thứ 3</th>
-                    <th class="border border-slate-200 py-1.5 px-0.5 md:py-2.5 bg-slate-50 text-theme font-black uppercase text-[10px] md:text-xs w-[15.3%]">Thứ 4</th>
-                    <th class="border border-slate-200 py-1.5 px-0.5 md:py-2.5 bg-slate-50 text-theme font-black uppercase text-[10px] md:text-xs w-[15.3%]">Thứ 5</th>
-                    <th class="border border-slate-200 py-1.5 px-0.5 md:py-2.5 bg-slate-50 text-theme font-black uppercase text-[10px] md:text-xs w-[15.3%]">Thứ 6</th>
-                    <th id="th-day-7" class="border border-slate-200 py-1.5 px-0.5 md:py-2.5 bg-emerald-50 text-emerald-800 font-black uppercase text-[10px] md:text-xs w-[15.3%] cursor-pointer hover:bg-emerald-100 transition-colors" onclick="setTimetableDayFilter(7)" title="Bấm để xem chi tiết Thứ 7">Thứ 7</th>
+                    <th id="timetable-th-col1" class="border border-slate-200 p-3 bg-slate-50 text-slate-400 font-black uppercase tracking-wider text-[10px] md:text-xs w-24">Tiết \\ Thứ</th>
+                    <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 2</th>
+                    <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 3</th>
+                    <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 4</th>
+                    <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 5</th>
+                    <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 6</th>
+                    <th id="th-day-7" class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm cursor-pointer hover:bg-slate-100 transition-colors" onclick="setTimetableDayFilter(7)" title="Bấm để xem chi tiết Thứ 7">Thứ 7</th>
                 </tr>`;
             }
         }
@@ -6939,10 +6953,10 @@
                     </div>`;
                 }
             } else {
-                col1Class = 'border border-slate-200 py-1 px-0.5 font-black bg-slate-50 w-[8%] text-center shrink-0';
+                col1Class = 'border border-slate-200 p-2 font-black bg-slate-50 w-24 text-center shrink-0';
                 col1Html = `
-                    <div class="text-slate-700 font-black text-[9px] md:text-[11px] leading-tight uppercase">T${period}</div>
-                    <div class="text-[6.5px] md:text-[8px] text-slate-400 font-medium whitespace-nowrap leading-none mt-0.5">${periodTimes[period]}</div>
+                    <div class="text-slate-700 font-black text-xs md:text-sm">Tiết ${period}</div>
+                    <div class="text-[9px] md:text-[10px] text-slate-400 font-semibold whitespace-nowrap leading-none mt-0.5">${periodTimes[period] || ''}</div>
                 `;
             }
             
@@ -6996,25 +7010,25 @@
                         </td>`;
                     }
                 } else {
-                    const cellMinH = 'min-h-[36px] md:min-h-[44px]';
+                    const cellMinH = 'min-h-[52px]';
                     const subtext = teacher || (subject ? 'Chưa phân công' : '');
                     if (!canEditTkb) {
                         html += `
-                        <td class="border border-slate-100 py-1 px-0.5 w-[15.3%] ${colorClass} ${dayClass} text-center transition-all">
+                        <td class="border border-slate-100 p-2 ${colorClass} ${dayClass} text-center transition-all">
                           <div class="flex flex-col justify-center ${cellMinH}">
-                            <span class="font-extrabold text-[10px] md:text-xs leading-tight truncate px-0.5" title="${subject}">${subject || '—'}</span>
-                            <span class="font-medium text-[7.5px] md:text-[9.5px] leading-tight mt-0.5 truncate px-0.5 ${subject ? 'text-slate-500/85' : 'text-slate-400'}" title="${subtext}">${subtext}</span>
+                            <span class="font-extrabold text-xs md:text-sm leading-tight truncate px-0.5" title="${subject}">${subject || '—'}</span>
+                            <span class="font-medium text-[10px] md:text-xs leading-tight mt-1 truncate px-0.5 ${subject ? 'text-slate-500' : 'text-slate-400'}" title="${subtext}">${subtext}</span>
                           </div>
                         </td>`;
                     } else {
                         html += `
-                        <td onclick="openPeriodModal('${key}', ${day}, ${period})" class="border border-slate-100 py-1 px-0.5 w-[15.3%] ${colorClass} ${dayClass} hover:opacity-90 transition-all cursor-pointer group">
+                        <td onclick="openPeriodModal('${key}', ${day}, ${period})" class="border border-slate-100 p-2 ${colorClass} ${dayClass} hover:opacity-90 transition-all cursor-pointer group">
                           <div class="flex flex-col justify-center ${cellMinH} relative">
-                            <span class="font-extrabold text-[10px] md:text-xs leading-tight truncate px-0.5 group-hover:text-theme transition-colors" title="${subject}">${subject || '—'}</span>
-                            <span class="font-medium text-[7.5px] md:text-[9.5px] leading-tight mt-0.5 truncate px-0.5 ${subject ? 'text-slate-500/85' : 'text-slate-400'}" title="${subtext}">${subtext}</span>
+                            <span class="font-extrabold text-xs md:text-sm leading-tight truncate px-0.5 group-hover:text-theme transition-colors" title="${subject}">${subject || '—'}</span>
+                            <span class="font-medium text-[10px] md:text-xs leading-tight mt-1 truncate px-0.5 ${subject ? 'text-slate-500' : 'text-slate-400'}" title="${subtext}">${subtext}</span>
                             <div class="absolute inset-0 border-2 border-dashed border-slate-300 rounded-xl opacity-0 group-hover:opacity-100 transition duration-200 flex items-center justify-center bg-slate-50/95 gap-1">
                               <i data-lucide="edit-3" class="w-3.5 h-3.5 text-theme"></i>
-                              <span class="text-[9px] font-black text-theme uppercase tracking-wider">Sửa</span>
+                              <span class="text-[10px] font-black text-theme uppercase tracking-wider">Sửa</span>
                             </div>
                           </div>
                         </td>`;
