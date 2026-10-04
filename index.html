@@ -6894,13 +6894,13 @@
         if (thead) {
             if (isTeacherTkb) {
                 thead.innerHTML = `<tr>
-                    <th class="border border-slate-200 py-1.5 px-0.5 md:py-2.5 bg-slate-50 text-slate-500 font-black uppercase tracking-wider text-[8.5px] md:text-xs w-[8%] min-w-[28px] md:min-w-[48px]">Tiết</th>
-                    <th class="border border-slate-200 py-1.5 px-0.5 md:py-2 bg-slate-50 text-theme font-black uppercase text-[10px] md:text-xs w-[15.3%]">Thứ 2</th>
-                    <th class="border border-slate-200 py-1.5 px-0.5 md:py-2 bg-slate-50 text-theme font-black uppercase text-[10px] md:text-xs w-[15.3%]">Thứ 3</th>
-                    <th class="border border-slate-200 py-1.5 px-0.5 md:py-2 bg-slate-50 text-theme font-black uppercase text-[10px] md:text-xs w-[15.3%]">Thứ 4</th>
-                    <th class="border border-slate-200 py-1.5 px-0.5 md:py-2 bg-slate-50 text-theme font-black uppercase text-[10px] md:text-xs w-[15.3%]">Thứ 5</th>
-                    <th class="border border-slate-200 py-1.5 px-0.5 md:py-2 bg-slate-50 text-theme font-black uppercase text-[10px] md:text-xs w-[15.3%]">Thứ 6</th>
-                    <th id="th-day-7" class="border border-slate-200 py-1.5 px-0.5 md:py-2 bg-emerald-50 text-emerald-800 font-black uppercase text-[10px] md:text-xs w-[15.3%] cursor-pointer hover:bg-emerald-100 transition-colors" onclick="setTimetableDayFilter(7)" title="Bấm để xem chi tiết Thứ 7">Thứ 7</th>
+                    <th class="border border-slate-200 py-1.5 px-1 md:py-2.5 bg-slate-50 text-slate-500 font-black uppercase tracking-wider text-[9px] md:text-xs w-[11.8%] min-w-[38px] md:min-w-[56px]">Tiết</th>
+                    <th class="border border-slate-200 py-1.5 px-0.5 md:py-2 bg-slate-50 text-theme font-black uppercase text-[10px] md:text-xs w-[14.7%]">Thứ 2</th>
+                    <th class="border border-slate-200 py-1.5 px-0.5 md:py-2 bg-slate-50 text-theme font-black uppercase text-[10px] md:text-xs w-[14.7%]">Thứ 3</th>
+                    <th class="border border-slate-200 py-1.5 px-0.5 md:py-2 bg-slate-50 text-theme font-black uppercase text-[10px] md:text-xs w-[14.7%]">Thứ 4</th>
+                    <th class="border border-slate-200 py-1.5 px-0.5 md:py-2 bg-slate-50 text-theme font-black uppercase text-[10px] md:text-xs w-[14.7%]">Thứ 5</th>
+                    <th class="border border-slate-200 py-1.5 px-0.5 md:py-2 bg-slate-50 text-theme font-black uppercase text-[10px] md:text-xs w-[14.7%]">Thứ 6</th>
+                    <th id="th-day-7" class="border border-slate-200 py-1.5 px-0.5 md:py-2 bg-emerald-50 text-emerald-800 font-black uppercase text-[10px] md:text-xs w-[14.7%] cursor-pointer hover:bg-emerald-100 transition-colors" onclick="setTimetableDayFilter(7)" title="Bấm để xem chi tiết Thứ 7">Thứ 7</th>
                 </tr>`;
             } else {
                 thead.innerHTML = `<tr>
@@ -6923,7 +6923,7 @@
         let html = ''; 
         for(let period = 1; period <= maxPeriods; period++) { 
             if (period === 6) {
-                const sessionTitle = isTeacherTkb ? 'Dạy Thêm (Buổi Chiều)' : 'Buổi Chiều';
+                const sessionTitle = isTeacherTkb ? 'Dạy Thêm' : 'Buổi Chiều';
                 const sessionIcon = isTeacherTkb ? 'book-open' : 'sun';
                 const divPy = isTeacherTkb ? 'py-1 text-xs' : 'py-1.5 text-xs md:text-sm';
                 html += `<tr>
@@ -6936,20 +6936,20 @@
             let col1Html = '';
             let col1Class = '';
             if (isTeacherTkb) {
-                col1Class = 'border border-slate-200 py-1 px-0.5 font-black bg-slate-50 w-[8%] text-center shrink-0';
+                col1Class = 'border border-slate-200 py-1 px-1 font-black bg-slate-50 w-[11.8%] text-center shrink-0';
                 const rawTime = periodTimes[period] || '';
                 const compactTime = formatCompactPeriodTime(rawTime);
                 if (period <= 5) {
                     col1Html = `
                     <div ${canEditTkb ? `onclick="editPeriodTime(${period})" class="cursor-pointer group py-0.5 px-0.5 rounded-lg hover:bg-slate-100 transition-all"` : ''} title="${canEditTkb ? 'Bấm để đổi giờ tiết này' : ''}">
-                        <div class="text-slate-700 font-black text-[9px] md:text-[11px] leading-tight uppercase ${canEditTkb ? 'group-hover:text-theme' : ''}">T${period}</div>
-                        <div class="text-[6.5px] md:text-[8px] text-slate-400 font-medium whitespace-nowrap leading-none mt-0.5">${compactTime}</div>
+                        <div class="text-slate-700 font-black text-[9.5px] md:text-[11px] leading-tight uppercase ${canEditTkb ? 'group-hover:text-theme' : ''}">T${period}</div>
+                        <div class="text-[7px] md:text-[8.5px] text-slate-400 font-medium whitespace-nowrap leading-none mt-0.5">${compactTime}</div>
                     </div>`;
                 } else {
                     col1Html = `
                     <div ${canEditTkb ? `onclick="editPeriodTime(${period})" class="cursor-pointer group py-0.5 px-0.5 rounded-lg hover:bg-indigo-50/90 transition-all"` : ''} title="${canEditTkb ? 'Bấm để đổi giờ ca học này' : ''}">
-                        <div class="text-indigo-950 font-black text-[9px] md:text-xs tracking-tight ${canEditTkb ? 'group-hover:text-indigo-600' : ''}">C${period - 5}</div>
-                        <div class="text-[6.5px] md:text-[8px] text-indigo-500 font-bold whitespace-nowrap leading-none mt-0.5">${compactTime}</div>
+                        <div class="text-indigo-950 font-black text-[9.5px] md:text-xs tracking-tight ${canEditTkb ? 'group-hover:text-indigo-600' : ''}">C${period - 5}</div>
+                        <div class="text-[7px] md:text-[8.5px] text-indigo-500 font-bold whitespace-nowrap leading-none mt-0.5">${compactTime}</div>
                     </div>`;
                 }
             } else {
@@ -6992,14 +6992,14 @@
                     const cellMinH = 'min-h-[30px] md:min-h-[36px]';
                     if (!canEditTkb) {
                         html += `
-                        <td class="border border-slate-200/80 p-0.5 w-[15.3%] ${colorClass} ${dayClass} text-center transition-all">
+                        <td class="border border-slate-200/80 p-0.5 w-[14.7%] ${colorClass} ${dayClass} text-center transition-all">
                           <div class="flex flex-col items-center justify-center ${cellMinH}">
                             <span class="font-black text-[10px] md:text-xs tracking-tight truncate px-0.5 ${subject ? '' : 'text-slate-300 font-normal'}">${subject || '—'}</span>
                           </div>
                         </td>`;
                     } else {
                         html += `
-                        <td onclick="openPeriodModal('${key}', ${day}, ${period})" class="border border-slate-200/80 p-0.5 w-[15.3%] ${colorClass} ${dayClass} hover:opacity-90 transition-all cursor-pointer group">
+                        <td onclick="openPeriodModal('${key}', ${day}, ${period})" class="border border-slate-200/80 p-0.5 w-[14.7%] ${colorClass} ${dayClass} hover:opacity-90 transition-all cursor-pointer group">
                           <div class="flex flex-col items-center justify-center ${cellMinH} relative">
                             <span class="font-black text-[10px] md:text-xs tracking-tight truncate px-0.5 ${subject ? 'group-hover:text-theme' : 'text-slate-300 font-normal'} transition-colors">${subject || '—'}</span>
                             <div class="absolute inset-0 border-2 border-dashed border-slate-300 rounded-lg opacity-0 group-hover:opacity-100 transition duration-150 flex items-center justify-center bg-slate-50/95 gap-1">
@@ -7186,7 +7186,7 @@
         
         for (let period = 1; period <= maxPeriods; period++) {
             if (period === 6) {
-                const sessionTitle = isTeacherTkb ? 'Dạy Thêm (Buổi Chiều)' : 'Buổi Chiều';
+                const sessionTitle = isTeacherTkb ? 'Dạy Thêm' : 'Buổi Chiều';
                 html += `
                 <div class="bg-indigo-50 text-indigo-800 font-black py-2 px-3 rounded-xl uppercase tracking-wider text-xs text-center border border-indigo-100 mt-3 flex items-center justify-center gap-1.5">
                     <i data-lucide="book-open" class="w-3.5 h-3.5 text-indigo-600"></i> ${sessionTitle}
