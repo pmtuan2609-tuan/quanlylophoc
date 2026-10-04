@@ -1019,6 +1019,7 @@
            </div>
            <div id="teacher-timetable-controls" class="hidden flex flex-wrap items-center gap-2 md:gap-3 w-full sm:w-auto">
               <div id="teacher-tkb-stats" class="flex flex-wrap items-center gap-1.5 text-xs font-bold bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-slate-700"></div>
+              <button type="button" onclick="openPeriodTimesModal()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold border border-indigo-200 px-3.5 py-2 rounded-xl text-xs md:text-sm transition flex items-center gap-1.5 shadow-sm whitespace-nowrap" title="Tùy chỉnh khung giờ dạy thêm & các tiết"><i data-lucide="clock" class="w-4 h-4 text-indigo-600"></i> Cài đặt giờ dạy</button>
             </div>
             <!-- Nút Xuất ảnh 4K cho cả HS & GV -->
             <div class="flex items-center gap-2 ml-auto sm:ml-0">
@@ -1044,7 +1045,7 @@
             <table id="timetable-table" class="w-full text-center border-collapse min-w-[700px] h-full">
                 <thead id="timetable-thead">
                     <tr>
-                        <th class="border border-slate-200 p-3 bg-slate-50 text-slate-400 font-black uppercase tracking-wider text-[10px] md:text-xs">Tiết \ Thứ</th>
+                        <th id="timetable-th-col1" class="border border-slate-200 p-3 bg-slate-50 text-slate-400 font-black uppercase tracking-wider text-[10px] md:text-xs">Tiết \ Thứ</th>
                         <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 2</th>
                         <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 3</th>
                         <th class="border border-slate-200 p-3 bg-slate-50 text-theme font-black uppercase text-xs md:text-sm">Thứ 4</th>
@@ -2615,6 +2616,107 @@
          <button id="btn-period-clear" class="flex-none bg-rose-50 hover:bg-rose-100 text-rose-600 font-black px-4 py-3 rounded-xl transition text-xs uppercase tracking-wider">Xóa tiết</button>
          <button onclick="closeModalUi('timetable-period-modal', 'timetable-period-content')" class="flex-[0.4] bg-slate-100 text-slate-500 font-black py-3 rounded-xl hover:bg-slate-200 hover:text-slate-700 transition text-xs uppercase tracking-wider">Hủy</button>
          <button id="btn-period-save" class="flex-1 bg-theme-grad text-white font-black py-3 rounded-xl hover:scale-[1.02] transition shadow-lg text-xs uppercase tracking-wider">Lưu tiết</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Tùy Chỉnh Giờ Giảng Dạy & Dạy Thêm -->
+  <div id="period-times-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[700] p-4 opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-[2rem] p-6 md:p-8 w-full max-w-lg shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col border border-white/20" id="period-times-content">
+      <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 text-white flex items-center justify-center font-bold shadow-md shadow-indigo-500/20">
+            <i data-lucide="clock" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-lg md:text-xl font-black text-slate-800 tracking-tight">Cài đặt giờ giảng dạy</h3>
+            <p class="text-xs text-slate-400 font-bold">Tùy chỉnh khung giờ dạy thêm & các tiết học</p>
+          </div>
+        </div>
+        <button onclick="closeModalUi('period-times-modal', 'period-times-content')" class="text-slate-400 hover:text-slate-600 bg-slate-50 p-2 rounded-full transition"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+
+      <!-- Presets for quick selection -->
+      <div class="mb-4">
+        <label class="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wide block mb-2">Mẫu giờ dạy thêm thông dụng</label>
+        <div class="grid grid-cols-3 gap-2">
+          <button type="button" onclick="applyPeriodTimesPreset('standard_afternoon')" class="bg-indigo-50/70 hover:bg-indigo-100 border border-indigo-200 text-indigo-700 rounded-xl p-2 text-center transition flex flex-col items-center justify-center">
+            <span class="text-xs font-black">Chiều chuẩn</span>
+            <span class="text-[9px] text-indigo-500 font-medium">13:00 - 16:15</span>
+          </button>
+          <button type="button" onclick="applyPeriodTimesPreset('tutoring_afternoon')" class="bg-purple-50/70 hover:bg-purple-100 border border-purple-200 text-purple-700 rounded-xl p-2 text-center transition flex flex-col items-center justify-center">
+            <span class="text-xs font-black">Dạy thêm Chiều</span>
+            <span class="text-[9px] text-purple-500 font-medium">13:30 - 18:30</span>
+          </button>
+          <button type="button" onclick="applyPeriodTimesPreset('tutoring_evening')" class="bg-amber-50/70 hover:bg-amber-100 border border-amber-200 text-amber-700 rounded-xl p-2 text-center transition flex flex-col items-center justify-center">
+            <span class="text-xs font-black">Dạy thêm Tối</span>
+            <span class="text-[9px] text-amber-500 font-medium">14:00 - 19:00</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Inputs for Extra Teaching (Ca 1 to 4 / Tiết 6 to 9) -->
+      <div class="space-y-3 mb-5 max-h-[260px] overflow-y-auto custom-scrollbar p-1">
+        <div class="text-xs font-black text-indigo-900 uppercase tracking-wider flex items-center gap-1.5 pb-1 border-b border-indigo-100">
+          <i data-lucide="book-open" class="w-3.5 h-3.5 text-indigo-600"></i> Khung giờ Dạy Thêm (Buổi Chiều / Tối)
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">Ca 1 (Tiết 6)</label>
+            <input type="text" id="input-period-time-6" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl ring-theme outline-none font-bold text-slate-800 text-xs" placeholder="VD: 13:00 - 13:45">
+          </div>
+          <div>
+            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">Ca 2 (Tiết 7)</label>
+            <input type="text" id="input-period-time-7" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl ring-theme outline-none font-bold text-slate-800 text-xs" placeholder="VD: 13:45 - 14:30">
+          </div>
+          <div>
+            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">Ca 3 (Tiết 8)</label>
+            <input type="text" id="input-period-time-8" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl ring-theme outline-none font-bold text-slate-800 text-xs" placeholder="VD: 14:45 - 15:30">
+          </div>
+          <div>
+            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">Ca 4 (Tiết 9)</label>
+            <input type="text" id="input-period-time-9" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl ring-theme outline-none font-bold text-slate-800 text-xs" placeholder="VD: 15:30 - 16:15">
+          </div>
+        </div>
+
+        <!-- Optional Section for Morning (Tiết 1 to 5) -->
+        <details class="group mt-2 border border-slate-200 rounded-xl overflow-hidden">
+          <summary class="cursor-pointer bg-slate-50 p-2.5 text-xs font-bold text-slate-600 flex items-center justify-between list-none">
+            <span class="flex items-center gap-1.5"><i data-lucide="sun" class="w-3.5 h-3.5 text-amber-500"></i> Tùy chỉnh giờ Buổi Sáng (Tiết 1 - 5)</span>
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 group-open:rotate-180 transition-transform"></i>
+          </summary>
+          <div class="p-3 bg-white space-y-2.5">
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="text-[9px] font-bold text-slate-400 uppercase">Tiết 1</label>
+                <input type="text" id="input-period-time-1" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-700">
+              </div>
+              <div>
+                <label class="text-[9px] font-bold text-slate-400 uppercase">Tiết 2</label>
+                <input type="text" id="input-period-time-2" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-700">
+              </div>
+              <div>
+                <label class="text-[9px] font-bold text-slate-400 uppercase">Tiết 3</label>
+                <input type="text" id="input-period-time-3" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-700">
+              </div>
+              <div>
+                <label class="text-[9px] font-bold text-slate-400 uppercase">Tiết 4</label>
+                <input type="text" id="input-period-time-4" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-700">
+              </div>
+              <div class="col-span-2">
+                <label class="text-[9px] font-bold text-slate-400 uppercase">Tiết 5</label>
+                <input type="text" id="input-period-time-5" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-700">
+              </div>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex gap-2">
+        <button type="button" onclick="resetPeriodTimesToDefault()" class="flex-none bg-slate-100 hover:bg-slate-200 text-slate-600 font-black px-4 py-3 rounded-xl transition text-xs uppercase tracking-wider">Mặc định</button>
+        <button type="button" onclick="closeModalUi('period-times-modal', 'period-times-content')" class="flex-[0.4] bg-slate-100 text-slate-500 font-black py-3 rounded-xl hover:bg-slate-200 hover:text-slate-700 transition text-xs uppercase tracking-wider">Hủy</button>
+        <button type="button" onclick="savePeriodTimesFromModal()" class="flex-1 bg-theme-grad text-white font-black py-3 rounded-xl hover:scale-[1.02] transition shadow-lg text-xs uppercase tracking-wider">Lưu khung giờ</button>
       </div>
     </div>
   </div>
@@ -6532,6 +6634,123 @@
         return palettes[index];
     }
 
+    function getTeacherPeriodTimes() {
+        const defaultTimes = {
+            1: "07:00 - 07:45",
+            2: "07:45 - 08:30",
+            3: "08:55 - 09:40",
+            4: "09:40 - 10:25",
+            5: "10:25 - 11:10",
+            6: "13:00 - 13:45",
+            7: "13:45 - 14:30",
+            8: "14:45 - 15:30",
+            9: "15:30 - 16:15"
+        };
+        const custom = (teacherTimetable && teacherTimetable.periodTimes) || (currentUser && currentUser.periodTimes) || {};
+        return Object.assign({}, defaultTimes, custom);
+    }
+
+    function savePeriodTimes(newTimes) {
+        if (!teacherTimetable) {
+            teacherTimetable = { id: 'teacher_default', name: 'TKB Giảng dạy GV', data: {}, periodTimes: {} };
+        }
+        if (!teacherTimetable.periodTimes) teacherTimetable.periodTimes = {};
+        teacherTimetable.periodTimes = Object.assign({}, teacherTimetable.periodTimes, newTimes);
+        
+        if (currentUser) {
+            if (!currentUser.periodTimes) currentUser.periodTimes = {};
+            currentUser.periodTimes = Object.assign({}, currentUser.periodTimes, newTimes);
+        }
+        
+        const targetId = (currentUser && currentUser.id) || 'thaytuan';
+        try {
+            localStorage.setItem('teacherTimetable_' + targetId, JSON.stringify(teacherTimetable));
+            localStorage.setItem('backup_teacherTimetable', JSON.stringify(teacherTimetable));
+        } catch(e) {}
+        
+        saveAppData();
+        applyTimetable();
+    }
+
+    function editPeriodTime(period) {
+        if (!canEditTimetable()) {
+            showModal('info', 'Thông báo', 'Bạn không có quyền chỉnh sửa thời khóa biểu này.');
+            return;
+        }
+        const times = getTeacherPeriodTimes();
+        const curTime = times[period] || '';
+        const title = period <= 5 ? `Chỉnh giờ: Tiết ${period} (Sáng)` : `Chỉnh giờ: Ca dạy thêm ${period - 5}`;
+        showPrompt(title, 'Nhập khung giờ học (VD: 14:00 - 15:30, 17:30 - 19:00):', curTime, (val) => {
+            if (!val || !val.trim()) return;
+            const updated = {};
+            updated[period] = val.trim();
+            savePeriodTimes(updated);
+            showModal('success', 'Đã cập nhật', `Đã cập nhật khung giờ thành công: ${val.trim()}`);
+        });
+    }
+
+    function openPeriodTimesModal() {
+        const times = getTeacherPeriodTimes();
+        for (let p = 1; p <= 9; p++) {
+            const input = document.getElementById(`input-period-time-${p}`);
+            if (input) input.value = times[p] || '';
+        }
+        openModalUi('period-times-modal', 'period-times-content');
+        lucide.createIcons();
+    }
+
+    function applyPeriodTimesPreset(presetType) {
+        if (presetType === 'standard_afternoon') {
+            document.getElementById('input-period-time-6').value = '13:00 - 13:45';
+            document.getElementById('input-period-time-7').value = '13:45 - 14:30';
+            document.getElementById('input-period-time-8').value = '14:45 - 15:30';
+            document.getElementById('input-period-time-9').value = '15:30 - 16:15';
+        } else if (presetType === 'tutoring_afternoon') {
+            document.getElementById('input-period-time-6').value = '13:30 - 15:00';
+            document.getElementById('input-period-time-7').value = '15:15 - 16:45';
+            document.getElementById('input-period-time-8').value = '17:00 - 18:30';
+            document.getElementById('input-period-time-9').value = '18:45 - 20:15';
+        } else if (presetType === 'tutoring_evening') {
+            document.getElementById('input-period-time-6').value = '14:00 - 15:30';
+            document.getElementById('input-period-time-7').value = '15:45 - 17:15';
+            document.getElementById('input-period-time-8').value = '17:30 - 19:00';
+            document.getElementById('input-period-time-9').value = '19:15 - 20:45';
+        }
+    }
+
+    function savePeriodTimesFromModal() {
+        const updated = {};
+        for (let p = 1; p <= 9; p++) {
+            const input = document.getElementById(`input-period-time-${p}`);
+            if (input && input.value.trim()) {
+                updated[p] = input.value.trim();
+            }
+        }
+        savePeriodTimes(updated);
+        closeModalUi('period-times-modal', 'period-times-content');
+        setTimeout(() => {
+            showModal('success', 'Thành công', 'Đã lưu cài đặt khung giờ giảng dạy!');
+        }, 300);
+    }
+
+    function resetPeriodTimesToDefault() {
+        showModal('confirm', 'Khôi phục mặc định', 'Bạn có muốn đặt lại toàn bộ khung giờ về mặc định tiêu chuẩn không?', () => {
+            if (teacherTimetable) teacherTimetable.periodTimes = {};
+            if (currentUser && currentUser.periodTimes) currentUser.periodTimes = {};
+            const targetId = (currentUser && currentUser.id) || 'thaytuan';
+            try {
+                localStorage.setItem('teacherTimetable_' + targetId, JSON.stringify(teacherTimetable));
+                localStorage.setItem('backup_teacherTimetable', JSON.stringify(teacherTimetable));
+            } catch(e) {}
+            saveAppData();
+            applyTimetable();
+            closeModalUi('period-times-modal', 'period-times-content');
+            setTimeout(() => {
+                showModal('success', 'Đã đặt lại', 'Đã khôi phục khung giờ về mặc định!');
+            }, 300);
+        });
+    }
+
     function applyTimetable() { 
         let t;
         const isTeacherTkb = (currentTimetableViewMode === 'teacher');
@@ -6620,17 +6839,12 @@
             }
         }
 
-        const periodTimes = {
-            1: "07:00 - 07:45",
-            2: "07:45 - 08:30",
-            3: "08:55 - 09:40",
-            4: "09:40 - 10:25",
-            5: "10:25 - 11:10",
-            6: "13:00 - 13:45",
-            7: "13:45 - 14:30",
-            8: "14:45 - 15:30",
-            9: "15:30 - 16:15"
-        };
+        const thCol1 = document.getElementById('timetable-th-col1');
+        if (thCol1) {
+            thCol1.innerText = isTeacherTkb ? 'Giờ / Tiết' : 'Tiết \\ Thứ';
+        }
+
+        const periodTimes = getTeacherPeriodTimes();
         
         // When in class mode (TKB HS), only show morning (periods 1 to 5)
         const maxPeriods = (currentTimetableViewMode === 'class') ? 5 : 9;
@@ -6648,20 +6862,37 @@
                 </tr>`;
             }
             
-            const periodLabel = period <= 5 
-                ? `Tiết ${period}` 
-                : (isTeacherTkb ? `Tiết ${period - 5}` : `Tiết ${period - 5} (Chiều)`);
-            const col1Class = isTeacherTkb 
-                ? 'border border-slate-200 py-1.5 px-1 font-black bg-slate-50 w-16 text-center' 
-                : 'border border-slate-200 p-2 font-black bg-slate-50 w-24 text-center';
-            const timeHtml = isTeacherTkb 
-                ? '' 
-                : `<div class="text-[9px] text-slate-400 font-bold mt-0.5 whitespace-nowrap">${periodTimes[period]}</div>`;
+            let col1Html = '';
+            let col1Class = '';
+            if (isTeacherTkb) {
+                col1Class = 'border border-slate-200 py-1.5 px-1 font-black bg-slate-50 w-24 text-center';
+                if (period <= 5) {
+                    col1Html = `
+                    <div ${canEditTkb ? `onclick="editPeriodTime(${period})" class="cursor-pointer group py-0.5 rounded-lg hover:bg-slate-100 transition-all"` : ''} title="${canEditTkb ? 'Bấm để đổi giờ tiết này' : ''}">
+                        <div class="text-slate-600 font-extrabold text-[10px] md:text-[11px] tracking-wider uppercase ${canEditTkb ? 'group-hover:text-theme' : ''}">Tiết ${period}</div>
+                        ${canEditTkb ? `<div class="text-[8px] text-slate-400 group-hover:text-theme font-medium opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">${periodTimes[period]}</div>` : ''}
+                    </div>`;
+                } else {
+                    col1Html = `
+                    <div ${canEditTkb ? `onclick="editPeriodTime(${period})" class="cursor-pointer group py-0.5 px-1 rounded-lg hover:bg-indigo-50 transition-all"` : ''} title="${canEditTkb ? 'Bấm để đổi giờ ca học này' : ''}">
+                        <div class="text-indigo-950 font-black text-[11px] md:text-xs leading-tight tracking-tight ${canEditTkb ? 'group-hover:text-indigo-600' : ''} whitespace-nowrap">${periodTimes[period]}</div>
+                        <div class="text-[9px] text-slate-400 font-bold mt-0.5 flex items-center justify-center gap-0.5">
+                            <span>Ca ${period - 5}</span>
+                            ${canEditTkb ? '<i data-lucide="edit-2" class="w-2.5 h-2.5 opacity-0 group-hover:opacity-100 text-indigo-500 transition-opacity"></i>' : ''}
+                        </div>
+                    </div>`;
+                }
+            } else {
+                col1Class = 'border border-slate-200 p-2 font-black bg-slate-50 w-24 text-center';
+                col1Html = `
+                    <div class="text-slate-600 font-extrabold text-[10px] md:text-[11px] tracking-wider uppercase">Tiết ${period}</div>
+                    <div class="text-[9px] text-slate-400 font-bold mt-0.5 whitespace-nowrap">${periodTimes[period]}</div>
+                `;
+            }
             
             html += `<tr>
                 <td class="${col1Class}">
-                    <div class="text-slate-600 font-extrabold text-[10px] md:text-[11px] tracking-wider uppercase">${periodLabel}</div>
-                    ${timeHtml}
+                    ${col1Html}
                 </td>`; 
             for(let day = 2; day <= 7; day++) { 
                 const key = `d${day}_p${period}`; 
@@ -6779,7 +7010,8 @@
             subject = val;
         }
         
-        const periodLabel = period <= 5 ? `Tiết ${period}` : (isTeacherMode ? `Tiết ${period - 5} (Dạy thêm)` : `Tiết ${period - 5} (Chiều)`);
+        const periodTimes = getTeacherPeriodTimes();
+        const periodLabel = period <= 5 ? `Tiết ${period}` : (isTeacherMode ? `${periodTimes[period]} (Dạy thêm)` : `Tiết ${period - 5} (Chiều)`);
         document.getElementById('timetable-period-modal-title').innerText = `${periodLabel} - Thứ ${day}`;
         document.getElementById('modal-period-subject').value = subject;
         
