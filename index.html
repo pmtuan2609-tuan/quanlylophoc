@@ -3781,9 +3781,12 @@
                 const syncChannel = new BroadcastChannel('qllh_sync_channel');
                 syncChannel.onmessage = (e) => {
                     if (e.data && e.data.type === 'DATA_SYNC') {
-                        const tId = currentTeacherId || (currentUser ? currentUser.id : 'thaytuan');
-                        if (!e.data.targetId || e.data.targetId === tId) {
-                            syncClassData(false);
+                        // Chỉ tự động đồng bộ kéo về cho học sinh, không can thiệp giáo viên đang làm việc
+                        if (currentUserRole === 'student') {
+                            const tId = currentTeacherId || (currentUser ? currentUser.id : 'thaytuan');
+                            if (!e.data.targetId || e.data.targetId === tId) {
+                                syncClassData(false);
+                            }
                         }
                     }
                 };
@@ -8726,6 +8729,23 @@
 
         let targetId = currentTeacherId || (currentUser && currentUser.id ? currentUser.id : 'thaytuan');
         if (targetId === 'admin') targetId = 'thaytuan';
+
+        // NẾU LÀ GIÁO VIÊN: Khi bấm nút "Đồng bộ", đẩy (PUSH) toàn bộ dữ liệu vừa chỉnh sửa lên máy chủ và Supabase
+        if (currentUserRole === 'teacher') {
+            saveAppData();
+            
+            // Chờ tác vụ đồng bộ hoàn tất
+            await new Promise(r => setTimeout(r, 600));
+
+            if (iconTimetable) iconTimetable.classList.remove('animate-spin');
+            if (iconChart) iconChart.classList.remove('animate-spin');
+
+            if (notify) {
+                showModal('success', 'Đồng Bộ Thành Công', 'Dữ liệu Thời khóa biểu, Sơ đồ lớp và Lớp học đã được đồng bộ an toàn lên máy chủ!');
+            }
+            return;
+        }
+
         let fetchedData = null;
 
         // 1. Thử nạp từ Supabase nếu có kết nối
